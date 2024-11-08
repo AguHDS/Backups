@@ -1,2 +1,2 @@
 # Backups
-Large app with authentication and features, with the goal of storing personal data like cloud
+Large app with authentication and features, a livechat and others, with the goal of storing personal data like cloud
