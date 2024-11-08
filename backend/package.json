@@ -1,0 +1,39 @@
+{
+  "name": "backups",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgustinHDS/chatLive_node.git"
+  },
+  "keywords": [
+    "testnode"
+  ],
+  "author": "Ag",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AgustinHDS/chatLive_node/issues"
+  },
+  "homepage": "https://github.com/AgustinHDS/chatLive_node#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "4.19.2",
+    "express-validator": "^7.1.0",
+    "http-proxy-middleware": "^3.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.10.1",
+    "socket.io": "4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3"
+  }
+}

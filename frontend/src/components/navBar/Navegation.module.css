@@ -1,0 +1,42 @@
+.navbar {
+  background-color: rgb(94, 122, 93);
+  box-shadow: 0 0 10px;
+  height: auto;
+  position: fixed;
+}
+
+.navBtnsFix {
+  position: absolute;
+  right: 0;
+  margin-right: 25px;
+}
+
+.containerFix {
+  max-width: none;
+  margin: 0px 13px;
+}
+
+.collapseIcone img {
+  width: 20px;
+  height: auto;
+}
+
+.navbarBrand {
+  user-select: none;
+  color: white;
+  pointer-events: none;
+  margin: 0;
+  font-size: 1.5em;
+  font-family: monospace;
+}
+
+.signContainer {
+  display: flex;
+  position: relative;
+  user-select: none;
+  right: 0;
+}
+
+.dropdownLogout:hover {
+  color: rgb(203, 203, 203);
+}

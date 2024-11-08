@@ -1,0 +1,19 @@
+.mainAdvice {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    color: rgb(222, 222, 222);
+}
+
+.adviceContent {
+    text-align: center;
+    width: 350px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    background-color: #7a7b7d;
+    height: 50px;
+    box-shadow: 0 0 4px black;
+}

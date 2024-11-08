@@ -1,0 +1,133 @@
+  /* use important to replace boostrap properties */
+
+body {
+  background-color: #a5a5a5;
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}
+
+/* buttons */
+
+.oldgreenBtn {
+  background-color: rgb(94, 122, 93) !important;
+  border: none;
+}
+
+.oldgreenBtn:hover {
+  background-color: rgb(82, 105, 81) !important;
+}
+
+.oldgreenBtn:active {
+  background-color: rgb(70, 88, 69) !important;
+}
+
+.oldgrayBtn {
+  background-color: #949494;
+  border: 2px inset #4e4e4e;
+  border-radius: 0px;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  width: 150px;
+  white-space: nowrap;
+  margin: 5px;
+}
+
+.oldgrayBtn:hover {
+  background-color: #818181;
+  border: 2px inset #4e4e4e;
+}
+
+.oldgrayBtn:active {
+  background-color: #727272 !important;
+  border: 2px inset #4e4e4e !important;
+}
+
+/* login and sign */
+
+.modalWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; 
+  height: 100vh; 
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.formLoginAndSign {
+  background-color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 430px;
+  box-sizing: border-box;
+  text-align: center;
+  margin: 15px;
+}
+
+.signGroup {
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.signLabel {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.signInput {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.loginAndSignSuccesfull {
+  color: rgb(4, 178, 4);
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0;
+  top: 15px;
+  position: relative;
+}
+
+.warningsLoginAndSign {
+  color: red;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  margin-bottom: 0;
+  top: 15px;
+  position: relative;
+}
+
+/* Modal */
+
+.modalContainer {
+  display: flex;
+  position: relative;
+  top: 90px;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.modalBasis {
+  background-color: #949494;
+  box-shadow: 0 0 10px;
+  height: 820px;
+  width: 80vw;
+  top: 80px;
+  padding: 10px 30px;
+}

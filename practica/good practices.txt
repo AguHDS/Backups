@@ -1,0 +1,39 @@
+Buena practica para fetch y cosas asincronas: usar AbortController. Api de JS que evita que se hagan multiples llamadas simultaneamente. Cancela
+ las
+peticiones anteriores y muestra la ultima (por ejemplo cuando se hace muchas veces click repetidamente)
+
+useEffect(() => {
+  const controller = new AbortController();
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true); // Comienza el fetch, activa el estado de carga
+
+      const response = await fetch("someapiurl", {
+        signal: controller.signal, // Necesario que se llame 'signal'
+      });
+
+      if (!response.ok) {
+        throw new Error("Error consiguiendo la data");
+      }
+
+      const data = await response.json();
+
+      setText(data.logs); // Actualiza el estado con la data obtenida
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Fetch aborted");
+      } else {
+        console.error("Fetch error:", error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchData();
+
+  return () => {
+    controller.abort(); // Aborta la petición si se desmonta el componente o cambia la dependencia
+  };
+}, [depend]);

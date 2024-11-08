@@ -1,0 +1,18 @@
+                                                                  - App -
+- Added Redux ✓
+- Migration to React ✓
+
+                                                            - Cuentas de usuario -
+
+
+_ Si el usuario esta autenticado, verifique que se pueda mostrar el modal principal en la web sin cambiar la url ✓
+_ Configurar el backend para que acepte cookie con el JWT cuando el usuario esta autenticado ✓     
+_ La data de los users deben almacenarse en una base de datos ✓
+_ Crear endpoints para las rutas de registro y login ✓
+_ Validaciones para sign-in/sign-up en frontend y backend ✓
+
+
+Live chat:
+- Sincronizar el chat, para que cuando se conecten usuarios en diferentes tiempos en el navegador puedan ver y escribir en el chat ✓
+
+

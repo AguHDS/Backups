@@ -1,0 +1,11 @@
+
+
+* persistencia del estado global y reautenticacion del usuario al recargar la pagina
+
+. En el backend, enviar al usuario autenticado un JWT token y un refresh token. (duracion del jwt token: 5-10mins, refresh token: 1-2hs)
+. El jwt token se va a guardar en memoria y el refresh token en una cookie http secure.
+. Al recargar la pagina, el estado global se reinicia, pero al incio de la aplicacion (usando useEffect en un nivel superior)
+  se va a hacer una solicitud al backend para verificar si el refresh token es valido, y asi pedir un nuevo jwt token.
+. Si el refresh token es válido se va a enviar un nuevo jwt token que vamos a almacenar en memoria (estado global de redux).
+. En el estado global se va a guardar: nombre de usuario, rol, isAUthenticated.
+. El logout deberia llevar al usuario a la pagina principal y recargar, para que verifyToken se dispare

@@ -1,0 +1,120 @@
+n react es muy comun usar map() para renderizar listas a partir de objetos u otras cosas. 
+Es importante transformar primero a un array para usar map() e iterar sobre cada elemento que queremos luego renderizar, ya que map() 
+usa 2 parametros, (elemento, index), y el index va a ser la key utilizada ya que cada elemento mapeado en react necesita una key de propiedad
+
+
+---------------------------------------------------------------------------------------------------
+styles.module CSS en react
+
+si quiero agregar mas de una clase de un modulo css en react, tengo que meter las clases en un array y transformarlo a un string.
+
+ ej:
+<Button className={[styles.redButtons, style.blacWriting].join(' ')}>
+.Si las clases empiezan a crecer mucho, se puede meter el array con estilos. en una constante y poner la constante en el elemento html 
+
+Cuando usamos modulos en react para hacer css en el front se crea un mini hasheo en la clase agregada, esto va a evitar problemas de clases
+pisandose cuando el proyecto sea mas grande
+
+Reducer:
+
+Que es useReducer (explicacion 2): alternativa a useState, sirve en los casos donde tenemos que manejar estados complejos y-o estados que
+esten relacionados entre si (por ejemplo distintos estados que manejan logica dependiendo de que tarea se elija, por eso se usa switch).
+Que es useReduce? es un hook que es una funcion que recibe dos argumentos: el estado inicial, la accion a ejecutar y devuelve el estado
+ya modificado.
+Se usa para manejar estados globales cuando el proyecto es grande.
+. No puede ejecutar codigo asincrono directamente (Se puede conbinar con useEffect o el middleware de redux thunk para maneajr asincronía)
+. No puede setear cosas en el local/session storage
+. Se usa con switch
+. useReducer es usado cuando tenemos tareas especificas y sabemos de antemanos cuales van a ser, para ponerlas en el switch, ejecutar cierto
+  codigo basado en el action.type de la tarea (ej: 'ADD_TAREA'), y guardar el resultado en el estado 
+
+dispatch: es el actualizado de estado de useReduce.
+Cuando usamos dispatch, creamos un objeto action que podemos usar para definir el tipo de accion que vamos a manejar.
+Cuando le mandamos el objeto a dispach en por ejemplo un onClick={dispatch({type: 'editar', payload: '1'})}, dispatch envia esas propiedades
+al objeto action, que en el Switch del reducer se evaluará comparando su type y payload para ejecutar el codigo correspondiente
+action tiene 2 propiedades: 
+
+action.type:
+la usamos para definir el tipo que corresponde con la tarea a realizar. Por ejemplo si en un switch tenemos case "ADD_FILE",
+cuando usamos dispatch dendriamos que hacer algo como:
+const addTask = (file) => dispatch({ type: "ADD_FILE", payload: file });
+
+action.payload :(opcional)
+contiene datos especificos si es que el action los necesita para hacer tareas extra, por ej usar otro argumetno adicional. Por ejemplo, si 
+estamos haciendo una task, el payload contendrá la task, o si vamos a eliminar algo, el payload contendrá el indice o id.
+Ej:
+dispatch({type: "ADD_FILE", payload: leche})
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TASK":
+      return [...state, action.payload]; // action.payload contiene "leche"
+    default:
+      return state;
+  }
+};
+
+Ejemplo completo:
+// Definimos el reducer
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "ADD_TASK":
+      return [...state, action.payload]; // Agrega una nueva tarea
+    case "REMOVE_TASK":
+      return state.filter((_, index) => index !== action.payload); // Elimina la tarea en el índice dado
+    default:
+      return state;
+  }
+};
+
+// Componente TaskManager
+const TaskManager = () => {
+  // Inicializamos el estado con el reducer
+  const [tasks, dispatch] = useReducer(reducer, [], () => {
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
+
+  // Guardar las tareas en el local storage cuando cambien
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  // Función para agregar una tarea
+  const addTask = (task) => {
+    dispatch({ type: "ADD_TASK", payload: task });
+  };
+
+  // Función para eliminar una tarea
+  const removeTask = (index) => {
+    dispatch({ type: "REMOVE_TASK", payload: index });
+  };
+
+  return (
+    <div>
+      <h2>Task Manager</h2>
+      <ul>
+        {tasks.map((task, index) => (
+          <li key={index}>
+            {task} 
+            <button onClick={() => removeTask(index)}>Eliminar</button>
+          </li>
+        ))}
+      </ul>
+      <button onClick={() => addTask(prompt("Nueva tarea:"))}>
+        Agregar Tarea
+      </button>
+    </div>
+  );
+};
+
+export default TaskManager;
+
+Al usar fuera del componente al recuer, podemos exportarlo y usarlo en otras partes del codigo, y evitamos que se re-renderize
+
+React Router
+Se usa para la navegacion entre paginas definiendo rutas y dandoselas a componentes especificos.
+
+
+Context api y redux
+se usan para gestionar estados globales, como por ejemplo datos de un usuario autenticado. Redux hace lo mismo pero es mas complejos
