@@ -1,8 +1,9 @@
 # Backups
-Large app with authentication and features, a livechat and others, with the goal of storing personal data like cloud
+full stack app with authentication and the goal of storing large quantity of data and files, interact with other users and customize your profile.
 
-Technologies used:
-React, redux, next
-Node
+technologies for frontend: react, redux, typescript
+backend: node, mongodb, next
+
+Technologies used: react, redux, next node
 Javascript, Typescript
 MongoDB, SQL
