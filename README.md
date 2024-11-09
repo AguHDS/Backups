@@ -5,5 +5,4 @@ frontend: react, redux, typescript, tailwind, Headless UI
 
 backend: node, mongodb, next
 
-How to install:
-install all dependencies with npm i and run the app with npm run dev (vite is needed until i migrate to next)
+it's a work in progress... there is a lot of work left to do
