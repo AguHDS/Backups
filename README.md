@@ -19,4 +19,4 @@ In case you want to see it on your local you will need some setups:
 
 once you're all set just run npm install in the backend and frontend folder to install all dependencies. You can run the frontend in the frontend folder with npm run dev, and backend in backend folder with npm start. (tailwind runs along with the frontend terminal)
 
-expected changes: typescript, next, monbodb, and some C# in the future
+expected changes to add: typescript, next, monbodb, and some C# in the future
