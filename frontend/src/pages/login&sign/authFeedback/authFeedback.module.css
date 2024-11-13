@@ -1,0 +1,16 @@
+.loginAndSignSuccesfull {
+    color: rgb(4, 178, 4);
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0;
+    position: relative;
+  }
+  
+  .warningsLoginAndSign {
+    color: red;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 0;
+    position: relative;
+  }
