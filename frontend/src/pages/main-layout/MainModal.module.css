@@ -1,0 +1,39 @@
+  .buttonContainer {
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .buttonContainer button {
+    background-color: #949494;
+    border: 2px inset #4e4e4e;
+    border-radius: 0px;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    width: 150px;
+    white-space: nowrap;
+    margin: 5px;
+  }
+
+  .containerView {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .defaultView {
+    width: 95%;
+    position: relative;
+    text-align: center;
+    top: 15px;
+    color: #d6d6d6;
+    height: 700px;
+    padding: 20px;
+    border: 2px solid #4f4f4f;
+    background-color: #949494;
+  }
+
+  .userList {
+    display: flex;
+    font-size: medium;
+  }
