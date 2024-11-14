@@ -1,7 +1,8 @@
 export default function Input({
   className = "text-sm rounded-lg w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:placeholder-gray-400",
   type = "text",
-  id = undefined, //arreglar las clases aca, estan creo que mal hechas y no hay que poner las dos
+  id = undefined,
+  name = "",
   value = "",
   checked = false,
   onChange = () => {},

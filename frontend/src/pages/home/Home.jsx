@@ -16,7 +16,7 @@ export default function Home() {
     (state) => state.auth
   );
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     dispatch(verifyToken());
   }, [dispatch]);
