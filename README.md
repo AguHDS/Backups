@@ -17,12 +17,12 @@ Some of the features that this app will have:
 many of the features aren't avialable yet since i'm working on them
 
 *main tools used:
-*js/ts
-*node
-*react
-*redux-toolkit
-*next
-*sql
-*mongodb
-*tailwind
-*headlessui
+* js/ts
+* node
+* react
+* redux-toolkit
+* next
+* sql
+* mongodb
+* tailwind
+* headlessui
