@@ -10,9 +10,9 @@ App with the objetive of letting you storage all type of data and files. You'll 
 * Global live chat and private chat between users
 * User profiles
 
-## many of the features aren't avialable yet since i'm working on them
+many features aren't avialable yet since i'm working on them
 
-*main tools used:
+## main tools used:
 * js/ts
 * node
 * react
