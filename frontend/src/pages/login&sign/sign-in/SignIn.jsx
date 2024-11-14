@@ -11,7 +11,6 @@ import { Button, Input } from "../../../components/common";
 import { useAuth } from "../../../hooks";
 
 export default function SignIn() {
-  /*   console.log("montando sign in"); */
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e) => {
