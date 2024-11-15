@@ -9,6 +9,7 @@ App with the objetive of letting you storage all type of data and files. You'll 
 * Level system that will grant benefits such like more space to store
 * Global live chat and private chat between users
 * User profiles
+* and more... i add what it comes to my mind while i work on this
 
 many features aren't avialable yet since i'm working on them
 
