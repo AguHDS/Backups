@@ -12,14 +12,9 @@ import { verifyToken } from "../../redux/features/authSlice";
 
 export default function Home() {
   console.log("Home se está renderizando");
-  const { isAuthenticated, shouldVerfifyToken } = useSelector(
+  const { isAuthenticated } = useSelector(
     (state) => state.auth
   );
-  const dispatch = useDispatch();
-  
-  useEffect(() => {
-    dispatch(verifyToken());
-  }, [dispatch]);
 
   return (
     <>

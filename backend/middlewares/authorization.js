@@ -4,7 +4,7 @@ import { verifyToken } from "../utils/handleJwt.js";
 
 const authorizedUser = async (req, res, next) => {
   try {
-    const authToken = req.cookies["authToken"];
+    const authToken = req.cookies["authToken"]; //this will change since the authToken will be stored in redux and the refresh token in the cookie
     if (!authToken) {
       return res.status(401).json({ message: "No auth token" });
     }

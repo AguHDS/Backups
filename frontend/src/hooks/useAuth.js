@@ -13,7 +13,7 @@ import {
 
 //redux
 import { useDispatch } from "react-redux";
-import { login } from "../redux/features/authSlice";
+import { login } from "../redux/features/authSlice"; //almacenar el .user al estado global de redux
 
 /**
  * Validator and error handler for login and sign up
@@ -72,14 +72,15 @@ export default function useAuth() {
   };
 
   useEffect(() => {
-    if (status === null) return;
+    if(data === null || status === null) return
 
+    console.log('entrando en el useEffect')
     const { message, redirect } = validateLoginStatus(status);
-
     setStatusMessage(message);
+    dispatch(login(data));
 
     if (redirect) navigate("/");
-  }, [status, navigate]);
+  }, [data, status, navigate]);
 
   return {
     input,
@@ -91,5 +92,4 @@ export default function useAuth() {
 }
 
 /* documentar bien las cosas y darle nombres apropiados */
-/* hacer lo del auth una vez que se loguea el usuario y es eniado a home  (mostrar main modal y cambiar la navbar options).*/
 /* chequear que los componentes se reendereen bien con console log al principio de ellos */

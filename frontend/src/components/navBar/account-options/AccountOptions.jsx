@@ -33,10 +33,10 @@ export default function AccountOptions() {
   }; */
 
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative inline-block text-left"> 
       <div>
         <MenuButton as="div" className="mr-4 text-xl cursor-pointer text-white">
-          {userData.user}
+          {userData.name}
           <ChevronDownIcon
             aria-hidden="true"
             className="relative top-[5px] -mr-1 size-5"

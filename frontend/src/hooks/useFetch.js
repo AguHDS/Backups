@@ -27,8 +27,6 @@ export default function useFetch() {
         signal: controller.signal,
       });
 
-      setStatus(response.status);
-
       if (!response.ok) {
         const errorData = await response.json();
 
@@ -40,9 +38,12 @@ export default function useFetch() {
 
       //you'll get the message "login successfull as ${user} as 200 response here"
       const result = await response.json();
+      setStatus(response.status);
       setData(result);
+      
     } catch (error) {
       console.error(error);
+      console.error("Error fetching data:", error.message);
     } finally {
       setIsLoading(false);
     }
