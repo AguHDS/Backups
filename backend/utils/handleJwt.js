@@ -11,21 +11,22 @@ export const tokenSign = async (user) => {
       },
       JWT_SECRET,
       {
-        expiresIn: "2h",
+        expiresIn: "5m",
       }
     );
 
     return sign;
   } catch (error) {
-    console.log(error);
+    console.log("error trying to sign token (tokenSIgn)", error);
   }
 };
 
 export const verifyToken = async (token) => {
   try {
-    return jwt.verify(token, JWT_SECRET); //decode the token
+    //decode the token, returning the payload (name, role)
+    return jwt.verify(token, JWT_SECRET);
   } catch (err) {
     console.error("Token verification failed:", err.message);
-    throw new Error("Invalid or expired token"); // Lanza un error específico
+    throw new Error("Invalid or expired token");
   }
 };

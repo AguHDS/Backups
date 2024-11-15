@@ -16,7 +16,7 @@ const login = async (req, res) => {
 
     const data = matchedData(req);
     const user = data.user;
-    const pass = data.password; //luego verificar que quien se loguea es un user (si tiene el rol y si lo tiene mostrarle el main content)
+    const pass = data.password;
 
     connection.query(
       "SELECT namedb, passdb, role FROM users WHERE namedb = ?",
@@ -33,18 +33,19 @@ const login = async (req, res) => {
           const comparedPassword = await compare(pass, row.passdb);
 
           if (comparedPassword) {
-            console.log(`Login successful as: ${user}`);
             const bodyWithRole = { ...data, role: row.role };
             const token = await tokenSign(bodyWithRole);
+            console.log(`login successful as: user: ${user}, role: ${row.role}`);
 
-            res.cookie("authToken", token, {
+            res.status(200).json({ token, user: { name: user, role: row.role }}); /* da un problema de headers la terminal cuando se hace la solicitud pero la respuesta al cliente funciona, probar en postman, da el token con el objeto user que tiene el username y el rol. */ 
+
+            /* res.cookie("authToken", token, {
               httpOnly: true,
               secure: process.env.NODE_ENV === "production", //secure is a boolean, if its value isn't 'production', it will be false and the cookie won't be secure.
               maxAge: 2 * 60 * 60 * 1000,
               sameSite: "Strict",
-            });
+            }); */
 
-            return res.status(200).send({ msg: `Login successful as ${user}` });
           } else {
             console.log(`Invalid credentials (user: ${user}, pass: ${pass})`);
 
