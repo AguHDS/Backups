@@ -2,7 +2,7 @@
   "name": "backups",
   "version": "1.0.0",
   "description": "backups description",
-  "main": "server.js",a
+  "main": "server.js",
   "scripts": {
     "test": "npm start"
   },
