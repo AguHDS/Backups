@@ -2,7 +2,7 @@
 
 App with the objetive of letting you storage all type of data and files. You'll need to be authenticated first
 
-## Some of the features that this app will have:
+## some of the features that this app will have:
 
 * Storage for every authenticated user (with mb/gb limit)
 * Configs to make your uploads public/private, so other users are able to see them
@@ -23,7 +23,7 @@ many features aren't avialable yet since i'm working on them
 * tailwind
 * headlessui
 
-# How to run locally
+# how to run locally
 in case you want to see it on your local (idk why you would, since it's not finished), you have to install the dependencies first.
 
 * once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies
