@@ -22,3 +22,11 @@ many features aren't avialable yet since i'm working on them
 * mongodb
 * tailwind
 * headlessui
+
+# How to run locally
+in case you want to see it on your local (idk why you would, since it's not finished), you have to install the dependencies first.
+
+* once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies
+* you have to use a server for the backend and its database (i use xampp)
+* use npm start to run the backend (node) and npm run dev to run the frontend (vite)
+* in case that the database is not configurated you can create your database locally with xampp and apply its configuration in the database.js file
