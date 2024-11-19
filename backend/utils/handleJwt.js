@@ -1,32 +1,55 @@
 import jwt from "jsonwebtoken";
-const JWT_SECRET = process.env.JWT_SECRET;
+import handleHttpError from "../utils/handleError.js";
+const JWT_ACCESS_SECRET = process.env.JWT_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
-export const tokenSign = async (user) => {
+/**
+ * @param {object} user - username and role
+ * @param {string} type - type of token (access or refresh)
+ * @param {Date} expiresIn - expiration time
+ * @returns - jwt token
+ */
+
+export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
   try {
+    const secret = type === "access" ? JWT_ACCESS_SECRET : JWT_REFRESH_SECRET;
+    if(!secret) throw new Error("No secret");
+
     //TODO enviar tambien fecha de expiración para usarla en el front
     const sign = jwt.sign(
       {
         name: user.user,
         role: user.role,
       },
-      JWT_SECRET,
+      secret,
       {
-        expiresIn: "5m",
+        expiresIn,
       }
     );
 
     return sign;
   } catch (error) {
-    console.log("error trying to sign token (tokenSIgn)", error);
+    console.error(`Error signing ${type} token: `, error);
+    return handleHttpError(res, 500, "Token generation failed");
   }
 };
 
-export const verifyToken = async (token) => {
+/**
+ * @param {string} token - token
+ * @param {string} type - type of token (access or refresh)
+ * @returns - decoded token
+ */
+
+export const verifyToken = (token, type = "access") => {
   try {
-    //decode the token, returning the payload (name, role)
-    return jwt.verify(token, JWT_SECRET);
+    const secret = type === "access" ? JWT_ACCESS_SECRET : JWT_REFRESH_SECRET;
+    if(!secret) throw new Error("No secret");
+
+    //decode the token if is valid, comparing with the secret, returning the payload (name, role)
+    return jwt.verify(token, secret);
+    
   } catch (err) {
-    console.error("Token verification failed:", err.message);
-    throw new Error("Invalid or expired token");
+    console.error(`Token verification failed for ${type} token:`, err.message);
+    return handleHttpError(res, 401, "Invalid or expired token.");
   }
 };

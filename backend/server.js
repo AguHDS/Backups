@@ -9,11 +9,16 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 //routes
 import { login, registration, verifyToken, logout } from "./routes/index.js";
 
+if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
+  throw new Error("Missing JWT secrets in environment variables");
+}
+
 const app = express();
 const server = http.createServer(app);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+//middleware for cookies
 app.use(cookieParser());
 
 app.use(
