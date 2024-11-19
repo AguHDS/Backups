@@ -2,7 +2,8 @@
 import handleHttpError from "../utils/handleError.js";
 import { verifyToken } from "../utils/handleJwt.js";
 
-const authorizedUser = async (req, res, next) => {
+// this has to change
+const authorizedUser = async (req, res, next) => { 
   try {
     const authToken = req.cookies["authToken"]; //this will change since the authToken will be stored in redux and the refresh token in the cookie
     if (!authToken) {

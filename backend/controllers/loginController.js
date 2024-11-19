@@ -19,7 +19,7 @@ const login = async (req, res) => {
     const pass = data.password;
 
     connection.query(
-      "SELECT namedb, passdb, role FROM users WHERE namedb = ?",
+      "SELECT * FROM users WHERE namedb = ?",
       [user],
       async (error, results) => {
         if (error) {
@@ -34,18 +34,45 @@ const login = async (req, res) => {
 
           if (comparedPassword) {
             const bodyWithRole = { ...data, role: row.role };
-            const token = await tokenSign(bodyWithRole);
-            console.log(`login successful as: user: ${user}, role: ${row.role}`);
+            const accessToken = await tokenSign(bodyWithRole, "access", "5m");
+            const refreshToken = await tokenSign(bodyWithRole, "refresh", "7d");
 
-            res.status(200).json({ token, user: { name: user, role: row.role }}); /* da un problema de headers la terminal cuando se hace la solicitud pero la respuesta al cliente funciona, probar en postman, da el token con el objeto user que tiene el username y el rol. */ 
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
-            /* res.cookie("authToken", token, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === "production", //secure is a boolean, if its value isn't 'production', it will be false and the cookie won't be secure.
-              maxAge: 2 * 60 * 60 * 1000,
-              sameSite: "Strict",
-            }); */
+            connection.query(
+              "INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?,?,?)",
+              [row.id, refreshToken, expiresAt],
+              (error) => {
+                if (error) {
+                  console.log(
+                    "Error saving refresh token in the database",
+                    error
+                  );
 
+                  return res.status(500).json({
+                    message: "Error saving refresh token in the database",
+                  });
+                }
+
+                res.cookie("refreshToken", refreshToken, {
+                  httpOnly: true,
+                  secure: process.env.NODE_ENV === "production",
+                  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                  sameSite: "Strict",
+                });
+
+                console.log(
+                  `login successful as: user: ${user}, role: ${row.role}`
+                );
+
+                return res.status(200).json({
+                  accessToken: accessToken,
+                  //take in account that i'm sending the role and name direclty from the database and not the token
+                  user: { name: user, role: row.role },
+                });
+              }
+            );
           } else {
             console.log(`Invalid credentials (user: ${user}, pass: ${pass})`);
 

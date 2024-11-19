@@ -2,7 +2,7 @@
  * HTTP error handler
  * @param {object} res - res object
  * @param {number} code - status code
- * @param {string, object} message  - message
+ * @param {string} message  - message
  */
 
 const handleHttpError = (
