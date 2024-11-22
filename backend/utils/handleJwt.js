@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import handleHttpError from "../utils/handleError.js";
 const JWT_ACCESS_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
@@ -20,6 +19,7 @@ export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
       {
         name: user.user,
         role: user.role,
+        id: user.id,
       },
       secret,
       {
@@ -30,7 +30,7 @@ export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
     return sign;
   } catch (error) {
     console.error(`Error signing ${type} token: `, error);
-    return handleHttpError(res, 500, "Token generation failed");
+    return res.status(500).json({ msg: "Token generation failed" });
   }
 };
 
@@ -50,6 +50,6 @@ export const verifyToken = (token, type = "access") => {
     
   } catch (err) {
     console.error(`Token verification failed for ${type} token:`, err.message);
-    return handleHttpError(res, 401, "Invalid or expired token.");
+    return null;
   }
 };
