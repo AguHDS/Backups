@@ -1,5 +1,3 @@
-import handleHttpError from "../utils/handleError.js";
-
 const hasSessionOpen = (req, res, next) => {
   try {
     const token = req.cookies["authToken"];
@@ -10,8 +8,8 @@ const hasSessionOpen = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log(error);
-    return handleHttpError(res, 401, "Invalid or expired token");
+    console.log('error in logout middleware ', error);
+    return res.status(500).json({ message: "Error trying to logout" });
   }
 };
 

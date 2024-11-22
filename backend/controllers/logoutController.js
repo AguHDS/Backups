@@ -1,5 +1,3 @@
-import handleHttpError from "../utils/handleError.js";
-
 const endSession = (req, res) => {
   try {
     res.clearCookie("authToken", {
@@ -13,7 +11,7 @@ const endSession = (req, res) => {
   } catch (error) {
     console.error("Error in endSession controller:", error);
 
-    return handleHttpError(res, "Error in endSession controller", 500);
+    return res.status(500).json({ msg: "Logout failed" });
   }
 };
 

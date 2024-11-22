@@ -1,11 +1,9 @@
 //verifica que el cliente sea un usuario autenticado en la web principal
-import handleHttpError from "../utils/handleError.js";
 import { verifyToken } from "../utils/handleJwt.js";
 
-// this has to change
 const authorizedUser = async (req, res, next) => { 
   try {
-    const authToken = req.cookies["authToken"]; //this will change since the authToken will be stored in redux and the refresh token in the cookie
+    const authToken = req.cookies["authToken"];
     if (!authToken) {
       return res.status(401).json({ message: "No auth token" });
     }
@@ -17,7 +15,7 @@ const authorizedUser = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Authorization error", error.message);
-    return handleHttpError(res, 401, "Invalid or expired token.");
+    return res.status(401).json({ message: "Invalid or expired token." });
   }
 };
 
