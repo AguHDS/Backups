@@ -1,6 +1,5 @@
 import connection from "../dbConnection/database.js";
 import { validationResult, matchedData } from "express-validator";
-import handleHttpError from "../utils/handleError.js";
 import { encrypt } from "../utils/handlePassword.js";
 
 //localhost:3001/registration
@@ -81,8 +80,8 @@ const register = async (req, res) => {
       }
     );
   } catch (error) {
-    console.log(error);
-    handleHttpError(res, "Error trying to sign up");
+    console.log('Error trying to sign up', error);
+    return res.status(500).json({ message: "Error trying to sign up" });
   }
 };
 
