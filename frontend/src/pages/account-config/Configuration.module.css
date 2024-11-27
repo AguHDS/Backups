@@ -1,0 +1,16 @@
+.containerView {
+  display: flex;
+  justify-content: center;
+}
+
+.defaultView {
+  width: 95%;
+  position: relative;
+  text-align: center;
+  top: 15px;
+  color: #d6d6d6;
+  height: 700px;
+  padding: 20px;
+  border: 2px solid #4f4f4f;
+  background-color: #949494;
+}

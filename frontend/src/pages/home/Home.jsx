@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { NavBar, UnauthorizedWarning } from "../../components";
 
 //pages
-import MainLayout from "../main-layout/MainLayout";
+import Configuration from "../account-config/Configuration";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -20,7 +20,8 @@ export default function Home() {
     <>
       <NavBar />
       <div className="mainContainer">
-        {isAuthenticated ? <MainLayout /> : <UnauthorizedWarning />}
+        <Configuration />
+        {/* {isAuthenticated ? <MainLayout /> : <UnauthorizedWarning />} */}
       </div>
     </>
   );

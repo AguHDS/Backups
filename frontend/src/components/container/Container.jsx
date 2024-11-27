@@ -1,7 +1,7 @@
 import React from "react";
 
-const Container = ({ children }) => {
-  return <div className="reusableContainer backupsColor max-w-3xl ">{children}</div>;
+const Container = ({ children, className }) => {
+  return <div className={`mx-auto ${className}`}>{children}</div>;
 };
 
 export default Container;
