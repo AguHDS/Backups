@@ -256,12 +256,12 @@
   height: 3.5rem !important;
 }
 
-.h-\[820px\] {
-  height: 820px !important;
+.h-\[80\%\] {
+  height: 80% !important;
 }
 
-.h-\[90vh\] {
-  height: 90vh !important;
+.h-\[820px\] {
+  height: 820px !important;
 }
 
 .h-auto {
@@ -274,30 +274,6 @@
 
 .h-screen {
   height: 100vh !important;
-}
-
-.h-\[50\%\] {
-  height: 50% !important;
-}
-
-.h-\[70\%\] {
-  height: 70% !important;
-}
-
-.h-\[80\%\] {
-  height: 80% !important;
-}
-
-.h-\[60\%\] {
-  height: 60% !important;
-}
-
-.h-\[85\%\] {
-  height: 85% !important;
-}
-
-.h-\[809\%\] {
-  height: 809% !important;
 }
 
 .min-h-\[3\.25rem\] {
@@ -316,32 +292,16 @@
   width: 14rem !important;
 }
 
+.w-\[60\%\] {
+  width: 60% !important;
+}
+
 .w-\[80vw\] {
   width: 80vw !important;
 }
 
 .w-full {
   width: 100% !important;
-}
-
-.w-\[50\%\] {
-  width: 50% !important;
-}
-
-.w-\[70\%\] {
-  width: 70% !important;
-}
-
-.w-\[80\%\] {
-  width: 80% !important;
-}
-
-.w-\[60\%\] {
-  width: 60% !important;
-}
-
-.max-w-7xl {
-  max-width: 80rem !important;
 }
 
 .max-w-full {
@@ -863,11 +823,6 @@ a {
   .sm\:flex-nowrap {
     flex-wrap: nowrap !important;
   }
-
-  .sm\:px-6 {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
-  }
 }
 
 @media (min-width: 768px) {
@@ -883,11 +838,6 @@ a {
 @media (min-width: 1024px) {
   .lg\:max-w-xl {
     max-width: 36rem !important;
-  }
-
-  .lg\:px-8 {
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
   }
 }
 

@@ -1,7 +1,6 @@
 /* library used: headlessui */
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { createRef } from "react";
 
 //redux
 import { useSelector } from "react-redux";
@@ -13,7 +12,7 @@ export default function AccountOptions() {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <MenuButton as="div" className="mr-4 text-xl cursor-pointer text-white">
-          {userData.name}
+          {userData.user.name} {/* chequear cuando me registro, logea automaticamente el usuario, esto no tiene que ser asi, tiene que seguir desogeado despues de registrarse */}
           <ChevronDownIcon
             aria-hidden="true"
             className="relative top-[5px] -mr-1 size-5"

@@ -3,7 +3,7 @@ import express from "express";
 import http from "http";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { initializeSocket } from "./livechat-socketHandler/socketHandler.js";
+/* import { initializeSocket } from "./livechat-socketHandler/socketHandler.js"; */
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 //routes
@@ -43,7 +43,7 @@ app.use(
   })
 );
 
-const io = initializeSocket(server);
+/* const io = initializeSocket(server); */
 
 app.get("/favicon.ico", (req, res) => {
   res.status(204).end();
