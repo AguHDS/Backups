@@ -1,16 +1,12 @@
-//este archivo va a ser transformado al de configuracion de la cuenta
-
-import styles from "./Configuration.module.css";
-
 //components
 import { Container } from "../../components";
 
 //common components
 import { Button } from "../../components/common";
-import { useState } from "react";
+/* import { useState } from "react"; */
 
 export default function Configuration() {
-  const [onClose, setonClose] = useState(false);
+ /*  const [onClose, setonClose] = useState(false); */
 
   return (
     <Container className="flex justify-center max-w-full bg-black h-screen">

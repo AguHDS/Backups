@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 
-export function initializeSocket(server) {
+/* export function initializeSocket(server) {
     const io = new Server(server, { connectionStateRecovery: {} });
 
     io.on('connection', (socket) => {
@@ -16,4 +16,4 @@ export function initializeSocket(server) {
     });
 
     return io;
-}
+} */

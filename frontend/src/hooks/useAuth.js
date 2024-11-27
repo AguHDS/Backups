@@ -72,13 +72,20 @@ export default function useAuth() {
   };
 
   useEffect(() => {
-    if(data === null || status === null) return
+    if (data === null || status === null) return;
 
-    console.log('entrando en el useEffect')
+    console.log("entrando en el useEffect");
     const { message, redirect } = validateLoginStatus(status);
     setStatusMessage(message);
-    dispatch(login(data));
 
+    //if user signs up, redirect without login
+    if (data.email) {
+      navigate("/");
+      return;
+    }
+
+    //if user logs in, setup redux global state and redirect
+    dispatch(login(data));
     if (redirect) navigate("/");
   }, [data, status, navigate]);
 

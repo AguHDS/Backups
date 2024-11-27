@@ -3,26 +3,22 @@ App with the objetive of letting you storage all type of data and files. You'll 
 
 ## some of the features that this app will have:
 
-* Storage for every authenticated user (with mb/gb limit)
+* Storage for authenticated user (with mb/gb limit)
 * Configs to make your uploads public/private, so other users are able to see them
 * Level system that will grant benefits such like more space to store
-* Global live chat and private chat between users
+* Some social media interactions between users
 * User profiles
-
-* and more... i add what it comes to my mind while i work on this
 
 many features aren't avialable yet since i'm working on them
 
 ## main tools used:
+
 * js/ts
-* node
+* node/express
 * react
 * redux-toolkit
-* next
-* sql
-* mongodb
+* mysql
 * tailwind
-* headlessui
 
 ## how to run locally
 
@@ -34,4 +30,4 @@ in case you want to see it on your local (idk why you would, since it's far from
 * use npm start to run the backend (node) and npm run dev to run the frontend (vite)
 * in case that the database is not configurated you can create your database locally with xampp and apply its configuration in the database.js file
 
-note: tailwind may break in development, if that happen and the styles break just run the frontend again
+note: tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again
