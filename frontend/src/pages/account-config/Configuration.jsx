@@ -1,13 +1,7 @@
-//components
-import { Container } from "../../components";
-
 //common components
-import { Button } from "../../components/common";
-/* import { useState } from "react"; */
+import { Button, Container } from "../../components/common/";
 
 export default function Configuration() {
- /*  const [onClose, setonClose] = useState(false); */
-
   return (
     <Container className="flex justify-center max-w-full bg-black h-screen">
       <div className="w-[60%] h-[80%] bg-gray-700 rounded-lg shadow-lg mx-auto my-auto">

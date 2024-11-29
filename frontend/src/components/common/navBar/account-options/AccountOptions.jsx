@@ -12,7 +12,7 @@ export default function AccountOptions() {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <MenuButton as="div" className="mr-4 text-xl cursor-pointer text-white">
-          {userData.user.name} {/* chequear cuando me registro, logea automaticamente el usuario, esto no tiene que ser asi, tiene que seguir desogeado despues de registrarse */}
+          {userData.user.name}
           <ChevronDownIcon
             aria-hidden="true"
             className="relative top-[5px] -mr-1 size-5"
@@ -43,11 +43,6 @@ export default function AccountOptions() {
     </Menu>
   );
 }
-
-/* hacer tareas que digan sobre profile: 
-tiene que ser accedido mediante un ingreso de ruta por link element desde el boton Profile en navbar o clickeo de imagen.
-y para trabajar con hijos: la page profile va a renderizar hijos como la biografia, las imagenes, el contenido a la izquierda, etc 
-hacer lo mismo o algo parecido con configuracion, pensar qué cosa deberia y que cosa no debería ser un Hijo */
 
 
 
