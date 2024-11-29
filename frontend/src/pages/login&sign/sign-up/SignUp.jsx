@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 
-//components
-import { NavBar } from "../../../components";
-import AuthFeedback from "../authFeedback/AuthFeedback";
-
 //common components
-import { Button, Input } from "../../../components/common";
+import { Button, Input, NavBar } from "../../../components/common";
+
+//components
+import AuthFeedback from "../authFeedback/AuthFeedback";
 
 //custom hooks
 import useAuth from "../../../hooks/useAuth";

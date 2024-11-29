@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-//components
-import { NavBar, UnauthorizedWarning } from "../../components";
+//common components
+import { NavBar, UnauthorizedWarning } from "../../components/common/";
 
 //pages
 import { Configuration, Profile } from "../";
@@ -17,8 +17,11 @@ export default function Home() {
   return (
     <>
       <NavBar />
-      <div className="mainContainer">
-        {isAuthenticated ? <Configuration /> : <UnauthorizedWarning />}
+      <div className="contentWrapper">
+
+        <Profile />
+        {/* <Configuration />
+        {isAuthenticated ? <Profile /> : <UnauthorizedWarning />} */}
       </div>
     </>
   );
