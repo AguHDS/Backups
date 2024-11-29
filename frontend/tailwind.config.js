@@ -13,5 +13,8 @@ export default {
     },
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    //option: { nocompatible: true } <- only use this in modern browsers
+    require("tailwind-scrollbar")({ nocompatible: true }),
+  ],
 };
