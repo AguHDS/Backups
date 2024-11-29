@@ -23,10 +23,10 @@ a {
 
 /* Containers */
 
-.mainContainer {
-  /* min-height: 100%;
-  display: flex;
-  margin-top: 58px; */
+.contentWrapper {
+/*   min-height: 555px;
+  padding-bottom: 30px;
+  position: relative; */
 }
 
 .reusableContainer {
@@ -105,4 +105,21 @@ a {
 
 .backupsInput::placeholder {
   color: #a0aec0;
+}
+
+/* tailwind-scrollbar */
+.scrollbar-container > .overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollbar-container > .overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #333;
+  border-radius: 4px;
+}
+.scrollbar-container > .overflow-y-auto::-webkit-scrollbar-track {
+  background-color: #1a1a1a;
+}
+/* Firefox support */
+.scrollbar-container > .overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #333 #1a1a1a;
 }
