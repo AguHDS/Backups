@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 //common components
-import { Button, Input, NavBar } from "../../../components/common";
+import { Button, Input } from "../../../components/common";
 
 //components
 import AuthFeedback from "../authFeedback/AuthFeedback";
@@ -27,7 +27,6 @@ export default function SignUp() {
 
   return (
     <>
-      <NavBar />
       <div
         tabIndex="-1"
         className="flex items-center justify-center w-full min-h-screen"

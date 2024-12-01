@@ -1,8 +1,18 @@
 //utils
 import { Route, Routes, Navigate } from "react-router-dom";
 
+//components
+import { NavBar } from "./components/common/";
+
 //pages
-import { Home, NotFound, SignIn, SignUp } from "./pages";
+import {
+  Home,
+  NotFound,
+  SignIn,
+  SignUp,
+  Profile,
+  AccountSettings,
+} from "./pages";
 
 //redux
 import { Provider } from "react-redux";
@@ -12,13 +22,16 @@ const App = () => {
   return (
     <>
       <Provider store={store}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/sign-in" element={<SignIn />} />
-            <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/*" element={<Navigate to="NotFound" />} />
-            <Route path="/NotFound" element={<NotFound />} />
-          </Routes>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/account-settings" element={<AccountSettings />} />
+          <Route path="/*" element={<Navigate to="NotFound" />} />
+          <Route path="/NotFound" element={<NotFound />} />
+        </Routes>
       </Provider>
     </>
   );

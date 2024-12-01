@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { NavBar, UnauthorizedWarning } from "../../components/common/";
 
 //pages
-import { Configuration, Profile } from "../";
+import { AccountSettings, Profile } from "../";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -16,12 +16,12 @@ export default function Home() {
 
   return (
     <>
-      <NavBar />
       <div className="contentWrapper">
-
-        <Profile />
-        {/* <Configuration />
-        {isAuthenticated ? <Profile /> : <UnauthorizedWarning />} */}
+        {isAuthenticated ? (
+          <span style={{ color: "green" }}>Correctly authenticated</span>
+        ) : (
+          <UnauthorizedWarning />
+        )}
       </div>
     </>
   );
