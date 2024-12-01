@@ -405,28 +405,6 @@
   width: 100% !important;
 }
 
-.w-auto {
-  width: auto !important;
-}
-
-.w-screen {
-  width: 100vw !important;
-}
-
-.w-fit {
-  width: -moz-fit-content !important;
-  width: fit-content !important;
-}
-
-.w-11\/12 {
-  width: 91.666667% !important;
-}
-
-.w-max {
-  width: -moz-max-content !important;
-  width: max-content !important;
-}
-
 .max-w-full {
   max-width: 100% !important;
 }
@@ -600,14 +578,6 @@
 
 .border-t-4 {
   border-top-width: 4px !important;
-}
-
-.border-t-\[6px\] {
-  border-top-width: 6px !important;
-}
-
-.border-t-\[20px\] {
-  border-top-width: 20px !important;
 }
 
 .border-t-\[10px\] {
