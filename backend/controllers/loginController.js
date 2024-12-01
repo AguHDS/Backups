@@ -56,7 +56,6 @@ const login = async (req, res) => {
                 if (tokenResults.length > 0) {
                   const existingToken = tokenResults[0];
                   const expiresAt = new Date(existingToken.expires_at);
-                  console.log("expires at es: ", expiresAt);
                   const now = new Date();
 
                   //tken expired, delete it and insert a new one
