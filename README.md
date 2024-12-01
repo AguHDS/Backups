@@ -11,6 +11,9 @@ App with the objetive of letting you storage all type of data and files. You'll 
 
 many features aren't avialable yet since i'm working on them
 
+## this is how profile section looks like for now when you're correctly authenticated
+![Showcase](Profile-showcase.png)
+
 ## main tools used:
 
 * js/ts
