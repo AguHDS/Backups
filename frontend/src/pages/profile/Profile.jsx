@@ -79,19 +79,19 @@ export default function Profile() {
               <ul className="mt-5 border-t border-solid border-[#141414] p-0 list-none">
                 <li className="bg-[#121212] p-1 flex justify-between">
                   <span>Status</span>
-                  <span className="text-gray-400">offline</span>
-                </li>
-                <li className="bg-[#121212] p-1 flex justify-between">
-                  <span>Max. space</span>
-                  <span className="text-green-400">6 GB</span>
+                  <span className="text-green-400">online</span>
                 </li>
                 <li className="bg-[#121212] p-1 flex justify-between">
                   <span>Role</span>
-                  <span className="text-gray-400">user</span>
+                  <span className="text-green-400">admin</span>
                 </li>
                 <li className="bg-[#121212] p-1 flex justify-between">
                   <span>Friends</span>
                   <span>4</span>
+                </li>
+                <li className="bg-[#121212] p-1 flex justify-between">
+                  <span>Max. space</span>
+                  <span className="text-green-400">6 GB</span>
                 </li>
               </ul>
               <h3 className="text-center my-5">Space used</h3>

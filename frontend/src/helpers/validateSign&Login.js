@@ -12,8 +12,8 @@ export const validateLoginFields = (user, password, email) => {
   }
 
   if (user || password) {
-    if (user.length < 3 || password.length < 3) {
-      errors.push("Fields must be at least 3 characters long");
+    if (user.length < 1 || password.length < 1) {
+      errors.push("Fields must be at least 1 character");
     }
   }
 
