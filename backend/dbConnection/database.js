@@ -7,4 +7,6 @@ const connection = mysql.createConnection({
     password: '',
 });
 
-export default connection;
+const promiseConnection = connection.promise();
+
+export default promiseConnection;
