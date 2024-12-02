@@ -58,64 +58,14 @@ const login = async (req, res) => {
                   const expiresAt = new Date(existingToken.expires_at);
                   const now = new Date();
 
-                  //tken expired, delete it and insert a new one
+                  //token expired
                   if (expiresAt < now) {
-                    connection.query(
-                      "DELETE FROM refresh_tokens WHERE user_id = ?",
-                      [user_row.id],
-                      (deleteError) => {
-                        if (deleteError) {
-                          console.log(
-                            "Error deleting refresh token:",
-                            deleteError
-                          );
-                          return res.status(500).json({
-                            message:
-                              "Failed to delete expired refresh token from the database",
-                          });
-                        }
-
-                        const newExpiresAt_2 = new Date();
-                        newExpiresAt_2.setMinutes(newExpiresAt_2.getMinutes() + 5);
-
-                        connection.query(
-                          "INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
-                          [user_row.id, refreshToken, newExpiresAt_2],
-                          (insertError) => {
-                            if (insertError) {
-                              console.log(
-                                "Error saving new refresh token (88ab):",
-                                insertError
-                              );
-                              return res.status(500).json({
-                                message:
-                                  "Failed to save the new refresh token in the database",
-                              });
-                            }
-
-                            res.cookie("refreshToken", refreshToken, {
-                              httpOnly: true,
-                              secure: process.env.NODE_ENV === "production",
-                              maxAge: 5 * 60 * 1000,
-                              sameSite: "Strict",
-                            });
-
-                            console.log(
-                              `Login successful as: user: ${user}, role: ${user_row.role}, id: ${user_row.id}`
-                            );
-
-                            return res.status(200).json({
-                              accessToken,
-                              user: {
-                                name: user,
-                                role: user_row.role,
-                                id: user_row.id,
-                              },
-                            });
-                          }
-                        );
-                      }
+                    console.log(
+                      "Refresh token has expired, user must log in again."
                     );
+                    return res.status(401).json({
+                      message: "Refresh token expired, please log in again.",
+                    });
                   } else {
                     console.log(
                       "User already has a valid refresh token in the database"
@@ -126,12 +76,12 @@ const login = async (req, res) => {
                   }
                 } else {
                   //if no token exists, proceed to store it
-                  const newExpiresAt_3 = new Date();
-                  newExpiresAt_3.setMinutes(newExpiresAt_3.getMinutes() + 5);
+                  const newExpiresAt_2 = new Date();
+                  newExpiresAt_2.setMinutes(newExpiresAt_2.getMinutes() + 5);
 
                   connection.query(
                     "INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
-                    [user_row.id, refreshToken, newExpiresAt_3],
+                    [user_row.id, refreshToken, newExpiresAt_2],
                     (insertError) => {
                       if (insertError) {
                         console.log(
@@ -147,7 +97,7 @@ const login = async (req, res) => {
                       res.cookie("refreshToken", refreshToken, {
                         httpOnly: true,
                         secure: process.env.NODE_ENV === "production",
-                        maxAge: 5 * 60 * 1000,
+                        maxAge: 5 * 60 * 1000, // 5 minutes for testing
                         sameSite: "Strict",
                       });
 
