@@ -36,7 +36,6 @@ const validateRefreshToken = async (req, res, next) => {
       console.error("Error trying to verify the token");
       return res.status(401).json({ message: "Invalid or expired refresh token" });
     }
- 
 
     //data inside the refresh token, the user making the request should match this data too
     const { id, name, role } = decodedRefreshToken;
