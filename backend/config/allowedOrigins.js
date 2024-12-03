@@ -1,6 +1,6 @@
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
+  `http://localhost:${process.env.PORT_FRONTEND}`,
+  `http://localhost:${process.env.PORT_BACKEND}`,
 ];
 
 export default allowedOrigins;

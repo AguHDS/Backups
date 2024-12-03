@@ -15,7 +15,7 @@ export default function AccountOptions() {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <MenuButton as="div" className="mr-4 text-xl cursor-pointer text-white">
-          {userData.user.name}
+          {userData.name}
           <ChevronDownIcon
             aria-hidden="true"
             className="relative top-[5px] -mr-1 size-5"
@@ -56,27 +56,3 @@ export default function AccountOptions() {
     </Menu>
   );
 }
-
-/* const dispatch = useDispatch();
-  const router = useRouter();
-
-  const handleLogout = async () => { future handle logout when i already have next and use it with its useRouter
-    try {
-      // Hacer la solicitud al backend para cerrar sesión
-      const response = await fetch('/api/logout', {
-        method: 'POST',
-        credentials: 'include', // Incluir las cookies si es necesario
-      });
-      if (response.ok) {
-        // Despachar la acción de logout para borrar el token de Redux
-        dispatch(logout());
-        
-        // Redirigir al usuario después de que la sesión se cierre
-        router.push('/login'); // O cualquier otra página después de cerrar sesión
-      } else {
-        console.error('Error al cerrar sesión');
-      }
-    } catch (error) {
-      console.error('Error de red', error);
-    }
-  }; */

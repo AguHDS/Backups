@@ -1,6 +1,38 @@
+# Ignorar node_modules en todas las subcarpetas
 **/node_modules
-**.env
-.vscode/*
-/backend/env.example
+
+# Ignorar archivos .env en todas las subcarpetas
+**/*.env
+
+# Ignorar archivos específicos en la raíz
 practica/
 to-do.txt
+
+# Ignorar archivos específicos en backend
+/backend/env.example
+/frontend/env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+**/dist
+**/dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

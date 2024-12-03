@@ -28,7 +28,24 @@ many features aren't avialable yet since i'm working on them
 in case you want to see it on your local (idk why you would, since it's far from being finished) you have to install the dependencies first.
 
 * once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies
-* create .env with all the variables needed (PORT_BACKEND=AnyPortYouWant, JWT_SECRET=YourSecretHere, JWT_REFRESH_SECRET=YourRefreshSecretHere, NODE_ENV=dev)
+* create .env for /backend and /frontend and modify it with your own configs
+
+.env from backend:
+PORT_FRONTEND=frontend port
+PORT_BACKEND=backend port
+JWT_SECRET=secret
+JWT_REFRESH_SECRET=refresh secret
+NODE_ENV=dev
+
+DB_HOST=your host
+DB_DATABASE=your db name
+DB_USER=your root
+DB_PASSWORD=your password
+
+.env from frontend:
+VITE_PORT=your url+port
+VITE_BACKEND=your backend url+port
+
 * you have to use a server for the backend and its database (i use xampp for now)
 * use npm start to run the backend (node) and npm run dev to run the frontend (vite)
 * in case that the database is not configurated you can create your database locally with xampp and apply its configuration in the database.js file
