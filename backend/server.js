@@ -44,10 +44,11 @@ app.use("/refreshToken", refreshToken);
 app.use("/verifyToken", verifyToken);
 
 //proxy that redirects all the requests that aren't defined here to vite's port, so the front can handle them
+const PORT_FRONTEND = process.env.PORT_FRONTEND;
 app.use(
   "/",
   createProxyMiddleware({
-    target: "http://localhost:5173",
+    target: `http://localhost:${PORT_FRONTEND}`,
     changeOrigin: true,
   })
 );
@@ -58,7 +59,7 @@ app.get("/favicon.ico", (req, res) => {
   res.status(204).end();
 });
 
-const PORT = process.env.PORT_BACKEND || 3001;
-server.listen(PORT, () => {
-  console.log(`Listening on: http://localhost:${PORT}`);
+const PORT_BACKEND = process.env.PORT_BACKEND;
+server.listen(PORT_BACKEND, () => {
+  console.log(`Listening on: http://localhost:${PORT_BACKEND}`);
 });

@@ -57,8 +57,8 @@ export default function useAuth() {
       let endpoint = "";
 
       "email" in formData
-        ? (endpoint = "http://localhost:3001/registration")
-        : (endpoint = "http://localhost:3001/login");
+        ? (endpoint = `${import.meta.env.VITE_BACKEND}/registration`)
+        : (endpoint = `${import.meta.env.VITE_BACKEND}/login`);
 
       fetchData(endpoint, {
         method: "POST",
@@ -78,7 +78,7 @@ export default function useAuth() {
     const { message, redirect } = validateLoginStatus(status);
     setStatusMessage(message);
 
-    //if user signs up, redirect without login
+    //if user registers, redirect without login
     if (data.email) {
       navigate("/");
       return;
@@ -86,7 +86,7 @@ export default function useAuth() {
 
     //if user logs in, setup redux global state and redirect
     dispatch(login(data));
-    if (redirect) navigate("/");
+    if (redirect) navigate("/home");
   }, [data, status, navigate]);
 
   return {
@@ -97,6 +97,3 @@ export default function useAuth() {
     handleSubmit,
   };
 }
-
-/* documentar bien las cosas y darle nombres apropiados */
-/* chequear que los componentes se reendereen bien con console log al principio de ellos */
