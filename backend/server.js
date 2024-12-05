@@ -1,4 +1,5 @@
 import "dotenv/config";
+import config from "./config/environmentVars.js";
 import express from "express";
 import http from "http";
 import cookieParser from "cookie-parser";
@@ -20,10 +21,6 @@ import {
   refreshToken,
 } from "./routes/index.js";
 
-if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
-  throw new Error("Missing JWT secrets in environment variables");
-}
-
 //cfg
 const app = express();
 const server = http.createServer(app);
@@ -44,11 +41,10 @@ app.use("/refreshToken", refreshToken);
 app.use("/verifyToken", verifyToken);
 
 //proxy that redirects all the requests that aren't defined here to vite's port, so the front can handle them
-const PORT_FRONTEND = process.env.PORT_FRONTEND;
 app.use(
   "/",
   createProxyMiddleware({
-    target: `http://localhost:${PORT_FRONTEND}`,
+    target: `http://localhost:${config.portFrontend}`,
     changeOrigin: true,
   })
 );
@@ -59,7 +55,6 @@ app.get("/favicon.ico", (req, res) => {
   res.status(204).end();
 });
 
-const PORT_BACKEND = process.env.PORT_BACKEND;
-server.listen(PORT_BACKEND, () => {
-  console.log(`Listening on: http://localhost:${PORT_BACKEND}`);
+server.listen(`${config.portBackend}`, () => {
+  console.log(`Listening on: http://localhost:${config.portBackend}`);
 });

@@ -7,6 +7,7 @@
 # Ignorar archivos específicos en la raíz
 practica/
 to-do.txt
+z_comm.txt
 
 # Ignorar archivos específicos en backend
 /backend/env.example
