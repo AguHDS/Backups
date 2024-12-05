@@ -1,12 +1,13 @@
 # Backups
-App with the objetive of letting you storage all type of data and files. You'll need to be authenticated first
+App with the objetive of letting you storage all type of files, getting level for more space and organizing your profile to make them
+private or public. You'll need to be validated as a user to access.
 
 ## some of the features that this app will have:
 
 * Storage for authenticated user (with mb/gb limit)
 * Configs to make your uploads public/private, so other users are able to see them
 * Level system that will grant benefits such like more space to store
-* Some social media interactions between users
+* Minimum social media interactions between users
 * User profiles
 
 many features aren't avialable yet since i'm working on them
@@ -30,21 +31,25 @@ in case you want to see it on your local (idk why you would, since it's far from
 * once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies
 * create .env for /backend and /frontend and modify it with your own configs
 
-.env from backend:
+### backend > .env
+
+```
 PORT_FRONTEND=frontend port
 PORT_BACKEND=backend port
-JWT_SECRET=secret
-JWT_REFRESH_SECRET=refresh secret
+JWT_SECRET=your secret
+JWT_REFRESH_SECRET=your refresh secret
 NODE_ENV=dev
-
 DB_HOST=your host
 DB_DATABASE=your db name
-DB_USER=your root
-DB_PASSWORD=your password
+DB_USER=your user
+```
 
-.env from frontend:
-VITE_PORT=your url+port
-VITE_BACKEND=your backend url+port
+### frontend > .env
+
+```
+VITE_FRONTENDPORT=frontend port
+VITE_BACKENDPORT=backend port
+```
 
 * you have to use a server for the backend and its database (i use xampp for now)
 * use npm start to run the backend (node) and npm run dev to run the frontend (vite)
