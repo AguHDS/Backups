@@ -5,26 +5,27 @@ export const getNewToken = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       console.log("iniciando peticion");
-      const response = await fetch(`${import.meta.env.VITE_BACKEND}/refreshToken`, {
+      const response = await fetch(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/refreshTokens`, {
         method: "POST",
         credentials: "include",
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.log("algo salió mal:", errorText);
+        console.log("Couldn't get a new accessToken:", errorText);
         throw new Error(errorText || "Not authorized");
       }
 
       const data = await response.json();
+      console.log("response with new accessToken: ", data);
       if (!data.accessToken || !data.userData) {
-        console.error("Formato de respuesta inválido:", data);
+        console.error("Invalid format answer:", data);
         throw new Error("Invalid response format");
       }
-      console.log("token verificado: ", data);
+      console.log("token renovado: ", data);
       return data;
     } catch (error) {
-      console.error(error.message);
+      console.error('Failed trying to get a new accessToken: ', error.message);
       return rejectWithValue(error.message);
     }
   }
@@ -33,7 +34,7 @@ export const getNewToken = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    token: null,
+    accessToken: null,
     userData: {},
     status: "idle",
     isAuthenticated: false,
@@ -41,17 +42,18 @@ const authSlice = createSlice({
   },
   reducers: {
     login: (state, action) => {
-      state.token = action.payload.accessToken; 
+      state.accessToken = action.payload.accessToken;
       state.userData = action.payload.userData;
       state.isAuthenticated = true;
     },
     logout: (state) => {
-      state.token = null;
+      state.accessToken = null;
       state.userData = {};
       state.isAuthenticated = false;
     },
   },
 
+  //for /refreshToken endpoint, to get a new accessToken when it's about to expire using refreshToken
   extraReducers: (builder) => {
     builder
       .addCase(getNewToken.pending, (state) => {
@@ -59,18 +61,13 @@ const authSlice = createSlice({
       })
       .addCase(getNewToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
-        state.token = action.payload.accessToken;
-        state.userData = action.payload;
-        console.log("el resultado es: ", action.payload);
+        state.accessToken = action.payload.accessToken;
+        state.userData = action.payload.userData;
         state.status = "succeeded";
         state.error = null;
       })
       .addCase(getNewToken.rejected, (state, action) => {
-        console.error(
-          "getNewToken failed_1:",
-          action.payload || action.error.message
-        );
-        state.token = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
         state.userData = {};
         state.status = "failed";

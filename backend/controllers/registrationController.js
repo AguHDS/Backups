@@ -2,7 +2,6 @@ import connection from "../dbConnection/database.js";
 import { validationResult, matchedData } from "express-validator";
 import { encrypt } from "../utils/handlePassword.js";
 
-//localhost:3001/registration
 const register = async (req, res) => {
   try {
     const errors = validationResult(req);

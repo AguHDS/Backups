@@ -50,15 +50,15 @@ export default function useAuth() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    //if there is not input errors, do fetch
+    //if there is not input errors, consume /registration or /login
     if (errorCheck()) {
       const formData = getFormData(e.target);
 
       let endpoint = "";
 
       "email" in formData
-        ? (endpoint = `${import.meta.env.VITE_BACKEND}/registration`)
-        : (endpoint = `${import.meta.env.VITE_BACKEND}/login`);
+        ? (endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/registration`)
+        : (endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/login`);
 
       fetchData(endpoint, {
         method: "POST",

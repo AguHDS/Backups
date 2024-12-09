@@ -10,7 +10,7 @@ import AuthFeedback from "../authFeedback/AuthFeedback";
 import useAuth from "../../../hooks/useAuth";
 
 export default function SignUp() {
-  /*  console.log("Se esta renderizando Sign up"); */
+   console.log("Se esta renderizando Sign up");
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e) => {

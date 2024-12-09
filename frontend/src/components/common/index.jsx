@@ -5,3 +5,4 @@ export { default as Input } from "./Inputs/Input";
 export { default as Container } from "./container/Container";
 export { default as NavBar } from "./navBar/Navegation";
 export { default as UnauthorizedWarning } from "./unauthorized-warning/UnauthorizedWarning";
+export { default as ProtectedRoute } from "./protectedRoute/ProtectedRoute";

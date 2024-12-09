@@ -1,3 +1,4 @@
+import config from "../config/environmentVars.js";
 import promiseConnection from "../dbConnection/database.js";
 import { validationResult, matchedData } from "express-validator";
 import { compare } from "../utils/handlePassword.js";
@@ -53,7 +54,6 @@ const deleteExistingRefreshToken = async (userId) => {
   }
 };
 
-//localhost:3001/login
 const login = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -89,8 +89,8 @@ const login = async (req, res) => {
       id: userRow.id,
     };
 
-    const accessToken = await tokenSign(bodyWithRole, "access", "5m");
-    const refreshToken = await tokenSign(bodyWithRole, "refresh", "6m");
+    const accessToken = await tokenSign(bodyWithRole, "access", "30s");
+    const refreshToken = await tokenSign(bodyWithRole, "refresh", "1m");
 
     //check if the user already have a refresh token in the database
 
@@ -120,15 +120,15 @@ const login = async (req, res) => {
 
     // If no token exists, set time, save in DB, and send cookie
     const newExpiresAt = new Date();
-    newExpiresAt.setMinutes(newExpiresAt.getMinutes() + 6); // 6 minutes for testing
+    newExpiresAt.setMinutes(newExpiresAt.getMinutes() + 1); // 1m for testing
 
     await saveRefreshToken(userRow.id, refreshToken, newExpiresAt);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 6 * 60 * 1000, // 6 minutes for testing
-      sameSite: "Strict",
+      secure: config.nodeEnv === "production",
+      maxAge: 60 * 1000, // 1m for testing
+      sameSite: config.nodeEnv === "production" ? "None" : "Lax",
     });
 
     console.log(
