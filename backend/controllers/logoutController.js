@@ -1,8 +1,10 @@
+import config from "../config/environmentVars.js";
+
 const endSession = (req, res) => {
   try {
     res.clearCookie("authToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: config.nodeEnv === "production",
       maxAge: 0,
       sameSite: "Strict"
     });

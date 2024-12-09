@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 //common components
 import { Button, Input } from "../../../components/common/";
@@ -10,6 +10,7 @@ import AuthFeedback from "../authFeedback/AuthFeedback";
 import { useAuth } from "../../../hooks";
 
 export default function SignIn() {
+  console.log("se esta renderizando signIn")
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e) => {

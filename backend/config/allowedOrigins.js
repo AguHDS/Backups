@@ -1,6 +1,8 @@
+import config from "../config/environmentVars.js";
+
 const allowedOrigins = [
-  `http://localhost:${process.env.PORT_FRONTEND}`,
-  `http://localhost:${process.env.PORT_BACKEND}`,
+  `http://localhost:${config.portFrontend}`,
+  `http://localhost:${config.portBackend}`,
 ];
 
 export default allowedOrigins;

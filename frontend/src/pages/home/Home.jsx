@@ -1,27 +1,18 @@
-import { useEffect } from "react";
+//components
+import { Button } from "../../components/common/";
 
-//common components
-import { NavBar, UnauthorizedWarning } from "../../components/common/";
-
-//pages
-import { AccountSettings, Profile } from "../";
-
-//redux
-import { useSelector, useDispatch } from "react-redux";
-/* import { verifyToken } from "../../redux/features/authSlice"; va a ser necesario volver a verificar el token? pensar */
+//react router dom
+import { Link } from "react-router-dom";
 
 export default function Home() {
-  console.log("Home se está renderizando");
-  const { isAuthenticated } = useSelector((state) => state.auth);
-
   return (
     <>
+      <h2 style={{ color: "green" }}>Correctly authenticated</h2>
       <div className="contentWrapper">
-        {isAuthenticated ? (
-          <span style={{ color: "green" }}>Correctly authenticated</span>
-        ) : (
-          <UnauthorizedWarning />
-        )}
+
+        <Link to="/">
+          <Button label="To dashboard"></Button>
+        </Link>
       </div>
     </>
   );
