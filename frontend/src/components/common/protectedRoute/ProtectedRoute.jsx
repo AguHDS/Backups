@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
 //redux
-import { getNewToken, logout } from "../../../redux/features/authSlice";
+import { getNewToken, logout } from "../../../redux/features/authThunks";
 
 //check access token expiration time
 const isAccessTokenValid = (accessToken) => {
@@ -13,8 +13,8 @@ const isAccessTokenValid = (accessToken) => {
 
   try {
     const { exp } = jwtDecode(accessToken);
-    console.log("expiration time is: ", exp);
     const now = Math.floor(Date.now() / 1000);
+    //exp > now = accessToken is valid
     return exp > now;
   } catch (error) {
     console.error("Error decoding token:", error);
@@ -33,13 +33,15 @@ export default function ProtectedRoute({ children }) {
       try {
         await dispatch(getNewToken()).unwrap();
       } catch (error) {
-        console.error("Failed trying to get a new accessToken:", error);
-        dispatch(logout());
+        if (error === "Invalid or expired refresh token") {
+          console.error("Failed trying to get a new accessToken:", error);
+          dispatch(logout());
+        }
       }
     };
 
     checkToken();
-  }, [accessToken, isAuthenticated, dispatch]);
+  }, [accessToken]);
 
   if (!isAuthenticated || !isAccessTokenValid(accessToken)) {
     console.error("Protected route, you need to log in");
