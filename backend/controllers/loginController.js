@@ -101,33 +101,25 @@ const login = async (req, res) => {
       const expiresAt = new Date(existingToken.expires_at);
       const now = new Date();
 
+      //delete expired token from the database when user tries to login again witha refresh token in the database, probably this will be deleted if persist login can delete refresh token from db when the session is expired
       if (expiresAt < now) {
-        console.log("Refresh token has expired, user must log in again");
-        await deleteExistingRefreshToken(userRow.id);
-        return res.status(401).json({
-          message: "Token deleted, user must log in again",
-        });
-      } else {
         console.log(
-          "User already has a non-expired refresh token in the database."
+          "Refresh token expired, refreshing new one in the database"
         );
-        return res.status(400).json({
-          message:
-            "This user already has a non-expired refresh token in the database",
-        });
+        await deleteExistingRefreshToken(userRow.id);
       }
     }
 
-    // If no token exists, set time, save in DB, and send cookie
+    //if no token exists or it's expired, set time, save in DB, and send cookie
     const newExpiresAt = new Date();
-    newExpiresAt.setMinutes(newExpiresAt.getMinutes() + 1); // 1m for testing
+    newExpiresAt.setSeconds(newExpiresAt.getSeconds() + 65); // 65seg for testing
 
     await saveRefreshToken(userRow.id, refreshToken, newExpiresAt);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: config.nodeEnv === "production",
-      maxAge: 60 * 1000, // 1m for testing
+      maxAge: 65 * 1000, // 65seg for testing
       sameSite: config.nodeEnv === "production" ? "None" : "Lax",
     });
 

@@ -31,7 +31,7 @@ const validateRefreshToken = async (req, res, next) => {
     if (!decodedRefreshToken) {
       console.error("Invalid or expired refresh token detected.");
       return res
-        .status(401)
+        .status(403)
         .json({ message: "Invalid or expired refresh token" });
     }
 
@@ -39,9 +39,9 @@ const validateRefreshToken = async (req, res, next) => {
 
     const tokenData = await findValidRefreshToken(refreshToken, id);
     if (!tokenData) {
-      console.error("Refresh token not found, doesn't match user or expired");
-      return res.status(401).json({
-        message: "Refresh token not found, doesn't match user or expired",
+      console.error("Refresh token not found (db), doesn't match user or expired");
+      return res.status(403).json({
+        message: "Refresh token not found (db), doesn't match user or expired",
       });
     }
 

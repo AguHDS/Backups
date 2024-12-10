@@ -1,39 +1,41 @@
 import promiseConnection from "../dbConnection/database.js";
-import { verifyToken } from "../utils/handleJwt.js";
 
-const isTokenValidInDB = async (userId)=> {
+//check if the user has a refresh token in the database
+const hasTokenInDB = async (userId) => {
   const [results] = await promiseConnection.query(
-    "SELECT user_id FROM refresh_tokens WHERE (user_id = ?)", [userId]
+    "SELECT user_id FROM refresh_tokens WHERE (user_id = ?)",
+    [userId]
   );
 
   return results.length === 0 ? null : results[0];
-}
+};
 
 const hasSessionOpen = async (req, res, next) => {
   try {
+    let hasRefreshCookie;
+    const { id } = req.body;
+    console.log("el id essss:", id);
+
+    const refreshDB = await hasTokenInDB(id);
+
+    if (!refreshDB) {
+      console.log("user has no refresh token in the db");
+      return res
+        .status(401)
+        .json({ message: "User has no refresh token in the db" });
+    }
+
     const refreshToken = req.cookies["refreshToken"];
-
-    //check if refresh token in cookies is valid
-    if(!refreshToken) {
+    if (!refreshToken) {
       console.log("No refresh token in cookies (logout middleware)");
-      return res.status(401).json({message: "No refresh token found in cookies"});
+      hasRefreshCookie = false;
     }
 
-    const decodedToken = verifyToken(refreshToken, "refresh");
+    req.userData = { id, hasRefreshCookie };
 
-    //check if token is valid in database
-    const { id } = decodedToken;
-    await isTokenValidInDB(id);
-    
-    if(!isTokenValidInDB) {
-      console.log("Refresh token not found in database (logout middleware)");
-      return res.status(401).json({message: "No refresh token found in database"});
-    }
-
-    return res.sendStatus(200);
-    
+    next();
   } catch (error) {
-    console.log('error in logout middleware ', error);
+    console.log("error in logout middleware ", error);
     return res.status(500).json({ message: "Error trying to logout" });
   }
 };

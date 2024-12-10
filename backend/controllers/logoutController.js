@@ -1,20 +1,46 @@
 import config from "../config/environmentVars.js";
+import promiseConnection from "../dbConnection/database.js";
 
-const endSession = (req, res) => {
+const deleteRefreshFromDB = async (userId) => {
   try {
-    res.clearCookie("authToken", {
-      httpOnly: true,
-      secure: config.nodeEnv === "production",
-      maxAge: 0,
-      sameSite: "Strict"
-    });
+    const deletedRefresh = await promiseConnection.query(
+      "DELETE FROM refresh_tokens WHERE user_id = ?",
+      [userId]
+    );
 
+    if(deletedRefresh.affectedRows === 0) {
+      console.log(`No refresh token found for ${userId}`);
+    }
+
+    console.log("Refresh token successfully deleted from database");
+  } catch (error) {
+    console.error("Error deleting refresh token from db:", error);
+    throw new Error("Error deleting refresh token from the database");
+  }
+};
+
+const logout = async(req, res) => {
+  try {
+    const { id, hasRefreshCookie  } = req.userData;
+
+    if(hasRefreshCookie) {
+      res.clearCookie("authToken", {
+        httpOnly: true,
+        secure: config.nodeEnv === "production",
+        maxAge: 0,
+        sameSite: "Strict"
+      });
+      console.log("Cookie comprovada y borrada desde logoutController")
+    }
+
+    await deleteRefreshFromDB(id);
+    console.log("logout successfull")
     return res.status(200).json({ msg: "Logout successful" });
   } catch (error) {
-    console.error("Error in endSession controller:", error);
+    console.error("Error in logout controller:", error);
 
     return res.status(500).json({ msg: "Logout failed" });
   }
 };
 
-export default endSession;
+export default logout;
