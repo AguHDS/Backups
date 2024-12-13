@@ -10,7 +10,7 @@ import { Button } from "../";
 import { useSelector } from "react-redux";
 
 export default function NavBar() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, userData } = useSelector((state) => state.auth);
   return (
     <>
       <nav className="backupsColor h-auto relative top-0 w-full flex flex-col shadow-[0_0_10px] z-50">
@@ -31,7 +31,7 @@ export default function NavBar() {
           </div>
           <div className="flex w-full h-[3.5rem] mr-3.5 items-center justify-end">
             {isAuthenticated ? (
-              <AccountOptions />
+              <AccountOptions username={userData.name} />
             ) : (
               <>
                 <Link to="/sign-in">

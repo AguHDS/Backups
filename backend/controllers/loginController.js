@@ -1,3 +1,4 @@
+import config from "../config/environmentVars.js";
 import promiseConnection from "../dbConnection/database.js";
 import { validationResult, matchedData } from "express-validator";
 import { compare } from "../utils/handlePassword.js";
@@ -5,6 +6,13 @@ import { tokenSign } from "../utils/handleJwt.js";
 
 const saveRefreshToken = async (userId, token, expiresAt) => {
   try {
+    // First, delete any existing refresh token for this user
+    await promiseConnection.query(
+      "DELETE FROM refresh_tokens WHERE user_id = ?",
+      [userId]
+    );
+
+    // Then insert the new refresh token
     await promiseConnection.query(
       "INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
       [userId, token, expiresAt]
@@ -28,32 +36,6 @@ const getUserByName = async (username) => {
   }
 };
 
-const checkExistingRefreshToken = async (userId) => {
-  try {
-    const [rows] = await promiseConnection.query(
-      "SELECT * FROM refresh_tokens WHERE user_id = ?",
-      [userId]
-    );
-    return rows;
-  } catch (error) {
-    console.error("Error checking refresh token in the database:", error);
-    throw new Error("Error checking refresh token in the database");
-  }
-};
-
-const deleteExistingRefreshToken = async (userId) => {
-  try {
-    await promiseConnection.query(
-      "DELETE FROM refresh_tokens WHERE user_id = ?",
-      [userId]
-    );
-  } catch (error) {
-    console.error("Error deleting expired refresh token:", error);
-    throw new Error("Error deleting expired refresh token from the database");
-  }
-};
-
-//localhost:3001/login
 const login = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -65,7 +47,7 @@ const login = async (req, res) => {
     const data = matchedData(req);
     const { user, password } = data;
 
-    //check if the user exists in the database
+    // Check if the user exists in the database
     const userResult = await getUserByName(user);
 
     if (userResult.length === 0) {
@@ -75,7 +57,7 @@ const login = async (req, res) => {
 
     const userRow = userResult[0];
 
-    // compare password sent by the user with the password in the database
+    // Compare password sent by the user with the password in the database
     const comparedPassword = await compare(password, userRow.passdb);
 
     if (!comparedPassword) {
@@ -89,46 +71,22 @@ const login = async (req, res) => {
       id: userRow.id,
     };
 
-    const accessToken = await tokenSign(bodyWithRole, "access", "5m");
-    const refreshToken = await tokenSign(bodyWithRole, "refresh", "6m");
+    const accessToken = await tokenSign(bodyWithRole, "access", "30s");
+    const refreshToken = await tokenSign(bodyWithRole, "refresh", "1m");
 
-    //check if the user already have a refresh token in the database
-
-    const existingRefreshToken = await checkExistingRefreshToken(userRow.id);
-
-    if (existingRefreshToken.length > 0) {
-      const existingToken = existingRefreshToken[0];
-      const expiresAt = new Date(existingToken.expires_at);
-      const now = new Date();
-
-      if (expiresAt < now) {
-        console.log("Refresh token has expired, user must log in again");
-        await deleteExistingRefreshToken(userRow.id);
-        return res.status(401).json({
-          message: "Token deleted, user must log in again",
-        });
-      } else {
-        console.log(
-          "User already has a non-expired refresh token in the database."
-        );
-        return res.status(400).json({
-          message:
-            "This user already has a non-expired refresh token in the database",
-        });
-      }
-    }
-
-    // If no token exists, set time, save in DB, and send cookie
+    // Set expiration time for the refresh token
     const newExpiresAt = new Date();
-    newExpiresAt.setMinutes(newExpiresAt.getMinutes() + 6); // 6 minutes for testing
+    newExpiresAt.setSeconds(newExpiresAt.getSeconds() + 65); // 65 seconds for testing
 
+    // Save the new refresh token, automatically deleting any existing one
     await saveRefreshToken(userRow.id, refreshToken, newExpiresAt);
 
+    // Set refresh token as a cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 6 * 60 * 1000, // 6 minutes for testing
-      sameSite: "Strict",
+      secure: config.nodeEnv === "production",
+      maxAge: 65 * 1000, // 65 seconds for testing
+      sameSite: config.nodeEnv === "production" ? "None" : "Lax",
     });
 
     console.log(

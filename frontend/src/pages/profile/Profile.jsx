@@ -44,7 +44,7 @@ export default function Profile() {
               </div>
               <div className="flex justify-center items-center mt-2">
                 <Link
-                  to="/"
+                  to="/home"
                   title="Share GB"
                   className="h-[30px] mx-[2px] w-[45px] flex items-center justify-center"
                 >

@@ -810,6 +810,11 @@
   line-height: 2rem !important;
 }
 
+.text-9xl {
+  font-size: 8rem !important;
+  line-height: 1 !important;
+}
+
 .text-\[14px\] {
   font-size: 14px !important;
 }
@@ -915,6 +920,11 @@
 .text-gray-900 {
   --tw-text-opacity: 1 !important;
   color: rgb(17 24 39 / var(--tw-text-opacity)) !important;
+}
+
+.text-green-300 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(134 239 172 / var(--tw-text-opacity)) !important;
 }
 
 .text-green-400 {

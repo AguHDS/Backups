@@ -1,57 +1,25 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
-export const getNewToken = createAsyncThunk(
-  "auth/refreshToken",
-  async (_, { rejectWithValue }) => {
-    try {
-      console.log("iniciando peticion");
-      const response = await fetch(`${import.meta.env.VITE_BACKEND}/refreshToken`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log("algo salió mal:", errorText);
-        throw new Error(errorText || "Not authorized");
-      }
-
-      const data = await response.json();
-      if (!data.accessToken || !data.userData) {
-        console.error("Formato de respuesta inválido:", data);
-        throw new Error("Invalid response format");
-      }
-      console.log("token verificado: ", data);
-      return data;
-    } catch (error) {
-      console.error(error.message);
-      return rejectWithValue(error.message);
-    }
-  }
-);
+import { createSlice } from "@reduxjs/toolkit";
+import { getNewToken, logout } from "./authThunks";
 
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    token: null,
+    accessToken: null,
     userData: {},
     status: "idle",
     isAuthenticated: false,
     error: null,
   },
   reducers: {
+    //probably will replace this one with thunk instead of using the custom hook auth.
     login: (state, action) => {
-      state.token = action.payload.accessToken; 
+      state.accessToken = action.payload.accessToken;
       state.userData = action.payload.userData;
       state.isAuthenticated = true;
     },
-    logout: (state) => {
-      state.token = null;
-      state.userData = {};
-      state.isAuthenticated = false;
-    },
   },
 
+  //extrareducers for async authentication
   extraReducers: (builder) => {
     builder
       .addCase(getNewToken.pending, (state) => {
@@ -59,26 +27,30 @@ const authSlice = createSlice({
       })
       .addCase(getNewToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
-        state.token = action.payload.accessToken;
-        state.userData = action.payload;
-        console.log("el resultado es: ", action.payload);
+        state.accessToken = action.payload.accessToken;
+        state.userData = action.payload.userData;
         state.status = "succeeded";
         state.error = null;
       })
       .addCase(getNewToken.rejected, (state, action) => {
-        console.error(
-          "getNewToken failed_1:",
-          action.payload || action.error.message
-        );
-        state.token = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
-        state.userData = {};
         state.status = "failed";
         state.error = action.payload || action.error.message;
-      });
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.accessToken = null;
+        state.userData = {};
+        state.status = "idle";
+        state.isAuthenticated = false;
+        state.error = null;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.error = action.payload || action.error.message;
+      })
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login } = authSlice.actions;
 
 export default authSlice.reducer;

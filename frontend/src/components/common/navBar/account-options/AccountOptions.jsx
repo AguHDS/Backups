@@ -2,20 +2,15 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
-//react router dom
+//react router
 import { Link } from "react-router-dom";
 
-//redux
-import { useSelector } from "react-redux";
-
-export default function AccountOptions() {
-  const { userData } = useSelector((state) => state.auth);
-
+export default function AccountOptions({username}) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <MenuButton as="div" className="mr-4 text-xl cursor-pointer text-white">
-          {userData.name}
+          {username}
           <ChevronDownIcon
             aria-hidden="true"
             className="relative top-[5px] -mr-1 size-5"

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 //common components
 import { Button, Input } from "../../../components/common/";

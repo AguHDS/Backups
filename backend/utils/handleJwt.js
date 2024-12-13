@@ -1,6 +1,5 @@
+import config from "../config/environmentVars.js";
 import jwt from "jsonwebtoken";
-const JWT_ACCESS_SECRET = process.env.JWT_SECRET;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 /**
  * @param {object} user - username and role
@@ -11,7 +10,7 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
 export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
   try {
-    const secret = type === "access" ? JWT_ACCESS_SECRET : JWT_REFRESH_SECRET;
+    const secret = type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
     if(!secret) throw new Error("No secret");
 
     //TODO enviar tambien fecha de expiración para usarla en el front
@@ -42,7 +41,7 @@ export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
 
 export const verifyToken = (token, type = "access") => {
   try {
-    const secret = type === "access" ? JWT_ACCESS_SECRET : JWT_REFRESH_SECRET;
+    const secret = type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
     if(!secret) throw new Error("No secret");
 
     //decode the token if is valid, comparing with the secret, returning the payload (name, role)
