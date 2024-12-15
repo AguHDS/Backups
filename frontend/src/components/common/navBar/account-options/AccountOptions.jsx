@@ -5,7 +5,18 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 //react router
 import { Link } from "react-router-dom";
 
-export default function AccountOptions({username}) {
+//redux
+import { useDispatch } from "react-redux";
+import { logout } from "../../../../redux/features/authThunks";
+
+export default function AccountOptions({ username }) {
+  const dispatch = useDispatch();
+
+  const handleLogout = (e)=> {
+    e.preventDefault();
+    dispatch(logout());
+  }
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -24,27 +35,27 @@ export default function AccountOptions({username}) {
       >
         <div className="py-1">
           <Link to="/profile">
-          <MenuItem>
-            <button className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
-              Profile
-            </button>
-          </MenuItem>
+            <MenuItem>
+              <button className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
+                Profile
+              </button>
+            </MenuItem>
           </Link>
           <div className="text-white bg-white h-[1px] w-full my-3"></div>
           <Link to="/account-settings">
-          <MenuItem>
-            <button className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
-              Configuration
-            </button>
-          </MenuItem>
+            <MenuItem>
+              <button className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
+                Configuration
+              </button>
+            </MenuItem>
           </Link>
           <div className="text-white bg-white h-[1px] w-full my-3"></div>
           <Link to="/">
-          <MenuItem>
-            <button className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
-              Logout
-            </button>
-          </MenuItem>
+            <MenuItem>
+              <button onClick={handleLogout} className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
+                Logout
+              </button>
+            </MenuItem>
           </Link>
         </div>
       </MenuItems>

@@ -8,8 +8,9 @@ const deleteRefreshFromDB = async (userId) => {
       [userId]
     );
 
-    if(deletedRefresh.affectedRows === 0) {
+    if (deletedRefresh.affectedRows === 0) {
       console.log(`No refresh token found for ${userId}`);
+      return;
     }
 
     console.log("Refresh token successfully deleted from database");
@@ -19,22 +20,14 @@ const deleteRefreshFromDB = async (userId) => {
   }
 };
 
-const logout = async(req, res) => {
+const logout = async (req, res) => {
   try {
-    const { id, hasRefreshCookie  } = req.userData;
+    const { id, hasRefreshCookie } = req.userData;
 
-    if(hasRefreshCookie) {
-      res.clearCookie("authToken", {
-        httpOnly: true,
-        secure: config.nodeEnv === "production",
-        maxAge: 0,
-        sameSite: "Strict"
-      });
-      console.log("Cookie comprovada y borrada desde logoutController")
-    }
+    if (hasRefreshCookie) res.clearCookie("refreshToken", { httpOnly: true });
 
     await deleteRefreshFromDB(id);
-    console.log("logout successfull")
+    console.log("logout successfull");
     return res.status(200).json({ msg: "Logout successful" });
   } catch (error) {
     console.error("Error in logout controller:", error);

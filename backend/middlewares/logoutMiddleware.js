@@ -14,21 +14,25 @@ const hasSessionOpen = async (req, res, next) => {
   try {
     let hasRefreshCookie;
     const { id } = req.body;
-    console.log("el id essss:", id);
+    console.log(req.body)
+    if (!id) {
+      console.log("No id in the logout request");
+      return res.status(401).json({ message: "No user id for logout request" });
+    }
 
     const refreshDB = await hasTokenInDB(id);
 
     if (!refreshDB) {
       console.log("user has no refresh token in the db");
-      return res
-        .status(401)
-        .json({ message: "User has no refresh token in the db" });
+      return res.status(401).json({ message: "User has no refresh token in the db" }); 
     }
-
+    
     const refreshToken = req.cookies["refreshToken"];
+
     if (!refreshToken) {
       console.log("No refresh token in cookies (logout middleware)");
       hasRefreshCookie = false;
+      return res.status(401).json({ message: "User has no refresh token in cookies" })
     }
 
     req.userData = { id, hasRefreshCookie };

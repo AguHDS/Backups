@@ -36,13 +36,13 @@ const App = () => {
         <NavBar />
         <Routes>
           {/* public routes */}
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/profile" element={<Profile />} />
 
           {/* protected routes */}
-          <Route path="/home" element={ <ProtectedRoute> <Home /> </ProtectedRoute>} />
+          <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
           <Route path="/account-settings" element={ <ProtectedRoute> <AccountSettings /> </ProtectedRoute>} />
 
           <Route path="/*" element={<Navigate to="NotFound" />} />

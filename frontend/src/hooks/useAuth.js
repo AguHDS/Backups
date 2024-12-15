@@ -86,7 +86,7 @@ export default function useAuth() {
 
     //if user logs in, setup redux global state and redirect
     dispatch(login(data));
-    if (redirect) navigate("/home");
+    if (redirect) navigate("/dashboard");
   }, [data, status, navigate]);
 
   return {
