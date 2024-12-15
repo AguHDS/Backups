@@ -22,7 +22,8 @@ const isAccessTokenValid = (accessToken) => {
   }
 };
 
-export default function ProtectedRoute({ children }) {
+  //check if user is authenticated and access token is valid before accessing protected childrens
+  export default function ProtectedRoute({ children }) {
   const dispatch = useDispatch();
   const { accessToken, isAuthenticated } = useSelector((state) => state.auth);
 
@@ -41,10 +42,10 @@ export default function ProtectedRoute({ children }) {
     };
 
     checkToken();
-  }, [accessToken]);
+  }, [accessToken, isAuthenticated]); //probar si funciona asi
 
-  if (!isAuthenticated || !isAccessTokenValid(accessToken)) {
-    console.error("Protected route, you need to log in");
+  if (!isAuthenticated && !isAccessTokenValid(accessToken)) {
+    console.error("Protected route, you need to log in"); //usar portal modal aca
     return <Navigate to="/" replace />;
   }
 
