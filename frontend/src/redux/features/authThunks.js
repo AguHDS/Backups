@@ -45,6 +45,7 @@ export const logout = createAsyncThunk(
     try {
         const state = getState();
         const userId = state.auth.userData.id;
+        console.log("user id from logout slice", userId)
 
       const response = await fetch(
         `http://localhost:${import.meta.env.VITE_BACKENDPORT}/logout`,
