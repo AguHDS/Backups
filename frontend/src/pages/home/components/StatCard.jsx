@@ -1,4 +1,4 @@
-export function StatCard({ type = '', title, icon, subtitle, value, color, children }) {
+export const StatCard = ({ type = '', title, icon, subtitle, value, color, children }) => {
   return (
     <div className="w-full sm:w-1/2 mb-5 md:w-1/4 lg:w-80 p-2 flex">
       <div className="bg-[#232d42] w-full p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">

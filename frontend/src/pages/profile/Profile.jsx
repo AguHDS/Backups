@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 //assets
 import images from "../../assets/images.js";
 
-export default function Profile() {
+export const Profile = () => {
   const { userData } = useSelector((state) => state.auth);
 
   return (

@@ -1,5 +1,3 @@
-export default function Graph() {
-    return(
-        <></>
-    )
-}
+export const Graph = () => {
+  return <></>;
+};

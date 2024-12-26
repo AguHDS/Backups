@@ -7,10 +7,9 @@ import { Button, Input } from "../../../components";
 import AuthFeedback from "../authFeedback/AuthFeedback";
 
 //custom hooks
-import useAuth from "../../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 
-export default function SignUp() {
-   console.log("Se esta renderizando Sign up");
+export const SignUp = () => {
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e) => {

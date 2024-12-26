@@ -1,5 +1,3 @@
-export default function MyFiles() {
-    return(
-        <></>
-    )
-}
+export const MyFiles = () => {
+  return <></>;
+};

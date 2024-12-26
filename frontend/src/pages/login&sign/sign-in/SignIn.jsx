@@ -9,7 +9,7 @@ import AuthFeedback from "../authFeedback/AuthFeedback";
 //custom hooks
 import { useAuth } from "../../../hooks";
 
-export default function SignIn() {
+export const SignIn = () => {
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e) => {

@@ -1,5 +1,3 @@
-export default function Bio() {
-    return(
-        <></>
-    )
-}
+export const Bio = () => {
+  return <></>;
+};

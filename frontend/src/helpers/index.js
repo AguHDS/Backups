@@ -1,3 +1,3 @@
-export { default as getFormData } from "./formData";
-export { default as handlerInputChange } from "./handlerInputChange";
-export {  validateLoginFields, validateLoginStatus } from "./validateSign&Login";
+export { getFormData } from "./formData";
+export { handlerInputChange } from "./handlerInputChange";
+export { validateLoginFields, validateLoginStatus } from "./validateSign&Login";

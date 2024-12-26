@@ -1,5 +1,5 @@
 /** Get all entries  of the form and return them as an object */
-export default function getFormData(form) {
+export const getFormData = (form) => {
   const formEntries = {};
 
   const data = new FormData(form);

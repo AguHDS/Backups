@@ -1,48 +1,45 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
 
 import { Button } from "../../components";
-import { StatCard } from "./components/StatCard";
+import { StatCard, AboutCard } from "./components";
 
-const Home = () => {
+export const Home = () => {
   return (
     <div className="flex items-center justify-center my-10 px-4">
       <div className="w-[70%] space-y-9">
-        {/* Info Container */}
+
+        {/* About section */}
         <div className="bg-[#232d42] p-8 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-200 mb-10 flex justify-center">
             What is this app used for?
           </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-            <div className="bg-[#0e172ab8] p-4 rounded-lg">
-              <h2 className="text-xl text-center text-gray-300">
-                Partner system
-              </h2>
-              <p className="text-[16px] text-gray-400 text-center break-words">
-                being partner with another user will allow you both to share{" "}
-                <span className="text-green-400">storage space</span> with each
-                other
-              </p>
-            </div>
-            <div className="bg-[#0e172ab8] p-4 rounded-lg">
-              <h3 className="text-xl text-center text-gray-300 mb-2">
-                Store your files
-              </h3>
-              <p className="text-[16px] text-gray-400 text-center break-words">
-                backup your files in a secure way, and edit your privacy
+            <AboutCard
+              title="Partner System"
+              subtitle={
+                <>Being partner with another user will allow you both to share
+                <span className="text-green-400"> storage space </span>with each other </> 
+              }
+            />
+
+            <AboutCard
+              title="Store your files"
+              subtitle="backup your files in a secure way, and edit your privacy
                 settings in case you want to make them public or private and
-                show them in your profile
-              </p>
-            </div>
-            <div className="bg-[#0e172ab8] p-4 rounded-lg">
-              <h3 className="text-xl text-center text-gray-300 mb-2">
-                Daily quests
-              </h3>
-              <p className="text-[16px] text-gray-400 text-center break-words">
-                by doing daily quests you can gain exp and upgrade your account
-                level, gaining benefits, like for example additional{" "}
-                <span className="text-green-400">storage space</span>
-              </p>
-            </div>
+                show them in your profile" 
+            />
+
+            <AboutCard
+              title="Daily quests"
+              subtitle={
+                <>
+                  by doing daily quests you can gain exp and upgrade your
+                  account level, gaining benefits, like for example additional
+                  <span className="text-green-400">storage space</span>
+                </>
+              }
+            />
           </div>
         </div>
 
@@ -95,5 +92,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;

@@ -9,7 +9,7 @@ import { Button } from "../";
 //redux
 import { useSelector } from "react-redux";
 
-export default function NavBar() {
+export const NavBar = () => {
   const { isAuthenticated, userData } = useSelector((state) => state.auth);
   return (
     <>
