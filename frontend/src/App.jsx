@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 
 //components
-import { NavBar, ProtectedRoute } from "./components/common/";
+import { NavBar, ProtectedRoute } from "./components";
 
 //pages
 import {

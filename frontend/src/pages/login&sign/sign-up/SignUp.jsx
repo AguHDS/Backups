@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 //common components
-import { Button, Input } from "../../../components/common";
+import { Button, Input } from "../../../components";
 
 //components
 import AuthFeedback from "../authFeedback/AuthFeedback";

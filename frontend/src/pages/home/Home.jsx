@@ -1,6 +1,6 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
 
-import { Button } from "../../components/common";
+import { Button } from "../../components";
 import { StatCard } from "./components/StatCard";
 
 const Home = () => {
