@@ -1,20 +1,18 @@
-//utils
-import { Navigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
 
 //redux
-import { getNewToken, logout } from "../../redux/features/authThunks";
+import { useSelector, useDispatch } from "react-redux";
+import { getNewToken } from "../../redux/features/authThunks";
 
-//check access token expiration time
+//check if the expiration time is valid
 const isAccessTokenValid = (accessToken) => {
   if (!accessToken) return false;
 
   try {
     const { exp } = jwtDecode(accessToken);
     const now = Math.floor(Date.now() / 1000);
-    //exp > now = accessToken is valid
     return exp > now;
   } catch (error) {
     console.error("Error decoding token:", error);
@@ -22,32 +20,30 @@ const isAccessTokenValid = (accessToken) => {
   }
 };
 
-  //check if user is authenticated and access token is valid before accessing protected childrens
-  export const ProtectedRoute = ({ children }) => {
-  const dispatch = useDispatch();
+export const ProtectedRoute = () => {
   const { accessToken, isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const checkToken = async () => {
-      if (!isAuthenticated || isAccessTokenValid(accessToken)) return;
+    const verifyAuthentication = async () => {
+      if (!isAuthenticated || !isAccessTokenValid(accessToken)) {
+        try {
+          console.log("[Protected Route] trying to get new tokens");
+          await dispatch(getNewToken()).unwrap();
 
-      try {
-        await dispatch(getNewToken()).unwrap();
-      } catch (error) {
-        if (error === "Invalid or expired refresh token") {
-          console.error("Failed trying to get a new accessToken:", error);
-          dispatch(logout());
+          if (!isAuthenticated) {
+            window.location.replace("/");
+          }
+        } catch (error) {
+          console.error("Error refreshing token:", error);
+          window.location.replace("/");
         }
+        return null;
       }
     };
+    
+    verifyAuthentication();
+  }, [isAuthenticated, accessToken, dispatch]);
 
-    checkToken();
-  }, [accessToken, isAuthenticated]);
-
-  if (!isAuthenticated && !isAccessTokenValid(accessToken)) {
-    console.error("Protected route, you need to log in"); //usar portal modal aca
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
-}
+  return <Outlet />;
+};
