@@ -1,8 +1,5 @@
 import { Link } from "react-router-dom";
 
-//common components
-import { Container } from "../../components/common/";
-
 //redux
 import { useSelector } from "react-redux";
 
@@ -13,7 +10,7 @@ export default function Profile() {
   const { userData } = useSelector((state) => state.auth);
 
   return (
-    <Container className="flex justify-center mt-5">
+    <div className="mx-auto flex justify-center mt-5">
       <div className="w-[80vw] max-w-full">
         {/* header */}
         <div className="w-full">
@@ -201,6 +198,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-    </Container>
+    </div>
   );
 }

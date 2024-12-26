@@ -1,3 +1,5 @@
+import tailwindScrollbar from 'tailwind-scrollbar';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   mode: 'jit',
@@ -6,15 +8,14 @@ export default {
   corePlugins: {
     preflight: false,
   },
-  theme: {
+  /* theme: {
     container: {
       center: true,
       padding: "2rem",
     },
     extend: {},
-  },
+  } */
   plugins: [
-    //option: { nocompatible: true } <- only use this in modern browsers
-    require("tailwind-scrollbar")({ nocompatible: true }),
+    tailwindScrollbar({ nocompatible: true }), //use this on true for compatibility with modern browsers
   ],
 };

@@ -12,10 +12,19 @@ import { logout } from "../../../../redux/features/authThunks";
 export default function AccountOptions({ username }) {
   const dispatch = useDispatch();
 
-  const handleLogout = (e)=> {
+  const handleLogout = async (e) => {
     e.preventDefault();
-    dispatch(logout());
-  }
+    try {
+      const resultLogout = await dispatch(logout());
+      if (logout.fulfilled.match(resultLogout)) {
+        window.location.reload();
+      } else {
+        console.error("Failed to logout:", resultLogout.error?.message || "Unknown error");
+      }
+    } catch(error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -52,7 +61,10 @@ export default function AccountOptions({ username }) {
           <div className="text-white bg-white h-[1px] w-full my-3"></div>
           <Link to="/">
             <MenuItem>
-              <button onClick={handleLogout} className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
+              <button
+                onClick={handleLogout}
+                className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded"
+              >
                 Logout
               </button>
             </MenuItem>

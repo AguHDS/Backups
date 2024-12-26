@@ -13,7 +13,6 @@ import {
   SignIn,
   SignUp,
   AccountSettings,
-  Dashboard,
   Profile,
 } from "./pages";
 
@@ -42,7 +41,6 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
 
           {/* protected routes */}
-          <Route path="/dashboard" element={ <ProtectedRoute> <Dashboard /> </ProtectedRoute>} />
           <Route path="/account-settings" element={ <ProtectedRoute> <AccountSettings /> </ProtectedRoute>} />
 
           <Route path="/*" element={<Navigate to="NotFound" />} />
