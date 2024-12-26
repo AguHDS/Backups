@@ -45,7 +45,8 @@ export const verifyToken = (token, type = "access") => {
     if(!secret) throw new Error("No secret");
 
     //decode the token if is valid, comparing with the secret, returning the payload (name, role)
-    return jwt.verify(token, secret);
+    const decoded = jwt.verify(token, secret);
+    return decoded;
     
   } catch (err) {
     console.error(`Token verification failed for ${type} token:`, err.message);
