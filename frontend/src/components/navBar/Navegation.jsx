@@ -31,7 +31,7 @@ export const NavBar = () => {
           </div>
           <div className="flex w-full h-[3.5rem] mr-3.5 items-center justify-end">
             {isAuthenticated ? (
-              <AccountOptions username={userData.name} />
+              <AccountOptions username={userData.user} />
             ) : (
               <>
                 <Link to="/sign-in">

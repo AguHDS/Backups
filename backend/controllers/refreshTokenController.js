@@ -54,14 +54,15 @@ const updateRefreshTokenFromDB = async (refreshToken, userId) => {
 //send new access token if everything was validated
 const sendNewAccessToken = async (req, res) => {
   try {
+    //use id from preevious refreshToken, to get user data from database
     const { userId } = req.user;
-
     const userName = await getUserById(userId);
-    
-    const { namedb, id, role } = userName[0];
-    console.log('traido de la db: ', id, role, namedb);
+    const { namedb, role, id } = userName[0];
 
-    const accessToken = await tokenSign({ id, namedb, role }, "access", "30s");
+    //rename namedb to match with the structure of tokenSign
+    const userData = { user: namedb, role, id };
+
+    const accessToken = await tokenSign(userData, "access", "30s");
 
     const unmodifiedExpirationTime = await getDateTime(id);
     if (!unmodifiedExpirationTime) {
@@ -79,7 +80,7 @@ const sendNewAccessToken = async (req, res) => {
     /* the expiration time of the refresh token is calculated to have same time than the first refresh token emited, so the expiration 
     time always counts down until it's zero, we're not using an absolute expiration time to make this process but maybe it will be 
     upgraded to that in the future if it was needed */
-    const refreshToken = await tokenSign({ id, namedb, role }, "refresh", `${timeRemaining}s`);
+    const refreshToken = await tokenSign(userData, "refresh", `${timeRemaining}s`);
     await updateRefreshTokenFromDB(refreshToken, id);
 
     res.cookie("refreshToken", refreshToken, {
@@ -88,15 +89,11 @@ const sendNewAccessToken = async (req, res) => {
       maxAge: timeRemaining * 1000,
       sameSite: config.nodeEnv === "production" ? "None" : "Lax",
     });
-    console.log("Enviando nuevo access token");
 
+    console.log("sending new access token, updating refresh token...");
     return res.status(200).json({
       accessToken,
-      userData: {
-        name: namedb,
-        role: role,
-        id: id,
-      },
+      userData,
     });
   } catch (error) {
     console.error(`Error trying to update the token. ${error.message}`);
