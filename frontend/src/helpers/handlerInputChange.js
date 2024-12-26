@@ -1,4 +1,4 @@
-export default function handlerInputChange(e) {
+export const handlerInputChange = (e) => {
   const { value, name, type, checked } = e.target;
   if (type === "checkbox") {
     return {

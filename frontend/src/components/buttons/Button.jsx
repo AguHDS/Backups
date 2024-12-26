@@ -1,14 +1,14 @@
-export default function Button({
+export const Button = ({
   onClick = () => {},
   label = "Button",
   type = "button",
   className = "backupsBtn",
   style,
   id,
-}) {
+}) => {
   return (
     <button
-    type={type}
+      type={type}
       className={`${className}`}
       id={id}
       style={style}
@@ -17,4 +17,4 @@ export default function Button({
       {label}
     </button>
   );
-}
+};

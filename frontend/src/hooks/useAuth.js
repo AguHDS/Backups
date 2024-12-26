@@ -19,7 +19,7 @@ import { login } from "../redux/features/authSlice"; //almacenar el .user al est
  * Validator and error handler for login and sign up
  */
 
-export default function useAuth() {
+export const useAuth = () => {
   const [input, setInput] = useState({
     user: "",
     password: "",
@@ -78,12 +78,11 @@ export default function useAuth() {
   useEffect(() => {
     if (data === null || status === null) return;
 
-    console.log("entrando en el useEffect");
     const { message, redirect } = validateLoginStatus(status);
     setStatusMessage(message);
 
     //if user registers, redirect without login
-    if (data.email) {
+    if (data.message === "Registration completed") {
       navigate("/");
       return;
     }

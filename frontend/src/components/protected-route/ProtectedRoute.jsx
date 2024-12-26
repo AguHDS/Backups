@@ -23,7 +23,7 @@ const isAccessTokenValid = (accessToken) => {
 };
 
   //check if user is authenticated and access token is valid before accessing protected childrens
-  export default function ProtectedRoute({ children }) {
+  export const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
   const { accessToken, isAuthenticated } = useSelector((state) => state.auth);
 

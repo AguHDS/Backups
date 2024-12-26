@@ -1,4 +1,4 @@
-export default function Input({
+export const Input = ({
   className = "text-sm rounded-lg w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:placeholder-gray-400",
   type = "text",
   id = undefined,
@@ -10,7 +10,7 @@ export default function Input({
   disabled = false,
   required = false,
   autocomplete = "off",
-}) {
+}) => {
   return (
     <input
       className={`${className}`}
@@ -26,4 +26,4 @@ export default function Input({
       autoComplete={autocomplete}
     />
   );
-}
+};
