@@ -1,5 +1,5 @@
 //common components
-import { Button } from "../../components/common";
+import { Button } from "../../components";
 
 export default function AccountSettings() {
   return (

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 //redux
 import { useDispatch } from "react-redux";
-import { logout } from "../../../../redux/features/authThunks";
+import { logout } from "../../../redux/features/authThunks";
 
 export default function AccountOptions({ username }) {
   const dispatch = useDispatch();

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 
 //redux
-import { getNewToken, logout } from "../../../redux/features/authThunks";
+import { getNewToken, logout } from "../../redux/features/authThunks";
 
 //check access token expiration time
 const isAccessTokenValid = (accessToken) => {
@@ -42,7 +42,7 @@ const isAccessTokenValid = (accessToken) => {
     };
 
     checkToken();
-  }, [accessToken, isAuthenticated]); //probar si funciona asi
+  }, [accessToken, isAuthenticated]);
 
   if (!isAuthenticated && !isAccessTokenValid(accessToken)) {
     console.error("Protected route, you need to log in"); //usar portal modal aca
