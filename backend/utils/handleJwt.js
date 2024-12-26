@@ -13,7 +13,6 @@ export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
     const secret = type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
     if(!secret) throw new Error("No secret");
 
-    //TODO enviar tambien fecha de expiración para usarla en el front
     const sign = jwt.sign(
       {
         name: user.user,

@@ -84,6 +84,7 @@ export const useAuth = () => {
     //if user registers, redirect without login
     if (data.message === "Registration completed") {
       navigate("/");
+      window.location.reload();
       return;
     }
 
@@ -91,7 +92,7 @@ export const useAuth = () => {
     dispatch(login(data));
     if (redirect) {
       navigate("/");
-     /*  window.location.reload();  Add this when we have persist login */
+      window.location.reload();
     }
   }, [data, status, navigate]);
 

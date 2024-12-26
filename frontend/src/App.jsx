@@ -1,13 +1,12 @@
 import { useEffect } from "react";
-
-//utils
 import { Route, Routes, Navigate } from "react-router-dom";
 
 //components
-import { NavBar, ProtectedRoute } from "./components";
+import { NavBar, ProtectedRoute, PersistLogin } from "./components";
 
 //pages
 import {
+  Dashboard,
   Home,
   NotFound,
   SignIn,
@@ -18,16 +17,10 @@ import {
 
 //redux
 import { store } from "./redux/store";
-import { useSelector } from "react-redux";
 import { Provider } from "react-redux";
 
 const App = () => {
   console.log("app rendereado x1");
-  const { status } = useSelector((state) => state.auth); //para testing
-
-  useEffect(() => { //para testing
-    console.log("Status in redux changed:", status);
-  }, [status]);
 
   return (
     <>
@@ -35,13 +28,20 @@ const App = () => {
         <NavBar />
         <Routes>
           {/* public routes */}
+        <Route element={<PersistLogin />}>
           <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/profile" element={<Profile />} />
 
-          {/* protected routes */}
-          <Route path="/account-settings" element={ <ProtectedRoute> <AccountSettings /> </ProtectedRoute>} />
+          {/* private routes */}
+         
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/account-settings" element={<AccountSettings />} />
+            </Route>
+        </Route>
 
           <Route path="/*" element={<Navigate to="NotFound" />} />
           <Route path="/NotFound" element={<NotFound />} />
