@@ -19,6 +19,19 @@ const getDateTime = async (userId) => {
   }
 };
 
+const getUserById = async (id) => {
+  try {
+    const [rows] = await promiseConnection.query(
+      "SELECT * FROM users WHERE id = ?",
+      [id]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error retrieving user from database:", error);
+    throw new Error("Error retrieving user from database");
+  }
+};
+
 const updateRefreshTokenFromDB = async (refreshToken, userId) => {
   try {
     const [results] = await promiseConnection.query(
@@ -41,9 +54,14 @@ const updateRefreshTokenFromDB = async (refreshToken, userId) => {
 //send new access token if everything was validated
 const sendNewAccessToken = async (req, res) => {
   try {
-    const { id, name, role } = req.user;
+    const { userId } = req.user;
 
-    const accessToken = await tokenSign({ id, name, role }, "access", "30s");
+    const userName = await getUserById(userId);
+    
+    const { namedb, id, role } = userName[0];
+    console.log('traido de la db: ', id, role, namedb);
+
+    const accessToken = await tokenSign({ id, namedb, role }, "access", "30s");
 
     const unmodifiedExpirationTime = await getDateTime(id);
     if (!unmodifiedExpirationTime) {
@@ -61,7 +79,7 @@ const sendNewAccessToken = async (req, res) => {
     /* the expiration time of the refresh token is calculated to have same time than the first refresh token emited, so the expiration 
     time always counts down until it's zero, we're not using an absolute expiration time to make this process but maybe it will be 
     upgraded to that in the future if it was needed */
-    const refreshToken = await tokenSign({ id, name, role }, "refresh", `${timeRemaining}s`);
+    const refreshToken = await tokenSign({ id, namedb, role }, "refresh", `${timeRemaining}s`);
     await updateRefreshTokenFromDB(refreshToken, id);
 
     res.cookie("refreshToken", refreshToken, {
@@ -75,7 +93,7 @@ const sendNewAccessToken = async (req, res) => {
     return res.status(200).json({
       accessToken,
       userData: {
-        name: name,
+        name: namedb,
         role: role,
         id: id,
       },

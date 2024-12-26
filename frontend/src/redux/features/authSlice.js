@@ -26,9 +26,11 @@ const authSlice = createSlice({
         state.status = "loading";
       })
       .addCase(getNewToken.fulfilled, (state, action) => {
+        console.log(state)
         state.isAuthenticated = true;
         state.accessToken = action.payload.accessToken;
         state.userData = action.payload.userData;
+        console.log('la data es:', action.payload.userData)
         state.status = "succeeded";
         state.error = null;
       })

@@ -1,5 +1,6 @@
 //index barrel to import these modules in one line
 
+export { Dashboard } from "./dashboard/Dashboard";
 export { Home } from "./home/Home";
 export { NotFound } from "./not-found/NotFound";
 export { SignIn } from "./login&sign/sign-in/SignIn";

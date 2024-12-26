@@ -35,7 +35,7 @@ const validateRefreshToken = async (req, res, next) => {
         .json({ message: "Invalid or expired refresh token" });
     }
 
-    const { id, name, role } = decodedRefreshToken;
+    const { id } = decodedRefreshToken;
 
     const tokenData = await findValidRefreshToken(refreshToken, id);
     if (!tokenData) {
@@ -46,9 +46,7 @@ const validateRefreshToken = async (req, res, next) => {
     }
 
     req.user = {
-      id,
-      name,
-      role,
+      userId: id
     };
 
     next();
