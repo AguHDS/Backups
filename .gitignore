@@ -12,6 +12,7 @@ z_comm.txt
 # Ignorar archivos específicos en backend
 /backend/env.example
 /frontend/env.example
+Backups-home-dashboard.png
 
 # Logs
 logs/

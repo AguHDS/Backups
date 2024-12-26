@@ -57,8 +57,12 @@ export default function useAuth() {
       let endpoint = "";
 
       "email" in formData
-        ? (endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/registration`)
-        : (endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/login`);
+        ? (endpoint = `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/registration`)
+        : (endpoint = `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/login`);
 
       fetchData(endpoint, {
         method: "POST",
@@ -86,7 +90,10 @@ export default function useAuth() {
 
     //if user logs in, setup redux global state and redirect
     dispatch(login(data));
-    if (redirect) navigate("/dashboard");
+    if (redirect) {
+      navigate("/");
+     /*  window.location.reload();  Add this when we have persist login */
+    }
   }, [data, status, navigate]);
 
   return {

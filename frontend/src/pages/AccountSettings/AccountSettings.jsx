@@ -1,9 +1,9 @@
 //common components
-import { Button, Container } from "../../components/common";
+import { Button } from "../../components/common";
 
 export default function AccountSettings() {
   return (
-    <Container className="flex justify-center max-w-full bg-black h-screen">
+    <div className="mx-auto flex justify-center max-w-full bg-black h-screen">
       <div className="w-[60%] h-[80%] bg-gray-700 rounded-lg shadow-lg mx-auto my-auto">
         <div className="justify-center space-x-4 p-4 flex flex-wrap sm:flex-nowrap">
           <Button
@@ -28,6 +28,6 @@ export default function AccountSettings() {
           </div>
         </div>
       </div>
-    </Container>
+    </div>
   );
 }
