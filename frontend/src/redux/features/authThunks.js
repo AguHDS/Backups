@@ -16,10 +16,12 @@ export const getNewToken = createAsyncThunk(
         const errorText = await response.text();
         console.log("Couldn't get a new accessToken:", errorText);
 
+        //no refresh token in cookies
         if (response.status === 401) {
-          return rejectWithValue("No refresh token in cookies");
+          return rejectWithValue(401);
         }
 
+        //invalid or expired refresh token
         if (response.status === 403) {
           return rejectWithValue("Invalid or expired refresh token");
         }

@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useEffect } from "react";
 
@@ -21,6 +21,7 @@ const isAccessTokenValid = (accessToken) => {
 };
 
 export const ProtectedRoute = () => {
+  const navigate = useNavigate();
   const { accessToken, isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -29,21 +30,24 @@ export const ProtectedRoute = () => {
       if (!isAuthenticated || !isAccessTokenValid(accessToken)) {
         try {
           console.log("[Protected Route] trying to get new tokens");
-          await dispatch(getNewToken()).unwrap();
-
-          if (!isAuthenticated) {
-            window.location.replace("/");
+          const response = await dispatch(getNewToken());
+          if (response.payload === 401) {
+            console.error(
+              "[Protected Route] No refresh token in cookies. Redirecting to login."
+            );
+            navigate("/sign-in");
           }
         } catch (error) {
-          console.error("Error refreshing token:", error);
-          window.location.replace("/");
+          console.error(
+            "Error veryfing authentication (ProtectedRoute catch) :",
+            error
+          );
         }
-        return null;
       }
     };
-    
-    verifyAuthentication();
-  }, [isAuthenticated, accessToken, dispatch]);
 
-  return <Outlet />;
+    verifyAuthentication();
+  }, [isAuthenticated, accessToken, dispatch, navigate]);
+
+  return <>{isAuthenticated ? <Outlet /> : null}</>;
 };
