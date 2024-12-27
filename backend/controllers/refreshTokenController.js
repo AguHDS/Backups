@@ -74,7 +74,7 @@ const sendNewAccessToken = async (req, res) => {
     const timeRemaining = Math.floor((new Date(unmodifiedExpirationTime) - Date.now()) / 1000);
     if (timeRemaining <= 0) {
       console.error(`Refresh token expired for user: ${id}`);
-      return res.status(401).json({ message: "Refresh token has expired" });
+      return res.status(403).json({ message: "Refresh token has expired" });
     }
 
     /* the expiration time of the refresh token is calculated to have same time than the first refresh token emited, so the expiration 

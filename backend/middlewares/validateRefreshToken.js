@@ -22,8 +22,12 @@ const validateRefreshToken = async (req, res, next) => {
   try {
     const cookies = req.cookies;
     if (!cookies?.refreshToken) {
-      console.error("No refresh found in the cookies");
-      return res.status(401).json({ message: "No refresh token in cookies" });
+      console.log("No refresh found in the cookies");
+      return res
+        .status(401)
+        .json({
+          message: "No refresh token in cookies (validateRefreshToken)",
+        });
     }
     const refreshToken = cookies.refreshToken;
 
@@ -39,14 +43,16 @@ const validateRefreshToken = async (req, res, next) => {
 
     const tokenData = await findValidRefreshToken(refreshToken, id);
     if (!tokenData) {
-      console.error("Refresh token not found (db), doesn't match user or expired");
+      console.error(
+        "Refresh token not found (db), doesn't match user or expired"
+      );
       return res.status(403).json({
         message: "Refresh token not found (db), doesn't match user or expired",
       });
     }
 
     req.user = {
-      userId: id
+      userId: id,
     };
 
     next();
