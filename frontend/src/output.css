@@ -234,6 +234,21 @@
   margin-bottom: auto !important;
 }
 
+.mx-8 {
+  margin-left: 2rem !important;
+  margin-right: 2rem !important;
+}
+
+.mx-6 {
+  margin-left: 1.5rem !important;
+  margin-right: 1.5rem !important;
+}
+
+.mx-4 {
+  margin-left: 1rem !important;
+  margin-right: 1rem !important;
+}
+
 .-mr-1 {
   margin-right: -0.25rem !important;
 }
@@ -673,6 +688,15 @@
   overflow-y: auto !important;
 }
 
+.whitespace-nowrap {
+  white-space: nowrap !important;
+}
+
+.break-normal {
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
 .break-words {
   overflow-wrap: break-word !important;
 }
@@ -1008,6 +1032,21 @@
 .py-5 {
   padding-top: 1.25rem !important;
   padding-bottom: 1.25rem !important;
+}
+
+.px-10 {
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
+}
+
+.px-12 {
+  padding-left: 3rem !important;
+  padding-right: 3rem !important;
+}
+
+.px-2 {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
 }
 
 .pb-3 {

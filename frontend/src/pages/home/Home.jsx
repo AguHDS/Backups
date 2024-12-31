@@ -14,7 +14,7 @@ export const Home = () => {
   const { setIsModalOpen } = useModalContext();
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] pl-12 pr-12 bg-[#0a0f1e] text-white">
+    <div className="min-h-[calc(100vh-3.5rem)] px-12 bg-[#0a0f1e] text-white">
       <Modal>
         <TermsAndConditions />
       </Modal>
@@ -28,7 +28,7 @@ export const Home = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Feature Cards */}
-        <div className="mb-12">
+        <div className="px-2 mx-4">
           <FeatureCard
             title="Partner System"
             description="Being partner with another user will allow you both to share storage space with each other"
@@ -39,7 +39,7 @@ export const Home = () => {
             }}
           />
         </div>
-        <div className="mb-12">
+        <div className="px-2 mx-4">
           <FeatureCard
             title="Store your files"
             description="Backup your files in a secure way, and edit your privacy settings in case you want to make them public or private"
@@ -50,7 +50,7 @@ export const Home = () => {
             }}
           />
         </div>
-        <div className="mb-12">
+        <div className="px-2 mx-4">
           <FeatureCard
             title="Daily quests"
             description="By doing daily quests you can gain exp and upgrade your account level, gaining benefits, like additional storage space"
