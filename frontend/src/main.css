@@ -23,10 +23,8 @@ a {
 
 /* Containers */
 
-.contentWrapper {
-/*   min-height: 555px;
-  padding-bottom: 30px;
-  position: relative; */
+.feature-card {
+  height: auto;
 }
 
 .reusableContainer {
@@ -48,9 +46,17 @@ a {
   display: block;
 }
 
-.backupsBtn:focus {
+h1:focus {
+  outline: none; /* Remueve cualquier estilo de foco por defecto */
+}
+
+h1:focus-visible {
+  outline: 2px solid #007BFF; /* Agrega un estilo de foco visible solo al usar teclado */
+}
+
+.backupsLogo:focus-visible {
   outline: none;
-  border-color: #9ca3af;
+  border-color: #005eff;
   box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.5);
 }
 
