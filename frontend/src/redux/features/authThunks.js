@@ -35,7 +35,7 @@ export const getNewToken = createAsyncThunk(
 
       return data;
     } catch (error) {
-      console.error("Failed trying to get a new accessToken: ", error.message);
+      console.error("Token authentication failed: ", error.message);
       return rejectWithValue(error.message);
     }
   }

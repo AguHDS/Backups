@@ -4,6 +4,7 @@ private or public. You'll need to be validated as a user to access.
 
 ## some of the features that this app will have:
 
+* Strong securiy flow for accounts, using OAuth with token rotation and encrypting. More info in AuthFlow-info.md
 * Storage for authenticated user (with mb/gb limit)
 * Configs to make your uploads public/private, so other users are able to see them
 * Level system that will grant benefits such like more space to store
@@ -12,7 +13,12 @@ private or public. You'll need to be validated as a user to access.
 
 many features aren't avialable yet since i'm working on them
 
-## this is how profile section looks like for now when you're correctly authenticated
+### some previews of sections (changes on the frontend will be made)
+
+Dashboard section
+![Showcase](DashboardShowcase.png)
+
+Profile section
 ![Showcase](Profile_Showcase.png)
 
 ## main tools used:
