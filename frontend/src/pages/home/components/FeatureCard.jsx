@@ -12,10 +12,10 @@ export function FeatureCard({ title, description, icon, details }) {
     <div className="feature-card bg-[#1a1f2e] rounded-lg p-6 flex flex-col justify-between h-auto">
       <div className="h-[280px]">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-white">{title}</h2>
+          <h2 className="px-1 text-2xl font-semibold text-white">{title}</h2>
           {icon}
         </div>
-        <p className="text-gray-300 text-lg mb-8">{description}</p>
+        <p className="px-1 text-gray-300 text-lg">{description}</p>
       </div>
 
       <div>
