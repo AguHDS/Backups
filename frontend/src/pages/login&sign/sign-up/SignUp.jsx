@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 
 //common components
-import { Button, Input } from "../../../components";
+import { Button, Input, TermsAndConditions, Modal } from "../../../components";
 
-//components
+//components  
 import AuthFeedback from "../authFeedback/AuthFeedback";
 
 //custom hooks
@@ -112,14 +112,24 @@ export const SignUp = () => {
                   </div>
                 </div>
               </form>
-              <div className="relative mt-4 text-sm font-medium text-gray-500 dark:text-gray-300 self-end">
-                Have an account?
-                <Link
-                  to="/sign-in"
-                  className="ml-1 text-blue-700 hover:underline dark:text-blue-500"
-                >
-                  Sign in
-                </Link>
+              <div className="flex justify-between">
+                <div className="relative mt-4 text-sm font-medium text-gray-500 dark:text-gray-300 self-end">
+                  Have an account?
+                  <Link
+                    to="/sign-in"
+                    className="ml-1 text-blue-700 hover:underline dark:text-blue-500"
+                  >
+                    Sign in
+                  </Link>
+                </div>
+                <div className="relative mt-4 text-sm font-medium text-gray-500 dark:text-gray-300 self-end">
+                  by registiring you agree with the
+                  <a
+                    className="cursor-pointer ml-1 text-blue-700 hover:underline dark:text-blue-500"
+                  >
+                    Terms and conditions
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -127,4 +137,4 @@ export const SignUp = () => {
       </div>
     </>
   );
-}
+};
