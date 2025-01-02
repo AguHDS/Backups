@@ -30,11 +30,11 @@ export const SignIn = () => {
     <>
       <div
         tabIndex="-1"
-        className="flex items-center justify-center w-full h-screen"
+        className="flex items-center justify-center w-full h-[94vh]"
       >
         <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
           <div className="h-auto bg-white rounded-lg shadow dark:bg-gray-700">
-            <div className="text-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+            <div className=" text-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center">
                 Log in to your account
               </h3>
@@ -44,7 +44,7 @@ export const SignIn = () => {
                 className="overflow-hidden pl-6 pr-10"
                 onSubmit={handleSubmit}
               >
-                <div className="space-y-5">
+                <div className="space-y-8">
                   <div>
                     <label
                       className="text-sm text-gray-700 dark:text-gray-300"

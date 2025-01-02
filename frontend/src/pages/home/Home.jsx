@@ -1,4 +1,5 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
+import { Navigate, useNavigate } from "react-router-dom";
 
 //assets
 import images from "../../assets/images.js";
@@ -12,18 +13,24 @@ import { useModalContext } from "../../components/modal/context/ModalContext.jsx
 
 export const Home = () => {
   const { setIsModalOpen } = useModalContext();
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    setIsModalOpen(false);
+    navigate("/sign-up");
+  };
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] px-12 bg-[#0a0f1e] text-white">
       <Modal>
-        <TermsAndConditions />
+        <TermsAndConditions onUnderstand={handleRedirect} />
       </Modal>
       <Header />
       <div className="text-center mb-16 flex justify-center">
         <Button
           label="Get Started"
           className="backupsBtn flex items-center text-white px-8 py-4 rounded-lg shadow-md"
-          onClick={()=> setIsModalOpen(true)}
+          onClick={() => setIsModalOpen(true)}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

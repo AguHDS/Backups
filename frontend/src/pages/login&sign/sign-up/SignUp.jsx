@@ -1,15 +1,17 @@
 import { Link } from "react-router-dom";
 
-//common components
+//components
 import { Button, Input, TermsAndConditions, Modal } from "../../../components";
-
-//components  
 import AuthFeedback from "../authFeedback/AuthFeedback";
 
 //custom hooks
 import { useAuth } from "../../../hooks/useAuth";
 
+//context
+import { useModalContext } from "../../../components/modal/context/ModalContext";
+
 export const SignUp = () => {
+  const { setIsModalOpen } = useModalContext();
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e) => {
@@ -26,9 +28,12 @@ export const SignUp = () => {
 
   return (
     <>
+      <Modal>
+        <TermsAndConditions onUnderstand={()=> setIsModalOpen(false)} />
+      </Modal>
       <div
         tabIndex="-1"
-        className="flex items-center justify-center w-full min-h-screen"
+        className="flex items-center justify-center w-full h-[94vh]"
       >
         <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
           <div className="h-auto bg-white rounded-lg shadow dark:bg-gray-700 relative">
@@ -124,9 +129,7 @@ export const SignUp = () => {
                 </div>
                 <div className="relative mt-4 text-sm font-medium text-gray-500 dark:text-gray-300 self-end">
                   by registiring you agree with the
-                  <a
-                    className="cursor-pointer ml-1 text-blue-700 hover:underline dark:text-blue-500"
-                  >
+                  <a className="cursor-pointer ml-1 text-blue-700 hover:underline dark:text-blue-500" onClick={()=> setIsModalOpen(true)}>
                     Terms and conditions
                   </a>
                 </div>
