@@ -1,18 +1,7 @@
-import { Link } from "react-router-dom";
-
 //components
 import { Button } from "../";
 
-export const TermsAndConditions = ({ onClose, currentPath }) => {
-
-  const handleAccept = () => {
-    if (currentPath === '/') {
-      onClose('navigate-signup');
-    } else {
-      onClose('close');
-    }
-  };
-
+export const TermsAndConditions = ({ onUnderstand }) => {
   return (
     <div className="inset-0 isolate flex items-center justify-center p-4  bg-opacity-30">
       <div className="bg-gray-600 rounded w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -164,11 +153,11 @@ export const TermsAndConditions = ({ onClose, currentPath }) => {
             </p>
           </div>
           <div className="text-center mt-5 flex justify-center">
-              <Button
-                label="I understand"
-                onClick={handleAccept}
-                className="backupsBtn bg-gray-500 h-6 mx-2 flex items-center text-white px-8 py-4 rounded-lg shadow-md"
-              />
+            <Button
+              label="I understand"
+              onClick={onUnderstand}
+              className="backupsBtn bg-gray-500 h-6 mx-2 flex items-center text-white px-8 py-4 rounded-lg shadow-md"
+            />
           </div>
         </div>
       </div>
