@@ -1,5 +1,4 @@
-import config from "../config/environmentVars.js";
-import promiseConnection from "../dbConnection/database.js";
+import promiseConnection from "../db/database.js";
 
 const deleteRefreshFromDB = async (userId) => {
   try {

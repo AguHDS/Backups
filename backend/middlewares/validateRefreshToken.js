@@ -1,4 +1,4 @@
-import promiseConnection from "../dbConnection/database.js";
+import promiseConnection from "../db/database.js";
 import { verifyToken } from "../utils/handleJwt.js";
 
 //verify existence and expiration time of this data in the database (user_id is a foreign key related to the real user id)

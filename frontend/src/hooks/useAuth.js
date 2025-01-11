@@ -13,7 +13,7 @@ import {
 
 //redux
 import { useDispatch } from "react-redux";
-import { login } from "../redux/features/authSlice"; //almacenar el .user al estado global de redux
+import { login } from "../redux/features/authSlice";
 
 /**
  * Validator and error handler for login and sign up
@@ -91,7 +91,7 @@ export const useAuth = () => {
     //if user logs in, setup redux global state and redirect
     dispatch(login(data));
     if (redirect) {
-      navigate("/");
+      navigate("/dashboard");
       window.location.reload();
     }
   }, [data, status, navigate]);

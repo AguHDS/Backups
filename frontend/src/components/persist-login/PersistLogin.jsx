@@ -18,34 +18,31 @@ export const PersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { setIsModalOpen } = useModalContext();
 
-  // Effect to control modal visibility based on loading state
+  //efffect to control modal(spinner) visibility based on loading state
   useEffect(() => {
     setIsModalOpen(isLoading);
 
-    // Cleanup function to ensure modal is closed when component unmounts
     return () => {
       setIsModalOpen(false);
     };
   }, [isLoading, setIsModalOpen]);
 
-  // Effect to verify refresh token
+  //verify the user has refresh token
   useEffect(() => {
     const verifyRefreshToken = async () => {
       try {
         if (!isAuthenticated && !accessToken) {
-          console.log("[Persist login]: Getting new token");
           await dispatch(getNewToken()).unwrap();
         }
       } catch (error) {
         console.error("Failed trying to verify refresh token:", error);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); 
       }
     };
-
     verifyRefreshToken();
   }, [dispatch, isAuthenticated, accessToken]);
-
+  
   return (
     <>
       {isLoading ? (
