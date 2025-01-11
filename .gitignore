@@ -8,6 +8,7 @@
 practica/
 to-do.txt
 z_comm.txt
+z_aprender
 
 # Ignorar archivos específicos en backend
 /backend/env.example

@@ -1,5 +1,5 @@
 import config from "../config/environmentVars.js";
-import promiseConnection from "../dbConnection/database.js";
+import promiseConnection from "../db/database.js";
 import { validationResult, matchedData } from "express-validator";
 import { compare } from "../utils/handlePassword.js";
 import { tokenSign } from "../utils/handleJwt.js";

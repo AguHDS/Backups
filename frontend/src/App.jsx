@@ -37,7 +37,7 @@ const App = () => {
             {/* public routes */}
             <Route element={<PersistLogin />}>
               <Route path="/" element={<Home />} />
-              <Route path="/sign-in" element={<SignIn />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
 
@@ -45,7 +45,6 @@ const App = () => {
 
               <Route element={<ProtectedRoute />}>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/profile" element={<Profile />} />
                 <Route path="/account-settings" element={<AccountSettings />} />
               </Route>
             </Route>

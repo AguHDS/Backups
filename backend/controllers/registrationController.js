@@ -1,4 +1,4 @@
-import promiseConnection from "../dbConnection/database.js";
+import promiseConnection from "../db/database.js";
 import { validationResult, matchedData } from "express-validator";
 import { encrypt } from "../utils/handlePassword.js";
 

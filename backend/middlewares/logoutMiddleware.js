@@ -1,4 +1,4 @@
-import promiseConnection from "../dbConnection/database.js";
+import promiseConnection from "../db/database.js";
 
 //check if the user has a refresh token in the database
 const hasTokenInDB = async (userId) => {

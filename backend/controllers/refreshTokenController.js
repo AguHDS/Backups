@@ -1,5 +1,5 @@
 import config from "../config/environmentVars.js";
-import promiseConnection from "../dbConnection/database.js";
+import promiseConnection from "../db/database.js";
 import { tokenSign } from "../utils/handleJwt.js";
 
 //get expiration time of the first refresh token emited.
