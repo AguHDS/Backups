@@ -18,6 +18,7 @@ import {
   registration,
   logout,
   refreshToken,
+  getProfile
 } from "./routes/index.js";
 
 //cfg
@@ -35,8 +36,8 @@ app.use(cookieParser());
 app.use("/login", login);
 app.use("/registration", registration);
 app.use("/logout", logout);
-
 app.use("/refreshToken", refreshToken);
+app.use("/api/profile", getProfile);
 
 //proxy that redirects all the requests that aren't defined here to vite's port, so the front can handle them
 app.use(
