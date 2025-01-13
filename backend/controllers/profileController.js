@@ -31,8 +31,10 @@ const profileController = async (req, res) => {
     const userProfileData = await getUserProfileById(id);
 
     if (userProfileData === null) return res.status(404).json({ message: `Profile data not found for ${username} in users_profile table` });
-    console.log(userProfileData);
-    return res.status(200).json({ userProfileData });
+    
+    const userData = {...userProfileData, username, role, id }
+    
+    return res.status(200).json({ userData });
   } catch (error) {
     console.error("Failed to get user profile:", error);
     return res.status(500).json({ message: "Failed to get user profile" });

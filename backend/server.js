@@ -25,10 +25,8 @@ import {
 const app = express();
 const server = http.createServer(app);
 app.use(express.json());
-
 app.use(credentials);
 app.use(cors(corsOptions));
-
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -37,6 +35,7 @@ app.use("/login", login);
 app.use("/registration", registration);
 app.use("/logout", logout);
 app.use("/refreshToken", refreshToken);
+//get user's profile data
 app.use("/api/profile", getProfile);
 
 //proxy that redirects all the requests that aren't defined here to vite's port, so the front can handle them

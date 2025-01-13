@@ -3,7 +3,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 //react router
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 //redux
 import { useDispatch } from "react-redux";
@@ -11,12 +11,14 @@ import { logout } from "../../../redux/features/authThunks";
 
 export default function AccountOptions({ username }) {
   const dispatch = useDispatch();
+    const navigate = useNavigate();
 
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
       const resultLogout = await dispatch(logout());
       if (logout.fulfilled.match(resultLogout)) {
+        navigate("/");
         window.location.reload();
       } else {
         console.error("Failed to logout:", resultLogout.error?.message || "Unknown error");
