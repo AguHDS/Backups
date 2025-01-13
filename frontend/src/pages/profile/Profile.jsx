@@ -1,13 +1,48 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+
+//components
+import { Button } from "../../components";
 
 //redux
 import { useSelector } from "react-redux";
+
+//custom hooks
+import useFetch from "../../hooks/useFetch";
 
 //assets
 import images from "../../assets/images.js";
 
 export const Profile = () => {
-  const { userData } = useSelector((state) => state.auth);
+  const { isAuthenticated, userData } = useSelector((state) => state.auth);
+  const { data, status, isLoading, error, fetchData } = useFetch();
+  const { username } = useParams();
+  const navigate = useNavigate();
+
+  const isOwnprofile = isAuthenticated && userData.id === data?.userData.id;
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        await fetchData(
+          `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/api/profile/${username}`
+        );
+      } catch (err) {
+        console.error("Error fetching profile data:", err);
+      }
+    };
+    fetchProfileData();
+  }, [username, fetchData]);
+
+  useEffect(() => {
+    if (status === 404) {
+      navigate("/NotFound");
+    }
+  }, [status, navigate]);
+
+  if (!data?.userData || error) return null;
 
   return (
     <div className="mx-auto flex justify-center mt-5">
@@ -16,14 +51,16 @@ export const Profile = () => {
         <div className="w-full">
           <h1 className="bg-[#222] border font-serif border-t-[#222] border-b-[#585858] border-l-[#272727] border-r-[#272727] text-[#e0e0e0] font-verdana font-bold text-sm m-0 p-[5px_9px] text-left flex items-center justify-between">
             <span className="flex ml-[50px] relative top-[2px] text-base">
-              Ag's profile
+              {!isLoading && data.userData.username}'s profile
             </span>
-            <Link
-              to="/profile-settings"
-              className="float-right font-verdana text-xs relative top-[2px] mr-2 font-normal leading-[1em] text-blue-500 hover:underline"
-            >
-              Profile settings
-            </Link>
+            {isOwnprofile && (
+              <Link
+                to="/profile-settings"
+                className="float-right font-verdana text-xs relative top-[2px] mr-2 font-normal leading-[1em] text-blue-500 hover:underline"
+              >
+                Edit profile
+              </Link>
+            )}
           </h1>
         </div>
 
@@ -80,15 +117,19 @@ export const Profile = () => {
                 </li>
                 <li className="bg-[#121212] p-1 flex justify-between">
                   <span>role</span>
-                  <span className="text-gray-400">user</span>
+                  <span className="text-gray-400">
+                    {!isLoading && data.userData.role}
+                  </span>
                 </li>
                 <li className="bg-[#121212] p-1 flex justify-between">
                   <span>friends</span>
-                  <span>4</span>
+                  <span>{!isLoading && data.userData.friends}</span>
                 </li>
                 <li className="bg-[#121212] p-1 flex justify-between">
-                  <span>max. space</span>
-                  <span className="text-green-400">6 GB</span>
+                  <span>partner</span>
+                  <span className="text-gray-400 text-sm">
+                    {!isLoading && data.userData.partner}
+                  </span>
                 </li>
               </ul>
               <h3 className="text-center my-5">Space used</h3>
@@ -98,6 +139,14 @@ export const Profile = () => {
                 alt="Graph"
               />
               <div className="mt-4 flex flex-col w-full">
+                <div className="flex my-[3px] justify-between items-center w-full">
+                  <span className="text-green-400 text-ls px-4">
+                    Max. space
+                  </span>
+                  <span className="text-green-400 text-ls px-4 text-sm">
+                    6 GB
+                  </span>
+                </div>
                 <div className="flex my-[3px] justify-between items-center w-full">
                   <span className="text-cyan-300 text-ls px-4">
                     space available
@@ -126,20 +175,31 @@ export const Profile = () => {
             {/* right side */}
             <div className="w-full mr-[5px] ml-[5px] scrollbar-container">
               <div className="bg-[#272727] w-full max-w-full max-h-max">
-                <h1 className="mb-1 flex relative top-2 justify-center my-0 p-1 font-light">
-                  Public Backups
-                </h1>
                 {/* Contenedor de secciones */}
                 <div className="p-4 space-y-4 scrollbar-container">
+                  {!isLoading &&
+                    (data?.userData?.bio === null ? (
+                      <div className="flex justify-center items-center h-12 text-gray-200">
+                        No description available
+                      </div>
+                    ) : (
+                      <div className="flex items-center h-12 text-gray-200">
+                        {data?.userData?.bio}
+                      </div>
+                    ))}
+                  
+
                   {/* Sección 1 */}
                   <h2 className="text-center text-[#ccc] text-[18px] mb-2 border-t-[10px] border-l-0 border-r-0 border-b-0 pt-3 border-[#121212] border-solid w-full">
                     Sección 1
                   </h2>
-                  <textarea
-                    className="w-[95%] flex justify-center mx-auto bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
-                    rows="3"
-                    placeholder="Añade una breve descripción para la Sección 1..."
-                  ></textarea>
+                  {isOwnprofile && (
+                    <textarea
+                      className="w-[95%] flex justify-center mx-auto bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
+                      rows="3"
+                      placeholder="Añade una breve descripción para la Sección 1..."
+                    ></textarea>
+                  )}
                   <div className="p-4 overflow-y-auto max-h-[400px] border border-[#121212] bg-[#1e1e1e]">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                       {[...Array(12)].map((_, index) => (
@@ -152,21 +212,24 @@ export const Profile = () => {
                       ))}
                     </div>
                   </div>
-                  <button
-                    className="mt-2 p-2 w-full bg-[#272727] text-[#ccc] border border-[#444] hover:bg-[#333] transition"
-                    onClick={() => alert("Subir imagen a Sección 1")}
-                  >
-                    Subir Imagen a Sección 1
-                  </button>
+                  {isOwnprofile && (
+                    <Button
+                      label="Subir Imagen a Sección 1"
+                      className="mt-2 p-2 w-full bg-[#272727] text-[#ccc] border border-[#444] hover:bg-[#333] transition"
+                      onClick={() => alert("Subir imagen a Sección 1")}
+                    ></Button>
+                  )}
                   {/* Sección 2 */}
                   <h2 className="text-center text-[#ccc] text-[18px] mb-2 border-t-[10px] border-l-0 border-r-0 border-b-0 pt-3 border-[#121212] border-solid w-full">
                     Sección 2
                   </h2>
-                  <textarea
-                    className="w-[95%] flex justify-center mx-auto bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
-                    rows="3"
-                    placeholder="Añade una breve descripción para la Sección 2..."
-                  ></textarea>
+                  {isOwnprofile && (
+                    <textarea
+                      className="w-[95%] flex justify-center mx-auto bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
+                      rows="3"
+                      placeholder="Añade una breve descripción para la Sección 2..."
+                    ></textarea>
+                  )}
                   <div className="p-4 overflow-y-auto max-h-[400px] border border-[#121212] bg-[#1e1e1e]">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                       {[...Array(6)].map((_, index) => (
@@ -179,20 +242,22 @@ export const Profile = () => {
                       ))}
                     </div>
                   </div>
-                  <button
-                    className="mt-2 p-2 w-full bg-[#272727] text-[#ccc] border border-[#444] hover:bg-[#333] transition"
-                    onClick={() => alert("Subir imagen a Sección 2")}
-                  >
-                    Subir Imagen a Sección 2
-                  </button>
+                  {isOwnprofile && (
+                    <Button
+                      label="Subir Imagen a Sección 2"
+                      className="mt-2 p-2 w-full bg-[#272727] text-[#ccc] border border-[#444] hover:bg-[#333] transition"
+                      onClick={() => alert("Subir imagen a Sección 2")}
+                    ></Button>
+                  )}
                 </div>
                 {/* Botón para añadir nueva sección */}
-                <button
-                  className="mt-4 p-2 w-full bg-[#272727] text-[#ccc] border border-[#444] hover:bg-[#333] transition"
-                  onClick={() => alert("Añadir nueva sección")}
-                >
-                  Añadir nueva sección
-                </button>
+                {isOwnprofile && (
+                  <Button
+                    label="Añadir nueva sección"
+                    className="mt-4 p-2 w-full bg-[#272727] text-[#ccc] border border-[#444] hover:bg-[#333] transition"
+                    onClick={() => alert("Añadir nueva sección")}
+                  ></Button>
+                )}
               </div>
             </div>
           </div>
@@ -200,4 +265,4 @@ export const Profile = () => {
       </div>
     </div>
   );
-}
+};

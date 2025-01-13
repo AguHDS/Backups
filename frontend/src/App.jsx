@@ -26,7 +26,7 @@ import { Provider } from "react-redux";
 import { ModalProvider } from "./components/modal/context/ModalContext";
 
 const App = () => {
-  console.log("app rendereado x1");
+  console.log("app rendered");
 
   return (
     <>
@@ -37,9 +37,9 @@ const App = () => {
             {/* public routes */}
             <Route element={<PersistLogin />}>
               <Route path="/" element={<Home />} />
-              <Route path="/profile" element={<Profile />} />
               <Route path="/sign-in" element={<SignIn />} />
               <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/profile/:username" element={<Profile />} />
 
               {/* private routes */}
 
