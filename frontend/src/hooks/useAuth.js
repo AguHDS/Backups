@@ -77,6 +77,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     if (data === null || status === null) return;
+    console.log('useEffect useAUth ejecutado')
 
     const { message, redirect } = validateLoginStatus(status);
     setStatusMessage(message);

@@ -143,10 +143,6 @@
   top: 0px !important;
 }
 
-.top-2 {
-  top: 0.5rem !important;
-}
-
 .top-4 {
   top: 1rem !important;
 }
@@ -199,11 +195,6 @@
   margin-right: auto !important;
 }
 
-.my-0 {
-  margin-top: 0px !important;
-  margin-bottom: 0px !important;
-}
-
 .my-1 {
   margin-top: 0.25rem !important;
   margin-bottom: 0.25rem !important;
@@ -241,10 +232,6 @@
 
 .-mr-1 {
   margin-right: -0.25rem !important;
-}
-
-.mb-1 {
-  margin-bottom: 0.25rem !important;
 }
 
 .mb-10 {
@@ -1129,10 +1116,6 @@
 
 .font-bold {
   font-weight: 700 !important;
-}
-
-.font-light {
-  font-weight: 300 !important;
 }
 
 .font-medium {

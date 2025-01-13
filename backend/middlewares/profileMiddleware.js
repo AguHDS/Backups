@@ -7,13 +7,22 @@ const profileMiddleware = async (req, res, next) => {
     
     //get userdata from users table
     const user = await getUserByName(username);
-    if (user === null) return res.status(404).json({ message: "User not found" });
-
+    if (!user) {
+      return res.status(404).json({ 
+        status: 404,
+        message: `Profile data for ${username} not found` 
+      });
+    }
+    
     req.userData = { username: user.namedb, role: user.role, id: user.id };
 
     next();
   } catch (error) {
     console.error("Error in profileMiddleware:", error);
+    res.status(500).json({ 
+      status: 500,
+      message: 'Internal server error' 
+    });
   }
 };
 
