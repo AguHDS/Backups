@@ -1,10 +1,9 @@
-import promiseConnection from "../db/database.js";
+import promisePool from "../db/database.js";
 
 //get user profile data from users_profile table
-
 const getUserProfileById = async (id) => {
   try {
-    const [rows] = await promiseConnection.query(
+    const [rows] = await promisePool.query(
       "SELECT bio, profile_pic, partner, friends FROM users_profile WHERE fk_users_id = ?",
       [id]
     );
@@ -22,8 +21,7 @@ const getUserProfileById = async (id) => {
 };
 
 /* sends to the client profile information of the user provided in the params of the url, comparing its id from users table 
-with fk_users_id (foreign key) in users_profile table */
-
+with fk_users_id in users_profile table */
 const profileController = async (req, res) => {
   try {
     const { username, role, id } = req.userData;

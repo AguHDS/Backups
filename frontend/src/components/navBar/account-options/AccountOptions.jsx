@@ -1,4 +1,3 @@
-/* library: headlessui */
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
@@ -11,7 +10,7 @@ import { logout } from "../../../redux/features/authThunks";
 
 export default function AccountOptions({ username }) {
   const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -45,7 +44,7 @@ export default function AccountOptions({ username }) {
         className="absolute right-0 px-1 py-1 z-10 mt-[17px] w-56 origin-top-right rounded-md bg-[#212b3c] shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
       >
         <div className="py-1">
-          <Link to="/profile">
+          <Link to={`/profile/${username}`}>
             <MenuItem>
               <button className="bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded">
                 Profile

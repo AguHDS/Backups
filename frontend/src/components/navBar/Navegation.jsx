@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 
 //components
 import AccountOptions from "./account-options/AccountOptions";
-
-//common components
 import { Button } from "../";
 
 //redux
@@ -11,6 +9,7 @@ import { useSelector } from "react-redux";
 
 export const NavBar = () => {
   const { isAuthenticated, userData } = useSelector((state) => state.auth);
+  
   return (
     <>
       <nav className="backupsColor h-auto relative top-0 w-full flex flex-col shadow-[0_0_10px] z-50">

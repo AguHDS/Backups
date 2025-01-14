@@ -1,8 +1,8 @@
-import promiseConnection from "../database.js";
+import promisePool from "../database.js";
 
 const getUserById = async (id) => {
   try {
-    const [rows] = await promiseConnection.query(
+    const [rows] = await promisePool.query(
       "SELECT * FROM users WHERE id = ?",
       [id]
     );

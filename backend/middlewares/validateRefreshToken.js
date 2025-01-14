@@ -1,10 +1,10 @@
-import promiseConnection from "../db/database.js";
+import promisePool from "../db/database.js";
 import { verifyToken } from "../utils/handleJwt.js";
 
 //verify existence and expiration time of this data in the database (user_id is a foreign key related to the real user id)
 const findValidRefreshToken = async (refreshToken, id) => {
   try {
-    const [results] = await promiseConnection.query(
+    const [results] = await promisePool.query(
       "SELECT token, user_id, expires_at FROM refresh_tokens WHERE token = ? AND user_id = ? AND expires_at > NOW()",
       [refreshToken, id]
     );

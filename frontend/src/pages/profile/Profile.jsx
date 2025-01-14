@@ -55,7 +55,7 @@ export const Profile = () => {
             </span>
             {isOwnprofile && (
               <Link
-                to="/profile-settings"
+                to="/account-settings"
                 className="float-right font-verdana text-xs relative top-[2px] mr-2 font-normal leading-[1em] text-blue-500 hover:underline"
               >
                 Edit profile
@@ -128,7 +128,7 @@ export const Profile = () => {
                 <li className="bg-[#121212] p-1 flex justify-between">
                   <span>partner</span>
                   <span className="text-gray-400 text-sm">
-                    {!isLoading && data.userData.partner}
+                    {!isLoading && (data.userData.partner ? data.userData.partner : "-")}
                   </span>
                 </li>
               </ul>

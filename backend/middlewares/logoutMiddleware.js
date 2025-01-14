@@ -1,8 +1,8 @@
-import promiseConnection from "../db/database.js";
+import promisePool from "../db/database.js";
 
 //check if the user has a refresh token in the database
 const hasTokenInDB = async (userId) => {
-  const [results] = await promiseConnection.query(
+  const [results] = await promisePool.query(
     "SELECT user_id FROM refresh_tokens WHERE (user_id = ?)",
     [userId]
   );

@@ -1,4 +1,4 @@
-//common components
+//components
 import { Button } from "../../components";
 
 export const AccountSettings = () => {

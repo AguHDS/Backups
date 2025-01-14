@@ -1,22 +1,28 @@
 import config from "../config/environmentVars.js";
-import promiseConnection from "../db/database.js";
+import promisePool from "../db/database.js";
 import { validationResult, matchedData } from "express-validator";
 import { compare } from "../utils/handlePassword.js";
 import { tokenSign } from "../utils/handleJwt.js";
 
 const saveRefreshToken = async (userId, token, expiresAt) => {
   try {
-    // First, delete any existing refresh token for this user
-    await promiseConnection.query(
-      "DELETE FROM refresh_tokens WHERE user_id = ?",
+    //delete any existing refresh token for this user
+    const [existingToken] = await promisePool.query(
+      "SELECT * FROM refresh_tokens WHERE user_id = ?",
       [userId]
     );
 
-    // Then insert the new refresh token
-    await promiseConnection.query(
-      "INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
-      [userId, token, expiresAt]
-    );
+    if (existingToken.length > 0) {
+      await promisePool.query(
+        "UPDATE refresh_tokens SET token = ?, expires_at = ? WHERE user_id = ?",
+        [token, expiresAt, userId]
+      );
+    } else {
+      await promisePool.query(
+        "INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)",
+        [userId, token, expiresAt]
+      );
+    }
   } catch (error) {
     console.error("Error saving new refresh token to database:", error);
     throw new Error("Error saving new refresh token to database");
@@ -25,7 +31,7 @@ const saveRefreshToken = async (userId, token, expiresAt) => {
 
 const getUserByName = async (username) => {
   try {
-    const [rows] = await promiseConnection.query(
+    const [rows] = await promisePool.query(
       "SELECT * FROM users WHERE namedb = ?",
       [username]
     );
@@ -47,7 +53,7 @@ const login = async (req, res) => {
     const data = matchedData(req);
     const { user, password } = data;
 
-    // Check if the user exists in the database
+    //check if the user exists in users table
     const userResult = await getUserByName(user);
 
     if (userResult.length === 0) {
@@ -57,7 +63,7 @@ const login = async (req, res) => {
 
     const userRow = userResult[0];
 
-    // Compare password sent by the user with the password in the database
+    //compare password sent by the user with the password in the database
     const comparedPassword = await compare(password, userRow.passdb);
 
     if (!comparedPassword) {

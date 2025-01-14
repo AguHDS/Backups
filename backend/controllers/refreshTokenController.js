@@ -1,11 +1,11 @@
 import config from "../config/environmentVars.js";
-import promiseConnection from "../db/database.js";
+import promisePool from "../db/database.js";
 import { tokenSign } from "../utils/handleJwt.js";
 
 //get expiration time of the first refresh token emited.
-const getDateTime = async (userId) => {
+const getDateTime = async (userId, connection) => {
   try {
-    const [results] = await promiseConnection.query(
+    const [results] = await connection.query(
       "SELECT expires_at FROM refresh_tokens WHERE user_id = ?",
       [userId]
     );
@@ -19,9 +19,9 @@ const getDateTime = async (userId) => {
   }
 };
 
-const getUserById = async (id) => {
+const getUserById = async (id, connection) => {
   try {
-    const [rows] = await promiseConnection.query(
+    const [rows] = await connection.query(
       "SELECT * FROM users WHERE id = ?",
       [id]
     );
@@ -32,9 +32,9 @@ const getUserById = async (id) => {
   }
 };
 
-const updateRefreshTokenFromDB = async (refreshToken, userId) => {
+const updateRefreshTokenFromDB = async (refreshToken, userId, connection) => {
   try {
-    const [results] = await promiseConnection.query(
+    const [results] = await connection.query(
       "UPDATE refresh_tokens SET token = ? WHERE user_id = ?",
       [refreshToken, userId]
     );
@@ -50,13 +50,15 @@ const updateRefreshTokenFromDB = async (refreshToken, userId) => {
   }
 };
 
-
 //send new access token if everything was validated
 const sendNewAccessToken = async (req, res) => {
+  const connection = await promisePool.getConnection();
   try {
+    await connection.beginTransaction();
+
     //use id from preevious refreshToken, to get user data from database
     const { userId } = req.user;
-    const userName = await getUserById(userId);
+    const userName = await getUserById(userId, connection);
     const { namedb, role, id } = userName[0];
 
     //rename namedb to match with the structure of tokenSign
@@ -64,7 +66,7 @@ const sendNewAccessToken = async (req, res) => {
 
     const accessToken = await tokenSign(userData, "access", "30s");
 
-    const unmodifiedExpirationTime = await getDateTime(id);
+    const unmodifiedExpirationTime = await getDateTime(id, connection);
     if (!unmodifiedExpirationTime) {
       console.error(`No refresh token found for user in db: ${id}`);
       return res.status(404).json({ message: "Refresh token not found for the user in db" });
@@ -81,7 +83,8 @@ const sendNewAccessToken = async (req, res) => {
     time always counts down until it's zero, we're not using an absolute expiration time to make this process but maybe it will be 
     upgraded to that in the future if it was needed */
     const refreshToken = await tokenSign(userData, "refresh", `${timeRemaining}s`);
-    await updateRefreshTokenFromDB(refreshToken, id);
+    await updateRefreshTokenFromDB(refreshToken, id, connection);
+    await connection.commit();
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -96,8 +99,11 @@ const sendNewAccessToken = async (req, res) => {
       userData,
     });
   } catch (error) {
+    await connection.rollback();
     console.error(`Error trying to update the token. ${error.message}`);
     return res.status(500).json({ message: "Internal Server Error" });
+  } finally {
+    connection.release();
   }
 };
 

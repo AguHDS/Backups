@@ -1,8 +1,8 @@
-import promiseConnection from "../db/database.js";
+import promisePool from "../db/database.js";
 
 const deleteRefreshFromDB = async (userId) => {
   try {
-    const deletedRefresh = await promiseConnection.query(
+    const deletedRefresh = await promisePool.query(
       "DELETE FROM refresh_tokens WHERE user_id = ?",
       [userId]
     );

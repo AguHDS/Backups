@@ -1,9 +1,7 @@
 import { Link, Navigate } from "react-router-dom";
 
-//common components
-import { Button, Input } from "../../../components";
-
 //components
+import { Button, Input } from "../../../components";
 import AuthFeedback from "../authFeedback/AuthFeedback";
 
 //custom hooks

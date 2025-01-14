@@ -1,19 +1,22 @@
 import config from "../config/environmentVars.js";
 import mysql from 'mysql2';
 
-const connection = mysql.createConnection({
+const pool = mysql.createPool({
     host: config.dbHost,
     database: config.dbDatabase,
     user: config.dbUser,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
 });
 
-const promiseConnection = connection.promise();
+const promisePool = pool.promise();
 
 //check the connection to the database and log the errors
 async function checkConnection() {
     try {
-        await promiseConnection.query('SELECT 1 + 1 AS solution');
-        console.log('Connection to db successful');
+        await promisePool.query('SELECT 1 + 1 AS solution');
+        console.log('Connection pool to db successful');
     } catch (error) {
         console.error('Error connecting to the database:');
         console.error('Error code:', error.code);
@@ -24,4 +27,4 @@ async function checkConnection() {
 
 checkConnection();
 
-export default promiseConnection;
+export default promisePool;
