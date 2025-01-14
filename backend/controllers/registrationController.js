@@ -1,12 +1,11 @@
-import promiseConnection from "../db/database.js";
+import promisePool from "../db/database.js";
 import { validationResult, matchedData } from "express-validator";
 import { encrypt } from "../utils/handlePassword.js";
 
-//check if user or email already exists in the database
 const isNameOrEmailTaken = async (username, email) => {
   try {
     const query = `SELECT namedb, emaildb FROM users WHERE namedb = ? OR emaildb = ?`;
-    const [results] = await promiseConnection.query(query, [username, email]);
+    const [results] = await promisePool.query(query, [username, email]);
 
     if (results.length > 0) {
       console.error("User or email already exists in the database");
@@ -33,16 +32,31 @@ const isNameOrEmailTaken = async (username, email) => {
   }
 };
 
-//register new user
 const insertNewUser = async (name, email, pass, role) => {
+  const connection = await promisePool.getConnection();
   try {
-    await promiseConnection.query(
+    await connection .beginTransaction();
+
+    //insert new user in users table
+    const [userResult] = await connection.query(
       "INSERT INTO users (namedb, emaildb, passdb, role) VALUES (?, ?, ?, ?)",
       [name, email, pass, role]
     );
+
+    //add foreign key to users_profile table
+    const userId = userResult.insertId;
+    await connection.query(
+      "INSERT INTO users_profile (fk_users_id) VALUES (?)",
+      [userId]
+    );
+
+    await connection.commit();
   } catch (error) {
-    console.error("Error adding new user to database", error);
-    throw new Error("Error adding new user to database");
+    await connection.rollback();
+    console.error("Error adding new user and profile", error);
+    throw new Error("Error adding new user and profile");
+  } finally {
+    connection.release();
   }
 };
 
@@ -60,7 +74,6 @@ const register = async (req, res) => {
 
     const nameAndEmail = await isNameOrEmailTaken(body.user, body.email);
 
-    // Replace switch with if-else logic
     if (nameAndEmail.isTaken) {
       if (nameAndEmail.userTaken && !nameAndEmail.emailTaken) {
         console.error(`User ${body.user} already exists`);
@@ -80,7 +93,7 @@ const register = async (req, res) => {
       }
     }
 
-    // If not taken, proceed with registration
+    //if not taken, proceed with registration
     await insertNewUser(body.user, body.email, body.password, "user");
 
     console.log(
