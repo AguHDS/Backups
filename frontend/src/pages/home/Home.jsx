@@ -9,7 +9,7 @@ import { FeatureCard, Header } from "./components";
 import { Button, TermsAndConditions, Modal } from "../../components";
 
 //context
-import { useModalContext } from "../../components/modal/context/ModalContext.jsx";
+import { useModalContext } from "../../components/Modal/context/ModalContext.jsx";
 
 export const Home = () => {
   const { setIsModalOpen } = useModalContext();

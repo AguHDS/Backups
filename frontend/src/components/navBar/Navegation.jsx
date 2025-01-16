@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 //components
 import AccountOptions from "./account-options/AccountOptions";
-import { Button } from "../";
+import { Button } from "..";
 
 //redux
 import { useSelector } from "react-redux";

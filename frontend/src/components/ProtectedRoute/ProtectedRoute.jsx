@@ -20,6 +20,7 @@ const isAccessTokenValid = (accessToken) => {
   }
 };
 
+//component that checks if the user is authenticated to access private routes
 export const ProtectedRoute = () => {
   const navigate = useNavigate();
   const { accessToken, isAuthenticated } = useSelector((state) => state.auth);

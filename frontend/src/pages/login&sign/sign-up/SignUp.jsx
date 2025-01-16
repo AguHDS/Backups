@@ -8,7 +8,7 @@ import AuthFeedback from "../authFeedback/AuthFeedback";
 import { useAuth } from "../../../hooks/useAuth";
 
 //context
-import { useModalContext } from "../../../components/modal/context/ModalContext";
+import { useModalContext } from "../../../components/Modal/context/ModalContext";
 
 export const SignUp = () => {
   const { setIsModalOpen } = useModalContext();
