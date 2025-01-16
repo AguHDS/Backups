@@ -1,9 +1,10 @@
 export { Button } from "./buttons/Button";
 export { Input } from "./inputs/Input";
-export { NavBar } from "./navBar/Navegation";
-export { PersistLogin } from "./persist-login/PersistLogin";
-export { NotFound } from "./not-found/NotFound";
-export { ProtectedRoute } from "./protected-route/ProtectedRoute";
-export { TermsAndConditions } from "./terms/TermsAndConditions";
-export { Modal } from "./modal/Modal";
-export { LoadingSpinner } from "./spinner/LoadingSpinner";
+export { NavBar } from "./NavBar/Navegation";
+export { PersistLogin } from "./PersistLogin/PersistLogin";
+export { NotFound } from "./NotFound/NotFound";
+export { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
+export { RoutesWithNotFound } from "./RoutesWithNotFound/RoutesWithNotFound";
+export { Modal } from "./Modal/Modal";
+export { LoadingSpinner } from "./Spinner/LoadingSpinner";
+export { TermsAndConditions } from "./TermsAndConditions/TermsAndConditions";

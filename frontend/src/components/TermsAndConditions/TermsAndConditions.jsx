@@ -1,5 +1,5 @@
 //components
-import { Button } from "../";
+import { Button } from "..";
 
 export const TermsAndConditions = ({ onUnderstand }) => {
   return (

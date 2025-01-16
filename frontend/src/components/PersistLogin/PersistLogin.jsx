@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { LoadingSpinner, Modal } from "../";
 
 //context
-import { useModalContext } from "../../components/modal/context/ModalContext.jsx";
+import { useModalContext } from "../Modal/context/ModalContext.jsx";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
