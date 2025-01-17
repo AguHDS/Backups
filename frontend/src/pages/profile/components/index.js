@@ -1,3 +1,6 @@
-export { Bio } from "./Bio";
+export { ActionsAndProfileImg } from "./ActionsAndProfileImg";
 export { Graph } from "./Graph";
-export { MyFiles } from "./MyFiles";
+export { Header } from "./Header";
+export { UserInfo } from "./UserInfo";
+export { Storage } from "./Storage";
+export { ProfileContent } from "./ProfileContent";
