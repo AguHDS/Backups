@@ -9,7 +9,7 @@ export const Header = ({ isOwnProfile, username, isEditing, setIsEditing }) => {
         </span>
         {isOwnProfile && (
           <Button
-            label={isEditing ? "Save changes" : "Edit profile"}
+            label={isEditing ? "Cancel" : "Edit profile"}
             className="text-blue-500 text-sm hover:underline mr-1 mt-1 cursor-pointer bg-transparent border-none shadow-none"
             onClick={()=> setIsEditing(!isEditing)}
           ></Button>

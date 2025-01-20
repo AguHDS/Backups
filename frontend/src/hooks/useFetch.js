@@ -25,8 +25,8 @@ export default function useFetch() {
       if (!response.ok) {
         const errorData = await response.json();
         setStatus(response.status);
-        setError(errorData.message);
-        throw new Error(errorData.message);
+        setError(errorData || "Something went wrong");
+        return;
       }
 
       const result = await response.json();

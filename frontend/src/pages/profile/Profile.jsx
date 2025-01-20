@@ -31,7 +31,7 @@ export const Profile = () => {
   const { username } = useParams();
   const { setIsModalOpen } = useModalContext();
   const navigate = useNavigate();
-  
+
   //loading spinner
   useEffect(() => {
     setIsModalOpen(isLoading);
@@ -43,13 +43,14 @@ export const Profile = () => {
 
   const isOwnProfile = isAuthenticated && userData.id === data?.userData.id;
 
+  //get profile data from database
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         await fetchData(
           `http://localhost:${
             import.meta.env.VITE_BACKENDPORT
-          }/api/profile/${username}`
+          }/api/getProfile/${username}`
         );
       } catch (err) {
         console.error("Error fetching profile data:", err);
@@ -117,8 +118,9 @@ export const Profile = () => {
                 {/* right area */}
                 <ProfileContent
                   isEditing={isEditing}
-                  isOwnProfile={isOwnProfile}
                   bio={data.userData.bio}
+                  title={data.userData.sections.title}
+                  description={data.userData.sections.description}
                 />
               </div>
             </div>
