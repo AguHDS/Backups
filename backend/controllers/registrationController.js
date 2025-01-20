@@ -50,6 +50,12 @@ const insertNewUser = async (name, email, pass, role) => {
       [userId]
     );
 
+    //add foreign key to users_profile_sections table
+    await connection.query(
+      "INSERT INTO users_profile_sections (fk_users_id) VALUES (?)",
+      [userId]
+    );
+
     await connection.commit();
   } catch (error) {
     await connection.rollback();

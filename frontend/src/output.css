@@ -167,10 +167,6 @@
   z-index: 50 !important;
 }
 
-.float-right {
-  float: right !important;
-}
-
 .m-0 {
   margin: 0px !important;
 }
@@ -213,6 +209,11 @@
 .my-3 {
   margin-top: 0.75rem !important;
   margin-bottom: 0.75rem !important;
+}
+
+.my-4 {
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
 }
 
 .my-5 {
@@ -282,6 +283,14 @@
   margin-left: 5px !important;
 }
 
+.ml-auto {
+  margin-left: auto !important;
+}
+
+.mr-1 {
+  margin-right: 0.25rem !important;
+}
+
 .mr-2 {
   margin-right: 0.5rem !important;
 }
@@ -300,6 +309,10 @@
 
 .ms-2 {
   margin-inline-start: 0.5rem !important;
+}
+
+.mt-1 {
+  margin-top: 0.25rem !important;
 }
 
 .mt-2 {
@@ -340,6 +353,10 @@
 
 .inline-flex {
   display: inline-flex !important;
+}
+
+.table {
+  display: table !important;
 }
 
 .grid {
@@ -395,6 +412,10 @@
   height: 30px !important;
 }
 
+.h-\[50vh\] {
+  height: 50vh !important;
+}
+
 .h-\[80\%\] {
   height: 80% !important;
 }
@@ -419,21 +440,16 @@
   max-height: 350px !important;
 }
 
-.max-h-\[400px\] {
-  max-height: 400px !important;
-}
-
 .max-h-\[90vh\] {
   max-height: 90vh !important;
 }
 
-.max-h-max {
-  max-height: -moz-max-content !important;
-  max-height: max-content !important;
-}
-
 .min-h-\[3\.25rem\] {
   min-height: 3.25rem !important;
+}
+
+.min-h-\[80vh\] {
+  min-height: 80vh !important;
 }
 
 .min-h-\[calc\(100vh-3\.5rem\)\] {
@@ -476,6 +492,14 @@
   width: 100px !important;
 }
 
+.w-\[12vw\] {
+  width: 12vw !important;
+}
+
+.w-\[25\%\] {
+  width: 25% !important;
+}
+
 .w-\[45px\] {
   width: 45px !important;
 }
@@ -514,6 +538,10 @@
 
 .max-w-md {
   max-width: 28rem !important;
+}
+
+.flex-1 {
+  flex: 1 1 0% !important;
 }
 
 .flex-shrink-0 {
@@ -582,6 +610,10 @@
 
 .items-start {
   align-items: flex-start !important;
+}
+
+.items-end {
+  align-items: flex-end !important;
 }
 
 .items-center {
@@ -852,9 +884,19 @@
   background-color: rgb(42 47 62 / var(--tw-bg-opacity)) !important;
 }
 
+.bg-\[\#303030\] {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(48 48 48 / var(--tw-bg-opacity)) !important;
+}
+
 .bg-\[\#374151\] {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity)) !important;
+}
+
+.bg-\[\#3c3c3c\] {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(60 60 60 / var(--tw-bg-opacity)) !important;
 }
 
 .bg-\[\#444\] {
@@ -894,6 +936,10 @@
 .bg-green-600 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity)) !important;
+}
+
+.bg-transparent {
+  background-color: transparent !important;
 }
 
 .bg-white {
@@ -1109,11 +1155,6 @@
   line-height: 1.75rem !important;
 }
 
-.text-xs {
-  font-size: 0.75rem !important;
-  line-height: 1rem !important;
-}
-
 .font-bold {
   font-weight: 700 !important;
 }
@@ -1122,16 +1163,8 @@
   font-weight: 500 !important;
 }
 
-.font-normal {
-  font-weight: 400 !important;
-}
-
 .font-semibold {
   font-weight: 600 !important;
-}
-
-.leading-\[1em\] {
-  line-height: 1em !important;
 }
 
 .text-\[\#ccc\] {
@@ -1264,6 +1297,12 @@
 .shadow-md {
   --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
   --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+
+.shadow-none {
+  --tw-shadow: 0 0 #0000 !important;
+  --tw-shadow-colored: 0 0 #0000 !important;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
 
