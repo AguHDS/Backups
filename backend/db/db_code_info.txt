@@ -1,0 +1,51 @@
+run mysql service from windows before running the db on backend
+W+R > services.msc > mysql > start (disable it when no using it anymore so it doesn't consume resources)
+
+creation code of tables:
+
+users
+CREATE TABLE `users` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `namedb` VARCHAR(50) NOT NULL,
+  `emaildb` VARCHAR(80) NOT NULL,
+  `passdb` VARCHAR(80) NOT NULL,
+  `role` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+refresh_tokens
+CREATE TABLE `refresh_tokens` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `token` VARCHAR(255) NOT NULL,
+  `user_id` INT(10) UNSIGNED NOT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` DATETIME NOT NULL,
+  `revoked` TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `refresh_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+users_profile
+CREATE TABLE `users_profile` (
+  `fk_users_id` INT(10) UNSIGNED NOT NULL,
+  `bio` TEXT DEFAULT 'No description available',
+  `profile_pic` VARCHAR(255) DEFAULT NULL,
+  `partner` VARCHAR(75) DEFAULT '-',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `friends` INT(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`fk_users_id`),
+  KEY `idx_users_profile_fk_users_id` (`fk_users_id`),
+  CONSTRAINT `users_profile_fk_users_id` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+users_profile_sections
+CREATE TABLE `users_profile_sections` (
+  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `fk_users_id` INT(10) UNSIGNED NOT NULL,
+  `title` VARCHAR(255) DEFAULT 'Section title',
+  `description` VARCHAR(255) DEFAULT 'No description',
+  PRIMARY KEY (`id`),
+  KEY `fk_users_id` (`fk_users_id`),
+  CONSTRAINT `users_profile_sections_ibfk_1` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
