@@ -18,7 +18,8 @@ import {
   registration,
   logout,
   refreshToken,
-  getProfile
+  getProfile,
+  updateProfile
 } from "./routes/index.js";
 
 //cfg
@@ -31,12 +32,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 //routes
+
+//auth
 app.use("/login", login);
 app.use("/registration", registration);
 app.use("/logout", logout);
 app.use("/refreshToken", refreshToken);
-//get user's profile data
-app.use("/api/profile", getProfile);
+//profile
+app.use("/api/getProfile", getProfile);
+app.use("/api/updateProfile", updateProfile);
 
 //proxy that redirects all the requests that aren't defined here to vite's port, so the front can handle them
 app.use(

@@ -1,9 +1,9 @@
 import express from "express";
-import profileController from "../controllers/profileController.js";
-import profileMiddleware from "../middlewares/profileMiddleware.js";
+import getProfileController from "../controllers/getProfileController.js";
+import getProfileMiddleware from "../middlewares/getProfileMiddleware.js";
 
 const router = express.Router();
 
-router.get("/:username", profileMiddleware, profileController);
+router.get("/:username", getProfileMiddleware, getProfileController);
 
 export default router;
