@@ -10,22 +10,15 @@ import AuthFeedback from "../../login&sign/authFeedback/AuthFeedback";
 //custom hooks
 import useFetch from "../../../hooks/useFetch";
 
-export const ProfileContent = ({
-  isEditing,
-  bio,
-  title,
-  description,
-}) => {
-  const { username } = useParams();
-  const { status, isLoading, error, fetchData } = useFetch();
+export const ProfileContent = ({ isEditing, bio, title, description }) => {
   const [updateData, setUpdateData] = useState({
     bio: bio,
     title: title,
     description: description,
   });
-  const [sections, setSections] = useState([
-    { title: title, description: description },
-  ]);
+  const [sections, setSections] = useState([{ title: title, description: description }]);
+  const { status, isLoading, error, fetchData } = useFetch();
+  const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState([]);
 
   //fetch to update profile content data

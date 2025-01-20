@@ -7,6 +7,7 @@ const requiredVariables = [
   "DB_HOST",
   "DB_DATABASE",
   "DB_USER",
+  "DB_PASSWORD",
 ];
 
 const missingVariables = requiredVariables.filter((variable) => !process.env[variable]);
@@ -22,6 +23,7 @@ const config = {
     dbHost: process.env.DB_HOST,
     dbDatabase: process.env.DB_DATABASE,
     dbUser: process.env.DB_USER,
+    dbPassword: process.env.DB_PASSWORD
 }
 
 export default config;
