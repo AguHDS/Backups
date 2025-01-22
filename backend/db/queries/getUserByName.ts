@@ -1,4 +1,4 @@
-import promisePool from "../database.js";
+import promisePool from "../database";
 
 const getUserByName = async (username) => {
   try {

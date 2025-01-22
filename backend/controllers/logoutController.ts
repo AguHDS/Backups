@@ -1,4 +1,4 @@
-import promisePool from "../db/database.js";
+import promisePool from "../db/database";
 
 const deleteRefreshFromDB = async (userId) => {
   try {

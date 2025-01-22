@@ -1,6 +1,6 @@
-import config from "../config/environmentVars.js";
-import promisePool from "../db/database.js";
-import { tokenSign } from "../utils/handleJwt.js";
+import config from "../config/environmentVars";
+import promisePool from "../db/database";
+import { tokenSign } from "../utils/handleJwt";
 
 //get expiration time of the first refresh token emited.
 const getDateTime = async (userId, connection) => {

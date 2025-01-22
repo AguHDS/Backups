@@ -1,4 +1,4 @@
-import config from "../config/environmentVars.js";
+import config from "../config/environmentVars";
 import mysql from 'mysql2';
 
 const pool = mysql.createPool({

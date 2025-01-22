@@ -1,4 +1,4 @@
-import promisePool from "../db/database.js";
+import promisePool from "../db/database";
 
 //check if the user has a refresh token in the database
 const hasTokenInDB = async (userId) => {

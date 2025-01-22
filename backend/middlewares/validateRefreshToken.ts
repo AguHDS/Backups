@@ -1,5 +1,5 @@
-import promisePool from "../db/database.js";
-import { verifyToken } from "../utils/handleJwt.js";
+import promisePool from "../db/database";
+import { verifyToken } from "../utils/handleJwt";
 
 //verify existence and expiration time of this data in the database (user_id is a foreign key related to the real user id)
 const findValidRefreshToken = async (refreshToken, id) => {

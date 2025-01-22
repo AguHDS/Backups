@@ -1,21 +1,22 @@
-import config from "../config/environmentVars.js";
+import config from "../config/environmentVars";
 import jwt from "jsonwebtoken";
+import { JwtUserData } from "../types";
 
 /**
- * @param {object} user - username and role
- * @param {string} type - type of token (access or refresh)
- * @param {Date} expiresIn - expiration time
+ * @param user - username and role
+ * @param type - type of token (access or refresh)
+ * @param expiresIn - expiration time
  * @returns - jwt token
  */
 
-export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
+export const tokenSign = async (user: JwtUserData, type: "access" | "refresh" = "access", expiresIn: string = "5m"): Promise<string> => {
   try {
     const secret = type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
     if(!secret) throw new Error("No secret");
 
     const sign = jwt.sign(
       {
-        name: user.user,
+        name: user.name,
         role: user.role,
         id: user.id,
       },
@@ -28,17 +29,17 @@ export const tokenSign = async (user, type = "access", expiresIn = "5m") => {
     return sign;
   } catch (error) {
     console.error(`Error signing ${type} token: `, error);
-    return res.status(500).json({ msg: "Token generation failed" });
+    throw new Error("Token generation failed");
   }
 };
 
 /**
- * @param {string} token - token
- * @param {string} type - type of token (access or refresh)
+ * @param token - token
+ * @param type - type of token (access or refresh)
  * @returns - decoded token
  */
 
-export const verifyToken = (token, type = "access") => {
+export const verifyToken = (token: string, type: "access" | "refresh" = "access"): string | jwt.JwtPayload | null => {
   try {
     const secret = type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
     if(!secret) throw new Error("No secret");
@@ -48,7 +49,8 @@ export const verifyToken = (token, type = "access") => {
     return decoded;
     
   } catch (err) {
-    console.error(`Token verification failed for ${type} token:`, err.message);
+    const error = err as Error;
+    console.error(`Token verification failed for ${type} token:`, error.message);
     return null;
   }
 };

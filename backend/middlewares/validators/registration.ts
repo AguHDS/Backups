@@ -1,7 +1,6 @@
-//validator for the registration fields (backend)
-import { check } from "express-validator";
+import { check, ValidationChain } from "express-validator";
 
-const validatorRegistration = [
+const validatorRegistration: ValidationChain[] = [
   check("user")
     .notEmpty()
     .withMessage("User cannot be empty")
