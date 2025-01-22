@@ -1,4 +1,4 @@
-import promisePool from "../db/database.js";
+import promisePool from "../db/database";
 
 //get user profile data from users_profile table
 const getUserProfileById = async (id) => {

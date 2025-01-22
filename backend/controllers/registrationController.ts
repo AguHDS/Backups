@@ -1,6 +1,6 @@
-import promisePool from "../db/database.js";
+import promisePool from "../db/database";
 import { validationResult, matchedData } from "express-validator";
-import { encrypt } from "../utils/handlePassword.js";
+import { encrypt } from "../utils/handlePassword";
 
 const isNameOrEmailTaken = async (username, email) => {
   try {

@@ -1,8 +1,9 @@
-import config from "../config/environmentVars.js";
-import promisePool from "../db/database.js";
+import config from "../config/environmentVars";
+import promisePool from "../db/database";
 import { validationResult, matchedData } from "express-validator";
-import { compare } from "../utils/handlePassword.js";
-import { tokenSign } from "../utils/handleJwt.js";
+import { compare } from "../utils/handlePassword";
+import { tokenSign } from "../utils/handleJwt";
+import { JwtUserData } from "../types";
 
 const saveRefreshToken = async (userId, token, expiresAt) => {
   try {
@@ -71,8 +72,8 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const bodyWithRole = {
-      ...data,
+    const bodyWithRole: JwtUserData = {
+      name: user,
       role: userRow.role,
       id: userRow.id,
     };

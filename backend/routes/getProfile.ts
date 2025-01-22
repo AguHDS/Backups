@@ -1,6 +1,6 @@
 import express from "express";
-import getProfileController from "../controllers/getProfileController.js";
-import getProfileMiddleware from "../middlewares/getProfileMiddleware.js";
+import getProfileController from "../controllers/getProfileController";
+import getProfileMiddleware from "../middlewares/getProfileMiddleware";
 
 const router = express.Router();
 

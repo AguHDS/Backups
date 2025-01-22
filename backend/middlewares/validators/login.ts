@@ -1,7 +1,6 @@
-//validator for the login fields (backend)
-import { check } from "express-validator";
+import { check, ValidationChain } from "express-validator";
 
-const validatorLogin = [
+const validatorLogin: ValidationChain[] = [
   check("user")
     .notEmpty()
     .withMessage("User cannot be empty")
