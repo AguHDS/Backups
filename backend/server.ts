@@ -1,16 +1,16 @@
 import "dotenv/config";
-import config from "./config/environmentVars.js";
-import express from "express";
+import config from "./config/environmentVars";
+import express, { Express, Request, Response } from "express";
 import http from "http";
 import cookieParser from "cookie-parser";
 
 //cors
-import credentials from "./middlewares/credentials.js";
-import corsOptions from "./config/corsOption.js";
+import credentials from "./middlewares/credentials";
+import corsOptions from "./config/corsOption";
 import cors from "cors";
 
-/* import { initializeSocket } from "./livechat-socketHandler/socketHandler.js"; */
-import { createProxyMiddleware } from "http-proxy-middleware";
+/* import { initializeSocket } from "./livechat-socketHandler/socketHandler.ts"; */
+import { createProxyMiddleware, Options } from "http-proxy-middleware";
 
 //routes
 import {
@@ -19,12 +19,12 @@ import {
   logout,
   refreshToken,
   getProfile,
-  updateProfile
-} from "./routes/index.js";
+  updateProfile,
+} from "./routes/index";
 
 //cfg
-const app = express();
-const server = http.createServer(app);
+const app: Express = express();
+const server: http.Server = http.createServer(app);
 app.use(express.json());
 app.use(credentials);
 app.use(cors(corsOptions));
@@ -32,7 +32,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 //routes
-
 //auth
 app.use("/login", login);
 app.use("/registration", registration);
@@ -48,12 +47,12 @@ app.use(
   createProxyMiddleware({
     target: `http://localhost:${config.portFrontend}`,
     changeOrigin: true,
-  })
+  } as Options)
 );
 
 /* const io = initializeSocket(server); */
 
-app.get("/favicon.ico", (req, res) => {
+app.get("/favicon.ico", (req: Request, res: Response) => {
   res.status(204).end();
 });
 

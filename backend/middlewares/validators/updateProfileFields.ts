@@ -1,6 +1,6 @@
-import { check } from "express-validator";
+import { check, ValidationChain } from "express-validator";
 
-const validatorUpdateProfile = [
+const validatorUpdateProfile: ValidationChain[] = [
   check("bio")
     .trim()
     .notEmpty()

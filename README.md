@@ -58,8 +58,8 @@ VITE_FRONTENDPORT=frontend port
 VITE_BACKENDPORT=backend port
 ```
 
-* you must have installed mysql service on your computer, you can also use MySQLWorkbrench
-* in case you want to create your own database, you can read the "db/db_code_info.txt" file, there you have the code to create the tables
-* use npm start to run the backend and npm run dev to run the frontend
+- you must have installed mysql service on your computer, you can also use MySQLWorkbrench
+- in case you want to create your own database, you can read the "backend/db/db_code_info.txt" file, there you have the code to create the tables
+- use npm start to run the backend and npm run dev to run the frontend
 
 note: tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again

@@ -9,7 +9,8 @@ practica/
 to-do.txt
 /backend/db/tables_code.txt
 z_comm.txt
-z_aprender
+z_aprender.txt
+z_tsnotes.txt
 
 # Ignorar archivos específicos en backend
 /backend/env.example
