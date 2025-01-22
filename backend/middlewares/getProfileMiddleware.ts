@@ -1,4 +1,4 @@
-import { getUserByName } from "../db/queries/index.js";
+import { getUserByName } from "../db/queries/index";
 
 //check if the username provided in the params of the url exists in users table and extract: username, role, email and id
 const getProfileMiddleware = async (req, res, next) => {
