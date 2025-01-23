@@ -26,6 +26,16 @@ async function checkConnection() {
     }
 }
 
+//close connection pool when app is closed
+export async function closeDatabasePool() {
+    try {
+      await promisePool.end();
+      console.log("Connection pool to db closed");
+    } catch (error) {
+      console.error("Error closing the connection pool:", error);
+    }
+  }
+
 checkConnection();
 
 export default promisePool;

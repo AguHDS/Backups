@@ -9,7 +9,7 @@ const updateProfile = async (bio: string, title: string, description: string, id
   try {
     await connection.beginTransaction();
 
-    const [result] = await connection.query<ResultSetHeader>(
+    const [result] = await connection.execute<ResultSetHeader>(
       `UPDATE users_profile SET bio = ? WHERE fk_users_id = ?`,
       [bio, id]
     );
@@ -17,7 +17,7 @@ const updateProfile = async (bio: string, title: string, description: string, id
     if (result.affectedRows === 0)
       throw new Error("No profile found for the given user ID");
 
-    const [result2] = await connection.query<ResultSetHeader>(
+    const [result2] = await connection.execute<ResultSetHeader>(
       `UPDATE users_profile_sections SET title = ?, description = ? WHERE fk_users_id = ?`,
       [title, description, id]
     );
@@ -40,13 +40,12 @@ interface ProfileSection {
   description: string;
 }
 
-interface ProfileData {
+interface ProfileDataToUpdate {
   bio: string;
   sections: ProfileSection[];
-  userId: string;
 }
 
-const updateProfileController: RequestHandler<{}, { message: string } | { errors: ValidationError[] }, ProfileData> = 
+const updateProfileController: RequestHandler<{}, { message: string } | { errors: ValidationError[] }, { userId: string }, {}> = 
 async (req, res): Promise<void> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -55,7 +54,7 @@ async (req, res): Promise<void> => {
     return;
   }
 
-  const cleanData = matchedData(req);
+  const cleanData = matchedData(req) as ProfileDataToUpdate;
   console.log("cleanData (updateProfileController):", cleanData);
 
   const { userId } = req.body;

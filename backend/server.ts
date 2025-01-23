@@ -3,6 +3,7 @@ import config from "./config/environmentVars";
 import express, { Express, Request, Response } from "express";
 import http from "http";
 import cookieParser from "cookie-parser";
+import { closeDatabasePool } from "./db/database";
 
 //cors
 import credentials from "./middlewares/credentials";
@@ -55,6 +56,25 @@ app.use(
 app.get("/favicon.ico", (req: Request, res: Response) => {
   res.status(204).end();
 });
+
+//close connection pool when app is closed
+const shutDown = async ()=> {
+  console.log("Closing connection pool to db");
+  try {
+    await closeDatabasePool();
+    server.close(() => {
+      console.log("Server closed");
+      process.exit(0);
+    });
+  } catch (error) {
+    console.error("Error during shutdown:", error);
+    process.exit(1);
+  }
+};
+//ctrl + c
+process.on("SIGINT", shutDown);
+//for docker and production
+process.on("SIGTERM", shutDown);
 
 server.listen(`${config.portBackend}`, () => {
   console.log(`Listening on: http://localhost:${config.portBackend}`);
