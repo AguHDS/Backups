@@ -7,7 +7,8 @@ interface DecodedToken extends JwtPayload {
   id: string;
 }
 
-const updateProfileMiddleware: RequestHandler = (req, res, next): void => {
+const updateProfileMiddleware: RequestHandler<{ username: string }, { message: string }, { userId: string }, {}> = 
+(req, res, next): void => {
   try {
     const cookies = req.cookies;
 
@@ -44,9 +45,7 @@ const updateProfileMiddleware: RequestHandler = (req, res, next): void => {
     next();
   } catch (error) {
     console.error("An error occurred in updateProfileMiddleware:", error);
-    res.status(500).json({
-      message: "Internal server error in updateProfileMiddleware",
-    });
+    res.status(500).json({ message: "Internal server error in updateProfileMiddleware" });
     return;
   }
 };
