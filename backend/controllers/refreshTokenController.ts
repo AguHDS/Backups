@@ -1,11 +1,14 @@
 import config from "../config/environmentVars";
-import promisePool from "../db/database";
+import { RequestHandler } from "express";
 import { tokenSign } from "../utils/handleJwt";
+import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
+import promisePool from "../db/database";
+import { JwtUserData } from "../types";
 
 //get expiration time of the first refresh token emited.
-const getDateTime = async (userId, connection) => {
+const getDateTime = async (userId: number, connection: Connection): Promise<string | null> => {
   try {
-    const [results] = await connection.query(
+    const [results] = await connection.execute<RowDataPacket[]>(
       "SELECT expires_at FROM refresh_tokens WHERE user_id = ?",
       [userId]
     );
@@ -19,9 +22,9 @@ const getDateTime = async (userId, connection) => {
   }
 };
 
-const getUserById = async (id, connection) => {
+const getUserById = async (id: string, connection: Connection): Promise<RowDataPacket[]> => {
   try {
-    const [rows] = await connection.query(
+    const [rows] = await connection.execute<RowDataPacket[]>(
       "SELECT * FROM users WHERE id = ?",
       [id]
     );
@@ -32,9 +35,9 @@ const getUserById = async (id, connection) => {
   }
 };
 
-const updateRefreshTokenFromDB = async (refreshToken, userId, connection) => {
+const updateRefreshTokenFromDB = async (refreshToken: string, userId: number, connection: Connection) => {
   try {
-    const [results] = await connection.query(
+    const [results] = await connection.execute<ResultSetHeader>(
       "UPDATE refresh_tokens SET token = ? WHERE user_id = ?",
       [refreshToken, userId]
     );
@@ -50,33 +53,47 @@ const updateRefreshTokenFromDB = async (refreshToken, userId, connection) => {
   }
 };
 
+interface TokenResponse {
+  accessToken: string;
+  userData: {
+    name: string;
+    role: string;
+    id: number;
+  };
+}
+
 //send new access token if everything was validated
-const sendNewAccessToken = async (req, res) => {
+const sendNewAccessToken: RequestHandler<{}, { message: string } | TokenResponse, { userTokenId: string }, {}> = 
+async (req, res) => {
   const connection = await promisePool.getConnection();
   try {
     await connection.beginTransaction();
 
-    //use id from preevious refreshToken, to get user data from database
-    const { userId } = req.user;
-    const userName = await getUserById(userId, connection);
-    const { namedb, role, id } = userName[0];
+    //use id from previous refreshToken to get user data from database
+    const { userTokenId } = req.body;
+    const userRow = await getUserById(userTokenId, connection);
+    const { namedb, role, id } = userRow[0];
 
     //rename namedb to match with the structure of tokenSign
-    const userData = { user: namedb, role, id };
+    const userData: JwtUserData = { name: namedb, role, id };
 
     const accessToken = await tokenSign(userData, "access", "30s");
 
     const unmodifiedExpirationTime = await getDateTime(id, connection);
     if (!unmodifiedExpirationTime) {
       console.error(`No refresh token found for user in db: ${id}`);
-      return res.status(404).json({ message: "Refresh token not found for the user in db" });
+      res.status(404).json({ message: "Refresh token not found for the user in db" });
+      return;
     } 
 
     //converts the expiration time to seconds
-    const timeRemaining = Math.floor((new Date(unmodifiedExpirationTime) - Date.now()) / 1000);
+    const expirationDate = new Date(unmodifiedExpirationTime);
+    const timeRemaining = Math.floor((expirationDate.getTime() - Date.now()) / 1000);
+
     if (timeRemaining <= 0) {
       console.error(`Refresh token expired for user: ${id}`);
-      return res.status(403).json({ message: "Refresh token has expired" });
+      res.status(403).json({ message: "Refresh token has expired" });
+      return;
     }
 
     /* the expiration time of the refresh token is calculated to have same time than the first refresh token emited, so the expiration 
@@ -90,18 +107,20 @@ const sendNewAccessToken = async (req, res) => {
       httpOnly: true,
       secure: config.nodeEnv === "production",
       maxAge: timeRemaining * 1000,
-      sameSite: config.nodeEnv === "production" ? "None" : "Lax",
+      sameSite: config.nodeEnv === "production" ? "none" : "lax",
     });
 
     console.log("sending new access token, updating refresh token...");
-    return res.status(200).json({
-      accessToken,
-      userData,
-    });
+    res.status(200).json({ accessToken, userData });
+    return;
   } catch (error) {
     await connection.rollback();
-    console.error(`Error trying to update the token. ${error.message}`);
-    return res.status(500).json({ message: "Internal Server Error" });
+    
+    if(error instanceof Error) {
+      console.error(`Error trying to update the token. ${error.message}`);
+    }
+    res.status(500).json({ message: "Internal Server Error" });
+    return;
   } finally {
     connection.release();
   }
