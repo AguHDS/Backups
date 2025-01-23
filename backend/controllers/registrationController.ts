@@ -1,11 +1,24 @@
-import promisePool from "../db/database";
-import { validationResult, matchedData } from "express-validator";
+import { RequestHandler } from "express";
+import { validationResult, matchedData, ValidationError } from "express-validator";
 import { encrypt } from "../utils/handlePassword";
+import promisePool from "../db/database";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 
-const isNameOrEmailTaken = async (username, email) => {
+interface NameAndEmailCheckResult {
+  isTaken: boolean;
+  userTaken: string | null;
+  emailTaken: string | null;
+}
+
+interface UserRow extends RowDataPacket {
+  namedb: string;
+  emaildb: string;
+}
+
+const isNameOrEmailTaken = async (username: string, email: string): Promise<NameAndEmailCheckResult> => {
   try {
-    const query = `SELECT namedb, emaildb FROM users WHERE namedb = ? OR emaildb = ?`;
-    const [results] = await promisePool.query(query, [username, email]);
+    const [results] = await promisePool.execute<UserRow[]>('SELECT namedb, emaildb FROM users WHERE namedb = ? OR emaildb = ?', 
+    [username, email]);
 
     if (results.length > 0) {
       console.error("User or email already exists in the database");
@@ -32,26 +45,26 @@ const isNameOrEmailTaken = async (username, email) => {
   }
 };
 
-const insertNewUser = async (name, email, pass, role) => {
+const insertNewUser = async (name: string, email: string, pass: string, role: string): Promise<void> => {
   const connection = await promisePool.getConnection();
   try {
     await connection .beginTransaction();
 
     //insert new user in users table
-    const [userResult] = await connection.query(
+    const [userResult] = await connection.execute<ResultSetHeader>(
       "INSERT INTO users (namedb, emaildb, passdb, role) VALUES (?, ?, ?, ?)",
       [name, email, pass, role]
     );
 
     //add foreign key to users_profile table
     const userId = userResult.insertId;
-    await connection.query(
+    await connection.execute(
       "INSERT INTO users_profile (fk_users_id) VALUES (?)",
       [userId]
     );
 
     //add foreign key to users_profile_sections table
-    await connection.query(
+    await connection.execute(
       "INSERT INTO users_profile_sections (fk_users_id) VALUES (?)",
       [userId]
     );
@@ -66,15 +79,23 @@ const insertNewUser = async (name, email, pass, role) => {
   }
 };
 
-const register = async (req, res) => {
+interface UserData {
+  user: string;
+  password: string
+  email: string;
+}
+
+const register: RequestHandler<{}, { message: string } | { errors: ValidationError[] }, UserData, {}> = 
+async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.error("Validation errors found", errors.array());
-      return res.status(400).json({ errors: errors.array() });
+      res.status(400).json({ errors: errors.array() });
+      return;
     }
 
-    const data = matchedData(req);
+    const data: UserData = matchedData(req);
     const password = await encrypt(data.password);
     const body = { ...data, password };
 
@@ -83,33 +104,37 @@ const register = async (req, res) => {
     if (nameAndEmail.isTaken) {
       if (nameAndEmail.userTaken && !nameAndEmail.emailTaken) {
         console.error(`User ${body.user} already exists`);
-        return res.status(409).json({ message: `User is taken` });
+
+        res.status(409).json({ message: `User is taken` });
+        return;
       }
 
       if (!nameAndEmail.userTaken && nameAndEmail.emailTaken) {
         console.error(`Email ${body.email} already exists`);
-        return res.status(409).json({ message: `Email is taken` });
+
+        res.status(409).json({ message: `Email is taken` });
+        return;
       }
 
       if (nameAndEmail.userTaken && nameAndEmail.emailTaken) {
         console.error(`User ${body.user} and ${body.email} already exist`);
-        return res.status(409).json({
-          message: "The user and email are taken",
-        });
+
+        res.status(409).json({ message: "The user and email are taken" });
+        return;
       }
     }
 
     //if not taken, proceed with registration
     await insertNewUser(body.user, body.email, body.password, "user");
+    console.log(`User: ${body.user} and email: ${body.email} saved successfully`);
 
-    console.log(
-      `User: ${body.user} and email: ${body.email} saved successfully`
-    );
-
-    return res.status(200).json({ message: "Registration completed" });
+    res.status(200).json({ message: "Registration completed" });
+    return;
   } catch (error) {
     console.error("Unexpected error", error);
-    return res.status(500).json({ message: "Error trying to sign up" });
+
+    res.status(500).json({ message: "Error trying to sign up" });
+    return;
   }
 };
 
