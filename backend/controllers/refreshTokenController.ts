@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 import { tokenSign } from "../utils/handleJwt";
 import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
 import promisePool from "../db/database";
+import { getUserById } from "../db/queries";
 import { JwtUserData, ValidUserData } from "../types";
 
 //get expiration time of the first refresh token emited.
@@ -19,19 +20,6 @@ const getDateTime = async (userId: number, connection: Connection): Promise<stri
   } catch (error) {
     console.error("Error in getDateTime:", error);
     throw error;
-  }
-};
-
-const getUserById = async (id: string, connection: Connection): Promise<RowDataPacket[]> => {
-  try {
-    const [rows] = await connection.execute<RowDataPacket[]>(
-      "SELECT * FROM users WHERE id = ?",
-      [id]
-    );
-    return rows;
-  } catch (error) {
-    console.error("Error retrieving user from database:", error);
-    throw new Error("Error retrieving user from database");
   }
 };
 
@@ -63,6 +51,12 @@ async (req, res) => {
     //use id from previous refreshToken to get user data from database
     const { userTokenId } = req.body;
     const userRow = await getUserById(userTokenId, connection);
+    if(!userRow) {
+      console.error(`User not found in db: ${userTokenId}`);
+      res.status(404).json({ message: "User not found in db" });
+      return;
+    }
+
     const { namedb, role, id } = userRow[0];
 
     //rename namedb to match with the structure of tokenSign

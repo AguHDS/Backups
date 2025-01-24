@@ -21,16 +21,9 @@ const deleteRefreshFromDB = async (userId: number): Promise<void> => {
   }
 };
 
-interface CustomRequest extends Request {
-  userData: {
-    id: number;
-    hasRefreshCookie: boolean;
-  };
-}
-
-const logout = async (req: CustomRequest, res: Response): Promise<void> => {
+const logout = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id, hasRefreshCookie } = req.userData;
+    const { id, hasRefreshCookie } = req.activeSessionData!;
 
     if (hasRefreshCookie) res.clearCookie("refreshToken", { httpOnly: true });
 

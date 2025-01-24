@@ -1,11 +1,21 @@
+import { RowDataPacket, Connection } from "mysql2/promise";
 import promisePool from "../database";
 
-const getUserById = async (id) => {
+const getUserById = async (id: string, connection?: Connection): Promise<RowDataPacket | null> => {
   try {
-    const [rows] = await promisePool.query(
-      "SELECT * FROM users WHERE id = ?",
-      [id]
-    );
+    let rows: RowDataPacket[];
+
+    if(!connection) {
+      [rows] = await promisePool.execute<RowDataPacket[]>(
+        "SELECT * FROM users WHERE id = ?",
+        [id]
+      );
+    }else {
+      [rows] = await connection.execute<RowDataPacket[]>(
+        "SELECT * FROM users WHERE id = ?",
+        [id]
+      );
+    }
 
     if (rows.length === 0) {
       console.error("User by id not found in database");

@@ -1,6 +1,6 @@
 import config from "./environmentVars";
 
-const allowedOrigins = [
+const allowedOrigins: string[] = [
   `http://localhost:${config.portFrontend}`,
   `http://localhost:${config.portBackend}`,
 ];
