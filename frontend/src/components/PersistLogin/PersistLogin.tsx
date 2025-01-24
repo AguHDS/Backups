@@ -2,10 +2,10 @@ import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 //components
-import { LoadingSpinner, Modal } from "../";
+import { LoadingSpinner, Modal } from "..";
 
 //context
-import { useModalContext } from "../Modal/context/ModalContext.jsx";
+import { useModalContext } from "../Modal/context/ModalContext.js";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
