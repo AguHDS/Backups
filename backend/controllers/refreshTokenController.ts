@@ -3,7 +3,7 @@ import { RequestHandler } from "express";
 import { tokenSign } from "../utils/handleJwt";
 import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
 import promisePool from "../db/database";
-import { JwtUserData } from "../types";
+import { JwtUserData, ValidUserData } from "../types";
 
 //get expiration time of the first refresh token emited.
 const getDateTime = async (userId: number, connection: Connection): Promise<string | null> => {
@@ -53,17 +53,8 @@ const updateRefreshTokenFromDB = async (refreshToken: string, userId: number, co
   }
 };
 
-interface TokenResponse {
-  accessToken: string;
-  userData: {
-    name: string;
-    role: string;
-    id: number;
-  };
-}
-
 //send new access token if everything was validated
-const sendNewAccessToken: RequestHandler<{}, { message: string } | TokenResponse, { userTokenId: string }, {}> = 
+const sendNewAccessToken: RequestHandler<{}, { message: string } | ValidUserData, { userTokenId: string }, {}> = 
 async (req, res) => {
   const connection = await promisePool.getConnection();
   try {
