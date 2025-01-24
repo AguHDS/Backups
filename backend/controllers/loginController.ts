@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import config from "../config/environmentVars";
 import promisePool from "../db/database";
+import { getUserByName } from "../db/queries/index";
 import { RowDataPacket } from "mysql2/promise";
 import { validationResult, ValidationError, matchedData } from "express-validator";
 import { compare } from "../utils/handlePassword";
@@ -32,19 +33,6 @@ const saveRefreshToken = async (userId: number, token: string, expiresAt: Date):
   }
 };
 
-const getUserByName = async (username: string): Promise<RowDataPacket[]> => {
-  try {
-    const [rows] = await promisePool.execute<RowDataPacket[]>(
-      "SELECT * FROM users WHERE namedb = ?",
-      [username]
-    );
-    return rows;
-  } catch (error) {
-    console.error("Error retrieving user from database:", error);
-    throw new Error("Error retrieving user from database");
-  }
-};
-
 interface UserData {
   user: string;
   password: string
@@ -66,13 +54,18 @@ async (req, res) => {
     //check if the user exists in users table
     const userResult = await getUserByName(user);
 
+    if(!userResult) {
+      res.status(401).json({ message: "Credentials don't exist" });
+      return;
+    }
+
     if (userResult.length === 0) {
       console.error("Credentials don't exist for user:", user);
       res.status(401).json({ message: "Credentials don't exist" });
       return;
     }
 
-    const userRow = userResult[0];
+    const userRow = userResult;
 
     //compare password sent by the user with the password in the database
     const comparedPassword = await compare(password, userRow.passdb);
