@@ -1,2 +1,2 @@
-export * from './userModel'
+export * from './validUserData'
 export * from './jwtUserData'
