@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useModalContext } from "../../components/Modal/context/ModalContext.jsx";
-import useFetch from "../../hooks/useFetch";
-import { Modal, LoadingSpinner } from "../../components";
+import { useModalContext } from "../../components/Modal/context/ModalContext.js";
+import useFetch from "../../hooks/useFetch.js";
+import { Modal, LoadingSpinner } from "../../components/index.js";
 import images from "../../assets/images.js";
 import {
   Header,
@@ -12,7 +12,7 @@ import {
   UserInfo,
   Storage,
   ProfileContent,
-} from "./components";
+} from "./components/index.js";
 
 export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);

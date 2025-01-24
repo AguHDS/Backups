@@ -5,11 +5,11 @@ import { Navigate, useNavigate } from "react-router-dom";
 import images from "../../assets/images.js";
 
 //components
-import { FeatureCard, Header } from "./components";
-import { Button, TermsAndConditions, Modal } from "../../components";
+import { FeatureCard, Header } from "./components/index.js";
+import { Button, TermsAndConditions, Modal } from "../../components/index.js";
 
 //context
-import { useModalContext } from "../../components/Modal/context/ModalContext.jsx";
+import { useModalContext } from "../../components/Modal/context/ModalContext.js";
 
 export const Home = () => {
   const { setIsModalOpen } = useModalContext();

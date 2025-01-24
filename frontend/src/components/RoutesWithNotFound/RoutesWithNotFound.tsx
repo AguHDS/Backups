@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 //components
-import { NotFound } from "../";
+import { NotFound } from "..";
 
 export const RoutesWithNotFound = ({ children }) => {
   return (
