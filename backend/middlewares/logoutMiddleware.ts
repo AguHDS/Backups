@@ -12,14 +12,7 @@ const hasTokenInDB = async (userId: number): Promise<RowDataPacket | null> => {
   return results.length === 0 ? null : results[0];
 };
 
-interface CustomRequest extends Request {
-  userData?: {
-    id: number;
-    hasRefreshCookie: boolean;
-  };
-}
-
-const hasSessionOpen = async (req: CustomRequest, res: Response, next: NextFunction): Promise<void> => {
+const hasSessionOpen = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     let hasRefreshCookie;
     const { id } = req.body;
@@ -48,7 +41,7 @@ const hasSessionOpen = async (req: CustomRequest, res: Response, next: NextFunct
       hasRefreshCookie = true;
     }
     
-    req.userData = { id, hasRefreshCookie };
+    req.activeSessionData = { id, hasRefreshCookie };
     next();
   } catch (error) {
     console.log("error in logout middleware ", error);
