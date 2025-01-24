@@ -1,8 +1,9 @@
 import promisePool from "../database";
+import { RowDataPacket } from "mysql2/promise";
 
-const getUserByName = async (username) => {
+const getUserByName = async (username: string): Promise<RowDataPacket | null> => {
   try {
-    const [rows] = await promisePool.query(
+    const [rows] = await promisePool.execute<RowDataPacket[]>(
       "SELECT * FROM users WHERE namedb = ?",
       [username]
     );

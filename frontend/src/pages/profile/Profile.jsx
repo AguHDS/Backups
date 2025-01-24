@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
-//components
+import { useSelector } from "react-redux";
+import { useModalContext } from "../../components/Modal/context/ModalContext.jsx";
+import useFetch from "../../hooks/useFetch";
+import { Modal, LoadingSpinner } from "../../components";
+import images from "../../assets/images.js";
 import {
   Header,
   ActionsAndProfileImg,
@@ -10,19 +13,6 @@ import {
   Storage,
   ProfileContent,
 } from "./components";
-import { Modal, LoadingSpinner } from "../../components";
-
-//context
-import { useModalContext } from "../../components/Modal/context/ModalContext.jsx";
-
-//redux
-import { useSelector } from "react-redux";
-
-//custom hooks
-import useFetch from "../../hooks/useFetch";
-
-//assets
-import images from "../../assets/images.js";
 
 export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -41,7 +31,7 @@ export const Profile = () => {
     };
   }, [isLoading, setIsModalOpen]);
 
-  const isOwnProfile = isAuthenticated && userData.id === data?.userData.id;
+  const isOwnProfile = isAuthenticated && userData.id === data.id;
 
   //get profile data from database
   useEffect(() => {
@@ -87,7 +77,7 @@ export const Profile = () => {
           <div className="w-[80vw] max-w-full">
             <Header
               isOwnProfile={isOwnProfile}
-              username={data.userData.username}
+              username={data.username}
               isEditing={isEditing}
               setIsEditing={setIsEditing}
             />
@@ -102,10 +92,11 @@ export const Profile = () => {
                     addFriendIcon={images.addFriend}
                   />
                   <UserInfo
-                    role={data.userData.role}
-                    friendsCounter={data.userData.friends}
-                    partner={data.userData.partner}
+                    role={data.role}
+                    friendsCounter={data.userProfileData.friends}
+                    partner={data.userProfileData.partner}
                   />
+
                   <h3 className="text-center my-5">Storage</h3>
                   <Graph graphTestImage={images.graph} />
                   <Storage
@@ -118,9 +109,9 @@ export const Profile = () => {
                 {/* right area */}
                 <ProfileContent
                   isEditing={isEditing}
-                  bio={data.userData.bio}
-                  title={data.userData.sections.title}
-                  description={data.userData.sections.description}
+                  bio={data.userProfileData.bio}
+                  title={data.userSectionData.title}
+                  description={data.userSectionData.description}
                 />
               </div>
             </div>
