@@ -1,8 +1,10 @@
+import { Response, Request } from "express";
 import promisePool from "../db/database";
+import { ResultSetHeader } from "mysql2/promise";
 
-const deleteRefreshFromDB = async (userId) => {
+const deleteRefreshFromDB = async (userId: number): Promise<void> => {
   try {
-    const deletedRefresh = await promisePool.query(
+    const [deletedRefresh] = await promisePool.execute<ResultSetHeader>(
       "DELETE FROM refresh_tokens WHERE user_id = ?",
       [userId]
     );
@@ -19,7 +21,14 @@ const deleteRefreshFromDB = async (userId) => {
   }
 };
 
-const logout = async (req, res) => {
+interface CustomRequest extends Request {
+  userData: {
+    id: number;
+    hasRefreshCookie: boolean;
+  };
+}
+
+const logout = async (req: CustomRequest, res: Response): Promise<void> => {
   try {
     const { id, hasRefreshCookie } = req.userData;
 
@@ -27,11 +36,14 @@ const logout = async (req, res) => {
 
     await deleteRefreshFromDB(id);
     console.log("logout successfull");
-    return res.status(200).json({ msg: "Logout successful" });
+    
+    res.status(200).json({ message: "Logout successful" });
+    return;
   } catch (error) {
     console.error("Error in logout controller:", error);
 
-    return res.status(500).json({ msg: "Logout failed" });
+    res.status(500).json({ message: "Logout failed" });
+    return;
   }
 };
 

@@ -35,7 +35,7 @@ const getUserById = async (id: string, connection: Connection): Promise<RowDataP
   }
 };
 
-const updateRefreshTokenFromDB = async (refreshToken: string, userId: number, connection: Connection) => {
+const updateRefreshTokenFromDB = async (refreshToken: string, userId: number, connection: Connection): Promise<ResultSetHeader> => {
   try {
     const [results] = await connection.execute<ResultSetHeader>(
       "UPDATE refresh_tokens SET token = ? WHERE user_id = ?",
