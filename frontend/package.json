@@ -22,8 +22,14 @@
     "tailwind-scrollbar": "^3.1.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@types/jwt-decode": "^2.2.1",
+    "@types/node": "^22.10.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/redux": "^3.6.31",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "concurrently": "^9.1.0",
     "dotenv": "^16.4.7",
@@ -33,6 +39,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "tailwindcss": "^3.4.14",
+    "typescript": "^5.7.3",
     "vite": "^5.3.4",
     "wait-on": "^8.0.1"
   }

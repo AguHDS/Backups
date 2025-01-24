@@ -8,13 +8,6 @@ export default {
   corePlugins: {
     preflight: false,
   },
-  /* theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-    },
-    extend: {},
-  } */
   plugins: [
     tailwindScrollbar({ nocompatible: true }), //use this on true for compatibility with modern browsers
   ],
