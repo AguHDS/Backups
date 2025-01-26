@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 export const getNewToken = createAsyncThunk(
   "auth/refreshToken",
@@ -26,7 +27,6 @@ export const getNewToken = createAsyncThunk(
           return rejectWithValue("Invalid or expired refresh token");
         }
 
-
         throw new Error(errorText || "Not authorized");
       }
 
@@ -35,20 +35,25 @@ export const getNewToken = createAsyncThunk(
 
       return data;
     } catch (error) {
-      console.error("Token authentication failed: ", error.message);
-      return rejectWithValue(error.message);
+      if(error instanceof Error) {
+        console.error("Token authentication failed: ", error.message);
+        return rejectWithValue(error.message);
+      } else {
+        console.error("An unknown error occurred");
+        return rejectWithValue("An unknown error occurred");
+      }
     }
   }
 );
 
-export const logout = createAsyncThunk(
+export const logout = createAsyncThunk<{ message: string }, void,  { state: RootState }>(
   "auth/logout",
   async (_, { rejectWithValue, getState }) => {
     try {
         const state = getState();
         const userId = state.auth.userData.id;
 
-      const response = await fetch(
+        const response = await fetch(
         `http://localhost:${import.meta.env.VITE_BACKENDPORT}/logout`,
         {
           method: "POST",
@@ -69,8 +74,13 @@ export const logout = createAsyncThunk(
       console.log("Session ended");
       return { message: "Session ended" };
     } catch (error) {
-      console.error("Failed trying to end session: ", error.message);
-      return rejectWithValue(error.message);
+      if(error instanceof Error) {
+        console.error("Failed trying to end session: ", error.message);
+        return rejectWithValue(error.message);
+      } else {
+        console.error("An unknown error occurred");
+        return rejectWithValue("An unknown error occurred");
+      }
     }
   }
 );

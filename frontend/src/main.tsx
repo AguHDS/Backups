@@ -3,8 +3,14 @@ import ReactDOM from "react-dom/client";
 import "./output.css";
 import AppProvider from "./AppProvider";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
- <React.StrictMode>
-    <AppProvider />
- </React.StrictMode>
-);
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("No root element found");
+}
+
+ReactDOM.createRoot(rootElement).render(
+   <React.StrictMode>
+     <AppProvider />
+   </React.StrictMode>
+ );
