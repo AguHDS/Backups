@@ -1,4 +1,6 @@
+import React from "react";
 import { Route, Navigate } from "react-router-dom";
+import type { RootState } from "./redux/store";
 
 //components
 import { PersistLogin, ProtectedRoute, RoutesWithNotFound } from "./components";
@@ -16,7 +18,7 @@ import {
 import { useSelector } from "react-redux";
 
 export const AppRouter = () => {
-const { isAuthenticated } = useSelector((state) => state.auth);
+const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   return (
     <RoutesWithNotFound>

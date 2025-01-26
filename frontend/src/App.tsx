@@ -1,6 +1,11 @@
+import React, { ReactNode } from "react";
 import { NavBar } from "./components";
 
-const App = ({ children }) => {
+interface Props {
+  children: ReactNode;
+}
+
+const App = ({ children }: Props) => {
   return (
     <>
       <NavBar /> 
