@@ -1,39 +1,42 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-
-//custom hooks
 import useFetch from "./useFetch";
-
-//helpers
+import { useDispatch } from "react-redux";
+import { login } from "../redux/features/authSlice";
+import { UserDataWithToken } from "../types";
 import {
   getFormData,
   validateLoginFields,
   validateLoginStatus,
 } from "../helpers";
 
-//redux
-import { useDispatch } from "react-redux";
-import { login } from "../redux/features/authSlice";
+type AuthResponse = UserDataWithToken | { message: string };
+
+interface AuthInput  {
+  user: string;
+  password: string;
+  email: string;
+  inputsWarnings: string[];
+}
 
 /**
- * Validator and error handler for login and sign up
- */
+ * Validator for login and registration
+*/
 
 export const useAuth = () => {
-  const [input, setInput] = useState({
+  const [input, setInput] = useState<AuthInput>({
     user: "",
     password: "",
     email: "",
     inputsWarnings: [],
   });
-
-  const [statusMessage, setStatusMessage] = useState(null);
-  const { data, status, fetchData } = useFetch();
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const { data, status, fetchData } = useFetch<AuthResponse>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  //frontent validation
-  const errorCheck = () => {
+  //frontend input validation
+  const errorCheck = (): boolean => {
     const warnings = validateLoginFields(
       input.user,
       input.password,
@@ -47,12 +50,12 @@ export const useAuth = () => {
     return warnings.length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     //if there is not input errors, consume /registration or /login
     if (errorCheck()) {
-      const formData = getFormData(e.target);
+      const formData = getFormData(e.currentTarget);
 
       let endpoint = "";
 
@@ -77,13 +80,12 @@ export const useAuth = () => {
 
   useEffect(() => {
     if (data === null || status === null) return;
-    console.log('useEffect useAUth ejecutado')
 
     const { message, redirect } = validateLoginStatus(status);
     setStatusMessage(message);
 
     //if user registers, redirect without login
-    if (data.message === "Registration completed") {
+    if ("message" in data && data.message === "Registration completed") {
       navigate("/");
       window.location.reload();
       return;

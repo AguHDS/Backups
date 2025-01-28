@@ -1,4 +1,4 @@
-export const validateLoginFields = (user, password, email) => {
+export const validateLoginFields = ( user: string, password: string, email?: string): string[] => {
   const errors = [];
   const regex = /^[a-zA-Z0-9]+$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -24,9 +24,14 @@ export const validateLoginFields = (user, password, email) => {
   return errors;
 };
 
+interface ValidationStatus {
+  message: string;
+  redirect: boolean;
+}
+
 /*  backend status errors */
 
-export const validateLoginStatus = (status) => {
+export const validateLoginStatus = (status: number): ValidationStatus => {
   if (status >= 200 && status < 300) {
     return { message: "Operation successful", redirect: true };
   } else if (status === 401) {
@@ -42,5 +47,3 @@ export const validateLoginStatus = (status) => {
     };
   }
 };
-
-//if the form goes larger, consider to use Yup/Zup library to make this
