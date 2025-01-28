@@ -9,7 +9,7 @@ import { useModalContext } from "../Modal/context/ModalContext.js";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { getNewToken } from "../../redux/features/authThunks";
+import { getNewRefreshToken } from "../../redux/features/authThunks";
 
 //this component will try to get new tokens every time the app is reloaded
 export const PersistLogin = () => {
@@ -32,7 +32,7 @@ export const PersistLogin = () => {
     const verifyRefreshToken = async () => {
       try {
         if (!isAuthenticated && !accessToken) {
-          await dispatch(getNewToken()).unwrap();
+          await dispatch(getNewRefreshToken()).unwrap();
         }
       } catch (error) {
         console.error("Failed trying to verify refresh token:", error);

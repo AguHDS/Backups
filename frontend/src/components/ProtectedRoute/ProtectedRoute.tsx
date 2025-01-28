@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
-import { getNewToken } from "../../redux/features/authThunks";
+import { getNewRefreshToken } from "../../redux/features/authThunks";
 
 //check if the expiration time is valid
 const isAccessTokenValid = (accessToken) => {
@@ -31,11 +31,9 @@ export const ProtectedRoute = () => {
       if (!isAuthenticated || !isAccessTokenValid(accessToken)) {
         try {
           console.log("[Protected Route] trying to get new tokens");
-          const response = await dispatch(getNewToken());
+          const response = await dispatch(getNewRefreshToken());
           if (response.payload === 401) {
-            console.error(
-              "[Protected Route] No refresh token in cookies. Redirecting to login."
-            );
+            console.error("[Protected Route] No refresh token in cookies. Redirecting to login");
             navigate("/sign-in");
           }
         } catch (error) {

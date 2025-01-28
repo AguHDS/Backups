@@ -60,7 +60,7 @@ async (req, res) => {
     const { namedb, role, id } = userRow[0];
 
     //rename namedb to match with the structure of tokenSign
-    const userData: JwtUserData = { name: namedb, role, id };
+    const userData: JwtUserData = { name: namedb, role: role, id: id };
 
     const accessToken = await tokenSign(userData, "access", "30s");
 
