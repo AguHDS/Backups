@@ -1,15 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getNewRefreshToken, logout } from "./authThunks";
-
-interface UserData {
-  name?: string;
-  role?: string;
-  id?: number;
-}
+import { UserData } from "../../types";
 
 interface AuthState {
   accessToken: string | null,
-  userData: UserData,
+  userData: Partial<UserData>,
   status: "idle" | "loading" | "succeeded" | "failed";
   isAuthenticated: boolean,
   error?: string | number | null,
