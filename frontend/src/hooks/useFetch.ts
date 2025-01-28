@@ -1,19 +1,25 @@
 import { useState, useCallback } from "react";
 
+interface FetchResponse<Data> {
+  data: Data | null;
+  isLoading: boolean;
+  status: number | null;
+  error: string | null;
+  fetchData: (url: string, options?: RequestInit) => Promise<void>;
+}
+
 /**
- * custom fetch, don't have useEffect included
- * @param {string} url - url to fetch
- * @param {Object} options - fetch options
- * @returns {Object} data, isLoading, status, responseError, fetchData, cancelRequest
- */
+ * Custom fetch without useEffect included
+ * @returns {Object} data, isLoading, status, error, fetchData
+*/
 
-export default function useFetch() {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [status, setStatus] = useState(null);
-  const [error, setError] = useState(null);
+export default function useFetch<Data = unknown>(): FetchResponse<Data> {
+  const [data, setData] = useState<Data | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [status, setStatus] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchData = useCallback(async (url, options) => {
+  const fetchData = useCallback(async (url: string, options?: RequestInit): Promise<void> => {
     setIsLoading(true);
     setStatus(null);
     setError(null);
@@ -25,16 +31,17 @@ export default function useFetch() {
       if (!response.ok) {
         const errorData = await response.json();
         setStatus(response.status);
-        setError(errorData || "Something went wrong");
+        setError(typeof errorData === "string" ? errorData : JSON.stringify(errorData));
         return;
       }
 
       const result = await response.json();
       setStatus(response.status);
       setData(result);      
-    } catch (err) {
-      console.error("Error fetching data:", err.message);
-      setError(err.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error (useFetch)";
+      console.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
