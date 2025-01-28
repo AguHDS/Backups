@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store.js";
 import { useModalContext } from "../../components/Modal/context/ModalContext.js";
 import useFetch from "../../hooks/useFetch.js";
 import { Modal, LoadingSpinner } from "../../components/index.js";
@@ -15,9 +16,9 @@ import {
 } from "./components/index.js";
 
 export const Profile = () => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const { data, status, isLoading, error, fetchData } = useFetch();
-  const { isAuthenticated, userData } = useSelector((state) => state.auth);
+  const { isAuthenticated, userData } = useSelector((state: RootState) => state.auth);
   const { username } = useParams();
   const { setIsModalOpen } = useModalContext();
   const navigate = useNavigate();
@@ -42,8 +43,8 @@ export const Profile = () => {
             import.meta.env.VITE_BACKENDPORT
           }/api/getProfile/${username}`
         );
-      } catch (err) {
-        console.error("Error fetching profile data:", err);
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
       }
     };
     fetchProfileData();
