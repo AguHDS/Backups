@@ -23,7 +23,7 @@ Profile section
 
 ## main tools used:
 
-* js/ts
+* typescript
 * node/express
 * react
 * redux-toolkit

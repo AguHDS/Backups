@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getNewToken, logout } from "./authThunks";
+import { getNewRefreshToken, logout } from "./authThunks";
 
 interface UserData {
   name?: string;
@@ -12,7 +12,7 @@ interface AuthState {
   userData: UserData,
   status: "idle" | "loading" | "succeeded" | "failed";
   isAuthenticated: boolean,
-  error?: object | string | null,
+  error?: string | number | null,
 }
 
 const initialState: AuthState = {
@@ -35,20 +35,20 @@ const authSlice = createSlice({
     },
   },
 
-  //extrareducers for async authentication
+  //extra reducers for authThunks
   extraReducers: (builder) => {
     builder
-      .addCase(getNewToken.pending, (state) => {
+      .addCase(getNewRefreshToken.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(getNewToken.fulfilled, (state, action) => {
+      .addCase(getNewRefreshToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.accessToken = action.payload.accessToken;
         state.userData = action.payload.userData;
         state.status = "succeeded";
         state.error = null;
       })
-      .addCase(getNewToken.rejected, (state, action) => {
+      .addCase(getNewRefreshToken.rejected, (state, action) => {
         state.accessToken = null;
         state.isAuthenticated = false;
         state.status = "failed";

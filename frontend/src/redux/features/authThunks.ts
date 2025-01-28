@@ -1,7 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-export const getNewToken = createAsyncThunk(
+interface validUserData {
+  accessToken: string;
+  userData: {
+    name: string;
+    role: string;
+    id: number;
+  }
+}
+
+export const getNewRefreshToken = createAsyncThunk<validUserData, void, { rejectValue: string | number }>(
   "auth/refreshToken",
   async (_, { rejectWithValue }) => {
     try {
@@ -46,7 +55,7 @@ export const getNewToken = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk<{ message: string }, void,  { state: RootState }>(
+export const logout = createAsyncThunk<{ message: string }, void, { state: RootState; rejectValue: string }>(
   "auth/logout",
   async (_, { rejectWithValue, getState }) => {
     try {
