@@ -1,16 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../store";
+import { userDataWithAccessToken } from "../../types";
 
-interface validUserData {
-  accessToken: string;
-  userData: {
-    name: string;
-    role: string;
-    id: number;
-  }
-}
-
-export const getNewRefreshToken = createAsyncThunk<validUserData, void, { rejectValue: string | number }>(
+export const getNewRefreshToken = createAsyncThunk<userDataWithAccessToken, void, { rejectValue: string | number }>(
   "auth/refreshToken",
   async (_, { rejectWithValue }) => {
     try {
