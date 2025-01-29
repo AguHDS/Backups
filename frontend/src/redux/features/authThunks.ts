@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { userDataWithAccessToken } from "../../types";
+import { UserDataWithToken } from "../../types";
 
-export const getNewRefreshToken = createAsyncThunk<userDataWithAccessToken, void, { rejectValue: string | number }>(
+export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { rejectValue: string | number }>(
   "auth/refreshToken",
   async (_, { rejectWithValue }) => {
     try {
@@ -31,7 +31,7 @@ export const getNewRefreshToken = createAsyncThunk<userDataWithAccessToken, void
         throw new Error(errorText || "Not authorized");
       }
 
-      const data = await response.json();
+      const data: UserDataWithToken = await response.json();
       console.log("accessToken renovado:", data);
 
       return data;

@@ -1,12 +1,16 @@
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect, ReactNode, MouseEvent } from "react";
 import { createPortal } from "react-dom";
 
 //context
 import { useModalContext } from "./context/ModalContext";
 
-export const Modal = ({ children }) => {
+interface Props {
+  children: ReactNode;
+}
+
+export const Modal = ({ children }: Props) => {
   const { isModalOpen, setIsModalOpen } = useModalContext();
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
   const modalRoot = document.getElementById("modal-root");
 
@@ -15,24 +19,30 @@ export const Modal = ({ children }) => {
       console.error("Modal root not found");
     }
 
-    const handleEsc = (e) => {
-      if (e.key === "Escape") setIsModalOpen(false);
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsModalOpen(false);
+      }
     };
 
-    if (isModalOpen) addEventListener("keydown", handleEsc);
+    if (isModalOpen) {
+      document.addEventListener("keydown", handleEsc);
+    } else {
+      document.removeEventListener("keydown", handleEsc);
+    }
 
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
-  }, []);
+  }, [isModalOpen]);
 
-  const closeModal = (e) => {
+  const closeModal = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       setIsModalOpen(false);
     }
   };
 
-  if (!isModalOpen) return null;
+  if (!isModalOpen || !modalRoot) return null;
 
   return createPortal(
     <div

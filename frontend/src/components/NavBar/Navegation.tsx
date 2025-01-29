@@ -1,14 +1,12 @@
+import React from "react";
 import { Link } from "react-router-dom";
-
-//components
 import AccountOptions from "./account-options/AccountOptions";
 import { Button } from "..";
-
-//redux
 import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export const NavBar = () => {
-  const { isAuthenticated, userData } = useSelector((state) => state.auth);
+  const { isAuthenticated, userData } = useSelector((state: RootState) => state.auth);
   
   return (
     <>
@@ -22,15 +20,15 @@ export const NavBar = () => {
                 aria-label="Backups"
                 data-section="nav"
                 data-value="Backups"
-                tabIndex="0"
+                tabIndex={0}
               >
                 Backups
               </h1>
             </Link>
           </div>
           <div className="flex w-full h-[3.5rem] mr-3.5 items-center justify-end">
-            {isAuthenticated ? (
-              <AccountOptions username={userData.user} />
+            {isAuthenticated && userData.name ? (
+              <AccountOptions username={userData.name} />
             ) : (
               <>
                 <Link to="/sign-in">

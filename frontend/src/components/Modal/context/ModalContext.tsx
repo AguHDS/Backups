@@ -1,8 +1,17 @@
-import { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, ReactNode, Dispatch, SetStateAction } from "react";
 
-export const ModalContext = createContext(null);
+interface ModalContextType {
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+}
 
-export const ModalProvider = ({ children }) => {
+export const ModalContext = createContext<ModalContextType | null>(null);
+
+interface ModalProviderProps {
+  children: ReactNode;
+}
+
+export const ModalProvider = ({ children }: ModalProviderProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -12,7 +21,7 @@ export const ModalProvider = ({ children }) => {
   );
 };
 
-export const useModalContext = () => {
+export const useModalContext = (): ModalContextType => {
   const context = useContext(ModalContext);
 
   if (!context) throw new Error("Modal is being used outside its provider");

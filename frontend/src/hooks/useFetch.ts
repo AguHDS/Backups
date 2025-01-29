@@ -19,7 +19,7 @@ export default function useFetch<Data = unknown>(): FetchResponse<Data> {
   const [status, setStatus] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = useCallback(async (url: string, options?: RequestInit): Promise<void> => {
+  const fetchData = useCallback(async (url: string, options?: RequestInit) => {
     setIsLoading(true);
     setStatus(null);
     setError(null);
