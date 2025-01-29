@@ -1,24 +1,20 @@
+import React from "react";
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
-
-//components
 import { LoadingSpinner, Modal } from "..";
-
-//context
 import { useModalContext } from "../Modal/context/ModalContext.js";
-
-//redux
 import { useSelector, useDispatch } from "react-redux";
 import { getNewRefreshToken } from "../../redux/features/authThunks";
+import { RootState, AppDispatch } from "../../redux/store";
 
-//this component will try to get new tokens every time the app is reloaded
+//PersistLogin will try to get new tokens every time the app is reloaded
 export const PersistLogin = () => {
-  const dispatch = useDispatch();
-  const { accessToken, isAuthenticated } = useSelector((state) => state.auth);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const { accessToken, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { setIsModalOpen } = useModalContext();
 
-  //efffect to control modal(spinner) visibility based on loading state
+  //control modal(spinner) visibility based on loading state
   useEffect(() => {
     setIsModalOpen(isLoading);
 

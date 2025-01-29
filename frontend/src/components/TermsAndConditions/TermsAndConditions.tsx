@@ -1,7 +1,11 @@
-//components
+import React from "react";
 import { Button } from "..";
 
-export const TermsAndConditions = ({ onUnderstand }) => {
+interface Props {
+  onUnderstand: () => void;
+}
+
+export const TermsAndConditions = ({ onUnderstand }: Props) => {
   return (
     <div className="inset-0 isolate flex items-center justify-center p-4  bg-opacity-30">
       <div className="bg-gray-600 rounded w-full max-w-4xl max-h-[90vh] overflow-y-auto">

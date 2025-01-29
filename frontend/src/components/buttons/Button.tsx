@@ -1,3 +1,14 @@
+import React, { CSSProperties } from "react";
+
+interface ButtonProps {
+  onClick?: () => void;
+  label?: string;
+  type?: "button" | "submit" | "reset";
+  className?: string;
+  style?: CSSProperties;
+  id?: string;
+}
+
 export const Button = ({
   onClick = () => {},
   label = "Button",
@@ -5,15 +16,14 @@ export const Button = ({
   className = "backupsBtn",
   style,
   id,
-}) => {
+}: ButtonProps) => {
   return (
     <button
-      type={type}
-      className={`${className}`}
-      id={id}
-      style={style}
       onClick={onClick}
-    >
+      type={type}
+      className={className}
+      style={style}
+      id={id} >
       {label}
     </button>
   );

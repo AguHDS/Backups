@@ -1,19 +1,19 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
-
-//redux
+import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../redux/store";
 import { getNewRefreshToken } from "../../redux/features/authThunks";
 
 //check if the expiration time is valid
-const isAccessTokenValid = (accessToken) => {
+const isAccessTokenValid = (accessToken: string | null): boolean => {
   if (!accessToken) return false;
 
   try {
     const { exp } = jwtDecode(accessToken);
     const now = Math.floor(Date.now() / 1000);
-    return exp > now;
+
+    return exp !== undefined ? exp > now : false;
   } catch (error) {
     console.error("Error decoding token:", error);
     return false;
@@ -22,9 +22,9 @@ const isAccessTokenValid = (accessToken) => {
 
 //component that checks if the user is authenticated to access private routes
 export const ProtectedRoute = () => {
+  const { accessToken, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { accessToken, isAuthenticated } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const verifyAuthentication = async () => {
@@ -37,10 +37,7 @@ export const ProtectedRoute = () => {
             navigate("/sign-in");
           }
         } catch (error) {
-          console.error(
-            "Error veryfing authentication (ProtectedRoute catch) :",
-            error
-          );
+          console.error("Error veryfing authentication (ProtectedRoute catch) :", error);
         }
       }
     };

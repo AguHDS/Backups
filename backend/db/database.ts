@@ -14,7 +14,7 @@ const pool = mysql.createPool({
 const promisePool = pool;
 
 //check the connection to the database and log the errors
-async function checkConnection(): Promise<void> {
+async function checkConnection() {
     try {
         await promisePool.execute('SELECT 1 + 1 AS solution');
         console.log('Connection pool to db successful');
@@ -27,7 +27,7 @@ async function checkConnection(): Promise<void> {
 }
 
 //close connection pool when app is closed
-export async function closeDatabasePool(): Promise<void> {
+export async function closeDatabasePool() {
   try {
     await promisePool.end();
     console.log("Connection pool to db closed");
