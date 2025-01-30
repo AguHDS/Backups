@@ -4,7 +4,7 @@ import { ResultSetHeader } from "mysql2";
 import { validationResult, ValidationError, matchedData } from "express-validator";
 import promisePool from "../db/database";
 
-const updateProfile = async (bio: string, title: string, description: string, id: string): Promise<void> => {
+const updateProfile = async (bio: string, title: string, description: string, id: string) => {
   const connection: PoolConnection = await promisePool.getConnection();
   try {
     await connection.beginTransaction();
@@ -46,7 +46,7 @@ interface ProfileDataToUpdate {
 }
 
 const updateProfileController: RequestHandler<{}, { message: string } | { errors: ValidationError[] }, { userId: string }, {}> = 
-async (req, res): Promise<void> => {
+async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.error("Validation errors found", errors.array());

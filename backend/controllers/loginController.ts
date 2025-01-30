@@ -8,7 +8,7 @@ import { compare } from "../utils/handlePassword";
 import { tokenSign } from "../utils/handleJwt";
 import { JwtUserData, ValidUserData } from "../types";
 
-const saveRefreshToken = async (userId: number, token: string, expiresAt: Date): Promise<void> => {
+const saveRefreshToken = async (userId: number, token: string, expiresAt: Date) => {
   try {
     //delete any existing refresh token for this user
     const [existingToken] = await promisePool.execute<RowDataPacket[]>(

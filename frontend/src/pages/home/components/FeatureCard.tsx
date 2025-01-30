@@ -1,8 +1,20 @@
-import { useState } from "react";
+import { useState, ReactElement } from "react";
 import { Button } from "../../../components";
 
-export function FeatureCard({ title, description, icon, details }) {
-  const [showDetails, setShowDetails] = useState(false);
+interface Details {
+  text: string;
+  imageUrl: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  icon: ReactElement;
+  details: Details;
+}
+
+export function FeatureCard({ title, description, icon, details }: Props) {
+  const [showDetails, setShowDetails] = useState<boolean>(false);
 
   const handleShowDetails = () => {
     setShowDetails(!showDetails);

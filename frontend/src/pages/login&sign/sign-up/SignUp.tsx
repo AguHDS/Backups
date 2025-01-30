@@ -1,29 +1,31 @@
+import { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
-
-//components
 import { Button, Input, TermsAndConditions, Modal } from "../../../components";
 import AuthFeedback from "../authFeedback/AuthFeedback";
-
-//custom hooks
 import { useAuth } from "../../../hooks/useAuth";
-
-//context
 import { useModalContext } from "../../../components/Modal/context/ModalContext";
+
+interface AuthInput {
+  user: string;
+  password: string;
+  email: string;
+  inputsWarnings: string[];
+}
 
 export const SignUp = () => {
   const { setIsModalOpen } = useModalContext();
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
-  const handleUserChange = (e) => {
-    setInput((prev) => ({ ...prev, user: e.target.value }));
+  const handleUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setInput((prev: AuthInput) => ({ ...prev, user: e.target.value }));
   };
 
-  const handlePassChange = (e) => {
-    setInput((prev) => ({ ...prev, password: e.target.value }));
+  const handlePassChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setInput((prev: AuthInput) => ({ ...prev, password: e.target.value }));
   };
 
-  const handleEmailChange = (e) => {
-    setInput((prev) => ({ ...prev, email: e.target.value }));
+  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setInput((prev: AuthInput) => ({ ...prev, email: e.target.value }));
   };
 
   return (
@@ -32,7 +34,7 @@ export const SignUp = () => {
         <TermsAndConditions onUnderstand={()=> setIsModalOpen(false)} />
       </Modal>
       <div
-        tabIndex="-1"
+        tabIndex={0}
         className="flex items-center justify-center w-full h-[94vh]"
       >
         <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
@@ -49,7 +51,7 @@ export const SignUp = () => {
                     <label
                       className="text-sm text-gray-700 dark:text-gray-300"
                       htmlFor="name_login"
-                      tabIndex="0"
+                      tabIndex={0}
                     >
                       User
                     </label>
@@ -68,7 +70,7 @@ export const SignUp = () => {
                     <label
                       className="text-sm text-gray-700 dark:text-gray-300"
                       htmlFor="email_signUp"
-                      tabIndex="0"
+                      tabIndex={0}
                     >
                       Email
                     </label>
@@ -87,7 +89,7 @@ export const SignUp = () => {
                     <label
                       className="text-sm text-gray-700 dark:text-gray-300"
                       htmlFor="pass_login"
-                      tabIndex="0"
+                      tabIndex={0}
                     >
                       Password
                     </label>

@@ -1,4 +1,11 @@
-export const Storage = ({maxSpace, available, used, shared}) => {
+interface Props {
+  maxSpace: string;
+  available: string;
+  used: string;
+  shared: string;
+}
+
+export const Storage = ({maxSpace, available, used, shared}: Props) => {
   return (
     <div className="mt-4 flex flex-col w-full">
       <div className="flex my-[3px] justify-between items-center w-full">

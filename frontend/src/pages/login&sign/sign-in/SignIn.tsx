@@ -1,33 +1,38 @@
-import { Link, Navigate } from "react-router-dom";
-
-//components
+import { ChangeEvent, KeyboardEvent } from "react";
+import { Link } from "react-router-dom";
 import { Button, Input } from "../../../components";
 import AuthFeedback from "../authFeedback/AuthFeedback";
-
-//custom hooks
 import { useAuth } from "../../../hooks";
+
+interface AuthInput {
+  user: string;
+  password: string;
+  email: string;
+  inputsWarnings: string[];
+}
 
 export const SignIn = () => {
   const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
 
-  const handleUserChange = (e) => {
-    setInput((prev) => ({ ...prev, user: e.target.value }));
+  const handleUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setInput((prev: AuthInput) => ({ ...prev, user: e.target.value }));
   };
 
-  const handlePassChange = (e) => {
-    setInput((prev) => ({ ...prev, password: e.target.value }));
+  const handlePassChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setInput((prev: AuthInput) => ({ ...prev, password: e.target.value }));
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>): void => {
     if (e.key === "Enter") {
-      e.target.form.submit();
+      e.preventDefault();
+      e.currentTarget.form?.submit();
     }
   };
 
   return (
     <>
       <div
-        tabIndex="-1"
+        tabIndex={-1}
         className="flex items-center justify-center w-full h-[94vh]"
       >
         <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
@@ -47,7 +52,7 @@ export const SignIn = () => {
                     <label
                       className="text-sm text-gray-700 dark:text-gray-300"
                       htmlFor="name_login"
-                      tabIndex="0"
+                      tabIndex={0}
                     >
                       User
                     </label>
@@ -66,7 +71,7 @@ export const SignIn = () => {
                     <label
                       className="text-sm text-gray-700 dark:text-gray-300"
                       htmlFor="pass_login"
-                      tabIndex="0"
+                      tabIndex={0}
                     >
                       Password
                     </label>

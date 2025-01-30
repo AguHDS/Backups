@@ -1,7 +1,8 @@
-import React, { CSSProperties } from "react";
+import { CSSProperties, KeyboardEvent } from "react";
 
 interface ButtonProps {
   onClick?: () => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
   label?: string;
   type?: "button" | "submit" | "reset";
   className?: string;
@@ -11,6 +12,7 @@ interface ButtonProps {
 
 export const Button = ({
   onClick = () => {},
+  onKeyDown,
   label = "Button",
   type = "button",
   className = "backupsBtn",
@@ -20,6 +22,7 @@ export const Button = ({
   return (
     <button
       onClick={onClick}
+      onKeyDown={onKeyDown}
       type={type}
       className={className}
       style={style}

@@ -1,10 +1,16 @@
-export const Bio = ({bio, isEditing, onBioChange}) => {
+interface Props {
+  bio: string;
+  isEditing: boolean;
+  onBioChange: (bio: string) => void;
+}
+
+export const Bio = ({bio, isEditing, onBioChange}: Props) => {
   return (
     <>
       {isEditing ? (
         <textarea
           className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
-          rows="3"
+          rows={3}
           placeholder="Add a new biography"
           value={bio}
           onChange={(e) => onBioChange(e.target.value)}

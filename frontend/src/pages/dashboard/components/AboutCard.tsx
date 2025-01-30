@@ -1,4 +1,11 @@
-export const AboutCard = ({ title, subtitle }) => {
+import {ReactNode} from "react";
+
+interface Props {
+  title: string;
+  subtitle: ReactNode;
+}
+
+export const AboutCard = ({ title, subtitle }: Props) => {
   return (
     <>
       <div className="bg-[#0e172ab8] p-4 rounded-lg">

@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext, ReactNode, Dispatch, SetStateAction } from "react";
+import { useState, createContext, useContext, ReactNode, Dispatch, SetStateAction } from "react";
 
 interface ModalContextType {
   isModalOpen: boolean;

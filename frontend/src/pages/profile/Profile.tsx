@@ -15,9 +15,29 @@ import {
   ProfileContent,
 } from "./components/index.js";
 
+interface ProfileStats {
+  bio: string;
+  profile_pic?: string;
+  partner: string;
+  friends: number;
+}
+
+interface ProfileSection {
+  title: string;
+  description: string;
+}
+
+interface CustomResponse {
+  username: string;
+  role: string;
+  id: number;
+  userProfileData: ProfileStats;
+  userSectionData: ProfileSection;
+}
+
 export const Profile = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const { data, status, isLoading, error, fetchData } = useFetch();
+  const { data, status, isLoading, error, fetchData } = useFetch<CustomResponse>();
   const { isAuthenticated, userData } = useSelector((state: RootState) => state.auth);
   const { username } = useParams();
   const { setIsModalOpen } = useModalContext();
@@ -32,7 +52,7 @@ export const Profile = () => {
     };
   }, [isLoading, setIsModalOpen]);
 
-  const isOwnProfile = isAuthenticated && userData.id === data.id;
+  const isOwnProfile = !!(isAuthenticated && data && userData.id === data.id);
 
   //get profile data from database
   useEffect(() => {
@@ -66,14 +86,14 @@ export const Profile = () => {
         </Modal>
       )}
 
-      {!isLoading && !data?.userData && error && (
+      {!isLoading && !data && error && (
         <div className="flex justify-center items-center h-screen">
           <p className="text-red-500">Error loading profile.</p>
         </div>
       )}
 
       {/* Profile begins here */}
-      {!isLoading && data?.userData && (
+      {!isLoading && data && (
         <div className="mx-auto flex justify-center mt-5">
           <div className="w-[80vw] max-w-full">
             <Header
@@ -93,6 +113,7 @@ export const Profile = () => {
                     addFriendIcon={images.addFriend}
                   />
                   <UserInfo
+                    userStatus={"offline"}
                     role={data.role}
                     friendsCounter={data.userProfileData.friends}
                     partner={data.userProfileData.partner}

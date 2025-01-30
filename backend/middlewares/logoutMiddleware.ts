@@ -12,7 +12,7 @@ const hasTokenInDB = async (userId: number): Promise<RowDataPacket | null> => {
   return results.length === 0 ? null : results[0];
 };
 
-const hasSessionOpen = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const hasSessionOpen = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let hasRefreshCookie;
     const { id } = req.body;

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, CSSProperties } from "react";
+import { ChangeEvent, CSSProperties } from "react";
 
 interface InputProps {
   className?: string;

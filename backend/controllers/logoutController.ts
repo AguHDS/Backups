@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 import promisePool from "../db/database";
 import { ResultSetHeader } from "mysql2/promise";
 
-const deleteRefreshFromDB = async (userId: number): Promise<void> => {
+const deleteRefreshFromDB = async (userId: number) => {
   try {
     const [deletedRefresh] = await promisePool.execute<ResultSetHeader>(
       "DELETE FROM refresh_tokens WHERE user_id = ?",
@@ -21,7 +21,7 @@ const deleteRefreshFromDB = async (userId: number): Promise<void> => {
   }
 };
 
-const logout = async (req: Request, res: Response): Promise<void> => {
+const logout = async (req: Request, res: Response) => {
   try {
     const { id, hasRefreshCookie } = req.activeSessionData!;
 
