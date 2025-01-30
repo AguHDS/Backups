@@ -1,13 +1,13 @@
 import "dotenv/config";
-import config from "./config/environmentVars";
+import config from "./config/environmentVars.ts";
 import express, { Express, Request, Response } from "express";
 import http from "http";
 import cookieParser from "cookie-parser";
-import { closeDatabasePool } from "./db/database";
+import { closeDatabasePool } from "./db/database.ts";
 
 //cors
-import credentials from "./middlewares/credentials";
-import corsOptions from "./config/corsOption";
+import credentials from "./middlewares/credentials.ts";
+import corsOptions from "./config/corsOption.ts";
 import cors from "cors";
 
 /* import { initializeSocket } from "./livechat-socketHandler/socketHandler.ts"; */
@@ -21,7 +21,7 @@ import {
   refreshToken,
   getProfile,
   updateProfile,
-} from "./routes/index";
+} from "./routes/index.ts";
 
 //cfg
 const app: Express = express();

@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { validationResult, matchedData, ValidationError } from "express-validator";
-import { encrypt } from "../utils/handlePassword";
-import promisePool from "../db/database";
+import { encrypt } from "../utils/handlePassword.ts";
+import promisePool from "../db/database.ts";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
 interface NameAndEmailCheckResult {

@@ -1,4 +1,4 @@
-import promisePool from "../database";
+import promisePool from "../database.ts";
 import { RowDataPacket } from "mysql2/promise";
 
 const getUserByName = async (username: string): Promise<RowDataPacket | null> => {

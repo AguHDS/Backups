@@ -1,7 +1,7 @@
 //this route will be consumed every time the access token is expired
 import express, { RequestHandler } from "express";
-import refreshTokenMiddleware from "../middlewares/refreshTokenMiddleware";
-import sendNewAccessToken from "../controllers/refreshTokenController";
+import refreshTokenMiddleware from "../middlewares/refreshTokenMiddleware.ts";
+import sendNewAccessToken from "../controllers/refreshTokenController.ts";
 
 const router = express.Router();
 

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "dotenv concurrently \"vite\" \"wait-on http://localhost:5173 && npx tailwindcss -i ./src/main.css -o ./src/output.css --watch\"",
+    "dev": "concurrently -k \"tsc --noEmit --watch\" \"vite\" \"wait-on http://localhost:5173 && npx tailwindcss -i ./src/main.css -o ./src/output.css --watch\"",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"

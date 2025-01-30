@@ -1,6 +1,6 @@
 import express, {RequestHandler } from 'express';
-import loginController from '../controllers/loginController'; 
-import validatorLogin from '../middlewares/validators/login';
+import loginController from '../controllers/loginController.ts'; 
+import validatorLogin from '../middlewares/validators/login.ts';
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import { RequestHandler, Request } from "express";
-import { getUserByName } from "../db/queries/index";
+import { getUserByName } from "../db/queries/index.ts";
 
 //check if the username provided in the params of the url exists in users table and extract: username, role, email and id
 const getProfileMiddleware: RequestHandler<{ username: string }, { status: number, message: string }, {}, {}> =

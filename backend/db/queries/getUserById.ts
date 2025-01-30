@@ -1,5 +1,5 @@
 import { RowDataPacket, Connection } from "mysql2/promise";
-import promisePool from "../database";
+import promisePool from "../database.ts";
 
 const getUserById = async (id: string, connection?: Connection): Promise<RowDataPacket | null> => {
   try {

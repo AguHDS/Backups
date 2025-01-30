@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { NotFound } from "..";
 

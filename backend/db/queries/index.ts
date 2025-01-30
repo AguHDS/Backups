@@ -1,4 +1,4 @@
-import getUserByName from "./getUserByName";
-import getUserById from "./getUserById";
+import getUserByName from "./getUserByName.ts";
+import getUserById from "./getUserById.ts";
 
 export { getUserByName, getUserById };

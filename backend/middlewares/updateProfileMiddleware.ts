@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { JwtPayload } from "jsonwebtoken";
-import { verifyToken } from "../utils/handleJwt";
+import { verifyToken } from "../utils/handleJwt.ts";
 
 interface DecodedToken extends JwtPayload {
   name: string;
