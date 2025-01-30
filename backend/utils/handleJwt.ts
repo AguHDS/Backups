@@ -1,6 +1,6 @@
-import config from "../config/environmentVars";
+import config from "../config/environmentVars.ts";
+import { JwtUserData } from "../types/index.ts";
 import jwt from "jsonwebtoken";
-import { JwtUserData } from "../types";
 
 /**
  * @param user - username and role

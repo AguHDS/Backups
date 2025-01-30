@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { PoolConnection } from "mysql2/promise";
 import { ResultSetHeader } from "mysql2";
 import { validationResult, ValidationError, matchedData } from "express-validator";
-import promisePool from "../db/database";
+import promisePool from "../db/database.ts";
 
 const updateProfile = async (bio: string, title: string, description: string, id: string) => {
   const connection: PoolConnection = await promisePool.getConnection();

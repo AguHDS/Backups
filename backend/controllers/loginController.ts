@@ -1,12 +1,12 @@
 import { RequestHandler } from "express";
-import config from "../config/environmentVars";
-import promisePool from "../db/database";
-import { getUserByName } from "../db/queries/index";
+import config from "../config/environmentVars.ts";
+import promisePool from "../db/database.ts";
+import { getUserByName } from "../db/queries/index.ts";
 import { RowDataPacket } from "mysql2/promise";
 import { validationResult, ValidationError, matchedData } from "express-validator";
-import { compare } from "../utils/handlePassword";
-import { tokenSign } from "../utils/handleJwt";
-import { JwtUserData, ValidUserData } from "../types";
+import { compare } from "../utils/handlePassword.ts";
+import { tokenSign } from "../utils/handleJwt.ts";
+import { JwtUserData, ValidUserData } from "../types/index.ts";
 
 const saveRefreshToken = async (userId: number, token: string, expiresAt: Date) => {
   try {
@@ -50,7 +50,7 @@ async (req, res) => {
 
     const data: UserData = matchedData(req);
     const { user, password } = data;
-
+    
     //check if the user exists in users table
     const userResult = await getUserByName(user);
 

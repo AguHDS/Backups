@@ -6,9 +6,10 @@ import { useModalContext } from "./context/ModalContext";
 
 interface Props {
   children: ReactNode;
+  isSpinner?: boolean;
 }
 
-export const Modal = ({ children }: Props) => {
+export const Modal = ({ children, isSpinner = false }: Props) => {
   const { isModalOpen, setIsModalOpen } = useModalContext();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -20,7 +21,7 @@ export const Modal = ({ children }: Props) => {
     }
 
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && !isSpinner) {
         setIsModalOpen(false);
       }
     };

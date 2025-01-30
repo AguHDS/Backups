@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import promisePool from "../db/database";
+import promisePool from "../db/database.ts";
 import { RowDataPacket } from "mysql2/promise";
-import { verifyToken } from "../utils/handleJwt";
+import { verifyToken } from "../utils/handleJwt.ts";
 import { JwtPayload } from "jsonwebtoken";
 
 //verify existence and expiration time of this data in the database (user_id is a foreign key related to the real user id)

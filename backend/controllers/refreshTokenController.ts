@@ -1,10 +1,10 @@
-import config from "../config/environmentVars";
+import config from "../config/environmentVars.ts";
 import { RequestHandler } from "express";
-import { tokenSign } from "../utils/handleJwt";
+import { tokenSign } from "../utils/handleJwt.ts";
 import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
-import promisePool from "../db/database";
-import { getUserById } from "../db/queries";
-import { JwtUserData, ValidUserData } from "../types";
+import promisePool from "../db/database.ts";
+import { getUserById } from "../db/queries/index.ts";
+import { JwtUserData, ValidUserData } from "../types/index.ts";
 
 //get expiration time of the first refresh token emited.
 const getDateTime = async (userId: number, connection: Connection): Promise<string | null> => {

@@ -1,7 +1,7 @@
 import express, { RequestHandler } from "express";
-import updateProfileController from "../controllers/updateProfileController";
-import updateProfileMiddleware from "../middlewares/updateProfileMiddleware";
-import validatorUpdateProfile from "../middlewares/validators/updateProfileFields";
+import updateProfileController from "../controllers/updateProfileController.ts";
+import updateProfileMiddleware from "../middlewares/updateProfileMiddleware.ts";
+import validatorUpdateProfile from "../middlewares/validators/updateProfileFields.ts";
 
 const router = express.Router();
 

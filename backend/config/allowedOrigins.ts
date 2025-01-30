@@ -1,4 +1,4 @@
-import config from "./environmentVars";
+import config from "./environmentVars.ts";
 
 const allowedOrigins: string[] = [
   `http://localhost:${config.portFrontend}`,

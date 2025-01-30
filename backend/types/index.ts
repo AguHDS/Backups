@@ -1,2 +1,2 @@
-export * from './validUserData'
-export * from './jwtUserData'
+export * from './validUserData.ts'
+export * from './jwtUserData.ts'

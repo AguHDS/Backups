@@ -13,7 +13,6 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
           credentials: "include",
         }
       );
-
       if (!response.ok) {
         const errorText = await response.text();
         console.log("Couldn't get a new accessToken:", errorText);

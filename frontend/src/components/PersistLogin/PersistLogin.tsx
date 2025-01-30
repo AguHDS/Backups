@@ -32,16 +32,18 @@ export const PersistLogin = () => {
       } catch (error) {
         console.error("Failed trying to verify refresh token:", error);
       } finally {
-        setIsLoading(false); 
+        setIsLoading(false);
       }
     };
     verifyRefreshToken();
   }, [dispatch, isAuthenticated, accessToken]);
-  
+
+
+
   return (
     <>
       {isLoading ? (
-        <Modal>
+        <Modal isSpinner={true}>
           <div className="flex items-center justify-center min-h-screen">
             <LoadingSpinner size="lg" />
           </div>
