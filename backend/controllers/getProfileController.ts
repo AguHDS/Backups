@@ -85,7 +85,7 @@ declare module "express-serve-static-core" {
 
 /* sends to the client profile information of the user provided in the params of the url, comparing its id from users table 
 with fk_users_id in users_profile table */
-const getProfileController = async (req: Request, res: Response): Promise<void> => {
+const getProfileController = async (req: Request, res: Response) => {
   try {
     const { userData } = req;
     if (!userData) {

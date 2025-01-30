@@ -1,6 +1,13 @@
 import { Button } from "../../../components";
 
-export const Header = ({ isOwnProfile, username, isEditing, setIsEditing }) => {
+interface Props {
+  isOwnProfile: boolean;
+  username: string;
+  isEditing: boolean;
+  setIsEditing: (isEditing: boolean) => void;
+}
+
+export const Header = ({ isOwnProfile, username, isEditing, setIsEditing }: Props) => {
   return (
     <div className="w-full">
       <h1 className="bg-[#222] border font-serif border-t-[#222] border-b-[#585858] border-l-[#272727] border-r-[#272727] text-[#e0e0e0] font-verdana font-bold text-sm m-0 p-[5px_9px] text-left flex items-center justify-between">

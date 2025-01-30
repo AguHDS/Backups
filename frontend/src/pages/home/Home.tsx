@@ -1,15 +1,9 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
-import { Navigate, useNavigate } from "react-router-dom";
-
-//assets
-import images from "../../assets/images.js";
-
-//components
-import { FeatureCard, Header } from "./components/index.js";
 import { Button, TermsAndConditions, Modal } from "../../components/index.js";
-
-//context
+import { FeatureCard, Header } from "./components/index.js";
 import { useModalContext } from "../../components/Modal/context/ModalContext.js";
+import images from "../../assets/images.js";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
   const { setIsModalOpen } = useModalContext();

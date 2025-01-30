@@ -45,7 +45,7 @@ const isNameOrEmailTaken = async (username: string, email: string): Promise<Name
   }
 };
 
-const insertNewUser = async (name: string, email: string, pass: string, role: string): Promise<void> => {
+const insertNewUser = async (name: string, email: string, pass: string, role: string) => {
   const connection = await promisePool.getConnection();
   try {
     await connection .beginTransaction();

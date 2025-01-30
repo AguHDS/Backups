@@ -1,4 +1,8 @@
-export const Graph = ({graphTestImage}) => {
+interface Props {
+  graphTestImage: string;
+}
+
+export const Graph = ({graphTestImage}: Props) => {
   return (
     <div>
       <img

@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 
-export const ActionsAndProfileImg = ({
-  profilePic,
-  giftIcon,
-  msgIcon,
-  addFriendIcon,
-}) => {
+interface Props {
+  profilePic: string;
+  giftIcon: string;
+  msgIcon: string;
+  addFriendIcon: string;
+}
+
+export const ActionsAndProfileImg = ({ profilePic, giftIcon, msgIcon, addFriendIcon }: Props) => {
   return (
     <>
       <div className="block text-center">

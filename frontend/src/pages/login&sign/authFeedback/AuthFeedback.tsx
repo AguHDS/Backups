@@ -1,8 +1,14 @@
 import styles from "./AuthFeedback.module.css";
 
+interface Props {
+  input: string[];
+  status: number | null;
+  message: string | null;
+}
+
 /* warnings messages for login and sign */
 
-export default function AuthFeedback({ input, status, message }) {
+export default function AuthFeedback({ input, status, message }: Props) {
   return (
     <div>
       {/* render warnings */}

@@ -1,94 +1,142 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
-//components
 import { Button } from "../../../components";
 import { Bio } from "./Bio";
 import AuthFeedback from "../../login&sign/authFeedback/AuthFeedback";
-
-//custom hooks
 import useFetch from "../../../hooks/useFetch";
 
-export const ProfileContent = ({ isEditing, bio, title, description }) => {
+type ValidationError = {
+  msg: string;
+};
+
+type ApiError = {
+  message: string;
+};
+
+type FetchError = Error | ValidationError[] | ApiError | unknown;
+
+interface Section {
+  title: string;
+  description: string;
+}
+
+type SectionField = keyof Section;
+
+interface Props {
+  isEditing: boolean;
+  bio: string;
+  title: string;
+  description: string;
+}
+
+export const ProfileContent = ({ isEditing, bio, title, description }: Props) => {
   const [updateData, setUpdateData] = useState({
     bio: bio,
     title: title,
     description: description,
   });
-  const [sections, setSections] = useState([{ title: title, description: description }]);
+  const [sections, setSections] = useState<Section[]>([{ title: title, description: description }]);
   const { status, isLoading, error, fetchData } = useFetch();
   const { username } = useParams();
-  const [errorMessages, setErrorMessages] = useState([]);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  //utility function to validate fields
+  const validateFields = (): string[] => {
+    const errors: string[] = [];
+
+    if (!updateData.bio.trim()) {
+      errors.push("Bio cannot be empty");
+    }
+
+    sections.forEach((section, index) => {
+      if (!section.title.trim()) {
+        errors.push(`Title in section ${index + 1} cannot be empty`);
+      }
+      if (!section.description.trim()) {
+        errors.push(`Description in section ${index + 1} cannot be empty`);
+      }
+    });
+
+    return errors;
+  };
+
+  //check different types of errors from api response
+  const processError = (error: FetchError): string[] => {
+    if (Array.isArray(error)) {
+      return error.map((err: ValidationError) => err.msg);
+    }
+    
+    if (error && typeof error === 'object' && 'message' in error) {
+      return [error.message as string];
+    }
+
+    return ['An unexpected error occurred'];
+  };
 
   //fetch to update profile content data
   const handleUpdateProfile = async () => {
-    const errors = [];
-
-  if (!updateData.bio.trim()) {
-    errors.push("Bio cannot be empty");
-  }
-
-  sections.forEach((section) => {
-    if (!section.title.trim()) {
-      errors.push(`Title cannot be empty`);
+    const validationErrors = validateFields();
+    if (validationErrors.length > 0) {
+      setErrorMessages(validationErrors);
+      return;
     }
-    if (!section.description.trim()) {
-      errors.push(`Description cannot be empty`);
-    }
-  });
 
-  if (errors.length > 0) {
-    setErrorMessages(errors);
-    return;
-  }
-  
-    await fetchData(
-      `http://localhost:${
-        import.meta.env.VITE_BACKENDPORT
-      }/api/updateProfile/${username}`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          bio: updateData.bio,
-          sections,
-        }),
-      }
-    );
+    try {
+      await fetchData(
+        `http://localhost:${import.meta.env.VITE_BACKENDPORT
+        }/api/updateProfile/${username}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            bio: updateData.bio,
+            sections,
+          }),
+        }
+      );
+    }catch (error) {
+      console.error('Failed to update profile:', error);
+      setErrorMessages(['Failed to update profile.Try again later']);
+    }
   };
 
   useEffect(() => {
-    if (!isLoading) {
-      if (status === 200) {
-        console.log("Profile updated successfully");
-        window.location.reload();
-      } else if (error) {
-        console.error(error.message);
-        const errorMessages = error.errors?.map((err) => err.msg) || [`${error.message}`];
-        setErrorMessages(errorMessages);
-      }
+    if (isLoading) return;
+
+    if (status === 200) {
+      console.log("Profile updated successfully");
+      window.location.reload();
+      return;
+    }
+
+    if (error) {
+      const newErrorMessages = processError(error);
+      setErrorMessages(newErrorMessages);
+      console.error('Error updating profile:', error);
     }
   }, [status, error, isLoading]);
 
-  const handleBioChange = (newBio) => {
+  const handleBioChange = (newBio: string) => {
     setUpdateData((prev) => ({
       ...prev,
       bio: newBio,
     }));
   };
 
-  const handleChange = (field, value, index = null) => {
-    if (index !== null) {
+  const handleChange = (field: SectionField, value: string, index?: number) => {
+    if (typeof index === 'number') {
       setSections((prev) => {
         const updatedSections = [...prev];
-        updatedSections[index] = {
-          ...updatedSections[index],
-          [field]: value,
-        };
+        if (index >= 0 && index < updatedSections.length) {
+          updatedSections[index] = {
+            ...updatedSections[index],
+            [field]: value,
+          };
+        }
         return updatedSections;
       });
     }
@@ -129,7 +177,7 @@ export const ProfileContent = ({ isEditing, bio, title, description }) => {
                   <>
                     <textarea
                       className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
-                      rows="3"
+                      rows={3}
                       placeholder="Add a new description"
                       value={section.description}
                       onChange={(e) =>

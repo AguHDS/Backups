@@ -1,4 +1,16 @@
-export const StatCard = ({ type = '', title, icon, subtitle, value, color, children }) => {
+import { ReactNode } from "react";
+
+interface Props {
+  type?: string;
+  title: string;
+  icon: ReactNode;
+  subtitle: string;
+  value: string;
+  color: string;
+  children?: ReactNode;
+}
+
+export const StatCard = ({ type, title, icon, subtitle, value, color, children }: Props) => {
   return (
     <div className="w-full sm:w-1/2 mb-5 md:w-1/4 lg:w-80 p-2 flex">
       <div className="bg-[#232d42] w-full p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
