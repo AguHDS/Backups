@@ -30,43 +30,22 @@ Profile section
 * mysql
 * tailwind
 
-## how to run locally
-
-in case you want to see it on your local (idk why you would, since it's far from being finished) you have to install the dependencies first.
-
+### First setup
 * once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies
-* create .env for /backend and /frontend and modify it with your own configs
+* create .env for /backend and /frontend and modify it with your own configs (see .env.examples to see what you need)
 
-### backend/.env
-
-```
-PORT_FRONTEND=frontend port
-PORT_BACKEND=backend port
-JWT_SECRET=your secret
-JWT_REFRESH_SECRET=your refresh secret
-NODE_ENV=dev
-DB_HOST=your host
-DB_DATABASE=your db name
-DB_USER=your user
-DB_PASSWORD=your password
-```
-
-### frontend/.env
-
-```
-VITE_FRONTENDPORT=frontend port
-VITE_BACKENDPORT=backend port
-```
-
-- you must have installed mysql service on your computer, you can also use MySQLWorkbrench
+### Database setup
+- you must have installed mysql on your computer and run its service so the database and backend can work(W+R -> services.msc -> run/stop mysql service), you can also use MySQLWorkbrench for a better view of the database (you'll need to connect the schema to the db with the 
+credentials)
 - in case you want to create your own database, you can read the "backend/db/db_code_info.txt" file, there you have the code to create the tables
 
+### how to run the project locally
 Open visual studio terminal, step on frontend and backend folder and run:
-- for dev: npm run dev
-- for build dist: npm run build
-- for production: npm start
+* for dev: __npm run dev__ (if there are typescript errors, this run will fail and ask you to fix them)
+* for build dist: __npm run build__
+* for production: __npm start__
 
-Important Notes:
-- Vite changes its port when it's running on production or development, make sure to change the frontend port in the .env files
+Notes:
+. Vite changes its port when it's running on production or development, make sure to change the frontend port in the .env files
 and in the package.json of the frontend since it's using wait-on http://localhost:Your-port
-- Tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again
+. Tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again
