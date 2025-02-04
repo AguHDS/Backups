@@ -45,7 +45,8 @@ Open visual studio terminal, step on frontend and backend folder and run:
 * for build dist: __npm run build__
 * for production: __npm start__
 
-Notes:
-. Vite changes its port when it's running on production or development, make sure to change the frontend port in the .env files
-and in the package.json of the frontend since it's using wait-on http://localhost:Your-port
-. Tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again
+
+Notes:<br>
+. vite changes its port when it's running on production or development, make sure to change the frontend port in the .env files
+and in the package.json of the frontend since it's using "wait-on http://localhost:Your-port"<br>
+. tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again
