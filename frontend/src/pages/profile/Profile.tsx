@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store.js";
-import { useModalContext } from "../../components/Modal/context/ModalContext.js";
-import useFetch from "../../hooks/useFetch.js";
-import { Modal, LoadingSpinner } from "../../components/index.js";
-import images from "../../assets/images.js";
+import { RootState } from "../../redux/store";
+import { useModalContext } from "../../components/Modal/context/ModalContext";
+import useFetch from "../../hooks/useFetch";
+import { Modal, LoadingSpinner } from "../../components/index";
+import {images} from "../../assets/images";
 import {
   Header,
   ActionsAndProfileImg,
@@ -13,7 +13,7 @@ import {
   UserInfo,
   Storage,
   ProfileContent,
-} from "./components/index.js";
+} from "./components/index";
 
 interface ProfileStats {
   bio: string;

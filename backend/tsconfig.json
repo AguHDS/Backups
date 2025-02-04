@@ -1,7 +1,13 @@
 {
   "compilerOptions": {
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "nodenext",
+    "target": "ES2020",
+    "sourceMap": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    /* "module": "ESNext",
+    "moduleResolution": "node",
     "target": "ES2022",
     "strict": true,
     "esModuleInterop": true,
@@ -15,8 +21,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "noEmit": true,
-    "allowImportingTsExtensions": true, /* disable this for production */
+    "noUnusedLocals": true,
+    "allowImportingTsExtensions": true, */ /* disable this for production */
   },
-  "include": ["./"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

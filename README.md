@@ -60,6 +60,13 @@ VITE_BACKENDPORT=backend port
 
 - you must have installed mysql service on your computer, you can also use MySQLWorkbrench
 - in case you want to create your own database, you can read the "backend/db/db_code_info.txt" file, there you have the code to create the tables
-- use npm start to run the backend and npm run dev to run the frontend
 
-note: tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again
+Open visual studio terminal, step on frontend and backend folder and run:
+- for dev: npm run dev
+- for build dist: npm run build
+- for production: npm start
+
+Important Notes:
+- Vite changes its port when it's running on production or development, make sure to change the frontend port in the .env files
+and in the package.json of the frontend since it's using wait-on http://localhost:Your-port
+- Tailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again

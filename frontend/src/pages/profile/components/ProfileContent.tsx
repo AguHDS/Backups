@@ -94,7 +94,7 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
           },
           body: JSON.stringify({
             bio: updateData.bio,
-            sections,
+            sections: sections.length > 0 ? sections : [],
           }),
         }
       );

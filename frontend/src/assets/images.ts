@@ -5,7 +5,7 @@ import giftIcon from './giftIcon.png';
 import graph from './graph.png';
 import storageShowcase from './storageShowcase.png';
 
-const images = {
+export const images = {
   testImage,
   msgIcon,
   addFriend,
@@ -13,5 +13,3 @@ const images = {
   graph,
   storageShowcase
 };
-
-export default images;

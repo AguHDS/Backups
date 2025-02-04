@@ -21,10 +21,10 @@ export const TermsAndConditions = ({ onUnderstand }: Props) => {
             <section className="space-y-2">
               <h2 className="text-lg mb-2">1. Definitions</h2>
               <p>
-                1.1. "user": Any person who registers and uses the Application.
+                1.1. &quot;user&quot;: Any person who registers and uses the Application.
               </p>
               <p>
-                1.2. "content": Files, documents, images, videos, or other
+                1.2. &quot;content&quot;: Files, documents, images, videos, or other
                 materials uploaded to the Application.
               </p>
             </section>
@@ -37,7 +37,7 @@ export const TermsAndConditions = ({ onUnderstand }: Props) => {
                 truthful and up-to-date information.
               </p>
               <p>
-                2.2. It is the user's responsibility to maintain the
+                2.2. It is the user&apos;s responsibility to maintain the
                 confidentiality of their access credentials.
               </p>
               <p>

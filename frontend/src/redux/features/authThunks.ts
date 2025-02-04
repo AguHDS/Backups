@@ -7,7 +7,7 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/refreshToken`,
+        `http://localhost:3001/refreshToken`,
         {
           method: "POST",
           credentials: "include",
