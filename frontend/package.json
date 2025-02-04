@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"tsc --noEmit --watch\" \"vite\" \"wait-on http://localhost:5173 && npx tailwindcss -i ./src/main.css -o ./src/output.css --watch\"",
+    "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && npx tailwindcss -i ./src/main.css -o ./src/output.css --watch\"",
     "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "start": "vite preview",
+    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -28,6 +28,7 @@
     "@types/react-dom": "^18.3.5",
     "@types/react-router-dom": "^5.3.3",
     "@types/redux": "^3.6.31",
+    "@types/webpack-env": "^1.18.8",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-react-swc": "^3.5.0",

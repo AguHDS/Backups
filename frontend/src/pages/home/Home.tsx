@@ -1,8 +1,8 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
-import { Button, TermsAndConditions, Modal } from "../../components/index.js";
-import { FeatureCard, Header } from "./components/index.js";
-import { useModalContext } from "../../components/Modal/context/ModalContext.js";
-import images from "../../assets/images.js";
+import { Button, TermsAndConditions, Modal } from "../../components/index";
+import { FeatureCard, Header } from "./components/index";
+import { useModalContext } from "../../components/Modal/context/ModalContext";
+import {images} from "../../assets/images";
 import { useNavigate } from "react-router-dom";
 
 export const Home = () => {

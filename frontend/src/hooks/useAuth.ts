@@ -58,14 +58,11 @@ export const useAuth = () => {
       const formData = getFormData(e.currentTarget);
 
       let endpoint = "";
-
-      "email" in formData
-        ? (endpoint = `http://localhost:${
-            import.meta.env.VITE_BACKENDPORT
-          }/registration`)
-        : (endpoint = `http://localhost:${
-            import.meta.env.VITE_BACKENDPORT
-          }/login`);
+      if ("email" in formData) {
+        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/registration`;
+      } else {
+        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/login`;
+      }
 
       fetchData(endpoint, {
         method: "POST",
@@ -97,7 +94,7 @@ export const useAuth = () => {
       navigate("/dashboard");
       window.location.reload();
     }
-  }, [data, status, navigate]);
+  }, [data, status, navigate, dispatch]);
 
   return {
     input,

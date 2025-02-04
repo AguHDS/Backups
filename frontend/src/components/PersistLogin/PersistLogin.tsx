@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { LoadingSpinner, Modal } from "..";
-import { useModalContext } from "../Modal/context/ModalContext.js";
+import { useModalContext } from "../Modal/context/ModalContext";
 import { useSelector, useDispatch } from "react-redux";
 import { getNewRefreshToken } from "../../redux/features/authThunks";
 import { RootState, AppDispatch } from "../../redux/store";
