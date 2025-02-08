@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
 import { useModalContext } from "../../components/Modal/context/ModalContext";
 import useFetch from "../../hooks/useFetch";
 import { Modal, LoadingSpinner } from "../../components/index";
+import { RootState } from "../../redux/store";
+import { ProfileProvider } from "./context/ProfileContext";
 import {images} from "../../assets/images";
 import {
   Header,
@@ -36,7 +37,6 @@ interface CustomResponse {
 }
 
 export const Profile = () => {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
   const { data, status, isLoading, error, fetchData } = useFetch<CustomResponse>();
   const { isAuthenticated, userData } = useSelector((state: RootState) => state.auth);
   const { username } = useParams();
@@ -77,7 +77,7 @@ export const Profile = () => {
   }, [status, navigate]);
 
   return (
-    <>
+    <ProfileProvider isOwnProfile={isOwnProfile}>
       {isLoading && (
         <Modal>
           <div className="flex items-center justify-center min-h-screen">
@@ -97,10 +97,7 @@ export const Profile = () => {
         <div className="mx-auto flex justify-center mt-5">
           <div className="w-[80vw] max-w-full">
             <Header
-              isOwnProfile={isOwnProfile}
               username={data.username}
-              isEditing={isEditing}
-              setIsEditing={setIsEditing}
             />
             <div className="p-[8px] bg-[#121212] border-[#272727] border-solid border-r border-b text-[#e0e0e0]">
               <div className="flex flex-col md:flex-row w-full">
@@ -130,7 +127,6 @@ export const Profile = () => {
                 </div>
                 {/* right area */}
                 <ProfileContent
-                  isEditing={isEditing}
                   bio={data.userProfileData.bio}
                   title={data.userSectionData.title}
                   description={data.userSectionData.description}
@@ -140,6 +136,6 @@ export const Profile = () => {
           </div>
         </div>
       )}
-    </>
+    </ProfileProvider>
   );
 };
