@@ -2,7 +2,7 @@ interface Props {
   graphTestImage: string;
 }
 
-export const Graph = ({graphTestImage}: Props) => {
+export const Graph = ({ graphTestImage }: Props) => {
   return (
     <div>
       <img

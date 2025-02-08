@@ -1,10 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "../../../components";
-import { Bio } from "./Bio";
 import AuthFeedback from "../../login&sign/authFeedback/AuthFeedback";
 import useFetch from "../../../hooks/useFetch";
+import { Button } from "../../../components";
+import { Bio } from "./Bio";
+import { ImageUploader } from "./ImageUploader";
+import { useProfile } from "../context/ProfileContext";
 
 type ValidationError = {
   msg: string;
@@ -24,22 +26,24 @@ interface Section {
 type SectionField = keyof Section;
 
 interface Props {
-  isEditing: boolean;
   bio: string;
   title: string;
   description: string;
 }
 
-export const ProfileContent = ({ isEditing, bio, title, description }: Props) => {
+export const ProfileContent = ({ bio, title, description }: Props) => {
   const [updateData, setUpdateData] = useState({
     bio: bio,
     title: title,
     description: description,
   });
-  const [sections, setSections] = useState<Section[]>([{ title: title, description: description }]);
+  const [sections, setSections] = useState<Section[]>([
+    { title: title, description: description },
+  ]);
   const { status, isLoading, error, fetchData } = useFetch();
   const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const { isEditing } = useProfile();
 
   //utility function to validate fields
   const validateFields = (): string[] => {
@@ -66,15 +70,15 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
     if (Array.isArray(error)) {
       return error.map((err: ValidationError) => err.msg);
     }
-    
-    if (error && typeof error === 'object' && 'message' in error) {
+
+    if (error && typeof error === "object" && "message" in error) {
       return [error.message as string];
     }
 
-    return ['An unexpected error occurred'];
+    return ["An unexpected error occurred"];
   };
 
-  //fetch to update profile content data
+  //update user profile content data
   const handleUpdateProfile = async () => {
     const validationErrors = validateFields();
     if (validationErrors.length > 0) {
@@ -84,7 +88,8 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
 
     try {
       await fetchData(
-        `http://localhost:${import.meta.env.VITE_BACKENDPORT
+        `http://localhost:${
+          import.meta.env.VITE_BACKENDPORT
         }/api/updateProfile/${username}`,
         {
           method: "POST",
@@ -98,9 +103,9 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
           }),
         }
       );
-    }catch (error) {
-      console.error('Failed to update profile:', error);
-      setErrorMessages(['Failed to update profile.Try again later']);
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      setErrorMessages(["Failed to update profile.Try again later"]);
     }
   };
 
@@ -116,7 +121,7 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
     if (error) {
       const newErrorMessages = processError(error);
       setErrorMessages(newErrorMessages);
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
     }
   }, [status, error, isLoading]);
 
@@ -128,7 +133,7 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
   };
 
   const handleChange = (field: SectionField, value: string, index?: number) => {
-    if (typeof index === 'number') {
+    if (typeof index === "number") {
       setSections((prev) => {
         const updatedSections = [...prev];
         if (index >= 0 && index < updatedSections.length) {
@@ -148,7 +153,6 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
         <div className="p-4 space-y-4 scrollbar-container flex-1">
           <Bio
             bio={updateData.bio}
-            isEditing={isEditing}
             onBioChange={handleBioChange}
           />
           {/* Sections */}
@@ -159,7 +163,7 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
                   <div className="flex justify-center">
                     <input
                       type="text"
-                      className="w-[25%] text-center bg-[#272727] text-[#ccc] text-[18px] p-2 mb-4 border border-[#444]"
+                      className="w-[25%] text-center bg-[#272727] text-[#3d3c3c] text-[18px] p-2 mb-4 border border-[#444]"
                       placeholder={`Title for Section`}
                       value={section.title}
                       onChange={(e) =>
@@ -188,7 +192,9 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
                       input={errorMessages}
                       status={status}
                       message={
-                        errorMessages.length === 0 ? "Operation completed" : null
+                        errorMessages.length === 0
+                          ? "Operation completed"
+                          : null
                       }
                     />
                   </>
@@ -198,28 +204,10 @@ export const ProfileContent = ({ isEditing, bio, title, description }: Props) =>
                   </div>
                 )}
               </div>
-              <div className="p-4 overflow-y-auto h-[50vh] border border-[#121212] bg-[#1e1e1e]">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                  {[...Array(14)].map((_, index) => (
-                    <div
-                      key={`imagen1-${index}`}
-                      className="w-full h-[150px] bg-[#444] flex items-center justify-center text-[#ccc]"
-                    >
-                      imagen {index + 1}
-                    </div>
-                  ))}
-                </div>
-              </div>
             </React.Fragment>
           ))}
-          <div className="flex justify-center">
-            <Button
-              label="Add images"
-              className="my-4 p-2 text-center w-[12vw] bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333]"
-              onClick={() => alert("Processing...")}
-            ></Button>
-          </div>
         </div>
+        <ImageUploader />
         {isEditing && (
           <div className="flex flex-col items-end">
             <Button

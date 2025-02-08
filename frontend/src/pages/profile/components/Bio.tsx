@@ -1,10 +1,13 @@
+import { useProfile } from "../context/ProfileContext";
+
 interface Props {
   bio: string;
-  isEditing: boolean;
   onBioChange: (bio: string) => void;
 }
 
-export const Bio = ({bio, isEditing, onBioChange}: Props) => {
+export const Bio = ({ bio, onBioChange }: Props) => {
+  const { isEditing } = useProfile();
+
   return (
     <>
       {isEditing ? (
@@ -16,9 +19,7 @@ export const Bio = ({bio, isEditing, onBioChange}: Props) => {
           onChange={(e) => onBioChange(e.target.value)}
         ></textarea>
       ) : (
-        <div className="flex items-center h-12 text-gray-200">
-          {bio}
-        </div>
+        <div className="flex items-center h-12 text-gray-200">{bio}</div>
       )}
     </>
   );
