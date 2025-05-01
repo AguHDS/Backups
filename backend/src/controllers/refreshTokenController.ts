@@ -96,7 +96,7 @@ async (req, res) => {
       sameSite: config.nodeEnv === "production" ? "none" : "lax",
     });
 
-    console.log("sending new access token, updating refresh token...");
+    console.log("sending new access token and updating refresh token... (refreshTokenController)");
     res.status(200).json({ accessToken, userData });
     return;
   } catch (error) {

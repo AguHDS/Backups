@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction} from "express";
+import { Response, Request, NextFunction } from "express";
 import promisePool from "../db/database.js";
 import { RowDataPacket } from "mysql2/promise";
 

@@ -8,6 +8,9 @@ interface Config {
   dbDatabase: string;
   dbUser: string;
   dbPassword: string;
+  cloudinaryName: string;
+  cloudinaryApiKey: string;
+  cloudinaryApiSecret: string;
 }
 
 const requiredVariables = [
@@ -20,6 +23,9 @@ const requiredVariables = [
   "DB_DATABASE",
   "DB_USER",
   "DB_PASSWORD",
+  "CLOUDINARY_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
 ] as const;
 
 const missingVariables = requiredVariables.filter((variable) => !process.env[variable]);
@@ -45,6 +51,9 @@ const config: Config = {
   dbDatabase: getEnvVariable("DB_DATABASE"),
   dbUser: getEnvVariable("DB_USER"),
   dbPassword: getEnvVariable("DB_PASSWORD"),
+  cloudinaryName: getEnvVariable("CLOUDINARY_NAME"),
+  cloudinaryApiKey: getEnvVariable("CLOUDINARY_API_KEY"),
+  cloudinaryApiSecret: getEnvVariable("CLOUDINARY_API_SECRET"),
 };
 
 export default config;
