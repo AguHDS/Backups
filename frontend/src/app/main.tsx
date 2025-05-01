@@ -1,7 +1,6 @@
-import React from "react";
+/* import React from "react"; */
 import ReactDOM from "react-dom/client";
 import AppProvider from "./AppProvider";
-import "./output.css";
 
 const rootElement = document.getElementById("root");
 
