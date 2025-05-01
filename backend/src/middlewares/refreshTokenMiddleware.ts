@@ -30,20 +30,20 @@ async (req, res, next) => {
   try {
     const cookies = req.cookies;
     if (!cookies?.refreshToken) {
-      console.log("No refresh found in the cookies");
-      res.status(401).json({ message: "No refresh token in cookies (refreshTokenMiddleware)" });
+      console.log("Autocheck: No refresh found in the cookies (refreshTokenMiddleware)");
+      res.status(401).json({ message: "No refresh token in cookies" });
       return;
     }
     const refreshToken = cookies.refreshToken;
 
     const decodedRefreshToken = verifyToken(refreshToken, "refresh") as DecodedToken;
+
     if (!decodedRefreshToken) {
       console.error("Invalid or expired refresh token detected.");
       res.status(403).json({ message: "Invalid or expired refresh token" });
       return;
     }
 
-    console.log("hasta aca todo bien")
     const { id } = decodedRefreshToken;
 
     const tokenData = await findValidRefreshToken(refreshToken, id);
@@ -53,13 +53,11 @@ async (req, res, next) => {
       return;
     }
 
-    req.body.userTokenId = id;
+    req.body.userTokenId = id;//<- find a way to make this with req.userTokenId, it's bad to edit the body in the middleware directly
     next();
   } catch (error) {
-    if(error instanceof Error) {
-      console.error("Error during token validation:", error.message);
-    }
-    res.status(500).json({ message: "Internal Server Error" });
+    if(error instanceof Error) console.error("Error during token validation (refreshTokenMidddleware):", error.message);
+    res.status(401).json({ message: "Error during token validation, Unauthorized " });
     return;
   }
 };

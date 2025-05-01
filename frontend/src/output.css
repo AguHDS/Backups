@@ -211,11 +211,6 @@
   margin-bottom: 0.75rem !important;
 }
 
-.my-4 {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-
 .my-5 {
   margin-top: 1.25rem !important;
   margin-bottom: 1.25rem !important;
@@ -269,6 +264,10 @@
 
 .ml-1 {
   margin-left: 0.25rem !important;
+}
+
+.ml-2 {
+  margin-left: 0.5rem !important;
 }
 
 .ml-6 {
@@ -436,6 +435,10 @@
   max-height: 350px !important;
 }
 
+.max-h-\[50vh\] {
+  max-height: 50vh !important;
+}
+
 .max-h-\[90vh\] {
   max-height: 90vh !important;
 }
@@ -520,12 +523,20 @@
   width: 100% !important;
 }
 
+.min-w-\[90\%\] {
+  min-width: 90% !important;
+}
+
 .max-w-3xl {
   max-width: 48rem !important;
 }
 
 .max-w-4xl {
   max-width: 56rem !important;
+}
+
+.max-w-\[90\%\] {
+  max-width: 90% !important;
 }
 
 .max-w-full {
@@ -1161,6 +1172,11 @@
 
 .font-semibold {
   font-weight: 600 !important;
+}
+
+.text-\[\#3d3c3c\] {
+  --tw-text-opacity: 1 !important;
+  color: rgb(61 60 60 / var(--tw-text-opacity)) !important;
 }
 
 .text-\[\#ccc\] {
