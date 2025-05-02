@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import promisePool from "../db/database.js";
+import promisePool from "../../../db/database.js";
 import { ResultSetHeader } from "mysql2/promise";
 
 const deleteRefreshFromDB = async (userId: number) => {

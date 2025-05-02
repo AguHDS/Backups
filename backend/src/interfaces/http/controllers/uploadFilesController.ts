@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { cloudinary } from "../services/cloudinary.js";
+import { cloudinary } from "../../../services/cloudinary.js";
 import streamifier from "streamifier";
 
 interface FileData {

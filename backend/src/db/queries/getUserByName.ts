@@ -1,7 +1,7 @@
 import promisePool from "../database.js";
 import { RowDataPacket } from "mysql2/promise";
 
-const getUserByName = async (username: string): Promise<RowDataPacket | null> => {
+export const getUserByName = async (username: string): Promise<RowDataPacket | null> => {
   try {
     const [rows] = await promisePool.execute<RowDataPacket[]>(
       "SELECT * FROM users WHERE namedb = ?",
@@ -19,5 +19,3 @@ const getUserByName = async (username: string): Promise<RowDataPacket | null> =>
     throw new Error("Error retrieving username from database");
   }
 };
-
-export default getUserByName;
