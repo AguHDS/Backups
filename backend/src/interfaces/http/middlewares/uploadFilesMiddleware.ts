@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { MulterError } from "multer";
-import { upload } from "../config/multerConfig.js";
+import { upload } from "../infraestructure/config/multerConfig.js";
 import { decodeRefreshToken } from "../utils/decodeRefreshToken.js";
 
 interface ErrorResponse {

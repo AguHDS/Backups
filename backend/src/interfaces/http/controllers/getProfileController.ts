@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import promisePool from "../db/database.js";
+import promisePool from "../../../db/database.js";
 import { RowDataPacket } from "mysql2/promise";
 
 interface ProfileContent {
