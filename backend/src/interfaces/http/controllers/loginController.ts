@@ -1,17 +1,9 @@
-import { RequestHandler } from "express";
-import { validationResult, ValidationError, matchedData } from "express-validator";
+import { Request, Response } from "express";
 import { LoginUserUseCase } from "../../../application/useCases/LoginUserUseCase.js";
 import { MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/MysqlRefreshTokenRepository.js";
 import { MysqlUserRepository } from "../../../infraestructure/repositories/MysqlUserRepository.js";
 import { compare } from "../../../utils/handlePassword.js";
-
-
 import config from "../../../infraestructure/config/environmentVars.js";
-import { getUserByName } from "../../../db/queries/index.js";
-import { RowDataPacket } from "mysql2/promise";
-
-import { tokenSign } from "../../../utils/handleJwt.js";
-import { JwtUserData, ValidUserData } from "../../../shared/dtos/index.js";
 
 //dependency injection for the use case
 const loginUserUseCase = new LoginUserUseCase(
@@ -20,14 +12,13 @@ const loginUserUseCase = new LoginUserUseCase(
   new MysqlRefreshTokenRepository
 );
 
-export const loginController: RequestHandler = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+export const loginController = async (req: Request, res: Response) => {
+  if (!req.validatedUserData) {
+    res.status(500).json({ message: "Missing user validated data" });
     return;
   }
 
-  const { user, password } = matchedData(req);
+  const { user, password } = req.validatedUserData;
 
   try {
     //on login successful, get tokens and user data

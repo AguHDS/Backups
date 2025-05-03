@@ -6,6 +6,10 @@ declare module 'express' {
     activeSessionData?: {
       id: number;
       hasRefreshCookie: boolean;
-    };
+    },
+    validatedUserData?: {
+      user: string;
+      password: string;
+    },
   }
 }
