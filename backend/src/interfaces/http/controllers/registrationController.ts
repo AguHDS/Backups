@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { validationResult, matchedData, ValidationError } from "express-validator";
-import { encrypt } from "../../../utils/handlePassword.js";
+import { encrypt } from "../../../infraestructure/auth/handlePassword.js";
 import promisePool from "../../../db/database.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
@@ -85,7 +85,7 @@ interface UserData {
   email: string;
 }
 
-const register: RequestHandler<{}, { message: string } | { errors: ValidationError[] }, UserData, {}> = 
+export const registerController: RequestHandler<{}, { message: string } | { errors: ValidationError[] }, UserData, {}> = 
 async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -137,5 +137,3 @@ async (req, res) => {
     return;
   }
 };
-
-export default register;

@@ -1,7 +1,7 @@
 import { RowDataPacket, Connection } from "mysql2/promise";
 import promisePool from "../database.js";
 
-const getUserById = async (id: string, connection?: Connection): Promise<RowDataPacket | null> => {
+export const getUserById = async (id: string, connection?: Connection): Promise<RowDataPacket | null> => {
   try {
     let rows: RowDataPacket[];
 
@@ -28,5 +28,3 @@ const getUserById = async (id: string, connection?: Connection): Promise<RowData
     throw new Error("Error retrieving user from database");
   }
 };
-
-export default getUserById;

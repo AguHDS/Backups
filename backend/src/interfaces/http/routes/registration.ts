@@ -1,9 +1,10 @@
-import express, { RequestHandler } from "express";
-import register from "../controllers/registrationController.js";
-import validatorRegistration from "../middlewares/validators/registration.js";
+import express from "express";
+import validatorRegistration from "../middlewares/validators/registrationValidator.js";
+import { registerController } from "../controllers/registrationController.js";
+import { registrationMiddleware } from "../middlewares/registrationMiddleware.js";
 
 const router = express.Router();
 
-router.post("/", validatorRegistration, register as RequestHandler);
+router.post("/", validatorRegistration, registrationMiddleware, registerController);
 
 export default router;

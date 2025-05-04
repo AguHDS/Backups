@@ -1,5 +1,6 @@
-export interface UserData {
+export interface UserSessionData {
   name: string;
+  email: string;
   role: string;
   id: number;
 }

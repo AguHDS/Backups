@@ -2,9 +2,9 @@ import { RefreshTokenRepository } from "../../domain/repositories/RefreshTokenRe
 import promisePool from "../../db/database.js";
 import { RowDataPacket } from "mysql2/promise";
 
-//update refreshToken from DB
+//save or update refreshToken from DB
 export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
-  async save(userId: number, token: string, expiresAt: Date): Promise<void> {
+  async saveRefreshToDB(userId: number, token: string, expiresAt: Date): Promise<void> {
     try {
       //delete any existing refresh token for this user
       const [existingToken] = await promisePool.execute<RowDataPacket[]>(
