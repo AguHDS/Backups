@@ -1,2 +1,2 @@
-export * from './SessionPayload.js'
+export * from './userSession.js'
 export * from './jwtUserData.js'

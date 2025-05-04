@@ -4,7 +4,7 @@ import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
 import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
 import promisePool from "../../../db/database.js";
 import { getUserById } from "../../../db/queries/index.js";
-import { JwtUserData, SessionPayload } from "../../../shared/dtos/index.js";
+import { JwtUserData, UserSessionWithTokens } from "../../../shared/dtos/index.js";
 
 //get expiration time of the first refresh token emited.
 const getDateTime = async (userId: number, connection: Connection): Promise<string | null> => {

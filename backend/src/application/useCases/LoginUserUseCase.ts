@@ -1,5 +1,5 @@
 import { UserRepository } from "../../domain/repositories/UserRepository.js";
-import { JwtUserData, SessionPayload } from "../../shared/dtos/index.js";
+import { JwtUserData, UserSessionWithTokens } from "../../shared/dtos/index.js";
 import { tokenSign } from "../../infraestructure/auth/handleJwt.js";
 import { RefreshTokenRepository } from "../../domain/repositories/RefreshTokenRepository.js";
 
@@ -11,7 +11,7 @@ export class LoginUserUseCase {
     private readonly saveRefreshToken: RefreshTokenRepository
   ) {}
 
-  async execute(username: string, password: string): Promise<SessionPayload> {
+  async execute(username: string, password: string): Promise<UserSessionWithTokens> {
     //search user by name in db
     const user = await this.userRepo.findByUsername(username);
 
