@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { verifyToken } from "./handleJwt.js";
+import { verifyToken } from "../../../../infraestructure/auth/handleJwt.js";
 import { JwtPayload } from "jsonwebtoken";
 
 interface DecodedToken extends JwtPayload {

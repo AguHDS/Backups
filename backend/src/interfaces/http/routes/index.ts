@@ -6,4 +6,12 @@ import getProfile from "./getProfile.js";
 import updateProfile from "./updateProfile.js";
 import uploadFiles from "./uploadFiles.js";
 
-export { login, registration, logout, refreshToken, getProfile, updateProfile, uploadFiles };
+export {
+  login,
+  registration,
+  logout,
+  refreshToken,
+  getProfile,
+  updateProfile,
+  uploadFiles,
+};

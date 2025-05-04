@@ -1,5 +1,5 @@
-import config from "../infraestructure/config/environmentVars.js";
-import { JwtUserData } from "../shared/dtos/index.js";
+import config from "../config/environmentVars.js";
+import { JwtUserData } from "../../shared/dtos/jwtUserData.js";
 import jwt from "jsonwebtoken";
 
 /**

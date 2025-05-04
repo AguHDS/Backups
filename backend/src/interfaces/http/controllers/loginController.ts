@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import { LoginUserUseCase } from "../../../application/useCases/LoginUserUseCase.js";
 import { MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/MysqlRefreshTokenRepository.js";
 import { MysqlUserRepository } from "../../../infraestructure/repositories/MysqlUserRepository.js";
-import { compare } from "../../../utils/handlePassword.js";
+import { compare } from "../../../infraestructure/auth/handlePassword.js";
 import config from "../../../infraestructure/config/environmentVars.js";
 
-//dependency injection for the use case
+//dependency injection for the useCase
 const loginUserUseCase = new LoginUserUseCase(
-  new MysqlUserRepository,
+  new MysqlUserRepository(),
   compare,
-  new MysqlRefreshTokenRepository
+  new MysqlRefreshTokenRepository()
 );
 
 export const loginController = async (req: Request, res: Response) => {
@@ -24,7 +24,7 @@ export const loginController = async (req: Request, res: Response) => {
     //on login successful, get tokens and user data
     const { accessToken, refreshToken, userData } = await loginUserUseCase.execute(user, password);
 
-    //set refresh token as a cookie
+    //send refresh token as a cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: config.nodeEnv === "production",

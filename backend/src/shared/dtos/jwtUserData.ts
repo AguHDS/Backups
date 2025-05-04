@@ -1,3 +1,4 @@
+//requirements to create JWT tokens
 export interface JwtUserData {
     name: string;
     role: 'user' | 'admin';

@@ -1,10 +1,10 @@
 import config from "../../../infraestructure/config/environmentVars.js";
 import { RequestHandler } from "express";
-import { tokenSign } from "../../../utils/handleJwt.js";
+import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
 import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
 import promisePool from "../../../db/database.js";
 import { getUserById } from "../../../db/queries/index.js";
-import { JwtUserData, ValidUserData } from "../../../shared/dtos/index.js";
+import { JwtUserData, SessionPayload } from "../../../shared/dtos/index.js";
 
 //get expiration time of the first refresh token emited.
 const getDateTime = async (userId: number, connection: Connection): Promise<string | null> => {
@@ -42,7 +42,7 @@ const updateRefreshTokenFromDB = async (refreshToken: string, userId: number, co
 };
 
 //send new access token if everything was validated
-const sendNewAccessToken: RequestHandler<{}, { message: string } | ValidUserData, { userTokenId: string }, {}> = 
+const sendNewAccessToken: RequestHandler<{}, { message: string } | SessionPayload, { userTokenId: string }, {}> = 
 async (req, res) => {
   const connection = await promisePool.getConnection();
   try {
