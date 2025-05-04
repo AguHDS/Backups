@@ -11,5 +11,10 @@ declare module 'express' {
       user: string;
       password: string;
     },
+    sessionData?: {
+      name: string;
+      email: string;
+      password: string;
+    }
   }
 }

@@ -1,5 +1,4 @@
-import { RequestHandler } from "express";
-import { validationResult, matchedData, ValidationError } from "express-validator";
+import { Request, Response } from "express";
 import { encrypt } from "../../../infraestructure/auth/handlePassword.js";
 import promisePool from "../../../db/database.js";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
@@ -79,31 +78,23 @@ const insertNewUser = async (name: string, email: string, pass: string, role: st
   }
 };
 
-interface UserData {
-  user: string;
-  password: string
-  email: string;
-}
+export const registerController = async (req: Request, res: Response) => {
+  if (!req.sessionData) {
+    res.status(500).json({ message: "Missing user data" });
+    return;
+  }
 
-export const registerController: RequestHandler<{}, { message: string } | { errors: ValidationError[] }, UserData, {}> = 
-async (req, res) => {
+  const { name, email, password } = req.sessionData;
+
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      console.error("Validation errors found", errors.array());
-      res.status(400).json({ errors: errors.array() });
-      return;
-    }
+    const hashedPassword = await encrypt(password);
+    const body = { name, email, hashedPassword };
 
-    const data: UserData = matchedData(req);
-    const password = await encrypt(data.password);
-    const body = { ...data, password };
-
-    const nameAndEmail = await isNameOrEmailTaken(body.user, body.email);
+    const nameAndEmail = await isNameOrEmailTaken(body.name, body.email);
 
     if (nameAndEmail.isTaken) {
       if (nameAndEmail.userTaken && !nameAndEmail.emailTaken) {
-        console.error(`User ${body.user} already exists`);
+        console.error(`User ${body.name} already exists`);
 
         res.status(409).json({ message: `User is taken` });
         return;
@@ -117,7 +108,7 @@ async (req, res) => {
       }
 
       if (nameAndEmail.userTaken && nameAndEmail.emailTaken) {
-        console.error(`User ${body.user} and ${body.email} already exist`);
+        console.error(`User ${body.name} and ${body.email} already exist`);
 
         res.status(409).json({ message: "The user and email are taken" });
         return;
@@ -125,8 +116,8 @@ async (req, res) => {
     }
 
     //if not taken, proceed with registration
-    await insertNewUser(body.user, body.email, body.password, "user");
-    console.log(`User: ${body.user} and email: ${body.email} saved successfully`);
+    await insertNewUser(body.name, body.email, body.hashedPassword, "user");
+    console.log(`User: ${body.name} and email: ${body.email} saved successfully`);
 
     res.status(200).json({ message: "Registration completed" });
     return;
