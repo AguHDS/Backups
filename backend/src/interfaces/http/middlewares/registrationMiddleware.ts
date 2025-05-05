@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult, matchedData } from "express-validator";
-import { UserSession } from "../../../shared/dtos/userSession.js";
+import { UserSession } from "../../../shared/dtos/userDto.js";
 
-export const registrationMiddleware = (req: Request, res: Response, next: NextFunction)  => {
+export const registrationMiddleware = (req: Request, res: Response, next: NextFunction): void  => {
 const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.error("Validation errors found", errors.array());
@@ -19,6 +19,6 @@ const errors = validationResult(req);
       email,
       password,
     }
-
+    
     next();
 }
