@@ -41,11 +41,11 @@ app.use(credentials);
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//routes
-app.use("/login", login);
-app.use("/registration", registration);
-app.use("/logout", logout);
-app.use("/refreshToken", refreshToken);
+//API routes
+app.use("/api/login", login);
+app.use("/api/registration", registration);
+app.use("/api/logout", logout);
+app.use("/api/refreshToken", refreshToken);
 app.use("/api/getProfile", getProfile);
 app.use("/api/updateProfile", updateProfile);
 app.use("/api/uploadFiles", uploadFiles);
