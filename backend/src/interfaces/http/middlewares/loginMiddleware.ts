@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult, matchedData } from "express-validator";
 
-export const loginMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const loginMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   //check if credentials are valid using express-validator
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
