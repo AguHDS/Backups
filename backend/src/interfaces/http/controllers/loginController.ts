@@ -12,12 +12,7 @@ const loginUserUseCase = new LoginUserUseCase(
   new MysqlRefreshTokenRepository()
 );
 
-export const loginController = async (req: Request, res: Response) => {
-  if (!req.validatedUserData) {
-    res.status(500).json({ message: "Missing user validated data" });
-    return;
-  }
-
+export const loginController = async (req: Request, res: Response): Promise<void> => {
   const { user, password } = req.validatedUserData;
 
   try {
@@ -33,8 +28,10 @@ export const loginController = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({ accessToken, userData });
+    return;
   }catch(err) {
     console.error("Error in loginController");
     res.status(401).json({ message: err instanceof Error ? err.message : "Unauthorized" });
+    return;
   }
 }
