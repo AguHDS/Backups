@@ -7,7 +7,7 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/refreshToken`,
+        `http://localhost:3001/api/refreshToken`,
         {
           method: "POST",
           credentials: "include",
@@ -54,7 +54,7 @@ export const logout = createAsyncThunk<{ message: string }, void, { state: RootS
         const userId = state.auth.userData.id;
 
         const response = await fetch(
-        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/logout`,
+        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/logout`,
         {
           method: "POST",
           headers: {

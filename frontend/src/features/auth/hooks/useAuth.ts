@@ -59,9 +59,9 @@ export const useAuth = () => {
 
       let endpoint = "";
       if ("email" in formData) {
-        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/registration`;
+        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/registration`;
       } else {
-        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/login`;
+        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/login`;
       }
 
       fetchData(endpoint, {
