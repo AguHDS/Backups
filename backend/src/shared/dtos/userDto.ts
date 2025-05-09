@@ -11,7 +11,7 @@ export interface UserSessionWithTokens {
   refreshToken: string;
   userData: {
     name: string;
-    email: string;
+    email?: string; //email is not necessary for refresh token renewal, but is included for convenience
     role: string;
     id: number;
   };

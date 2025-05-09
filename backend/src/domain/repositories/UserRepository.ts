@@ -1,3 +1,4 @@
+import { Connection } from "mysql2/promise";
 import { User } from "../entities/User.js";
 
 export interface NameAndEmailCheckResult {
@@ -7,8 +8,10 @@ export interface NameAndEmailCheckResult {
 }
 
 export interface UserRepository {
-  //checks in the database if the user exists when logging in
+  //search in the database by username
   findByUsername(username: string): Promise<User | null>;
+  //search in the database by id
+  findById(id: number | string, connection: Connection): Promise<User | null>;
   //check in the database if username or email are already taken
   isNameOrEmailTaken(username: string, email: string): Promise<NameAndEmailCheckResult>
   //insert in the database a new user

@@ -15,6 +15,9 @@ declare module 'express' {
       name: string;
       email: string;
       password: string;
+    },
+    refreshTokenId?: {
+      id: string;
     }
   }
 }
