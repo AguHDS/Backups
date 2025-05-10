@@ -1,7 +1,6 @@
 import { User } from "../../domain/entities/User.js";
-import { UserRepository, NameAndEmailCheckResult } from "../../domain/repositories/UserRepository.js";
-import { RowDataPacket } from "mysql2/promise";
-import { ResultSetHeader } from "mysql2";
+import { UserRepository,NameAndEmailCheckResult } from "../../domain/repositories/UserRepository.js";
+import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
 import promisePool from "../../db/database.js";
 
 interface UserRow extends RowDataPacket {
@@ -24,30 +23,52 @@ export class MysqlUserRepository implements UserRepository {
 
       const row = rows[0];
 
-      return new User(
-        row.id, 
-        row.namedb, 
-        row.emaildb, 
-        row.passdb, 
-        row.role
-      );
+      return new User(row.id, row.namedb, row.emaildb, row.passdb, row.role);
     } catch (error) {
       console.error("Error retrieving username from database:", error);
       throw new Error("Error retrieving username from database");
     }
   }
-  async isNameOrEmailTaken(username: string, email: string): Promise<NameAndEmailCheckResult> {
+  async findById(id: number, connection: Connection): Promise<User | null> {
     try {
-      const [results] = await promisePool.execute<UserRow[]>('SELECT namedb, emaildb FROM users WHERE namedb = ? OR emaildb = ?', 
-      [username, email]);
+      const [rows] = await connection.execute<RowDataPacket[]>(
+        "SELECT * FROM users WHERE id = ?",
+        [id]
+      );
   
+      if (rows.length === 0) {
+        return null;
+      }
+  
+      const row = rows[0];
+  
+      return new User(row.id, row.namedb, row.emaildb, row.passdb, row.role);
+    } catch (error) {
+      console.error("Error retrieving user from database:", error);
+      throw new Error("Error retrieving user from database");
+    }
+  }
+  async isNameOrEmailTaken(
+    username: string,
+    email: string
+  ): Promise<NameAndEmailCheckResult> {
+    try {
+      const [results] = await promisePool.execute<UserRow[]>(
+        "SELECT namedb, emaildb FROM users WHERE namedb = ? OR emaildb = ?",
+        [username, email]
+      );
+
       if (results.length > 0) {
         console.error("User or email already exists in the database");
-  
+
         //check which specific values are taken
-        const userTaken = results.some((row) => row.namedb === username) ? username : null;
-        const emailTaken = results.some((row) => row.emaildb === email) ? email : null;
-  
+        const userTaken = results.some((row) => row.namedb === username)
+          ? username
+          : null;
+        const emailTaken = results.some((row) => row.emaildb === email)
+          ? email
+          : null;
+
         return {
           isTaken: true,
           userTaken,
@@ -65,10 +86,15 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error checking user existence in database");
     }
   }
-  async insertNewUser(name: string, email: string, pass: string, role: string): Promise<void> {
+  async insertNewUser(
+    name: string,
+    email: string,
+    pass: string,
+    role: string
+  ): Promise<void> {
     const connection = await promisePool.getConnection();
     try {
-      await connection .beginTransaction();
+      await connection.beginTransaction();
 
       //insert new user in users table
       const [userResult] = await connection.execute<ResultSetHeader>(
