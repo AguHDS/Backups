@@ -4,20 +4,21 @@ import { tokenSign } from "../../infraestructure/auth/handleJwt.js";
 import { RefreshTokenRepository } from "../../domain/repositories/RefreshTokenRepository.js";
 
 export class LoginUserUseCase {
-  //these properties are injected in loginController
   constructor(
     private readonly userRepo: UserRepository,
     private readonly comparePasswords: (pass: string, hash: string) => Promise<boolean>,
     private readonly saveRefreshToken: RefreshTokenRepository
   ) {}
 
+  /** Send new tokens and save refresh token to db
+   * 
+   * @returns An object with new tokens and user data 
+   */
   async execute(username: string, password: string): Promise<UserSessionWithTokens> {
-    //search user by name in db
     const user = await this.userRepo.findByUsername(username);
 
     if (!user) throw new Error("Credentials don't exist");
 
-    //check if password is valid
     const validPassword = await user.isPasswordValid(password, this.comparePasswords);
 
     if (!validPassword) throw new Error("Invalid credentials");

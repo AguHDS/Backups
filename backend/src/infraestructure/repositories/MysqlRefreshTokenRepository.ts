@@ -1,5 +1,5 @@
-import { RefreshTokenRepository } from "../../domain/repositories/RefreshTokenRepository.js";
 import promisePool from "../../db/database.js";
+import { RefreshTokenRepository } from "../../domain/repositories/RefreshTokenRepository.js";
 import { RowDataPacket, Connection, ResultSetHeader } from "mysql2/promise";
 
 //save or update refreshToken from DB

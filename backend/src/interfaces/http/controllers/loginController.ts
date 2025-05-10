@@ -1,30 +1,28 @@
+import config from "../../../infraestructure/config/environmentVars.js";
 import { Request, Response } from "express";
 import { LoginUserUseCase } from "../../../application/useCases/LoginUserUseCase.js";
-import { MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/MysqlRefreshTokenRepository.js";
-import { MysqlUserRepository } from "../../../infraestructure/repositories/MysqlUserRepository.js";
+import { MysqlRefreshTokenRepository, MysqlUserRepository } from "../../../infraestructure/repositories/index.js";
 import { compare } from "../../../infraestructure/auth/handlePassword.js";
-import config from "../../../infraestructure/config/environmentVars.js";
 
-//dependency injection for the useCase
+//dependency injection
 const loginUserUseCase = new LoginUserUseCase(
   new MysqlUserRepository(),
   compare,
   new MysqlRefreshTokenRepository()
 );
 
+/** Send new tokens and user data */
 export const loginController = async (req: Request, res: Response): Promise<void> => {
   const { user, password } = req.validatedUserData;
 
   try {
-    //on login successful, get tokens and user data
     const { accessToken, refreshToken, userData } = await loginUserUseCase.execute(user, password);
 
-    //send refresh token as a cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: config.nodeEnv === "production",
-      maxAge: 65 * 1000,
-      sameSite: config.nodeEnv === "production" ? "none" : "lax",
+      secure: config.nodeEnv === "production", //use secure cookies only in production
+      maxAge: 65 * 1000, //65 seconds
+      sameSite: config.nodeEnv === "production" ? "none" : "lax", //adjust for cross-site requests in production
     });
 
     res.status(200).json({ accessToken, userData });

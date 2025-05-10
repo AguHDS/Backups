@@ -3,10 +3,12 @@ import { JwtUserData } from "../../shared/dtos/jwtUserData.js";
 import jwt from "jsonwebtoken";
 
 /**
- * @param user - username and role
- * @param type - type of token (access or refresh)
- * @param expiresIn - expiration time
- * @returns - jwt token
+ * Generates a signed JWT token using the given user data and token type
+ *
+ * @param user - User data to include in the token payload (name, role, id)
+ * @param type - Type of token to generate: "access" or "refresh". Defaults to "access"
+ * @param expiresIn - Expiration time of the token (e.g., "30s", "5m"). Defaults to "5m"
+ * @returns A promise that resolves to the signed JWT token as a string
  */
 
 export const tokenSign = async (user: JwtUserData, type: "access" | "refresh" = "access", expiresIn: string = "5m"): Promise<string> => {
@@ -34,9 +36,11 @@ export const tokenSign = async (user: JwtUserData, type: "access" | "refresh" = 
 };
 
 /**
- * @param token - token
- * @param type - type of token (access or refresh)
- * @returns - decoded token
+ * Verifies a JWT token and returns the decoded payload if valid
+ *
+ * @param token - The JWT token to verify
+ * @param type - The type of token: "access" or "refresh". Default is "access"
+ * @returns The decoded JWT payload if the token is valid, or null if verification fails
  */
 
 export const verifyToken = (token: string, type: "access" | "refresh" = "access"): string | jwt.JwtPayload | null => {

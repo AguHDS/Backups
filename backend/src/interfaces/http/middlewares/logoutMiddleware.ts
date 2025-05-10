@@ -1,5 +1,5 @@
+import promisePool from "../../../db/database.js";
 import { Response, Request, NextFunction } from "express";
-import promisePool from "../db/database.js";
 import { RowDataPacket } from "mysql2/promise";
 
 //check if the user has a refresh token in the database
