@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
-import { PoolConnection } from "mysql2/promise";
-import { ResultSetHeader } from "mysql2";
+import { PoolConnection, ResultSetHeader } from "mysql2/promise";
 import { validationResult, matchedData } from "express-validator";
 import promisePool from "../../../db/database.js";
 
