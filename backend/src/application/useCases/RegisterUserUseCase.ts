@@ -7,6 +7,7 @@ export class RegisterUserUseCase {
     private readonly encrypt: (passwordPlain: string) => Promise<string>,
   ) {}
 
+  /** Register new user into the db */
   async execute(name: string, email: string, password: string): Promise<void> {
     const hashedPassword = await this.encrypt(password);
     const userData = { name, email, hashedPassword };
@@ -27,7 +28,6 @@ export class RegisterUserUseCase {
       }
     }
 
-    //if not taken, proceed with registration
     await this.userRepo.insertNewUser(userData.name, userData.email, userData.hashedPassword, "user");
   }
 }

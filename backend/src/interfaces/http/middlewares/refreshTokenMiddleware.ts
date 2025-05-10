@@ -9,14 +9,17 @@ interface DecodedToken extends JwtPayload {
 
 const mysqlRefreshTokenRepository = new MysqlRefreshTokenRepository();
 
+/** Validates refresh token received in cookies by the client */
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const cookies = req.cookies;
+
     if (!cookies?.refreshToken) {
       console.log("Autocheck: No refresh found in the cookies (refreshTokenMiddleware)");
       res.status(401).json({ message: "No refresh token in cookies" });
       return;
     }
+
     const refreshToken = cookies.refreshToken;
 
     const decodedRefreshToken = verifyToken(refreshToken, "refresh") as DecodedToken;
@@ -36,11 +39,15 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
       return;
     }
 
-    //add id to refreshTokenId custom prop in req object
+    //if the token is valid, add the id to request object
     req.refreshTokenId = { id };
+
     next();
   } catch (error) {
-    if(error instanceof Error) console.error("Error during token validation (refreshTokenMidddleware):", error.message);
+    if (error instanceof Error) {
+      console.error("Error during token validation (refreshTokenMidddleware):", error.message);
+    }
+
     res.status(401).json({ message: "Error during token validation, Unauthorized " });
     return;
   }

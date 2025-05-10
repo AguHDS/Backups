@@ -14,6 +14,7 @@ const errors = validationResult(req);
 
     const { name, email, password } = data;
 
+    //save user data in req object
     req.sessionData = {
       name,
       email,

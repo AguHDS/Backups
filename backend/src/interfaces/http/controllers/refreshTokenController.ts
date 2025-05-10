@@ -1,42 +1,42 @@
 import config from "../../../infraestructure/config/environmentVars.js";
+import promisePool from "../../../db/database.js";
 import { Request, Response } from "express";
 import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
-import promisePool from "../../../db/database.js";
-import { JwtUserData } from "../../../shared/dtos/index.js";
 import { RefreshTokenUseCase } from "../../../application/useCases/RefreshTokenUseCase.js";
-import { MysqlUserRepository } from "../../../infraestructure/repositories/MysqlUserRepository.js";
-import { MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/MysqlRefreshTokenRepository.js";
+import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/index.js";
 
+//dependency injection
 const refreshTokenUseCase = new RefreshTokenUseCase(
   new MysqlUserRepository(),
   new MysqlRefreshTokenRepository(),
   tokenSign
 );
 
-//send new access token if everything was validated correctly
-export const refreshTokenController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+/** Send new tokens and user data */
+export const refreshTokenController = async ( req: Request, res: Response): Promise<void> => {
   const connection = await promisePool.getConnection();
+
   try {
+    //begin a new transaction to ensure all db transactions are atomic to cancel them if one fails
     await connection.beginTransaction();
 
-    //use alias destructuring and use id from previous refreshToken to get user from database
+    //alias destructuring and use id from previous refreshToken
     const { id: userId } = req.refreshTokenId;
-    const { accessToken, refreshToken, userData, timeRemaining } =
-      await refreshTokenUseCase.execute(userId, connection);
 
+    const { accessToken, refreshToken, userData, timeRemaining } = await refreshTokenUseCase.execute(userId, connection);
+
+    //commit the db transaction once all steps succeed
     await connection.commit();
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: config.nodeEnv === "production",
-      maxAge: timeRemaining * 1000,
-      sameSite: config.nodeEnv === "production" ? "none" : "lax",
+      secure: config.nodeEnv === "production", //use secure cookies only in production
+      maxAge: timeRemaining * 1000, //set calculated time remaining
+      sameSite: config.nodeEnv === "production" ? "none" : "lax", //adjust for cross-site requests in production
     });
 
-    console.log("sending new access token and updating refresh token... (refreshTokenController)");
+    console.log("sending new access token and updating refresh token");
+
     res.status(200).json({ accessToken, userData });
     return;
   } catch (error) {
