@@ -1,33 +1,23 @@
 import { Response, Request } from "express";
-import promisePool from "../../../db/database.js";
-import { ResultSetHeader } from "mysql2/promise";
+import { RefreshTokenUseCase } from "../../../application/useCases/RefreshTokenUseCase.js";
+import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/index.js";
+import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
 
-const deleteRefreshFromDB = async (userId: number) => {
+//dependency injection
+const refreshTokenUseCase = new RefreshTokenUseCase(
+  new MysqlUserRepository(),
+  new MysqlRefreshTokenRepository(),
+  tokenSign
+);
+
+/** Deletes refresh token from database to logout a user */
+export const logoutController = async (req: Request, res: Response) => {
   try {
-    const [deletedRefresh] = await promisePool.execute<ResultSetHeader>(
-      "DELETE FROM refresh_tokens WHERE user_id = ?",
-      [userId]
-    );
+    const { id } = req.sessionWithId!;
 
-    if (deletedRefresh.affectedRows === 0) {
-      console.log(`No refresh token found for ${userId}`);
-      return;
-    }
+    res.clearCookie("refreshToken", { httpOnly: true });
 
-    console.log("Refresh token successfully deleted from database");
-  } catch (error) {
-    console.error("Error deleting refresh token from db:", error);
-    throw new Error("Error deleting refresh token from the database");
-  }
-};
-
-const logout = async (req: Request, res: Response) => {
-  try {
-    const { id, hasRefreshCookie } = req.activeSessionData!;
-
-    if (hasRefreshCookie) res.clearCookie("refreshToken", { httpOnly: true });
-
-    await deleteRefreshFromDB(id);
+    await refreshTokenUseCase.logout(id);
     console.log("logout successfull");
     
     res.status(200).json({ message: "Logout successful" });
@@ -39,5 +29,3 @@ const logout = async (req: Request, res: Response) => {
     return;
   }
 };
-
-export default logout;

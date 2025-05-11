@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult, matchedData } from "express-validator";
 
-/** Validate user data */
+/** Validates user data */
 export const loginMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

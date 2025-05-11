@@ -7,16 +7,16 @@ export class RefreshTokenUseCase {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly refreshRepo: RefreshTokenRepository,
-    private readonly tokenSign: (user: JwtUserData, type: "access" | "refresh", expiresIn: string) => Promise<string>
+    private readonly tokenSign: (user: JwtUserData,type: "access" | "refresh",expiresIn: string) => Promise<string>
   ) {}
 
   /**
    * Generates new tokens for the user and its data
-   * 
+   *
    * @param connection - A MySQL connection
    * @returns An object containing new tokens, user data, and time remaining for the refresh token
    */
-  
+
   async execute(userId: number | string, connection: Connection): Promise<UserSessionWithTokens & { timeRemaining: number }> {
     const user = await this.userRepo.findById(userId, connection);
     if (!user) throw new Error("USER_NOT_FOUND");
@@ -34,6 +34,7 @@ export class RefreshTokenUseCase {
     if (!refreshExpiresAt) throw new Error("REFRESH_TOKEN_NOT_FOUND");
 
     const timeRemaining = Math.floor((refreshExpiresAt.getTime() - Date.now()) / 1000);
+
     if (timeRemaining <= 0) throw new Error("REFRESH_TOKEN_EXPIRED");
 
     //with the calculated time remaining, create a new refresh token
@@ -47,5 +48,13 @@ export class RefreshTokenUseCase {
       userData: jwtPayload,
       timeRemaining,
     };
+  }
+
+  async hasRefreshInDB(userId: number): Promise<boolean> {
+    return this.refreshRepo.searchRefreshToken(userId);
+  }
+
+  async logout(userId: number): Promise<void> {
+    await this.refreshRepo.deleteRefreshFromDB(userId);
   }
 }

@@ -1,6 +1,6 @@
 import express from "express";
-import logoutMiddleware from "../middlewares/logoutMiddleware.js";
-import logoutController from "../controllers/logoutController.js";
+import { logoutMiddleware } from "../middlewares/logoutMiddleware.js";
+import { logoutController } from "../controllers/logoutController.js";
 
 const router = express.Router();
 
