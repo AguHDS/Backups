@@ -1,30 +1,29 @@
-import promisePool from "../../../db/database.js";
 import { Response, Request, NextFunction } from "express";
-import { RowDataPacket } from "mysql2/promise";
+import { RefreshTokenUseCase } from "../../../application/useCases/RefreshTokenUseCase.js";
+import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/index.js";
+import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
 
-//check if the user has a refresh token in the database
-const hasTokenInDB = async (userId: number): Promise<RowDataPacket | null> => {
-  const [results] = await promisePool.execute<RowDataPacket[]>(
-    "SELECT user_id FROM refresh_tokens WHERE (user_id = ?)",
-    [userId]
-  );
+//dependency injection
+const refreshTokenUseCase = new RefreshTokenUseCase(
+  new MysqlUserRepository(),
+  new MysqlRefreshTokenRepository(),
+  tokenSign
+);
 
-  return results.length === 0 ? null : results[0];
-};
 
-const hasSessionOpen = async (req: Request, res: Response, next: NextFunction) => {
+export const logoutMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let hasRefreshCookie;
     const { id } = req.body;
+
     if (!id) {
       console.log("No id in the logout request");
       res.status(401).json({ message: "No user id for logout request" });
       return;
     }
 
-    const refreshDB = await hasTokenInDB(id);
+    const hasRefresh = await refreshTokenUseCase.hasRefreshInDB(id);
 
-    if (!refreshDB) {
+    if (!hasRefresh) {
       console.log("user has no refresh token in the db");
       res.status(401).json({ message: "User has no refresh token in the db" });
       return;
@@ -34,14 +33,11 @@ const hasSessionOpen = async (req: Request, res: Response, next: NextFunction) =
 
     if (!refreshToken) {
       console.log("No refresh token in cookies (logout middleware)");
-      hasRefreshCookie = false;
       res.status(401).json({ message: "User has no refresh token in cookies" });
       return;
-    } else {
-      hasRefreshCookie = true;
     }
     
-    req.activeSessionData = { id, hasRefreshCookie };
+    req.sessionWithId = { id };
     next();
   } catch (error) {
     console.log("error in logout middleware ", error);
@@ -49,5 +45,3 @@ const hasSessionOpen = async (req: Request, res: Response, next: NextFunction) =
     return;
   }
 };
-
-export default hasSessionOpen;

@@ -40,4 +40,10 @@ export interface RefreshTokenRepository {
    * @returns A promise that resolves to the result of the SQL update operation
    */
   updateRefreshTokenFromDB(refreshToken: string, userId: number, connection: Connection): Promise<ResultSetHeader>;
+
+  /** Check if user has a refresh token in the database */
+  searchRefreshToken(userId: number): Promise<boolean>;
+
+  /** Delete a user's refresh token from database */
+  deleteRefreshFromDB(userId: number): Promise<void>;
 }

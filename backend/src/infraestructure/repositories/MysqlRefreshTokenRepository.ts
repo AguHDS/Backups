@@ -4,7 +4,11 @@ import { RowDataPacket, Connection, ResultSetHeader } from "mysql2/promise";
 
 //save or update refreshToken from DB
 export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
-  async saveRefreshToDB(userId: number, token: string, expiresAt: Date): Promise<void> {
+  async saveRefreshToDB(
+    userId: number,
+    token: string,
+    expiresAt: Date
+  ): Promise<void> {
     try {
       //delete any existing refresh token for this user
       const [existingToken] = await promisePool.execute<RowDataPacket[]>(
@@ -49,9 +53,9 @@ export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
         "SELECT expires_at FROM refresh_tokens WHERE user_id = ?",
         [userId]
       );
-  
+
       if (results.length === 0) return null;
-  
+
       return results[0].expires_at as Date;
     } catch (error) {
       console.error("Error in getDateTime:", error);
@@ -65,15 +69,43 @@ export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
         "UPDATE refresh_tokens SET token = ? WHERE user_id = ?",
         [refreshToken, userId]
       );
-  
+
       if (results.affectedRows === 0) {
         throw new Error("Failed to update refresh token");
       }
-  
+
       return results;
     } catch (error) {
       console.error("Error in updateRefreshTokenFromDB:", error);
       throw error;
     }
+  }
+
+  async deleteRefreshFromDB(userId: number): Promise<void> {
+    try {
+      const [deletedRefresh] = await promisePool.execute<ResultSetHeader>(
+        "DELETE FROM refresh_tokens WHERE user_id = ?",
+        [userId]
+      );
+
+      if (deletedRefresh.affectedRows === 0) {
+        console.log(`No refresh token found for ${userId}`);
+        return;
+      }
+
+      console.log("Refresh token successfully deleted from database");
+    } catch (error) {
+      console.error("Error deleting refresh token from db:", error);
+      throw new Error("Error deleting refresh token from the database");
+    }
+  }
+
+  async searchRefreshToken(userId: number): Promise<boolean> {
+    const [results] = await promisePool.execute<RowDataPacket[]>(
+      "SELECT user_id FROM refresh_tokens WHERE user_id = ?",
+      [userId]
+    );
+
+    return results.length > 0;
   }
 }
