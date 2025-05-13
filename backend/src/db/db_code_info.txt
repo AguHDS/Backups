@@ -49,3 +49,15 @@ CREATE TABLE `users_profile_sections` (
   KEY `fk_users_id` (`fk_users_id`),
   CONSTRAINT `users_profile_sections_ibfk_1` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+users_files
+CREATE TABLE users_files (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  public_id VARCHAR(255) NOT NULL UNIQUE,
+  url TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_user_id FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+);
