@@ -1,123 +1,48 @@
 import { Request, Response } from "express";
-import promisePool from "../../../db/database.js";
-import { RowDataPacket } from "mysql2/promise";
+import { MysqlProfileRepository } from "../../../infraestructure/repositories/MysqlProfileRepository.js";
+import { GetUserProfileUseCase } from "../../../application/useCases/GetUserProfileUseCase.js";
+import { CustomResponse } from "../.././../shared/dtos/index.js";
 
-interface ProfileContent {
-  bio: string;
-  profile_pic?: string;
-  partner: string;
-  friends: number;
-}
+const getUserProfileUseCase = new GetUserProfileUseCase(
+  new MysqlProfileRepository()
+);
 
-//get user profile data from users_profile table
-const getUserProfileById = async (id: number): Promise<ProfileContent | null> => {
+/**  Respond with user profile data, comparing its id from users table with fk_users_id in users_profile table */
+export const getProfileController = async (req: Request, res: Response) => {
   try {
-    const [rows] = await promisePool.execute<RowDataPacket[]>(
-      "SELECT bio, profile_pic, partner, friends FROM users_profile WHERE fk_users_id = ?",
-      [id]
-    );
+    const { name, role, id } = req.baseUserData;
 
-    if (rows.length === 0) {
-      console.error(`Data for id ${id} not found in users_prfile table`);
-      return null;
-    }
+    const profile = await getUserProfileUseCase.execute(id);
 
-    const row = rows[0];
-    return {
-      bio: row.bio,
-      profile_pic: row.profile_pic,
-      partner: row.partner,
-      friends: row.friends,
-    };
-  } catch (error) {
-    console.error("Error retrieving user from database:", error);
-    throw new Error("Error retrieving user from database");
-  }
-};
-
-interface ProfileSection {
-  title: string;
-  description: string;
-}
-
-const getUserSectionById = async (id: number): Promise<ProfileSection | null>=> {
-  try {
-    const [rows] = await promisePool.execute<RowDataPacket[]>(
-      "SELECT title, description FROM users_profile_sections WHERE fk_users_id = ?",
-      [id]
-    );
-
-    if (rows.length === 0) {
-      console.error(
-        `Sections data for id ${id} not found in users_prfile_sections table`
-      );
-      return null;
-    }
-
-    const row = rows[0];
-    return {
-      title: row.title,
-      description: row.description,
-    };
-  } catch (error) {
-    console.error("Error retrieving user section data from database:", error);
-    throw new Error("Error retrieving user section data from database");
-  }
-};
-
-interface CustomResponse {
-  username: string;
-  role: string;
-  id: number;
-  userProfileData: ProfileContent;
-  userSectionData: ProfileSection;
-}
-
-declare module "express-serve-static-core" {
-  interface Request {
-    userData: {
-      username: string;
-      role: string;
-      id: number;
-    };
-  }
-}
-
-/* sends to the client profile information of the user provided in the params of the url, comparing its id from users table 
-with fk_users_id in users_profile table */
-const getProfileController = async (req: Request, res: Response) => {
-  try {
-    const { userData } = req;
-    if (!userData) {
-      res.status(400).json({ message: "User data is missing in the request" });
-      return;
-    }
-
-    const { username, role, id } = userData;
-
-    const userProfileData = await getUserProfileById(id);
-    const userSectionData = await getUserSectionById(id);
-
-    if (!userProfileData || !userSectionData) {
-      res.status(404).json({ message: `Profile data not found for user ${username}` });
-      return;
-    }
-
-    const profile: CustomResponse = {
-      username,
+    //in the future we will need to include sections id and files
+    const response: CustomResponse = {
+      name,
       role,
       id,
-      userProfileData,
-      userSectionData,
+      userProfileData: {
+        bio: profile.bio,
+        profile_pic: profile.profilePic,
+        partner: profile.partner,
+        friends: profile.friendsCount,
+      },
+      userSectionData:
+        profile.sections?.map((section) => ({
+          title: section.title,
+          description: section.description,
+        })) ?? [],
     };
 
-    res.status(200).json(profile);
+    res.status(200).json(response);
     return;
   } catch (error) {
-    console.error("Failed to get user profile:", error);
-    res.status(500).json({ message: "Failed to get user profile" });
-    return;
+    if (error instanceof Error)
+      console.error("Failed to get user profile:", error);
+
+    switch (error.message) {
+      case "PROFILE_NOT_FOUND":
+        return res.status(404).json({ message: "Profile not found" });
+      default:
+        return res.status(500).json({ message: "Failed to get user profile" });
+    }
   }
 };
-
-export default getProfileController;

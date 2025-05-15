@@ -4,7 +4,11 @@ import { ProfileRepository } from "../../domain/repositories/ProfileRepository.j
 export class GetUserProfileUseCase {
   constructor(private readonly profileRepo: ProfileRepository) {}
 
-  /** Retrieves a user's profile by ID, adds their sections, and returns the complete profile */
+  /**
+   * Retrieves a complete user profile by ID, including associated profile sections.
+   *
+   * @returns A fully populated UserProfile object, or throws if not found.
+   */
   async execute(userId: number): Promise<UserProfile> {
     const profile = await this.profileRepo.getProfileById(userId);
 
