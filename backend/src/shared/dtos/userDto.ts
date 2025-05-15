@@ -4,7 +4,7 @@ export interface UserId {
 
 export interface BaseUserData {
   id: number;
-  username: string;
+  name: string;
   role: string;
   email?: string;
 }

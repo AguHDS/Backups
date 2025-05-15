@@ -11,7 +11,7 @@ interface ProfileSection {
 }
 
 export interface CustomResponse {
-  username: string;
+  name: string;
   role: string;
   id: number;
   userProfileData: ProfileContent;

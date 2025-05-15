@@ -1,20 +1,24 @@
-import { RequestHandler } from "express";
-import { getUserByName } from "../db/queries/index.js";
+import { Request, Response, NextFunction } from "express";
+import { MysqlUserRepository } from "../../../infraestructure/repositories/MysqlUserRepository.js";
 
-//check if the username provided in the params of the url exists in users table and extract: username, role, email and id
-const getProfileMiddleware: RequestHandler<{ username: string }, { status: number, message: string }, {}, {}> =
-async (req, res, next) => {
+const userRepository = new MysqlUserRepository();
+
+/** check if the username provided in the params of  url exists in users table */
+export const getProfileMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username } = req.params;
     
-    //get userdata from users table
-    const user = await getUserByName(username);
+    const user = await userRepository.findByUsername(username);
     if (!user) {
       res.status(404).json({ status: 404, message: `Profile data for ${username} not found` });
       return;
     }
     
-    req.userData = { username: user.namedb, role: user.role, id: user.id };
+    req.baseUserData = {
+      name: user.name,
+      role: user.role,
+      id: user.id
+    };
 
     next();
   } catch (error) {
@@ -23,5 +27,3 @@ async (req, res, next) => {
     return;
   }
 };
-
-export default getProfileMiddleware;
