@@ -12,7 +12,7 @@ export const loginMiddleware = (req: Request, res: Response, next: NextFunction)
   const { user, password } = matchedData(req);
 
   //add to req object user data
-  req.validatedUserData = { user, password };
+  req.userAndPassword = { user, password };
   
   next();
 }

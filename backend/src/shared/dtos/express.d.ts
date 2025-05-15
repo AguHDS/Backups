@@ -1,22 +1,19 @@
-import { Request } from 'express';
+import { Request } from "express";
+import { RefreshTokenId } from "./jwtUserData.ts";
+import {
+  UserSession,
+  UserAndPassword,
+  BaseUserData,
+  UserId,
+} from "./userDto.ts";
 
 //add custom props to Request object
-declare module 'express' {
+declare module "express" {
   interface Request {
-    sessionWithId?: {
-      id: number;
-    },
-    validatedUserData?: {
-      user: string;
-      password: string;
-    },
-    sessionData?: {
-      name: string;
-      email: string;
-      password: string;
-    },
-    refreshTokenId?: {
-      id: string;
-    }
+    userId?: UserId;
+    userAndPassword?: UserAndPassword;
+    userSession?: UserSession;
+    refreshTokenId?: RefreshTokenId;
+    baseUserData?: BaseUserData;
   }
 }

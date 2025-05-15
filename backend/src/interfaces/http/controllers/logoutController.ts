@@ -13,7 +13,7 @@ const refreshTokenUseCase = new RefreshTokenUseCase(
 /** Deletes refresh token from database to logout a user */
 export const logoutController = async (req: Request, res: Response) => {
   try {
-    const { id } = req.sessionWithId!;
+    const { id } = req.userId!;
 
     res.clearCookie("refreshToken", { httpOnly: true });
 
