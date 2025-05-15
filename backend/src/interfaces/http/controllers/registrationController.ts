@@ -9,7 +9,8 @@ const registerUserUseCase = new RegisterUserUseCase(
 );
 
 export const registerController = async (req: Request, res: Response): Promise<void> => {
-  const { name, email, password } = req.sessionData;
+  const { name, email, password } = req.userSession;
+  
   try {
     await registerUserUseCase.execute(name, email, password);
     console.log(`User: ${name} and email: ${email} saved successfully`);

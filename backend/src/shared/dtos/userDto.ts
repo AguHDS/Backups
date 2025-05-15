@@ -1,4 +1,19 @@
-//user session data
+export interface UserId {
+  id: number
+}
+
+export interface BaseUserData {
+  id: number;
+  username: string;
+  role: string;
+  email?: string;
+}
+
+export interface UserAndPassword {
+  user: string;
+  password: string;
+}
+
 export interface UserSession {
   name: string;
   email: string;

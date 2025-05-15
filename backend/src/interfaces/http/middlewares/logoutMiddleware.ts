@@ -37,7 +37,7 @@ export const logoutMiddleware = async (req: Request, res: Response, next: NextFu
       return;
     }
     
-    req.sessionWithId = { id };
+    req.userId = { id };
     next();
   } catch (error) {
     console.log("error in logout middleware ", error);

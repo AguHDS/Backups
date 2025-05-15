@@ -13,7 +13,7 @@ const loginUserUseCase = new LoginUserUseCase(
 
 /** Send new tokens and user data */
 export const loginController = async (req: Request, res: Response): Promise<void> => {
-  const { user, password } = req.validatedUserData;
+  const { user, password } = req.userAndPassword;
 
   try {
     const { accessToken, refreshToken, userData } = await loginUserUseCase.execute(user, password);
