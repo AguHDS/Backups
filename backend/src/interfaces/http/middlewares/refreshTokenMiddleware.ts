@@ -1,36 +1,20 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "../../../infraestructure/auth/handleJwt.js";
-import { JwtPayload } from "jsonwebtoken";
+import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
 import { MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/MysqlRefreshTokenRepository.js";
-
-interface DecodedToken extends JwtPayload {
-  id: string;
-}
 
 const mysqlRefreshTokenRepository = new MysqlRefreshTokenRepository();
 
 /** Validates refresh token received in cookies by the client */
-export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    //get refresh from cookies manually because we need it for the SQL query
     const cookies = req.cookies;
-
-    if (!cookies?.refreshToken) {
-      console.log("Autocheck: No refresh found in the cookies (refreshTokenMiddleware)");
-      res.status(401).json({ message: "No refresh token in cookies" });
-      return;
-    }
-
+    if (!cookies?.refreshToken) throw new Error("NO_REFRESH_TOKEN");
     const refreshToken = cookies.refreshToken;
 
-    const decodedRefreshToken = verifyToken(refreshToken, "refresh") as DecodedToken;
+    const decoded = decodeRefreshToken(req);
 
-    if (!decodedRefreshToken) {
-      console.error("Invalid or expired refresh token detected.");
-      res.status(403).json({ message: "Invalid or expired refresh token" });
-      return;
-    }
-
-    const { id } = decodedRefreshToken;
+    const { id } = decoded;
 
     const tokenData = await mysqlRefreshTokenRepository.findValidToken(refreshToken, id);
     if (!tokenData) {
@@ -44,11 +28,18 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
     next();
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Error during token validation (refreshTokenMidddleware):", error.message);
-    }
+    if(error instanceof Error) console.error("Error in updateProfileMiddleware:", error);
 
-    res.status(401).json({ message: "Error during token validation, Unauthorized " });
-    return;
+    switch (error.message) {
+      case "NO_REFRESH_TOKEN":
+        res.status(401).json({ message: "No refresh token in cookies" });
+        return;
+      case "INVALID_REFRESH_TOKEN":
+        res.status(403).json({ message: "Invalid or expired refresh token" });
+        return;
+      default:
+        res.status(500).json({ message: "Internal server error" });
+        return;
+    }
   }
 };

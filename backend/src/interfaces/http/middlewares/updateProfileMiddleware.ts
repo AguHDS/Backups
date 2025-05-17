@@ -1,53 +1,43 @@
-import { RequestHandler } from "express";
-import { JwtPayload } from "jsonwebtoken";
-import { verifyToken } from "../utils/handleJwt.js";
+import { Request, Response, NextFunction } from "express";
+import { validationResult } from "express-validator";
+import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
 
-interface DecodedToken extends JwtPayload {
-  name: string;
-  id: string;
-}
 
-const updateProfileMiddleware: RequestHandler<{ username: string }, { message: string }, { userId: string }, {}> = 
-(req, res, next): void => {
+export const updateProfileMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cookies = req.cookies;
-
-    if (!cookies?.refreshToken) {
-      console.log("No refresh found in the cookies (updateProfileMiddleware)");
-      res.status(401).json({ message: "No refresh token in cookies" });
-      return;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.error("Validation errors found", errors.array());
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const refreshToken = cookies.refreshToken;
-    const decodedRefreshToken = verifyToken(refreshToken, "refresh") as DecodedToken;
-    if (!decodedRefreshToken) {
-      console.error("Invalid or expired refresh token detected.");
-      res.status(403).json({ message: "Invalid or expired refresh token" });
-      return;
-    }
-    const { name, id } = decodedRefreshToken;
+    const decoded = decodeRefreshToken(req);
 
+    const { name, id } = decoded;
     const { username } = req.params;
+
     if (!username) {
-      console.error("Username parameter is missing in the url.");
-      res.status(400).json({ message: "Missing username in url" });
-      return;
+      return res.status(400).json({ message: "Missing username in URL" });
     }
 
-    //check if the user is trying to edit his own profile
+    //check if username in the url is the same than username from refresh token
     if (name !== username) {
-      console.error("Token username does not match the username in the url");
-      res.status(403).json({ message: "You don't have permission to edit this profile" });
-      return;
+      return res.status(403).json({ message: "You don't have permission to edit this profile" });
     }
 
-    req.body.userId = id;
+    req.refreshTokenId = { id };
     next();
   } catch (error) {
-    console.error("An error occurred in updateProfileMiddleware:", error);
-    res.status(500).json({ message: "Internal server error in updateProfileMiddleware" });
-    return;
+    if (error instanceof Error)
+      console.error("Error in updateProfileMiddleware:", error);
+
+    switch (error.message) {
+      case "NO_REFRESH_TOKEN":
+        return res.status(401).json({ message: "No refresh token in cookies" });
+      case "INVALID_REFRESH_TOKEN":
+        return res.status(403).json({ message: "Invalid or expired refresh token" });
+      default:
+        return res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
-
-export default updateProfileMiddleware;

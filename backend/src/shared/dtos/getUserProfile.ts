@@ -5,7 +5,7 @@ interface ProfileContent {
   friends: number;
 }
 
-interface ProfileSection {
+export interface ProfileSection {
   title: string;
   description: string;
 }
