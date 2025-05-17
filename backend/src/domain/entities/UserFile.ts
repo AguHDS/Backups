@@ -1,4 +1,4 @@
-export class UserFile {
+/* export class UserFile {
   constructor(
     public readonly id: number,
     public readonly sectionId: number,
@@ -6,3 +6,4 @@ export class UserFile {
     public readonly url: string
   ) {}
 }
+ */

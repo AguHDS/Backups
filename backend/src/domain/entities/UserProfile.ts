@@ -4,7 +4,7 @@ export class UserProfile {
   constructor(
     public readonly userId: number,
     public bio: string,
-    public friendsCount: number,
+    public friendsCount?: number,
     public profilePic?: string,
     public partner?: string,
     public sections?: UserProfileSection[]
