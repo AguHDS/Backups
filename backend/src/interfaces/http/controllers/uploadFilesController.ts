@@ -11,6 +11,7 @@ interface FileResponse {
   files: FileData[];
 }
 
+/** Upload user files to Cloudinary */
 export const uploadFilesController = async (req: Request, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];

@@ -7,7 +7,7 @@ const updateUserProfileUseCase = new UpdateUserProfileUseCase(
   new MysqlProfileRepository()
 );
 
-export interface ProfileDataToUpdate {
+interface ProfileDataToUpdate {
   bio: string;
   sections: {
     title: string;
@@ -15,6 +15,7 @@ export interface ProfileDataToUpdate {
   }[];
 }
 
+/** Updates bio and sections for specific user */
 export const updateProfileController = async (req: Request, res: Response) => {
   const cleanData: ProfileDataToUpdate = matchedData(req);
 

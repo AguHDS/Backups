@@ -10,6 +10,7 @@ const refreshTokenUseCase = new RefreshTokenUseCase(
   tokenSign
 );
 
+/** Validations before logout a user */
 export const logoutMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.body;

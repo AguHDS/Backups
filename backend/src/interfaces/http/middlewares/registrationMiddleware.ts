@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult, matchedData } from "express-validator";
 
+/** Validations before registering a user */
 export const registrationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

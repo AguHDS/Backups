@@ -8,6 +8,7 @@ const registerUserUseCase = new RegisterUserUseCase(
   encrypt
 );
 
+/** Register a new user in our database */
 export const registerController = async (req: Request, res: Response) => {
   const { name, email, password } = req.userSession;
   
