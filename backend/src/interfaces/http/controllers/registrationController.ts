@@ -8,7 +8,7 @@ const registerUserUseCase = new RegisterUserUseCase(
   encrypt
 );
 
-export const registerController = async (req: Request, res: Response): Promise<void> => {
+export const registerController = async (req: Request, res: Response) => {
   const { name, email, password } = req.userSession;
   
   try {
@@ -16,7 +16,6 @@ export const registerController = async (req: Request, res: Response): Promise<v
     console.log(`User: ${name} and email: ${email} saved successfully`);
 
     res.status(201).json({ message: "Registration completed" });
-    return;
   } catch (error) {
     if (error instanceof Error) {
       switch (error.message) {
@@ -30,12 +29,12 @@ export const registerController = async (req: Request, res: Response): Promise<v
           return;
         case "USERNAME_AND_EMAIL_TAKEN":
           console.error(`User ${name} and ${email} already exist`);
-          res.status(409).json({ message: "Name and email are already taken" }); 
+          res.status(409).json({ message: "Name and email are already taken" });
           return;
       }
     }
     console.error("Unexpected error", error);
+    
     res.status(500).json({ message: "Error trying to sign up" });
-    return;
   }
 };

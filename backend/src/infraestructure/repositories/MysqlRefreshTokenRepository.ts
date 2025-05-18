@@ -4,11 +4,7 @@ import { RowDataPacket, Connection, ResultSetHeader } from "mysql2/promise";
 
 //save or update refreshToken from DB
 export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
-  async saveRefreshToDB(
-    userId: number,
-    token: string,
-    expiresAt: Date
-  ): Promise<void> {
+  async saveRefreshToDB(userId: number,token: string,expiresAt: Date): Promise<void> {
     try {
       //delete any existing refresh token for this user
       const [existingToken] = await promisePool.execute<RowDataPacket[]>(

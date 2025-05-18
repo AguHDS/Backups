@@ -15,7 +15,7 @@ export interface ProfileDataToUpdate {
   }[];
 }
 
-export const updateProfileController = async (req: Request, res: Response): Promise<Response> => {
+export const updateProfileController = async (req: Request, res: Response) => {
   const cleanData: ProfileDataToUpdate = matchedData(req);
 
   const { id } = req.refreshTokenId;
@@ -24,17 +24,19 @@ export const updateProfileController = async (req: Request, res: Response): Prom
     await updateUserProfileUseCase.execute(cleanData.bio, cleanData.sections, id);
     console.log("Profile updated successfully!");
 
-    return res.status(200).json({ message: "Profile updated successfully!" });
+    res.status(200).json({ message: "Profile updated successfully!" });
   } catch (error) {
     if (error instanceof Error) console.error("Error updating profile:", error);
 
     switch (error.message) {
       case "INVALID_BIO":
-        return res.status(400).json({ message: "Invalid bio format" });
+        res.status(400).json({ message: "Invalid bio format" });
+        return;
       case "INVALID_SECTIONS":
-        return res.status(400).json({ message: "Invalid section format" });
+        res.status(400).json({ message: "Invalid section format" });
+        return;
     }
 
-    return res.status(500).json({ message: "Failed to update profile" });
+    res.status(500).json({ message: "Failed to update profile" });
   }
 };

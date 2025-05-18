@@ -33,16 +33,17 @@ export const getProfileController = async (req: Request, res: Response) => {
     };
 
     res.status(200).json(response);
-    return;
   } catch (error) {
     if (error instanceof Error)
       console.error("Failed to get user profile:", error);
 
     switch (error.message) {
       case "PROFILE_NOT_FOUND":
-        return res.status(404).json({ message: "Profile not found" });
+        res.status(404).json({ message: "Profile not found" });
+        return;
       default:
-        return res.status(500).json({ message: "Failed to get user profile" });
+        res.status(500).json({ message: "Failed to get user profile" });
+        return;
     }
   }
 };

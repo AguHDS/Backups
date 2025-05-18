@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { Request, Response } from "express";
 import { cloudinary } from "../../../services/cloudinary.js";
 import streamifier from "streamifier";
 
@@ -11,9 +11,10 @@ interface FileResponse {
   files: FileData[];
 }
 
-const uploadToCloudinary: RequestHandler<{}, FileResponse | { message: string } > = async (req, res) => {
+export const uploadFilesController = async (req: Request, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];
+
     const uploadPromise = files.map((file) => {
       return new Promise<FileData>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -31,16 +32,13 @@ const uploadToCloudinary: RequestHandler<{}, FileResponse | { message: string } 
 
     const results = await Promise.all(uploadPromise);
     console.log(results);
+    
     res.status(200).json({ files: results });
-    return;
   } catch (error) {
     console.error("Cloudinary Upload Error: ", error);
     res.status(500).json({ message: "Error uploading files to Cloudinary" });
-    return;
   }
 };
-
-export default uploadToCloudinary;
 
 /* flujo pensado (puedo estar equivocado)
 1. cada usuario puede subir archivos a Cloudinary, se crea una carpeta para cada usuario con sus archivos, se logra pasando su id
