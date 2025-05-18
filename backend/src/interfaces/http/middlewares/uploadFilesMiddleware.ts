@@ -3,7 +3,7 @@ import { MulterError } from "multer";
 import { upload } from "../../../infraestructure/config/multerConfig.js";
 import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
 
-//limit the size of files per request
+/** Limit the size of files per request */
 export const uploadLimit = async (req: Request, res: Response, next: NextFunction) => {
   upload.array("file", 5)(req, res, (err) => {
     if (err) {
@@ -37,6 +37,7 @@ export const uploadLimit = async (req: Request, res: Response, next: NextFunctio
   });
 };
 
+/** Validations before uploading files */
 export const uploadFilesMiddleware = (req: Request, res: Response, next: NextFunction) => {
   /* TODO
     . Manage the case of error where the file isn't a image, so show that error
