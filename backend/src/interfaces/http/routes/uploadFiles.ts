@@ -1,9 +1,9 @@
-import express, { RequestHandler } from "express";
+import express from "express";
 import { uploadFilesMiddleware, uploadLimit } from "../middlewares/uploadFilesMiddleware.js";
-import uploadFilesController from "../controllers/uploadFilesController.js";
+import { uploadFilesController } from "../controllers/uploadFilesController.js";
 
 const router = express.Router();
 
-router.post("/", uploadLimit, uploadFilesMiddleware as RequestHandler, uploadFilesController as RequestHandler);
+router.post("/", uploadLimit, uploadFilesMiddleware, uploadFilesController);
 
 export default router;

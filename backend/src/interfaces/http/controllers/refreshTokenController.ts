@@ -13,7 +13,7 @@ const refreshTokenUseCase = new RefreshTokenUseCase(
 );
 
 /** Send new tokens and user data */
-export const refreshTokenController = async ( req: Request, res: Response): Promise<void> => {
+export const refreshTokenController = async (req: Request, res: Response) => {
   const connection = await promisePool.getConnection();
 
   try {
@@ -38,7 +38,6 @@ export const refreshTokenController = async ( req: Request, res: Response): Prom
     console.log("sending new access token and updating refresh token");
 
     res.status(200).json({ accessToken, userData });
-    return;
   } catch (error) {
     await connection.rollback();
 
@@ -50,9 +49,7 @@ export const refreshTokenController = async ( req: Request, res: Response): Prom
           res.status(404).json({ message: "User not found in the database" });
           return;
         case "REFRESH_TOKEN_NOT_FOUND":
-          res
-            .status(404)
-            .json({ message: "Refresh token not found for the user in db" });
+          res.status(404).json({ message: "Refresh token not found for the user in db" });
           return;
         case "REFRESH_TOKEN_EXPIRED":
           res.status(403).json({ message: "Refresh token has expired" });

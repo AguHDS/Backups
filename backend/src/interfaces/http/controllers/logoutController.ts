@@ -21,11 +21,9 @@ export const logoutController = async (req: Request, res: Response) => {
     console.log("logout successfull");
     
     res.status(200).json({ message: "Logout successful" });
-    return;
   } catch (error) {
     console.error("Error in logout controller:", error);
 
     res.status(500).json({ message: "Logout failed" });
-    return;
   }
 };

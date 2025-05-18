@@ -10,7 +10,6 @@ const refreshTokenUseCase = new RefreshTokenUseCase(
   tokenSign
 );
 
-
 export const logoutMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.body;
@@ -42,6 +41,5 @@ export const logoutMiddleware = async (req: Request, res: Response, next: NextFu
   } catch (error) {
     console.log("error in logout middleware ", error);
     res.status(500).json({ message: "Error trying to logout" });
-    return;
   }
 };

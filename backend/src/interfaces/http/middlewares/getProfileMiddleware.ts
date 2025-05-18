@@ -24,6 +24,5 @@ export const getProfileMiddleware = async (req: Request, res: Response, next: Ne
   } catch (error) {
     console.error("Error in profileMiddleware:", error);
     res.status(500).json({ status: 500, message: 'Internal server error' });
-    return;
   }
 };

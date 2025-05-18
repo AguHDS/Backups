@@ -10,6 +10,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     //get refresh from cookies manually because we need it for the SQL query
     const cookies = req.cookies;
     if (!cookies?.refreshToken) throw new Error("NO_REFRESH_TOKEN");
+
     const refreshToken = cookies.refreshToken;
 
     const decoded = decodeRefreshToken(req);
@@ -17,6 +18,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     const { id } = decoded;
 
     const tokenData = await mysqlRefreshTokenRepository.findValidToken(refreshToken, id);
+
     if (!tokenData) {
       console.error("Refresh token not found (db), doesn't match user or expired");
       res.status(403).json({ message: "Refresh token not found (db), doesn't match user or expired" });

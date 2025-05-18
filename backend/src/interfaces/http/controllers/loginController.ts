@@ -12,7 +12,7 @@ const loginUserUseCase = new LoginUserUseCase(
 );
 
 /** Send new tokens and user data */
-export const loginController = async (req: Request, res: Response): Promise<void> => {
+export const loginController = async (req: Request, res: Response) => {
   const { user, password } = req.userAndPassword;
 
   try {
@@ -26,10 +26,8 @@ export const loginController = async (req: Request, res: Response): Promise<void
     });
 
     res.status(200).json({ accessToken, userData });
-    return;
   }catch(err) {
     console.error("Error in loginController");
     res.status(401).json({ message: err instanceof Error ? err.message : "Unauthorized" });
-    return;
   }
 }
