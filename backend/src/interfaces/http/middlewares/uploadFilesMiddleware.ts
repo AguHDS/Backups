@@ -8,8 +8,8 @@ export const uploadLimit = async (req: Request, res: Response, next: NextFunctio
   upload.array("file", 5)(req, res, (err) => {
     if (err) {
       if (err instanceof MulterError) {
-        /* TODO: obtain file size and limit number to use them in the error messages */
         if (err.code === "LIMIT_UNEXPECTED_FILE") {
+           /* TODO: obtain file size and limit number to use them in the error messages */
           console.error("Files limit exceeded per request");
 
           res.status(400).json({ error: "Too many files. Max allowed is 5 per request" });
@@ -17,8 +17,7 @@ export const uploadLimit = async (req: Request, res: Response, next: NextFunctio
         }
 
         if (err.code === "LIMIT_FILE_SIZE") {
-          /* TODO 
-          Check case where user uploads more than 1 file and 1 file size is bigger than allowed */
+          // TODO Check case where user uploads more than 1 file and 1 file size is bigger than allowed
           console.error("File size limit exceeded per request");
 
           res.status(400).json({ error: "Files size exceeds the limit. Max allowed is 5MB per request" });
@@ -39,24 +38,31 @@ export const uploadLimit = async (req: Request, res: Response, next: NextFunctio
 
 /** Validations before uploading files */
 export const uploadFilesMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  /* TODO
-    . Manage the case of error where the file isn't a image, so show that error
-    . Configure cloudinary to accept other type of files (txt, pdf, etc) */
   try {
-    
     const decodedToken = decodeRefreshToken(req);
-    console.log('test', decodedToken);
-    
     if (!req.files || req.files.length === 0) {
+      console.error("No fules uploaded");
       res.status(400).json({ message: "No files uploaded" });
       return;
     }
 
-    req.body.refreshTokenId = decodedToken.id;
+    req.refreshTokenId = decodedToken;
 
     next();
   } catch (error) {
     if (error instanceof Error) console.error("Error uploading files: ", error);
     res.status(500).json({ message: "Upload failed" });
+
+    switch (error.message) {
+      case "NO_REFRESH_TOKEN":
+        res.status(401).json({ message: "No refresh token in cookies" });
+        return;
+      case "INVALID_REFRESH_TOKEN":
+        res.status(403).json({ message: "Invalid or expired refresh token" });
+        return;
+      default:
+        res.status(500).json({ message: "Internal server error" });
+        return;
+    }
   }
 };

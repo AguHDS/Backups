@@ -32,8 +32,7 @@ export const updateProfileMiddleware = async (req: Request, res: Response, next:
     
     next();
   } catch (error) {
-    if (error instanceof Error)
-      console.error("Error in updateProfileMiddleware:", error);
+    if (error instanceof Error) console.error("Error in updateProfileMiddleware:", error);
 
     switch (error.message) {
       case "NO_REFRESH_TOKEN":

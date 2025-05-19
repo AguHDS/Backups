@@ -1,48 +1,26 @@
 import { Request, Response } from "express";
-import { cloudinary } from "../../../services/cloudinary.js";
-import streamifier from "streamifier";
+import { CloudinaryUploader } from "../../../infraestructure/adapters/CloudinaryUploader.js";
+import { UploadFilesUseCase } from "../../../application/useCases/UploadFilesUseCase.js";
 
-interface FileData {
-  url: string;
-  public_id: string;
-}
-
-interface FileResponse {
-  files: FileData[];
-}
+const uploader = new CloudinaryUploader();
+const uploadUseCase = new UploadFilesUseCase(uploader);
 
 /** Upload user files to Cloudinary */
 export const uploadFilesController = async (req: Request, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];
-
-    const uploadPromise = files.map((file) => {
-      return new Promise<FileData>((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "Files_collection" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve({ url: result.secure_url, public_id: result.public_id });
-          }
-        );
-
-        //send data to Cloudinary first transforming multer's buffer to stream
-        streamifier.createReadStream(file.buffer).pipe(stream);
-      });
-    });
-
-    const results = await Promise.all(uploadPromise);
-    console.log(results);
+    const results = await uploadUseCase.execute(files);
     
     res.status(200).json({ files: results });
   } catch (error) {
-    console.error("Cloudinary Upload Error: ", error);
-    res.status(500).json({ message: "Error uploading files to Cloudinary" });
+    console.error("Upload error:", error);
+    res.status(500).json({ message: error instanceof Error ? error.message : "Unknown error" });
   }
 };
 
 /* flujo pensado (puedo estar equivocado)
-1. cada usuario puede subir archivos a Cloudinary, se crea una carpeta para cada usuario con sus archivos, se logra pasando su id
+1. cada usuario puede subir archivos a Cloudinary, se crea una carpeta para cada usuario con sus archivos (actualmente, todas las imagenes
+subidas por los usuarios se almacenan en una unica carpeta llamada Files_collection), se logra pasando su id
 - como se obtiene el almacenamiento total de cada usuario que tiene en su carpeta? averiguar esto
 2. guardar en una tabla el public_id de cada imagen 
 3. en el cliente solicita el public_id de cada archivo/imagen en la base de datos para renderearla.
