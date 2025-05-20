@@ -1,5 +1,5 @@
-import { UserRepository } from "../../domain/repositories/UserRepository.js";
-import { NameAndEmailCheckResult } from "../../domain/repositories/UserRepository.js";
+import { UserRepository } from "../../domain/ports/repositories/UserRepository.js";
+import { NameAndEmailCheckResult } from "../../domain/ports/repositories/UserRepository.js";
 
 export class RegisterUserUseCase {
   constructor(

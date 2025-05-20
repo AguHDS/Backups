@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { MysqlUserRepository } from "../../../infraestructure/repositories/MysqlUserRepository.js";
+import { MysqlUserRepository } from "../../../infraestructure/adapters/repositories/MysqlUserRepository.js";
 
 const userRepository = new MysqlUserRepository();
 

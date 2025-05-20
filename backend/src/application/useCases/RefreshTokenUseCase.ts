@@ -1,5 +1,5 @@
-import { RefreshTokenRepository } from "../../domain/repositories/RefreshTokenRepository.js";
-import { UserRepository } from "../../domain/repositories/UserRepository.js";
+import { RefreshTokenRepository } from "../../domain/ports/repositories/RefreshTokenRepository.js";
+import { UserRepository } from "../../domain/ports/repositories/UserRepository.js";
 import { JwtUserData, UserSessionWithTokens } from "../../shared/dtos/index.js";
 import { Connection } from "mysql2/promise";
 

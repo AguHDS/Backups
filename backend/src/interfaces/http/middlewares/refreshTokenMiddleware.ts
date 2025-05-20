@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
-import { MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/MysqlRefreshTokenRepository.js";
+import { MysqlRefreshTokenRepository } from "../../../infraestructure/adapters/repositories/MysqlRefreshTokenRepository.js";
 
 const mysqlRefreshTokenRepository = new MysqlRefreshTokenRepository();
 

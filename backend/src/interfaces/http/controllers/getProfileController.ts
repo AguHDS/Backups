@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { MysqlProfileRepository } from "../../../infraestructure/repositories/MysqlProfileRepository.js";
+import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
 import { GetUserProfileUseCase } from "../../../application/useCases/GetUserProfileUseCase.js";
 import { CustomResponse } from "../.././../shared/dtos/index.js";
 

@@ -1,5 +1,5 @@
 import { Connection } from "mysql2/promise";
-import { User } from "../entities/User.js";
+import { User } from "../../entities/User.js";
 
 /** Represents the result of checking if username or email are taken */
 export interface NameAndEmailCheckResult {

@@ -1,6 +1,6 @@
-import promisePool from "../../db/database.js";
-import { User } from "../../domain/entities/User.js";
-import { UserRepository, NameAndEmailCheckResult } from "../../domain/repositories/UserRepository.js";
+import promisePool from "../../../db/database.js";
+import { User } from "../../../domain/entities/User.js";
+import { UserRepository, NameAndEmailCheckResult } from "../../../domain/ports/repositories/UserRepository.js";
 import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
 
 interface UserRow extends RowDataPacket {

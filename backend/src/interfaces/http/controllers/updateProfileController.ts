@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { UpdateUserProfileUseCase } from "../../../application/useCases/UpdateUserProfileUseCase.js";
-import { MysqlProfileRepository } from "../../../infraestructure/repositories/MysqlProfileRepository.js";
+import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
 
 const updateUserProfileUseCase = new UpdateUserProfileUseCase(
   new MysqlProfileRepository()

@@ -3,7 +3,7 @@ import promisePool from "../../../db/database.js";
 import { Request, Response } from "express";
 import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
 import { RefreshTokenUseCase } from "../../../application/useCases/RefreshTokenUseCase.js";
-import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/index.js";
+import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/adapters/repositories/index.js";
 
 //dependency injection
 const refreshTokenUseCase = new RefreshTokenUseCase(
