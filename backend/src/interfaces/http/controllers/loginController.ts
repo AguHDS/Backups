@@ -1,7 +1,7 @@
 import config from "../../../infraestructure/config/environmentVars.js";
 import { Request, Response } from "express";
 import { LoginUserUseCase } from "../../../application/useCases/LoginUserUseCase.js";
-import { MysqlRefreshTokenRepository, MysqlUserRepository } from "../../../infraestructure/repositories/index.js";
+import { MysqlRefreshTokenRepository, MysqlUserRepository } from "../../../infraestructure/adapters/repositories/index.js";
 import { compare } from "../../../infraestructure/auth/handlePassword.js";
 
 //dependency injection

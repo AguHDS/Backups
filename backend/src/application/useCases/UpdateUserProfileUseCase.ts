@@ -1,4 +1,4 @@
-import { ProfileRepository } from "../../domain/repositories/ProfileRepository.js";
+import { ProfileRepository } from "../../domain/ports/repositories/ProfileRepository.js";
 import { UserProfileSection } from "../../domain/entities/UserProfileSection.js";
 
 /**

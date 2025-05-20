@@ -1,7 +1,7 @@
-import { UserRepository } from "../../domain/repositories/UserRepository.js";
+import { UserRepository } from "../../domain/ports/repositories/UserRepository.js";
 import { JwtUserData, UserSessionWithTokens } from "../../shared/dtos/index.js";
 import { tokenSign } from "../../infraestructure/auth/handleJwt.js";
-import { RefreshTokenRepository } from "../../domain/repositories/RefreshTokenRepository.js";
+import { RefreshTokenRepository } from "../../domain/ports/repositories/RefreshTokenRepository.js";
 
 export class LoginUserUseCase {
   constructor(

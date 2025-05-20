@@ -1,4 +1,4 @@
-import { UserProfile, UserProfileSection } from "../entities/index.js";
+import { UserProfile, UserProfileSection } from "../../entities/index.js";
 
 export interface ProfileRepository {
   /**

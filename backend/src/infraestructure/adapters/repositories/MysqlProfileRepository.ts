@@ -1,10 +1,10 @@
-import promisePool from "../../db/database.js";
+import promisePool from "../../../db/database.js";
 import { RowDataPacket, PoolConnection, ResultSetHeader } from "mysql2/promise";
 import {
   UserProfile,
   UserProfileSection,
-} from "../../domain/entities/index.js";
-import { ProfileRepository } from "../../domain/repositories/ProfileRepository.js";
+} from "../../../domain/entities/index.js";
+import { ProfileRepository } from "../../../domain/ports/repositories/ProfileRepository.js";
 
 export class MysqlProfileRepository implements ProfileRepository {
   async getProfileById(userId: number): Promise<UserProfile | null> {

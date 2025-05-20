@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { RegisterUserUseCase } from "../../../application/useCases/RegisterUserUseCase.js";
-import { MysqlUserRepository } from "../../../infraestructure/repositories/MysqlUserRepository.js";
+import { MysqlUserRepository } from "../../../infraestructure/adapters/repositories/MysqlUserRepository.js";
 import { encrypt } from "../../../infraestructure/auth/handlePassword.js";
 
 const registerUserUseCase = new RegisterUserUseCase(

@@ -1,5 +1,5 @@
 import { UserProfile } from "../../domain/entities/UserProfile.js";
-import { ProfileRepository } from "../../domain/repositories/ProfileRepository.js";
+import { ProfileRepository } from "../../domain/ports/repositories/ProfileRepository.js";
 
 export class GetUserProfileUseCase {
   constructor(private readonly profileRepo: ProfileRepository) {}

@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import { RefreshTokenUseCase } from "../../../application/useCases/RefreshTokenUseCase.js";
-import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/repositories/index.js";
+import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/adapters/repositories/index.js";
 import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
 
 //dependency injection
