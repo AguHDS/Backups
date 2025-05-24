@@ -4,7 +4,7 @@ import logout from "./logout.js";
 import refreshToken from "./refreshToken.js";
 import getProfile from "./getProfile.js";
 import updateProfile from "./updateProfile.js";
-import uploadFiles from "./uploadFiles.js";
+/* import uploadFiles from "./uploadFiles.js"; */
 
 export {
   login,
@@ -13,5 +13,5 @@ export {
   refreshToken,
   getProfile,
   updateProfile,
-  uploadFiles,
+/*   uploadFiles, */
 };
