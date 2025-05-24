@@ -15,7 +15,7 @@ export interface UserAndPassword {
 }
 
 export interface UserSession {
-  name: string;
+  user: string;
   email: string;
   password: string;
 }

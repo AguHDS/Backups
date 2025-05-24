@@ -12,11 +12,11 @@ export const registrationMiddleware = (req: Request, res: Response, next: NextFu
 
   const data = matchedData(req);
 
-  const { name, email, password } = data;
+  const { user, email, password } = data;
 
   //save user data in req object
   req.userSession = {
-    name,
+    user,
     email,
     password,
   };

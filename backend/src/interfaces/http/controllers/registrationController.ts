@@ -10,18 +10,19 @@ const registerUserUseCase = new RegisterUserUseCase(
 
 /** Register a new user in our database */
 export const registerController = async (req: Request, res: Response) => {
-  const { name, email, password } = req.userSession;
-  
+  const { user, email, password } = req.userSession;
+
+  console.log(`Registering user: ${user} with email: ${email} and password: ${password}`);
   try {
-    await registerUserUseCase.execute(name, email, password);
-    console.log(`User: ${name} and email: ${email} saved successfully`);
+    await registerUserUseCase.execute(user, email, password);
+    console.log(`User: ${user} and email: ${email} saved successfully`);
 
     res.status(201).json({ message: "Registration completed" });
   } catch (error) {
     if (error instanceof Error) {
       switch (error.message) {
         case "USERNAME_TAKEN":
-          console.error(`User ${name} already exists`);
+          console.error(`User ${user} already exists`);
           res.status(409).json({ message: "Username already taken" });
           return;
         case "EMAIL_TAKEN":
@@ -29,7 +30,7 @@ export const registerController = async (req: Request, res: Response) => {
           res.status(409).json({ message: "Email already taken" });
           return;
         case "USERNAME_AND_EMAIL_TAKEN":
-          console.error(`User ${name} and ${email} already exist`);
+          console.error(`User ${user} and ${email} already exist`);
           res.status(409).json({ message: "Name and email are already taken" });
           return;
       }

@@ -8,11 +8,11 @@ export class RegisterUserUseCase {
   ) {}
 
   /** Register new user into the db */
-  async execute(name: string, email: string, password: string): Promise<void> {
+  async execute(user: string, email: string, password: string): Promise<void> {
     const hashedPassword = await this.encrypt(password);
-    const userData = { name, email, hashedPassword };
+    const userData = { user, email, hashedPassword };
 
-    const nameAndEmail: NameAndEmailCheckResult = await this.userRepo.isNameOrEmailTaken(userData.name, userData.email);
+    const nameAndEmail: NameAndEmailCheckResult = await this.userRepo.isNameOrEmailTaken(userData.user, userData.email);
 
     if (nameAndEmail.isTaken) {
       if (nameAndEmail.userTaken && !nameAndEmail.emailTaken) {
@@ -28,6 +28,6 @@ export class RegisterUserUseCase {
       }
     }
 
-    await this.userRepo.insertNewUser(userData.name, userData.email, userData.hashedPassword, "user");
+    await this.userRepo.insertNewUser(userData.user, userData.email, userData.hashedPassword, "user");
   }
 }
