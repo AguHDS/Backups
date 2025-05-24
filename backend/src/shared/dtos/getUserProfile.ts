@@ -14,6 +14,7 @@ export interface CustomResponse {
   name: string;
   role: string;
   id: number;
+  email: string;
   userProfileData: ProfileContent;
   userSectionData: ProfileSection[];
 }

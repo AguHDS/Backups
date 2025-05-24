@@ -10,7 +10,7 @@ const getUserProfileUseCase = new GetUserProfileUseCase(
 /**  Respond with user profile data, comparing its id from users table with fk_users_id in users_profile table */
 export const getProfileController = async (req: Request, res: Response) => {
   try {
-    const { name, role, id } = req.baseUserData;
+    const { name, role, id, email } = req.baseUserData;
 
     const profile = await getUserProfileUseCase.execute(id);
 
@@ -19,6 +19,7 @@ export const getProfileController = async (req: Request, res: Response) => {
       name,
       role,
       id,
+      email,
       userProfileData: {
         bio: profile.bio,
         profile_pic: profile.profilePic,
