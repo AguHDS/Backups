@@ -17,7 +17,8 @@ export const getProfileMiddleware = async (req: Request, res: Response, next: Ne
     req.baseUserData = {
       name: user.name,
       role: user.role,
-      id: user.id
+      id: user.id,
+      email: user.email
     };
 
     next();
