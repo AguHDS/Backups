@@ -10,6 +10,7 @@ const updateUserProfileUseCase = new UpdateUserProfileUseCase(
 interface ProfileDataToUpdate {
   bio: string;
   sections: {
+    id: number;
     title: string;
     description: string;
   }[];

@@ -38,54 +38,66 @@ export class MysqlProfileRepository implements ProfileRepository {
       );
 
       if (rows.length === 0) {
-        console.error(`Sections data for id ${userId} not found in users_prfile_sections table`);
+        console.error(
+          `Sections data for id ${userId} not found in users_prfile_sections table`
+        );
         return null;
       }
 
       return rows.map(
-        (row) =>
-          new UserProfileSection(
-            row.title,
-            row.description
-        )
+        (row) => new UserProfileSection(row.id, row.title, row.description)
       );
-      
     } catch (error) {
       console.error("Error retrieving user section data from database:", error);
       throw new Error("Error retrieving user section data from database");
     }
   }
-  async updateProfile(bio: string, sections: UserProfileSection[], userId: string): Promise<void> {
-  const connection: PoolConnection = await promisePool.getConnection();
+  async updateProfile(
+    bio: string,
+    sections: UserProfileSection[],
+    userId: string
+  ): Promise<void> {
+    const connection: PoolConnection = await promisePool.getConnection();
 
-  try {
-    await connection.beginTransaction();
+    try {
+      await connection.beginTransaction();
 
-    //update user bio
-    const [result] = await connection.execute<ResultSetHeader>(
-      `UPDATE users_profile SET bio = ? WHERE fk_users_id = ?`,
-      [bio, userId]
-    );
-
-    if (result.affectedRows === 0) throw new Error("No profile found for the given user ID");
-
-    //update sections array
-    for (const section of sections) {
-      await connection.execute<ResultSetHeader>(
-        `UPDATE users_profile_sections 
-         SET description = ? 
-         WHERE fk_users_id = ? AND title = ?`,
-        [section.description, userId, section.title] //using title as identifer for each section
+      //update user bio
+      const [result] = await connection.execute<ResultSetHeader>(
+        `UPDATE users_profile SET bio = ? WHERE fk_users_id = ?`,
+        [bio, userId]
       );
+
+      if (result.affectedRows === 0)
+        throw new Error("No profile found for the given user ID");
+
+      //update sections array
+      for (const section of sections) {
+        //if id is greater than 0, it means it's an existing section
+        if (section.id && section.id > 0) {
+          //update existing section
+          const [updateResult] = await connection.execute<ResultSetHeader>(
+            "UPDATE users_profile_sections SET title = ?, description = ? WHERE id = ? AND fk_users_id = ?",
+            [section.title, section.description, section.id, userId]
+          );
+
+          if (updateResult.affectedRows === 0) throw new Error(`Section with id ${section.id} not found for user ${userId}`);
+        } else {
+          //id is 0, add a new section
+          await connection.execute<ResultSetHeader>(
+            "INSERT INTO users_profile_sections (fk_users_id, title, description) VALUES (?, ?, ?)",
+            [userId, section.title, section.description]
+          );
+        }
+      }
+
+      await connection.commit();
+    } catch (error) {
+      await connection.rollback();
+      console.error("Error updating profile", error);
+      throw new Error("Error updating profile");
+    } finally {
+      connection.release();
     }
-    
-    await connection.commit();
-  } catch (error) {
-    await connection.rollback();
-    console.error("Error updating profile", error);
-    throw new Error("Error updating profile");
-  } finally {
-    connection.release();
   }
-};
 }

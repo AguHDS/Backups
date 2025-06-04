@@ -1,10 +1,15 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Modal, LoadingSpinner, useModalContext, useFetch } from "../../../shared";
+import {
+  Modal,
+  LoadingSpinner,
+  useModalContext,
+  useFetch,
+} from "../../../shared";
 import { RootState } from "../../../app/redux/store";
 import { ProfileProvider } from "../context/ProfileContext";
-import {images} from "../../../assets/images";
+import { images } from "../../../assets/images";
 import {
   Header,
   ActionsAndProfileImg,
@@ -22,6 +27,7 @@ interface ProfileStats {
 }
 
 interface ProfileSection {
+  id: number;
   title: string;
   description: string;
 }
@@ -31,12 +37,15 @@ interface CustomResponse {
   role: string;
   id: number;
   userProfileData: ProfileStats;
-  userSectionData: ProfileSection;
+  userSectionData: ProfileSection[];
 }
 
 export const Profile = () => {
-  const { data, status, isLoading, error, fetchData } = useFetch<CustomResponse>();
-  const { isAuthenticated, userData } = useSelector((state: RootState) => state.auth);
+  const { data, status, isLoading, error, fetchData } =
+    useFetch<CustomResponse>();
+  const { isAuthenticated, userData } = useSelector(
+    (state: RootState) => state.auth
+  );
   const { username } = useParams();
   const { setIsModalOpen } = useModalContext();
   const navigate = useNavigate();
@@ -66,6 +75,7 @@ export const Profile = () => {
       }
     };
     fetchProfileData();
+    console.log("Fetching profile data: ", data);
   }, [username, fetchData]);
 
   useEffect(() => {
@@ -94,9 +104,7 @@ export const Profile = () => {
       {!isLoading && data && (
         <div className="mx-auto flex justify-center mt-5">
           <div className="w-[80vw] max-w-full">
-            <Header
-              username={data.username}
-            />
+            <Header username={data.username} />
             <div className="p-[8px] bg-[#121212] border-[#272727] border-solid border-r border-b text-[#e0e0e0]">
               <div className="flex flex-col md:flex-row w-full">
                 {/* left area */}
@@ -126,8 +134,7 @@ export const Profile = () => {
                 {/* right area */}
                 <ProfileContent
                   bio={data.userProfileData.bio}
-                  title={data.userSectionData.title}
-                  description={data.userSectionData.description}
+                  sections={data.userSectionData}
                 />
               </div>
             </div>
