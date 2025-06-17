@@ -19,7 +19,12 @@ export const Bio = ({ bio, onBioChange }: Props) => {
           onChange={(e) => onBioChange(e.target.value)}
         ></textarea>
       ) : (
-        <div className="flex items-center h-12 text-gray-200">{bio}</div>
+        <div className="w-full mt-6">
+          <h2 className="text-green-500 text-lg ml-2 mb-1 font-medium">Bio</h2>
+          <div className="max-w-full bg-[#1e1e1e] border border-[#333] rounded-xl shadow-md p-3">
+            <p className="text-[18px] ml-2 my-0">{bio}</p>
+          </div>
+        </div>
       )}
     </>
   );

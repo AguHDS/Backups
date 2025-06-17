@@ -61,7 +61,7 @@ export const ImageUploader = () => {
 
   return (
     <div className="flex flex-col items-center">
-      {/* Contenedor principal */}
+      {/* Main container for images */}
       <div className="p-4 overflow-y-auto border border-[#121212] bg-[#1e1e1e] h-[50vh] max-h-[50vh] min-w-[90%] max-w-[90%]">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {[...Array(11)].map((_, index) => (
