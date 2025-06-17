@@ -21,7 +21,7 @@ export const loginController = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: config.nodeEnv === "production", //use secure cookies only in production
-      maxAge: 65 * 1000, //65 seconds
+      maxAge: 500 * 1000, //500 seconds for testing
       sameSite: config.nodeEnv === "production" ? "none" : "lax", //adjust for cross-site requests in production
     });
 

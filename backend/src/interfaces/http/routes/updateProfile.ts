@@ -1,10 +1,10 @@
 import express from "express";
-import { updateProfileController } from "../controllers/updateProfileController.js";
-import { updateProfileMiddleware } from "../middlewares/updateProfileMiddleware.js";
 import validatorUpdateProfile from "../middlewares/validators/updateProfileFields.js";
+import { updateProfileController } from "../controllers/updateProfileController.js";
+import { verifyUserOwnsProfile } from "../middlewares/verifyUserOwnsProfile.js";
 
 const router = express.Router();
 
-router.post("/:username", validatorUpdateProfile, updateProfileMiddleware, updateProfileController);
+router.post("/:username", validatorUpdateProfile, verifyUserOwnsProfile(true), updateProfileController);
 
 export default router;

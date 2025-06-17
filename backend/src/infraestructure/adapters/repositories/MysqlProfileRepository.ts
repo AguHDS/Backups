@@ -81,7 +81,10 @@ export class MysqlProfileRepository implements ProfileRepository {
             [section.title, section.description, section.id, userId]
           );
 
-          if (updateResult.affectedRows === 0) throw new Error(`Section with id ${section.id} not found for user ${userId}`);
+          if (updateResult.affectedRows === 0)
+            throw new Error(
+              `Section with id ${section.id} not found for user ${userId}`
+            );
         } else {
           //id is 0, add a new section
           await connection.execute<ResultSetHeader>(
@@ -96,6 +99,31 @@ export class MysqlProfileRepository implements ProfileRepository {
       await connection.rollback();
       console.error("Error updating profile", error);
       throw new Error("Error updating profile");
+    } finally {
+      connection.release();
+    }
+  }
+  async deleteSectionsByIds(
+    sectionIds: number[],
+    userId: string
+  ): Promise<void> {
+    if (sectionIds.length === 0) return;
+
+    const connection: PoolConnection = await promisePool.getConnection();
+    try {
+      await connection.beginTransaction();
+
+      const placeholders = sectionIds.map(() => "?").join(", ");
+      
+      await connection.execute(`DELETE FROM users_profile_sections WHERE id IN (${placeholders}) AND fk_users_id = ?`,
+        [...sectionIds, userId]
+      );
+
+      await connection.commit();
+    } catch (error) {
+      await connection.rollback();
+      console.error("Error deleting profile sections:", error);
+      throw new Error("Error deleting profile sections");
     } finally {
       connection.release();
     }

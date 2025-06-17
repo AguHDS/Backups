@@ -16,6 +16,7 @@ import {
   refreshToken,
   getProfile,
   updateProfile,
+  deleteSections,
 /*   uploadFiles */
 } from "./routes/index.js";
 
@@ -48,6 +49,7 @@ app.use("/api/logout", logout);
 app.use("/api/refreshToken", refreshToken);
 app.use("/api/getProfile", getProfile);
 app.use("/api/updateProfile", updateProfile);
+app.use("/api/deleteSections", deleteSections);
 /* app.use("/api/uploadFiles", uploadFiles); */
 
 //proxy to redirect all requests that aren't defined here to vite's port, so the client can handle them
