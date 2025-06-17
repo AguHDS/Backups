@@ -35,7 +35,7 @@ export class LoginUserUseCase {
 
     //set expiration date for refresh token to 65 seconds from now (65 seconds for testing)
     const expiresAt = new Date();
-    expiresAt.setSeconds(expiresAt.getSeconds() + 65);
+    expiresAt.setSeconds(expiresAt.getSeconds() + 500);
 
     await this.saveRefreshToken.saveRefreshToDB(user.id, refreshToken, expiresAt);
 

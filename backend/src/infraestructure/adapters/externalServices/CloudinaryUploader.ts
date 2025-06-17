@@ -1,0 +1,26 @@
+import { FileUploader, CloudinaryUploadResponse } from "../../../domain/ports/externalServices/FileUploader.js";
+import { cloudinary } from "../../../services/cloudinary.js";
+import streamifier from "streamifier";
+
+export class CloudinaryUploader implements FileUploader {
+  constructor(private readonly userId: number) {}
+
+  async upload(files: Express.Multer.File[]): Promise<CloudinaryUploadResponse[]> {
+    const folder = `user_files/${this.userId}`; //each user has his folder
+
+    const uploadPromises = files.map((file) => {
+      return new Promise<CloudinaryUploadResponse>((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve({ url: result.secure_url, public_id: result.public_id });
+          }
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream);
+      });
+    });
+
+    return await Promise.all(uploadPromises);
+  }
+}
