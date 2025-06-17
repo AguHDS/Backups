@@ -22,6 +22,7 @@ interface Section {
   description: string;
 }
 
+//Omit the id key since it's only used to identify sections, and we only want to update title and description in handleChangeSection()
 type SectionField = keyof Omit<Section, "id">;
 
 interface Props {
@@ -116,7 +117,7 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
       const updated = [...prev];
       updated[index] = {
         ...updated[index],
-        [field]: value,
+        [field]: value, //this line represents title and description
       };
       return updated;
     });
@@ -126,13 +127,11 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
     setSections((prev) => [
       ...prev,
       {
-        id: 0, //id will be assigned by the backend
+        id: 0, //if id is 0, it tells to backend that is a new section to create
         title: "",
         description: "",
       },
     ]);
-
-    await handleUpdateProfile();
   };
 
   //handle side effects after fetching data
@@ -153,6 +152,7 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
       <div className="bg-[#272727] w-full max-w-full flex-1">
         <div className="p-4 space-y-4 scrollbar-container flex-1">
           <Bio bio={updateData.bio} onBioChange={handleBioChange} />
+          <div className="border-[#121212] border-solid w-full"></div>
 
           {sections.map((section, index) => (
             <React.Fragment key={section.id}>
@@ -161,7 +161,7 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
                   <div className="flex justify-center">
                     <input
                       type="text"
-                      className="w-[25%] text-center bg-[#272727] text-[#3d3c3c] text-[18px] p-2 mb-4 border border-[#444]"
+                      className="w-[25%] text-center bg-[#272727] text-white text-[18px] p-2 mb-4 border border-[#444]"
                       placeholder="Title for Section"
                       value={section.title}
                       onChange={(e) =>
@@ -170,9 +170,9 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
                     />
                   </div>
                 ) : (
-                  <h2 className="text-center text-[#ccc] text-[18px] mb-2 border-t-[10px] pt-3 border-[#121212] border-solid w-full">
+                  <h3 className="text-center text-[#ccc] text-[18px] mb-2 border-t-[10px] pt-3 w-full">
                     {section.title}
-                  </h2>
+                  </h3>
                 )}
 
                 {isEditing ? (
@@ -199,23 +199,29 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
                           : null
                       }
                     />
+                  <ImageUploader />
                   </>
                 ) : (
-                  <div className="flex items-center h-12 text-gray-200">
-                    {section.description}
-                  </div>
+                  <>
+                    <p className="flex items-center text-gray-200">
+                      {section.description}
+                    </p>
+                    <div className="mb-4">
+                      <ImageUploader />
+                    </div>
+                  </>
                 )}
               </div>
+              <div className="border-[#121212] border-solid w-full"></div>
             </React.Fragment>
           ))}
         </div>
-        <ImageUploader />
         {isEditing && (
           <div className="flex flex-col items-end space-y-2 mr-4 mb-2">
             <Button
               label="Add New Section"
               className="bg-[#505050] text-white"
-              onClick={addNewSection} 
+              onClick={addNewSection}
             />
             <Button
               label="Save"
