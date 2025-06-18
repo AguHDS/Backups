@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button, AuthFeedback, useFetch } from "../../../shared";
 import { Bio } from "./Bio";
@@ -22,7 +21,6 @@ interface Section {
   description: string;
 }
 
-//Omit the id key since it's only used to identify sections, and we only want to update title and description in handleChangeSection()
 type SectionField = keyof Omit<Section, "id">;
 
 interface Props {
@@ -33,12 +31,12 @@ interface Props {
 export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
   const [updateData, setUpdateData] = useState({ bio });
   const [sections, setSections] = useState<Section[]>(initialSections);
+  const [sectionsToDelete, setSectionsToDelete] = useState<number[]>([]);
   const { status, isLoading, error, fetchData } = useFetch();
   const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { isEditing } = useProfile();
 
-  //utility function to validate fields
   const validateFields = (): string[] => {
     const errors: string[] = [];
 
@@ -58,7 +56,6 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
     return errors;
   };
 
-  //check different types of errors from api response
   const processError = (error: FetchError): string[] => {
     if (Array.isArray(error)) {
       return error.map((err: ValidationError) => err.msg);
@@ -69,7 +66,6 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
     return ["An unexpected error occurred"];
   };
 
-  //update user profile content data
   const handleUpdateProfile = async () => {
     const validationErrors = validateFields();
     if (validationErrors.length > 0) {
@@ -78,10 +74,22 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
     }
 
     try {
+      if (sectionsToDelete.length > 0) {
+        await fetch(
+          `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/deleteSections/${username}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sectionIds: sectionsToDelete }),
+          }
+        );
+      }
+
       await fetchData(
-        `http://localhost:${
-          import.meta.env.VITE_BACKENDPORT
-        }/api/updateProfile/${username}`,
+        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/updateProfile/${username}`,
         {
           method: "POST",
           credentials: "include",
@@ -94,47 +102,45 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
           }),
         }
       );
+
+      setSectionsToDelete([]);
     } catch (error) {
       console.error("Failed to update profile:", error);
-      setErrorMessages(["Failed to update profile.Try again later"]);
+      setErrorMessages(["Failed to update profile. Try again later"]);
     }
   };
 
   const handleBioChange = (newBio: string) => {
-    setUpdateData((prev) => ({
-      ...prev,
-      bio: newBio,
-    }));
+    setUpdateData((prev) => ({ ...prev, bio: newBio }));
   };
 
-  //handle the edition of values in sections when isEditing is true
-  const handleChangeSection = (
-    field: SectionField,
-    value: string,
-    index: number
-  ) => {
+  const handleChangeSection = (field: SectionField, value: string, index: number) => {
     setSections((prev) => {
       const updated = [...prev];
       updated[index] = {
         ...updated[index],
-        [field]: value, //this line represents title and description
+        [field]: value,
       };
       return updated;
     });
+  };
+
+  const markSectionForDeletion = (sectionId: number) => {
+    setSectionsToDelete((prev) => [...prev, sectionId]);
+    setSections((prev) => prev.filter((s) => s.id !== sectionId));
   };
 
   const addNewSection = async () => {
     setSections((prev) => [
       ...prev,
       {
-        id: 0, //if id is 0, it tells to backend that is a new section to create
+        id: 0,
         title: "",
         description: "",
       },
     ]);
   };
 
-  //handle side effects after fetching data
   useEffect(() => {
     if (isLoading) return;
     if (status === 200) {
@@ -164,9 +170,7 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
                       className="w-[25%] text-center bg-[#272727] text-white text-[18px] p-2 mb-4 border border-[#444]"
                       placeholder="Title for Section"
                       value={section.title}
-                      onChange={(e) =>
-                        handleChangeSection("title", e.target.value, index)
-                      }
+                      onChange={(e) => handleChangeSection("title", e.target.value, index)}
                     />
                   </div>
                 ) : (
@@ -178,34 +182,28 @@ export const ProfileContent = ({ bio, sections: initialSections }: Props) => {
                 {isEditing ? (
                   <>
                     <textarea
-                      className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
+                      className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-2 border border-[#444] resize-none"
                       rows={3}
                       placeholder="Add a new description"
                       value={section.description}
-                      onChange={(e) =>
-                        handleChangeSection(
-                          "description",
-                          e.target.value,
-                          index
-                        )
-                      }
+                      onChange={(e) => handleChangeSection("description", e.target.value, index)}
                     ></textarea>
+                    <button
+                      onClick={() => markSectionForDeletion(section.id)}
+                      className="ml-auto mb-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                    >
+                      Eliminar sección
+                    </button>
                     <AuthFeedback
                       input={errorMessages}
                       status={status}
-                      message={
-                        errorMessages.length === 0
-                          ? "Operation completed"
-                          : null
-                      }
+                      message={errorMessages.length === 0 ? "Operation completed" : null}
                     />
-                  <ImageUploader />
+                    <ImageUploader />
                   </>
                 ) : (
                   <>
-                    <p className="flex items-center text-gray-200">
-                      {section.description}
-                    </p>
+                    <p className="flex items-center text-gray-200">{section.description}</p>
                     <div className="mb-4">
                       <ImageUploader />
                     </div>

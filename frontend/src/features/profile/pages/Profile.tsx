@@ -40,6 +40,7 @@ export const Profile = () => {
             <Header username={data.username} />
             <div className="p-[8px] bg-[#121212] border-[#272727] border-solid border-r border-b text-[#e0e0e0]">
               <div className="flex flex-col md:flex-row w-full">
+
                 {/* left area */}
                 <div className="bg-[#272727] p-2 flex-shrink-0 w-full md:w-[225px]">
                   <ActionsAndProfileImg
@@ -54,7 +55,6 @@ export const Profile = () => {
                     friendsCounter={data.userProfileData.friends}
                     partner={data.userProfileData.partner}
                   />
-
                   <h3 className="text-center my-5">Storage</h3>
                   <Graph graphTestImage={images.graph} />
                   <Storage
@@ -64,6 +64,7 @@ export const Profile = () => {
                     shared="1 GB"
                   />
                 </div>
+                
                 {/* right area */}
                 <ProfileContent
                   bio={data.userProfileData.bio}
