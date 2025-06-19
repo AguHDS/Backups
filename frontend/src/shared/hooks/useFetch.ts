@@ -4,6 +4,7 @@ interface FetchResponse<Data> {
   data: Data | null;
   isLoading: boolean;
   status: number | null;
+  setStatus: (status: number | null) => void;
   error: string | null;
   fetchData: (url: string, options?: RequestInit) => Promise<void>;
 }
@@ -52,6 +53,7 @@ export const useFetch = <Data = unknown>(): FetchResponse<Data> => {
     isLoading,
     status,
     error,
+    setStatus,
     fetchData,
   };
 }
