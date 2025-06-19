@@ -11,13 +11,20 @@ export const Bio = ({ bio, onBioChange }: Props) => {
   return (
     <>
       {isEditing ? (
-        <textarea
-          className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
-          rows={3}
-          placeholder="Add a new biography"
-          value={bio}
-          onChange={(e) => onBioChange(e.target.value)}
-        ></textarea>
+        <>
+          <div className="w-full mt-6">
+            <h2 className="text-green-500 text-lg ml-2 mb-1 font-medium">
+              Bio
+            </h2>
+          </div>
+          <textarea
+            className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
+            rows={3}
+            placeholder="Add a new biography"
+            value={bio}
+            onChange={(e) => onBioChange(e.target.value)}
+          ></textarea>
+        </>
       ) : (
         <div className="w-full mt-6">
           <h2 className="text-green-500 text-lg ml-2 mb-1 font-medium">Bio</h2>
