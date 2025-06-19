@@ -79,9 +79,9 @@ export const ImageUploader = () => {
           {!readyToUpload ? (
             <Button
               label="Select new files"
-              className="my-2 mb-5 p-2 text-center w-[12vw] bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333]"
+              className="flex justify-center items-center w-[200px] mx-auto my-2 text-center p-2 bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333] rounded"
               onClick={handleButtonClick}
-            ></Button>
+            />
           ) : (
             <>
               <div className="mt-4 text-center text-[#ccc]">

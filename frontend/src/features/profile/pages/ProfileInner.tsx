@@ -145,7 +145,7 @@ export const ProfileInner = ({ data }: Props) => {
   return (
     <div className="mx-auto flex justify-center mt-5">
       <div className="w-[80vw] max-w-full">
-        <Header username={data.username} onCancel={handleCancel} />
+        <Header username={data.username} onSave={handleSave} onCancel={handleCancel} />
         <div className="p-[8px] bg-[#121212] border-[#272727] border-solid border-r border-b text-[#e0e0e0]">
           <div className="flex flex-col md:flex-row w-full">
             {/* Left Sidebar */}
@@ -196,7 +196,6 @@ export const ProfileInner = ({ data }: Props) => {
                   { id: 0, title: "", description: "" },
                 ])
               }
-              onSave={handleSave}
             />
           </div>
         </div>
