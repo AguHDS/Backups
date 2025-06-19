@@ -18,7 +18,6 @@ interface Props {
   ) => void;
   onDeleteSection: (sectionId: number) => void;
   onAddSection: () => void;
-  onSave: () => void;
 }
 
 export const ProfileContent = ({
@@ -30,7 +29,6 @@ export const ProfileContent = ({
   onChangeSection,
   onDeleteSection,
   onAddSection,
-  onSave,
 }: Props) => {
   const { isEditing } = useProfile();
 
@@ -39,19 +37,17 @@ export const ProfileContent = ({
       <div className="bg-[#272727] w-full max-w-full flex-1">
         <div className="p-4 space-y-4 scrollbar-container flex-1">
           <Bio bio={updateData.bio} onBioChange={onBioChange} />
+
+          <div className="h-1"></div>
           <div className="border-[#121212] border-solid w-full"></div>
 
           {sections.map((section, index) => (
-            <React.Fragment key={section.id !== 0 ? section.id : `new-${index}`}>
+            <React.Fragment
+              key={section.id !== 0 ? section.id : `new-${index}`}
+            >
               <div className="mb-6">
                 {isEditing ? (
                   <>
-                    <button
-                      onClick={() => onDeleteSection(section.id)}
-                      className="ml-auto mb-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
-                    >
-                      Delete Section
-                    </button>
                     <div className="flex justify-center">
                       <input
                         type="text"
@@ -65,7 +61,7 @@ export const ProfileContent = ({
                     </div>
                   </>
                 ) : (
-                  <h3 className="text-center text-[#ccc] text-[18px] mb-2 border-t-[10px] pt-3 w-full">
+                  <h3 className="text-center text-[#ccc] my-1 text-[28px] border-t-[10px] pt-3 w-full">
                     {section.title}
                   </h3>
                 )}
@@ -75,7 +71,7 @@ export const ProfileContent = ({
                     <textarea
                       className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-2 border border-[#444] resize-none"
                       rows={3}
-                      placeholder="Add a new description"
+                      placeholder="Add new description"
                       value={section.description}
                       onChange={(e) =>
                         onChangeSection("description", e.target.value, index)
@@ -91,10 +87,15 @@ export const ProfileContent = ({
                       }
                     />
                     <ImageUploader />
+                    <Button
+                      onClick={() => onDeleteSection(section.id)}
+                      className="flex justify-center mx-auto mt-5 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                      label="Delete Section"
+                    />
                   </>
                 ) : (
                   <>
-                    <p className="flex items-center text-gray-200">
+                    <p className="flex items-center text-gray-300">
                       {section.description}
                     </p>
                     <div className="mb-4">
@@ -103,6 +104,7 @@ export const ProfileContent = ({
                   </>
                 )}
               </div>
+              <div className="h-1"></div>
               <div className="border-[#121212] border-solid w-full"></div>
             </React.Fragment>
           ))}
@@ -110,14 +112,9 @@ export const ProfileContent = ({
         {isEditing && (
           <div className="flex flex-col items-end space-y-2 mr-4 mb-2">
             <Button
-              label="Add New Section"
-              className="bg-[#505050] text-white"
+              label="Add new section"
+              className="flex justify-center items-center w-[200px] mx-auto my-2 text-center p-2 bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333] rounded"
               onClick={onAddSection}
-            />
-            <Button
-              label="Save"
-              className="backupsBtn bg-[#3c3c3c]"
-              onClick={onSave}
             />
           </div>
         )}

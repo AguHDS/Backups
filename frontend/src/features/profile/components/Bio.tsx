@@ -27,9 +27,9 @@ export const Bio = ({ bio, onBioChange }: Props) => {
         </>
       ) : (
         <div className="w-full mt-6">
-          <h2 className="text-green-500 text-lg ml-2 mb-1 font-medium">Bio</h2>
+          <h2 className="text-green-400 text-lg ml-2 mb-1 font-medium">Biography</h2>
           <div className="max-w-full bg-[#1e1e1e] border border-[#333] rounded-xl shadow-md p-3">
-            <p className="text-[18px] ml-2 my-0">{bio}</p>
+            <p className="text-[18px] text-gray-300 ml-2 my-0">{bio}</p>
           </div>
         </div>
       )}
