@@ -3,28 +3,25 @@ import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js"
 
 /**
  * Check if the profile to edit belongs to the user making the request
- * @param attachIdToReq - if true, attaches the user ID from the refresh token to the request object
+ * @param attachUserDataToReq - if true, attaches username, role and id from the refresh token to request object
 */
 
-export const verifyUserOwnsProfile = (attachIdToReq = false) => {
+export const verifyUserOwnsProfile = (attachUserDataToReq = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log("Verifying user owns profile... (verifyUserOwnsProfile middleware)");
       const decoded = decodeRefreshToken(req);
-      const { name, id } = decoded;
+      const { name, role, id } = decoded;
       const { username } = req.params;
 
-      if (!username) {
-        res.status(400).json({ message: "Missing username in URL" });
-        return 
-      }
-
-      if (name !== username) {
+      //make params username optional
+      if (username && name !== username) {
         res.status(403).json({ message: "You don't have permission for this profile" });
-        return 
+        return;
       }
 
-      if (attachIdToReq) {
-        req.refreshTokenId = { id };
+      if (attachUserDataToReq) {
+        req.baseUserData = { name, role, id };
       }
 
       next();
