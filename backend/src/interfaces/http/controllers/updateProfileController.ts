@@ -20,7 +20,7 @@ interface ProfileDataToUpdate {
 export const updateProfileController = async (req: Request, res: Response) => {
   const cleanData: ProfileDataToUpdate = matchedData(req);
 
-  const { id } = req.refreshTokenId;
+  const { id } = req.baseUserData;
 
   try {
     await updateUserProfileUseCase.execute(cleanData.bio, cleanData.sections, id);

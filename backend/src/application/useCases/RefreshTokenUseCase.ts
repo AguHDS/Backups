@@ -2,12 +2,13 @@ import { RefreshTokenRepository } from "../../domain/ports/repositories/RefreshT
 import { UserRepository } from "../../domain/ports/repositories/UserRepository.js";
 import { JwtUserData, UserSessionWithTokens } from "../../shared/dtos/index.js";
 import { Connection } from "mysql2/promise";
+import jwt from "jsonwebtoken";
 
 export class RefreshTokenUseCase {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly refreshRepo: RefreshTokenRepository,
-    private readonly tokenSign: (user: JwtUserData,type: "access" | "refresh",expiresIn: string) => Promise<string>
+    private readonly tokenSign: (user: JwtUserData, type: "access" | "refresh", expiresIn: jwt.SignOptions["expiresIn"]) => Promise<string>
   ) {}
 
   /**

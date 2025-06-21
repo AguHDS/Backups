@@ -7,9 +7,14 @@ const mysqlRefreshTokenRepository = new MysqlRefreshTokenRepository();
 /** Validates refresh token received in cookies by the client */
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    //get refresh from cookies manually because we need it for the SQL query
+    //get refresh manually because we need it this way to use in SQL query
     const cookies = req.cookies;
-    if (!cookies?.refreshToken) throw new Error("NO_REFRESH_TOKEN");
+
+    if (!cookies?.refreshToken) {
+      console.log("No refresh token in cookies (refreshTokenMiddleware)");
+      res.status(401).json({ message: "No refresh token in cookies" });
+      return;
+    }
 
     const refreshToken = cookies.refreshToken;
 
@@ -30,7 +35,8 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
     next();
   } catch (error) {
-    if(error instanceof Error) console.error("Error in updateProfileMiddleware:", error);
+    if (error instanceof Error)
+      console.error("Error in refreshTokenMiddleware:", error);
 
     switch (error.message) {
       case "NO_REFRESH_TOKEN":

@@ -9,7 +9,7 @@ export class GetUserProfileUseCase {
    *
    * @returns A fully populated UserProfile object, or throws if not found.
    */
-  async execute(userId: number): Promise<UserProfile> {
+  async execute(userId: number | string): Promise<UserProfile> {
     const profile = await this.profileRepo.getProfileById(userId);
 
     if (!profile) {

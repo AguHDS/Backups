@@ -29,7 +29,7 @@ CREATE TABLE `refresh_tokens` (
 users_profile
 CREATE TABLE `users_profile` (
   `fk_users_id` INT(10) UNSIGNED NOT NULL,
-  `bio` TEXT DEFAULT 'No description available',
+  `bio` TEXT DEFAULT 'No bio available',
   `profile_pic` VARCHAR(255) DEFAULT NULL,
   `partner` VARCHAR(75) DEFAULT '-',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

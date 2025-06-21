@@ -33,9 +33,9 @@ export class LoginUserUseCase {
     const accessToken = await tokenSign(jwtPayload, "access", "30s");
     const refreshToken = await tokenSign(jwtPayload, "refresh", "1m");
 
-    //set expiration date for refresh token to 65 seconds from now (65 seconds for testing)
+    //set expiration date for refresh token to 65 seconds from now (1hr seconds for testing)
     const expiresAt = new Date();
-    expiresAt.setSeconds(expiresAt.getSeconds() + 500);
+    expiresAt.setSeconds(expiresAt.getSeconds() + 3600);
 
     await this.saveRefreshToken.saveRefreshToDB(user.id, refreshToken, expiresAt);
 
