@@ -14,7 +14,7 @@ export interface ProfileSection {
 export interface CustomResponse {
   name: string;
   role: string;
-  id: number;
+  id: number | string;
   email: string;
   userProfileData: ProfileContent;
   userSectionData: ProfileSection[];

@@ -15,7 +15,7 @@ export const deleteSectionsController = async (req, res) => {
     }
 
     //userId from refresh token
-    const { id } = req.refreshTokenId;
+    const { id } = req.baseUserData;
 
     if (!id) {
       res.status(401).json({ message: "Unauthorized: missing user ID" });

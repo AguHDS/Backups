@@ -7,7 +7,7 @@ export interface ProfileRepository {
    * @param userId - The ID of the user.
    * @returns A UserProfile if found, or null if not found.
   */
-  getProfileById(userId: number): Promise<UserProfile | null>;
+  getProfileById(userId: number | string): Promise<UserProfile | null>;
 
   /**
    * Retrieves all profile sections associated with a user.
@@ -15,7 +15,7 @@ export interface ProfileRepository {
    * @param userId - The ID of the user.
    * @returns An array of profile sections, or an empty array if none exist.
   */
-  getSectionsByUserId(userId: number): Promise<UserProfileSection[]>;
+  getSectionsByUserId(userId: number | string): Promise<UserProfileSection[]>;
 
   /**
    * Updates the bio and sections of a user profile
@@ -24,7 +24,7 @@ export interface ProfileRepository {
    * @param sections - List of updated profile sections
    * @param userId - The ID of the user to update (usually taken from refresh token)
   */
-  updateProfile(bio: string, sections: UserProfileSection[], userId: string): Promise<void>;
+  updateProfile(bio: string, sections: UserProfileSection[], userId: string | number): Promise<void>;
 
   /**
    * Deletes multiple user profile sections based on their IDs

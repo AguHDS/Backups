@@ -49,6 +49,7 @@ interface Props {
 /**
  * this component is necessary because useProfile can only be used inside its provider
  */
+
 export const ProfileInner = ({ data }: Props) => {
   const { isEditing, setIsEditing } = useProfile();
   const { status, setStatus, fetchData } = useFetch();

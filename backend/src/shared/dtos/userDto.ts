@@ -3,7 +3,7 @@ export interface UserId {
 }
 
 export interface BaseUserData {
-  id: number;
+  id: number | string;
   name: string;
   role: string;
   email?: string;

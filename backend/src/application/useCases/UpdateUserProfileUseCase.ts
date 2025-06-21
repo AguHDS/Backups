@@ -14,7 +14,7 @@ export class UpdateUserProfileUseCase {
    * @param sections - List of updated profile sections
    * @param userId - The ID of the user to update (usually taken from refreshToken)
    */
-  async execute(bio: string, sections: UserProfileSection[], userId: string): Promise<void> {
+  async execute(bio: string, sections: UserProfileSection[], userId: string | number): Promise<void> {
     if (!bio || typeof bio !== "string") throw new Error("INVALID_BIO");
     if (!Array.isArray(sections)) throw new Error("INVALID_SECTIONS");
 

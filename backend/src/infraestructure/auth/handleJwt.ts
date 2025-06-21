@@ -11,10 +11,15 @@ import jwt from "jsonwebtoken";
  * @returns A promise that resolves to the signed JWT token as a string
  */
 
-export const tokenSign = async (user: JwtUserData, type: "access" | "refresh" = "access", expiresIn: string = "5m"): Promise<string> => {
+export const tokenSign = async (
+  user: JwtUserData,
+  type: "access" | "refresh" = "access",
+  expiresIn: jwt.SignOptions["expiresIn"] = "5m"
+): Promise<string> => {
   try {
-    const secret = type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
-    if(!secret) throw new Error("No secret");
+    const secret =
+      type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
+    if (!secret) throw new Error("No secret");
 
     const sign = jwt.sign(
       {
@@ -45,16 +50,19 @@ export const tokenSign = async (user: JwtUserData, type: "access" | "refresh" = 
 
 export const verifyToken = (token: string, type: "access" | "refresh" = "access"): string | jwt.JwtPayload | null => {
   try {
-    const secret = type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
-    if(!secret) throw new Error("No secret");
+    const secret =
+      type === "access" ? config.jwtSecret : config.jwtRefreshSecret;
+    if (!secret) throw new Error("No secret");
 
     //decode the token if is valid, comparing with the secret, returning the payload (name, role)
     const decoded = jwt.verify(token, secret);
     return decoded;
-    
   } catch (err) {
     const error = err as Error;
-    console.error(`Token verification failed for ${type} token:`, error.message);
+    console.error(
+      `Token verification failed for ${type} token:`,
+      error.message
+    );
     return null;
   }
 };
