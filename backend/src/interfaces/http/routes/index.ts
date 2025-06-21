@@ -5,7 +5,7 @@ import refreshToken from "./refreshToken.js";
 import getProfile from "./getProfile.js";
 import updateProfile from "./updateProfile.js";
 import deleteSections from "./deleteSections.js";
-/* import uploadFiles from "./uploadFiles.js"; */
+import uploadFiles from "./uploadFiles.js";
 
 export {
   login,
@@ -15,5 +15,5 @@ export {
   getProfile,
   updateProfile,
   deleteSections,
-/*   uploadFiles, */
+  uploadFiles,
 };

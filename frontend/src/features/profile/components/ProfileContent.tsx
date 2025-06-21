@@ -86,7 +86,7 @@ export const ProfileContent = ({
                           : null
                       }
                     />
-                    <ImageUploader />
+                    <ImageUploader sectionId={section.id} sectionTitle={section.title} />
                     <Button
                       onClick={() => onDeleteSection(section.id)}
                       className="flex justify-center mx-auto mt-5 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
@@ -99,7 +99,7 @@ export const ProfileContent = ({
                       {section.description}
                     </p>
                     <div className="mb-4">
-                      <ImageUploader />
+                      <ImageUploader sectionId={section.id} sectionTitle={section.title} />
                     </div>
                   </>
                 )}

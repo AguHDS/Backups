@@ -17,7 +17,7 @@ import {
   getProfile,
   updateProfile,
   deleteSections,
-/*   uploadFiles */
+  uploadFiles
 } from "./routes/index.js";
 
 const app: Express = express();
@@ -50,7 +50,7 @@ app.use("/api/refreshToken", refreshToken);
 app.use("/api/getProfile", getProfile);
 app.use("/api/updateProfile", updateProfile);
 app.use("/api/deleteSections", deleteSections);
-/* app.use("/api/uploadFiles", uploadFiles); */
+app.use("/api/uploadFiles", uploadFiles);
 
 //proxy to redirect all requests that aren't defined here to vite's port, so the client can handle them
 app.use(

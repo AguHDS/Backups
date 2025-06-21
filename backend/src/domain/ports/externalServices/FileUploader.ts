@@ -5,5 +5,9 @@ export interface CloudinaryUploadResponse {
 
 export interface FileUploader {
   /** Upload to Cloudinary */
-  upload(files: Express.Multer.File[]): Promise<CloudinaryUploadResponse[]>;
+  upload(
+    files: Express.Multer.File[],
+    sectionId: string,
+    sectionTitle: string
+  ): Promise<CloudinaryUploadResponse[]>;
 }

@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../../../shared";
 import { useProfile } from "../context/ProfileContext";
+import { useParams } from "react-router-dom";
 /* import { Image } from "cloudinary-react"; */
 
-export const ImageUploader = () => {
+interface Props {
+  sectionId: number;
+  sectionTitle: string;
+}
+
+export const ImageUploader = ({ sectionId, sectionTitle }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isEditing, isOwnProfile } = useProfile();
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState<boolean>(false);
+  const { username } = useParams();
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
@@ -30,13 +37,14 @@ export const ImageUploader = () => {
   //send files to backend
   const handleSendFiles = async () => {
     const formData = new FormData();
-    files.forEach((file) => formData.append("file", file));
+    files.forEach((file) => formData.append("files", file));
 
     try {
       const response = await fetch(
-        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/uploadFiles`,
+        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
         {
           method: "POST",
+          credentials: "include",
           body: formData,
         }
       );
@@ -47,6 +55,7 @@ export const ImageUploader = () => {
       }
 
       const data = await response.json();
+      alert("Files uploaded successfully");
       console.log("Data recibida desde el basckend: ", data);
     } catch (error) {
       if (error instanceof Error) {
@@ -90,15 +99,15 @@ export const ImageUploader = () => {
               </div>
               <div className="flex justify-center space-x-4">
                 <Button
-                  label="Add files"
+                  label="Upload files"
                   className="my-1 mb-5 mt-5 p-2 text-center w-[12vw] bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333]"
                   onClick={handleSendFiles}
-                ></Button>
+                />
                 <Button
                   label="Cancel"
                   className="my-1 mb-5 mt-5 p-2 text-center w-[12vw] bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333]"
                   onClick={cancelUpload}
-                ></Button>
+                />
               </div>
             </>
           )}

@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { MulterError } from "multer";
 import { upload } from "../../../infraestructure/config/multerConfig.js";
-import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
 
 /** Limit the size of files per request */
 export const uploadLimit = async (req: Request, res: Response, next: NextFunction) => {
-  upload.array("file", 5)(req, res, (err) => {
+  upload.array("files", 5)(req, res, (err) => {
     if (err) {
       if (err instanceof MulterError) {
         if (err.code === "LIMIT_UNEXPECTED_FILE") {
@@ -34,35 +33,4 @@ export const uploadLimit = async (req: Request, res: Response, next: NextFunctio
 
     next();
   });
-};
-
-/** Validations before uploading files */
-export const uploadFilesMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const decodedToken = decodeRefreshToken(req);
-    if (!req.files || req.files.length === 0) {
-      console.error("No fules uploaded");
-      res.status(400).json({ message: "No files uploaded" });
-      return;
-    }
-
-    req.refreshTokenId = decodedToken;
-
-    next();
-  } catch (error) {
-    if (error instanceof Error) console.error("Error uploading files: ", error);
-    res.status(500).json({ message: "Upload failed" });
-
-    switch (error.message) {
-      case "NO_REFRESH_TOKEN":
-        res.status(401).json({ message: "No refresh token in cookies" });
-        return;
-      case "INVALID_REFRESH_TOKEN":
-        res.status(403).json({ message: "Invalid or expired refresh token" });
-        return;
-      default:
-        res.status(500).json({ message: "Internal server error" });
-        return;
-    }
-  }
 };

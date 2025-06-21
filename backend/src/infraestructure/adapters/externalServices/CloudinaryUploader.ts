@@ -3,10 +3,11 @@ import { cloudinary } from "../../../services/cloudinary.js";
 import streamifier from "streamifier";
 
 export class CloudinaryUploader implements FileUploader {
-  constructor(private readonly userId: number) {}
+  constructor(private readonly username: string, private readonly userId: string | number) {}
 
-  async upload(files: Express.Multer.File[]): Promise<CloudinaryUploadResponse[]> {
-    const folder = `user_files/${this.userId}`; //each user has his folder
+  async upload(files: Express.Multer.File[], sectionId, sectionTitle): Promise<CloudinaryUploadResponse[]> {
+    //each user has his folder in Cloudinary
+    const folder = `user_files/${this.username} (id: ${this.userId})/section: ${sectionTitle} (id: ${sectionId})`;
 
     const uploadPromises = files.map((file) => {
       return new Promise<CloudinaryUploadResponse>((resolve, reject) => {
