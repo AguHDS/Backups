@@ -8,10 +8,10 @@ export class UploadFilesUseCase {
     private readonly fileRepo: FileRepository
   ) {}
 
-  async execute(files: Express.Multer.File[], sectionId: string): Promise<UserFile[]> {
+  async execute(files: Express.Multer.File[], sectionId: string, sectionTitle): Promise<UserFile[]> {
     if (!files || files.length === 0) throw new Error("No files provided");
 
-    const uploaded = await this.uploader.upload(files, sectionId);
+    const uploaded = await this.uploader.upload(files, sectionId, sectionTitle);
 
     const fileEntities = uploaded.map((file) => new UserFile(file.public_id, file.url, sectionId));
 

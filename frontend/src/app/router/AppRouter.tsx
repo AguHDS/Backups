@@ -27,7 +27,7 @@ const { isAuthenticated } = useSelector((state: RootState) => state.auth);
         <Route path="/" element={isAuthenticated ? (<Navigate to="/dashboard" />) : (<Home />)} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/profile/:username" element={<Profile />} /> {/* :username is assigned in AccountOptions component */}
 
         {/* private routes */}
         <Route element={<ProtectedRoute />}>
