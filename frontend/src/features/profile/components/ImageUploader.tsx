@@ -1,31 +1,31 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "../../../shared";
 import { useProfile } from "../context/ProfileContext";
 import { useParams } from "react-router-dom";
-/* import { Image } from "cloudinary-react"; */
+import { useSections } from "../context/SectionsContext";
 
 interface Props {
-  sectionId: number;
-  sectionTitle: string;
+  sectionIndex: number;
 }
 
-export const ImageUploader = ({ sectionId, sectionTitle }: Props) => {
+export const ImageUploader = ({ sectionIndex }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isEditing, isOwnProfile } = useProfile();
-  const [files, setFiles] = useState<File[]>([]);
-  const [readyToUpload, setReadyToUpload] = useState<boolean>(false);
   const { username } = useParams();
+  const [files, setFiles] = useState<File[]>([]);
+  const [readyToUpload, setReadyToUpload] = useState(false);
 
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+  const { sections } = useSections();
+  const section = sections[sectionIndex];
+  const { id: sectionId, title: sectionTitle, files: uploadedFiles = [] } = section;
 
-  //set state with selected files
+  const handleButtonClick = () => fileInputRef.current?.click();
+
   const handleUploadFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
-    if (!selectedFiles || selectedFiles.length === 0) return;
+    const selected = e.target.files;
+    if (!selected || selected.length === 0) return;
 
-    setFiles((prevFiles) => [...prevFiles, ...Array.from(selectedFiles)]);
+    setFiles((prev) => [...prev, ...Array.from(selected)]);
     setReadyToUpload(true);
   };
 
@@ -34,7 +34,6 @@ export const ImageUploader = ({ sectionId, sectionTitle }: Props) => {
     setReadyToUpload(false);
   };
 
-  //send files to backend
   const handleSendFiles = async () => {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
@@ -56,33 +55,41 @@ export const ImageUploader = ({ sectionId, sectionTitle }: Props) => {
 
       const data = await response.json();
       alert("Files uploaded successfully");
-      console.log("Data recibida desde el basckend: ", data);
+      console.log("Data recibida desde el backend: ", data);
+
+      // TODO: aquí podrías actualizar el estado del contexto con los nuevos archivos
+
+      setFiles([]);
+      setReadyToUpload(false);
     } catch (error) {
       if (error instanceof Error) {
-        console.error(`An error ocurred. ${error.message}`);
+        console.error(`An error occurred. ${error.message}`);
       }
     }
   };
 
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
-
   return (
-    <div className="flex flex-col items-center">
-      {/* Main container for images */}
+    <div className="flex flex-col items-center w-full">
+      {/* Imagenes actuales */}
       <div className="p-4 overflow-y-auto border border-[#121212] bg-[#1e1e1e] h-[50vh] max-h-[50vh] min-w-[90%] max-w-[90%]">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {[...Array(11)].map((_, index) => (
-            <div
-              key={`imagen1-${index}`}
-              className="w-full h-[150px] bg-[#444] flex items-center justify-center text-[#ccc]"
-            >
-              imagen {index + 1}
-            </div>
-          ))}
+          {uploadedFiles.length > 0 ? (
+            uploadedFiles.map((file, i) => (
+              <div key={`${file.publicId}-${i}`} className="w-full h-[150px]">
+                <img
+                  src={file.url}
+                  alt={`Uploaded file ${i + 1}`}
+                  className="object-cover w-full h-full rounded"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="text-[#999]">No images uploaded for this section</div>
+          )}
         </div>
       </div>
+
+      {/* Botones de subida */}
       {!isEditing && isOwnProfile && (
         <div className="flex flex-col items-center mt-4">
           {!readyToUpload ? (
@@ -118,8 +125,6 @@ export const ImageUploader = ({ sectionId, sectionTitle }: Props) => {
             onChange={handleUploadFiles}
             multiple
             aria-label="Upload files"
-            aria-hidden="true"
-            title="Select files to upload"
           />
         </div>
       )}

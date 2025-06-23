@@ -60,7 +60,6 @@ export const useProfileData = () => {
       }
     };
     fetchProfileData();
-    console.log("Fetching profile data: ", data);
   }, [username, fetchData]);
 
   useEffect(() => {

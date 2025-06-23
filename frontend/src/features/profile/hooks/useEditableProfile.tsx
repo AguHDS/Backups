@@ -1,32 +1,22 @@
 import { useState, useEffect } from "react";
-import { Section } from "../types/profileSection.js";
 
+/* Manages editable profile bio state 
+allowing updates and reset to original value when editing is cancelled */
 
-export const useEditableProfile = (bio: string, initialSections: Section[]) => {
+export const useEditableProfile = (bio: string) => {
   const [updateData, setUpdateData] = useState({ bio });
-  const [sections, setSections] = useState<Section[]>(initialSections);
-  const [sectionsToDelete, setSectionsToDelete] = useState<number[]>([]);
 
-  //restore data when canceling edit
-  const reset = () => {
-    setUpdateData({ bio });
-    setSections(initialSections);
-    setSectionsToDelete([]);
+  const reset = (originalBio: string) => {
+    setUpdateData({ bio: originalBio });
   };
 
-  //restore data to its original state to ensure cancel button works correctly
   useEffect(() => {
     setUpdateData({ bio });
-    setSections(initialSections);
-  }, [bio, initialSections]);
+  }, [bio]);
 
   return {
     updateData,
     setUpdateData,
-    sections,
-    setSections,
-    sectionsToDelete,
-    setSectionsToDelete,
     reset,
   };
 };
