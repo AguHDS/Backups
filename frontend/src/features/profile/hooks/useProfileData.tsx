@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useFetch, useModalContext } from "../../../shared";
 import { RootState } from "../../../app/redux/store";
+import { Section } from "../types/section";
 
 interface ProfileStats {
   bio: string;
@@ -11,18 +12,12 @@ interface ProfileStats {
   friends: number;
 }
 
-interface ProfileSection {
-  id: number;
-  title: string;
-  description: string;
-}
-
 interface UserProfile {
   username: string;
   role: string;
   id: number;
   userProfileData: ProfileStats;
-  userSectionData: ProfileSection[];
+  userSectionData: Section[];
 }
 
 export const useProfileData = () => {

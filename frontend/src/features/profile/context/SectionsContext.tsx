@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { Section } from "../types/profileSection";
+import { Section } from "../types/section";
 
 interface SectionsContextType {
   sections: Section[];

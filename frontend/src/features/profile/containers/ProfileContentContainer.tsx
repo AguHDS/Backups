@@ -13,6 +13,7 @@ import {
   ProfileContent,
 } from "../components";
 import { images } from "../../../assets/images";
+import { UserProfileData } from "../types/userProfileData";
 
 type ValidationError = { msg: string };
 type ApiError = { message: string };
@@ -28,29 +29,10 @@ const processError = (error: FetchError): string[] => {
   return ["An unexpected error occurred"];
 };
 
-interface Props {
-  data: {
-    username: string;
-    role: string;
-    id: number;
-    userProfileData: {
-      bio: string;
-      profile_pic?: string;
-      partner: string;
-      friends: number;
-    };
-    userSectionData: {
-      id: number;
-      title: string;
-      description: string;
-    }[];
-  };
-}
-
 /* Handles profile editing logic (bio, sections, file uploads, validations),
 and renders the full profile layout. It's used inside SectionsContext (in ProfileContextProvider) to access sections state */
 
-export const ProfileContentContainer = ({ data }: Props) => {
+export const ProfileContentContainer = ({ data }: UserProfileData) => {
   const { isEditing, setIsEditing } = useProfile();
   const { status, setStatus, fetchData } = useFetch();
   const { username } = useParams();
