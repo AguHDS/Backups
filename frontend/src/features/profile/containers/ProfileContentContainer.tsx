@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEditableProfile } from "../hooks/useEditableProfile";
 import { useProfile } from "../context/ProfileContext";
+import { useFetch } from "../../../shared";
+import { useSections } from "../context/SectionsContext";
 import {
   Header,
   ActionsAndProfileImg,
@@ -10,7 +12,6 @@ import {
   Storage,
   ProfileContent,
 } from "../components";
-import { useFetch } from "../../../shared";
 import { images } from "../../../assets/images";
 
 type ValidationError = { msg: string };
@@ -46,27 +47,19 @@ interface Props {
   };
 }
 
-/**
- * this component is necessary because useProfile can only be used inside its provider
- */
+/* Handles profile editing logic (bio, sections, file uploads, validations),
+and renders the full profile layout. It's used inside SectionsContext (in ProfileContextProvider) to access sections state */
 
-export const ProfileInner = ({ data }: Props) => {
+export const ProfileContentContainer = ({ data }: Props) => {
   const { isEditing, setIsEditing } = useProfile();
   const { status, setStatus, fetchData } = useFetch();
   const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const { updateData, setUpdateData, reset } = useEditableProfile(
+    data.userProfileData.bio
+  );
+  const { sections, sectionsToDelete, setSectionsToDelete } = useSections();
 
-  const {
-    updateData,
-    setUpdateData,
-    sections,
-    setSections,
-    sectionsToDelete,
-    setSectionsToDelete,
-    reset,
-  } = useEditableProfile(data.userProfileData.bio, data.userSectionData);
-
-  //reset error messages when editing profile
   useEffect(() => {
     if (isEditing) {
       setErrorMessages([]);
@@ -135,9 +128,8 @@ export const ProfileInner = ({ data }: Props) => {
     }
   };
 
-  // Reset function to clear form validation checks
   const handleCancel = () => {
-    reset();
+    reset(data.userProfileData.bio);
     setErrorMessages([]);
     setStatus(null);
     setIsEditing(false);
@@ -146,7 +138,11 @@ export const ProfileInner = ({ data }: Props) => {
   return (
     <div className="mx-auto flex justify-center mt-5">
       <div className="w-[80vw] max-w-full">
-        <Header username={data.username} onSave={handleSave} onCancel={handleCancel} />
+        <Header
+          username={data.username}
+          onSave={handleSave}
+          onCancel={handleCancel}
+        />
         <div className="p-[8px] bg-[#121212] border-[#272727] border-solid border-r border-b text-[#e0e0e0]">
           <div className="flex flex-col md:flex-row w-full">
             {/* Left Sidebar */}
@@ -176,27 +172,9 @@ export const ProfileInner = ({ data }: Props) => {
             {/* Right Content */}
             <ProfileContent
               updateData={updateData}
-              sections={sections}
               errorMessages={errorMessages}
               status={status!}
               onBioChange={(bio) => setUpdateData({ bio })}
-              onChangeSection={(field, value, index) =>
-                setSections((prev) => {
-                  const updated = [...prev];
-                  updated[index] = { ...updated[index], [field]: value };
-                  return updated;
-                })
-              }
-              onDeleteSection={(id) => {
-                setSectionsToDelete((prev) => [...prev, id]);
-                setSections((prev) => prev.filter((s) => s.id !== id));
-              }}
-              onAddSection={() =>
-                setSections((prev) => [
-                  ...prev,
-                  { id: 0, title: "", description: "" },
-                ])
-              }
             />
           </div>
         </div>

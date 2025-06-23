@@ -111,40 +111,6 @@
   scrollbar-width: initial;
 }
 
-.container {
-  width: 100%;
-}
-
-@media (min-width: 640px) {
-  .container {
-    max-width: 640px;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
-}
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1536px;
-  }
-}
-
 .pointer-events-none {
   pointer-events: none !important;
 }
@@ -941,11 +907,6 @@
   background-color: rgb(55 65 81 / var(--tw-bg-opacity)) !important;
 }
 
-.bg-\[\#444\] {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(68 68 68 / var(--tw-bg-opacity)) !important;
-}
-
 .bg-\[\#\] {
   background-color: # !important;
 }
@@ -1009,6 +970,11 @@
 .object-contain {
   -o-object-fit: contain !important;
      object-fit: contain !important;
+}
+
+.object-cover {
+  -o-object-fit: cover !important;
+     object-fit: cover !important;
 }
 
 .p-0 {
@@ -1220,6 +1186,11 @@
 
 .font-semibold {
   font-weight: 600 !important;
+}
+
+.text-\[\#999\] {
+  --tw-text-opacity: 1 !important;
+  color: rgb(153 153 153 / var(--tw-text-opacity)) !important;
 }
 
 .text-\[\#ccc\] {

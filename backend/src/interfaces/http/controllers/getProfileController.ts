@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
 import { GetUserProfileUseCase } from "../../../application/useCases/GetUserProfileUseCase.js";
 import { CustomResponse } from "../.././../shared/dtos/index.js";
+import { MysqlFileRepository } from "../../../infraestructure/adapters/repositories/MysqlFileRepository.js";
 
 const getUserProfileUseCase = new GetUserProfileUseCase(
-  new MysqlProfileRepository()
+  new MysqlProfileRepository(),
+  new MysqlFileRepository()
 );
 
 /**  Respond with user profile data, comparing its id from users table with fk_users_id in users_profile table */
@@ -31,6 +33,11 @@ export const getProfileController = async (req: Request, res: Response) => {
           id: section.id,
           title: section.title,
           description: section.description,
+          files:
+            section.files?.map((file) => ({
+              url: file.url,
+              public_id: file.publicId,
+            })) ?? [],
         })) ?? [],
     };
 

@@ -3,34 +3,23 @@ import { Button, AuthFeedback } from "../../../shared";
 import { Bio } from "./Bio";
 import { ImageUploader } from "./ImageUploader";
 import { useProfile } from "../../../features/profile/context/ProfileContext";
-import { Section } from "../types/profileSection.js";
+import { useSections } from "../context/SectionsContext.js";
 
 interface Props {
   updateData: { bio: string };
-  sections: Section[];
   errorMessages: string[];
   status: number | null;
   onBioChange: (bio: string) => void;
-  onChangeSection: (
-    field: "title" | "description",
-    value: string,
-    index: number
-  ) => void;
-  onDeleteSection: (sectionId: number) => void;
-  onAddSection: () => void;
 }
 
 export const ProfileContent = ({
   updateData,
-  sections,
   errorMessages,
   status,
   onBioChange,
-  onChangeSection,
-  onDeleteSection,
-  onAddSection,
-}: Props) => {
+}: Props) => { //usar contexto para no hacer prop drilling
   const { isEditing } = useProfile();
+  const { sections, updateSection, deleteSection, addSection } = useSections();
 
   return (
     <div className="w-full mr-[5px] ml-[5px] scrollbar-container flex flex-col h-full min-h-[80vh]">
@@ -55,7 +44,7 @@ export const ProfileContent = ({
                         placeholder="Title for Section"
                         value={section.title}
                         onChange={(e) =>
-                          onChangeSection("title", e.target.value, index)
+                          updateSection(index, "title", e.target.value)
                         }
                       />
                     </div>
@@ -74,7 +63,7 @@ export const ProfileContent = ({
                       placeholder="Add new description"
                       value={section.description}
                       onChange={(e) =>
-                        onChangeSection("description", e.target.value, index)
+                        updateSection(index, "description", e.target.value)
                       }
                     ></textarea>
                     <AuthFeedback
@@ -86,9 +75,9 @@ export const ProfileContent = ({
                           : null
                       }
                     />
-                    <ImageUploader sectionId={section.id} sectionTitle={section.title} />
+                    <ImageUploader sectionIndex={index} />
                     <Button
-                      onClick={() => onDeleteSection(section.id)}
+                      onClick={() => deleteSection(section.id)}
                       className="flex justify-center mx-auto mt-5 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
                       label="Delete Section"
                     />
@@ -99,7 +88,7 @@ export const ProfileContent = ({
                       {section.description}
                     </p>
                     <div className="mb-4">
-                      <ImageUploader sectionId={section.id} sectionTitle={section.title} />
+                      <ImageUploader sectionIndex={index} />
                     </div>
                   </>
                 )}
@@ -114,7 +103,7 @@ export const ProfileContent = ({
             <Button
               label="Add new section"
               className="flex justify-center items-center w-[200px] mx-auto my-2 text-center p-2 bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333] rounded"
-              onClick={onAddSection}
+              onClick={addSection}
             />
           </div>
         )}

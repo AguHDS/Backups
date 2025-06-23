@@ -1,7 +1,9 @@
 import { useProfileData } from "../hooks/useProfileData";
 import { ProfileProvider } from "../context/ProfileContext";
 import { Modal, LoadingSpinner } from "../../../shared";
-import { ProfileInner } from "./ProfileInner";
+import { ProfileContextProvider } from "../providers/ProfileContextProvider";
+
+/* ProfileContextProvider wraps the profile in SectionsContext. ProfileContentContainer contains the logic and uses sections context */
 
 export const Profile = () => {
   const { data, error, isLoading, isOwnProfile } = useProfileData();
@@ -24,7 +26,7 @@ export const Profile = () => {
         </div>
       )}
 
-      {!isLoading && data && <ProfileInner data={data} />}
+      {!isLoading && data && <ProfileContextProvider data={data} />}
     </ProfileProvider>
   );
 };

@@ -1,63 +1,63 @@
 run mysql service from windows before running the db on backend
 W+R > services.msc > mysql > start (disable it when no using it anymore so it doesn't consume resources)
 
-creation code of tables:
+DDL code taken from Mysql Workbrench:
 
 users
 CREATE TABLE `users` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `namedb` VARCHAR(50) NOT NULL,
-  `emaildb` VARCHAR(80) NOT NULL,
-  `passdb` VARCHAR(80) NOT NULL,
-  `role` VARCHAR(15) NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `namedb` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `emaildb` varchar(80) COLLATE utf8mb4_general_ci NOT NULL,
+  `passdb` varchar(80) COLLATE utf8mb4_general_ci NOT NULL,
+  `role` varchar(15) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
 refresh_tokens
 CREATE TABLE `refresh_tokens` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `token` VARCHAR(255) NOT NULL,
-  `user_id` INT(10) UNSIGNED NOT NULL,
-  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `expires_at` DATETIME NOT NULL,
-  `revoked` TINYINT(1) NOT NULL DEFAULT 0,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `user_id` int unsigned NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` datetime NOT NULL,
+  `revoked` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `refresh_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `fk_refresh_user` (`user_id`),
+  CONSTRAINT `fk_refresh_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
 users_profile
 CREATE TABLE `users_profile` (
-  `fk_users_id` INT(10) UNSIGNED NOT NULL,
-  `bio` TEXT DEFAULT 'No bio available',
-  `profile_pic` VARCHAR(255) DEFAULT NULL,
-  `partner` VARCHAR(75) DEFAULT '-',
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `friends` INT(11) NOT NULL DEFAULT 0,
+  `fk_users_id` int unsigned NOT NULL,
+  `bio` varchar(255) COLLATE utf8mb4_general_ci DEFAULT 'No bio available',
+  `profile_pic` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `partner` varchar(75) COLLATE utf8mb4_general_ci DEFAULT '-',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `friends` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`fk_users_id`),
-  KEY `idx_users_profile_fk_users_id` (`fk_users_id`),
-  CONSTRAINT `users_profile_fk_users_id` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `fk_user` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
 users_profile_sections
 CREATE TABLE `users_profile_sections` (
-  `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `fk_users_id` INT(10) UNSIGNED NOT NULL,
-  `title` VARCHAR(255) DEFAULT 'Section title',
-  `description` VARCHAR(255) DEFAULT 'No description',
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `fk_users_id` int unsigned NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci DEFAULT 'Section title',
+  `description` varchar(500) COLLATE utf8mb4_general_ci DEFAULT 'No description',
   PRIMARY KEY (`id`),
-  KEY `fk_users_id` (`fk_users_id`),
-  CONSTRAINT `users_profile_sections_ibfk_1` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `fk_user_profile_sections` (`fk_users_id`),
+  CONSTRAINT `fk_user_profile_sections` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
 users_files
-CREATE TABLE users_files (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  user_id INT UNSIGNED NOT NULL,
-  public_id VARCHAR(255) NOT NULL UNIQUE,
-  url TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_user_id FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
-);
+CREATE TABLE `users_files` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `section_id` int unsigned NOT NULL,
+  `public_id` varchar(255) NOT NULL,
+  `url` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `public_id` (`public_id`),
+  KEY `fk_section_id` (`section_id`),
+  CONSTRAINT `fk_section_id` FOREIGN KEY (`section_id`) REFERENCES `users_profile_sections` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3
