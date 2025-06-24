@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import { Section } from "../types/section";
-
+import { Section, UserFile } from "../types/section";
 interface SectionsContextType {
   sections: Section[];
   setSections: React.Dispatch<React.SetStateAction<Section[]>>;
@@ -9,9 +8,12 @@ interface SectionsContextType {
   updateSection: (index: number, field: "title" | "description", value: string) => void;
   addSection: () => void;
   deleteSection: (sectionId: number) => void;
+  renderFilesOnResponse: (sectionId: number, newFiles: UserFile[]) => void;
 }
 
-const SectionsContext = createContext<SectionsContextType | undefined>(undefined);
+const SectionsContext = createContext<SectionsContextType | undefined>(
+  undefined
+);
 
 export const useSections = () => {
   const context = useContext(SectionsContext);
@@ -28,7 +30,11 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
   const [sections, setSections] = useState<Section[]>(initialSections);
   const [sectionsToDelete, setSectionsToDelete] = useState<number[]>([]);
 
-  const updateSection = (index: number, field: "title" | "description", value: string) => {
+  const updateSection = (
+    index: number,
+    field: "title" | "description",
+    value: string
+  ) => {
     setSections((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [field]: value };
@@ -39,13 +45,27 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
   const addSection = () => {
     setSections((prev) => [
       ...prev,
-      { id: 0, title: "", description: "", files: [] }
+      { id: 0, title: "", description: "", files: [] },
     ]);
   };
 
   const deleteSection = (sectionId: number) => {
     setSections((prev) => prev.filter((s) => s.id !== sectionId));
     setSectionsToDelete((prev) => [...prev, sectionId]);
+  };
+
+  //renders images at the moment they are uploaded
+  const renderFilesOnResponse = (sectionId: number, newFiles: UserFile[]) => {
+    setSections((prev) =>
+      prev.map((section) =>
+        section.id === sectionId
+          ? {
+              ...section,
+              files: [...(section.files || []), ...newFiles],
+            }
+          : section
+      )
+    );
   };
 
   return (
@@ -58,6 +78,7 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
         updateSection,
         addSection,
         deleteSection,
+        renderFilesOnResponse,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-interface UserFile {
+export interface UserFile {
   publicId: string;
   url: string;
   sectionId: string;
