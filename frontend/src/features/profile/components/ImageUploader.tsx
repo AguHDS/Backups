@@ -3,9 +3,14 @@ import { Button } from "../../../shared";
 import { useProfile } from "../context/ProfileContext";
 import { useParams } from "react-router-dom";
 import { useSections } from "../context/SectionsContext";
+import { UserFile } from "../types/section";
 
 interface Props {
   sectionIndex: number;
+}
+
+interface FileUploadResponse {
+  files: UserFile[];
 }
 
 export const ImageUploader = ({ sectionIndex }: Props) => {
@@ -15,7 +20,7 @@ export const ImageUploader = ({ sectionIndex }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
 
-  const { sections } = useSections();
+  const { sections, renderFilesOnResponse } = useSections();
   const section = sections[sectionIndex];
   const { id: sectionId, title: sectionTitle, files: uploadedFiles = [] } = section;
 
@@ -53,11 +58,11 @@ export const ImageUploader = ({ sectionIndex }: Props) => {
         throw new Error(`Error uploading files, ${error}`);
       }
 
-      const data = await response.json();
-      alert("Files uploaded successfully");
-      console.log("Data recibida desde el backend: ", data);
+      const data: FileUploadResponse = await response.json();
 
-      // TODO: aquí podrías actualizar el estado del contexto con los nuevos archivos
+      alert("Files uploaded successfully");
+
+      renderFilesOnResponse(sectionId, data.files);
 
       setFiles([]);
       setReadyToUpload(false);
