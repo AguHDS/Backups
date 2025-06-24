@@ -3,14 +3,14 @@ import { Button } from "../../../shared";
 import { useProfile } from "../context/ProfileContext";
 import { useParams } from "react-router-dom";
 import { useSections } from "../context/SectionsContext";
-import { UserFile } from "../types/section";
+import { UploadedFile } from "../types/section";
 
 interface Props {
   sectionIndex: number;
 }
 
 interface FileUploadResponse {
-  files: UserFile[];
+  files: UploadedFile[];
 }
 
 export const ImageUploader = ({ sectionIndex }: Props) => {
@@ -19,7 +19,6 @@ export const ImageUploader = ({ sectionIndex }: Props) => {
   const { username } = useParams();
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
-
   const { sections, renderFilesOnResponse } = useSections();
   const section = sections[sectionIndex];
   const { id: sectionId, title: sectionTitle, files: uploadedFiles = [] } = section;

@@ -1,12 +1,15 @@
-export interface UserFile {
+export interface BaseSection {
+  id: number;
+  title: string;
+  description: string;
+}
+
+export interface UploadedFile {
   publicId: string;
   url: string;
   sectionId: string;
 }
 
-export interface Section {
-  id: number;
-  title: string;
-  description: string;
-  files?: UserFile[];
+export interface SectionWithFile extends BaseSection {
+  files?: UploadedFile[];
 }

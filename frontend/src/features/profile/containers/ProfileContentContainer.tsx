@@ -13,7 +13,7 @@ import {
   ProfileContent,
 } from "../components";
 import { images } from "../../../assets/images";
-import { UserProfileData } from "../types/userProfileData";
+import { FetchedUserProfile } from "../types/profileData";
 
 type ValidationError = { msg: string };
 type ApiError = { message: string };
@@ -32,7 +32,7 @@ const processError = (error: FetchError): string[] => {
 /* Handles profile editing logic (bio, sections, file uploads, validations),
 and renders the full profile layout. It's used inside SectionsContext (in ProfileContextProvider) to access sections state */
 
-export const ProfileContentContainer = ({ data }: UserProfileData) => {
+export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { isEditing, setIsEditing } = useProfile();
   const { status, setStatus, fetchData } = useFetch();
   const { username } = useParams();
