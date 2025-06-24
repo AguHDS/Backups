@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState } from "react";
-import { Section, UserFile } from "../types/section";
+import { SectionWithFile, UploadedFile } from "../types/section";
 interface SectionsContextType {
-  sections: Section[];
-  setSections: React.Dispatch<React.SetStateAction<Section[]>>;
+  sections: SectionWithFile[];
+  setSections: React.Dispatch<React.SetStateAction<SectionWithFile[]>>;
   sectionsToDelete: number[];
   setSectionsToDelete: React.Dispatch<React.SetStateAction<number[]>>;
   updateSection: (index: number, field: "title" | "description", value: string) => void;
   addSection: () => void;
   deleteSection: (sectionId: number) => void;
-  renderFilesOnResponse: (sectionId: number, newFiles: UserFile[]) => void;
+  renderFilesOnResponse: (sectionId: number, newFiles: UploadedFile[]) => void;
 }
 
 const SectionsContext = createContext<SectionsContextType | undefined>(
@@ -23,11 +23,11 @@ export const useSections = () => {
 
 interface Props {
   children: React.ReactNode;
-  initialSections: Section[];
+  initialSections: SectionWithFile[];
 }
 
 export const SectionsProvider = ({ children, initialSections }: Props) => {
-  const [sections, setSections] = useState<Section[]>(initialSections);
+  const [sections, setSections] = useState<SectionWithFile[]>(initialSections);
   const [sectionsToDelete, setSectionsToDelete] = useState<number[]>([]);
 
   const updateSection = (
@@ -55,7 +55,7 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
   };
 
   //renders images at the moment they are uploaded
-  const renderFilesOnResponse = (sectionId: number, newFiles: UserFile[]) => {
+  const renderFilesOnResponse = (sectionId: number, newFiles: UploadedFile[]) => {
     setSections((prev) =>
       prev.map((section) =>
         section.id === sectionId

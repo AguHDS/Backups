@@ -17,7 +17,7 @@ export const ProfileContent = ({
   errorMessages,
   status,
   onBioChange,
-}: Props) => { //usar contexto para no hacer prop drilling
+}: Props) => {
   const { isEditing } = useProfile();
   const { sections, updateSection, deleteSection, addSection } = useSections();
 
@@ -30,74 +30,82 @@ export const ProfileContent = ({
           <div className="h-1"></div>
           <div className="border-[#121212] border-solid w-full"></div>
 
-          {sections.map((section, index) => (
-            <React.Fragment
-              key={section.id !== 0 ? section.id : `new-${index}`}
-            >
-              <div className="mb-6">
-                {isEditing ? (
-                  <>
-                    <div className="flex justify-center">
-                      <input
-                        type="text"
-                        className="w-[25%] text-center bg-[#272727] text-white text-[18px] p-2 mb-4 border border-[#444]"
-                        placeholder="Title for Section"
-                        value={section.title}
+          {/* Mostrar mensaje si no hay secciones */}
+          {sections.length === 0 ? (
+            <p className="text-center text-gray-400 my-4">
+              No sections yet. Add one to get started.
+            </p>
+          ) : (
+            sections.map((section, index) => (
+              <React.Fragment
+                key={section.id !== 0 ? section.id : `new-${index}`}
+              >
+                <div className="mb-6">
+                  {isEditing ? (
+                    <>
+                      <div className="flex justify-center">
+                        <input
+                          type="text"
+                          className="w-[25%] text-center bg-[#272727] text-white text-[18px] p-2 mb-4 border border-[#444]"
+                          placeholder="Title for Section"
+                          value={section.title}
+                          onChange={(e) =>
+                            updateSection(index, "title", e.target.value)
+                          }
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <h3 className="text-center text-[#ccc] my-1 text-[28px] border-t-[10px] pt-3 w-full">
+                      {section.title}
+                    </h3>
+                  )}
+
+                  {isEditing ? (
+                    <>
+                      <textarea
+                        className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-2 border border-[#444] resize-none"
+                        rows={3}
+                        placeholder="Add new description"
+                        value={section.description}
                         onChange={(e) =>
-                          updateSection(index, "title", e.target.value)
+                          updateSection(index, "description", e.target.value)
+                        }
+                      ></textarea>
+                      <AuthFeedback
+                        input={errorMessages}
+                        status={status}
+                        message={
+                          errorMessages.length === 0
+                            ? "Operation completed"
+                            : null
                         }
                       />
-                    </div>
-                  </>
-                ) : (
-                  <h3 className="text-center text-[#ccc] my-1 text-[28px] border-t-[10px] pt-3 w-full">
-                    {section.title}
-                  </h3>
-                )}
-
-                {isEditing ? (
-                  <>
-                    <textarea
-                      className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-2 border border-[#444] resize-none"
-                      rows={3}
-                      placeholder="Add new description"
-                      value={section.description}
-                      onChange={(e) =>
-                        updateSection(index, "description", e.target.value)
-                      }
-                    ></textarea>
-                    <AuthFeedback
-                      input={errorMessages}
-                      status={status}
-                      message={
-                        errorMessages.length === 0
-                          ? "Operation completed"
-                          : null
-                      }
-                    />
-                    <ImageUploader sectionIndex={index} />
-                    <Button
-                      onClick={() => deleteSection(section.id)}
-                      className="flex justify-center mx-auto mt-5 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
-                      label="Delete Section"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <p className="flex items-center text-gray-300">
-                      {section.description}
-                    </p>
-                    <div className="mb-4">
                       <ImageUploader sectionIndex={index} />
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className="h-1"></div>
-              <div className="border-[#121212] border-solid w-full"></div>
-            </React.Fragment>
-          ))}
+                      <Button
+                        onClick={() => deleteSection(section.id)}
+                        className="flex justify-center mx-auto mt-5 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                        label="Delete Section"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <p className="flex items-center text-gray-300">
+                        {section.description}
+                      </p>
+                      <div className="mb-4">
+                        <ImageUploader sectionIndex={index} />
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className="h-1"></div>
+                <div className="border-[#121212] border-solid w-full"></div>
+              </React.Fragment>
+            ))
+          )}
         </div>
+
         {isEditing && (
           <div className="flex flex-col items-end space-y-2 mr-4 mb-2">
             <Button

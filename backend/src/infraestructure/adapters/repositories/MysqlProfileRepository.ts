@@ -37,13 +37,6 @@ export class MysqlProfileRepository implements ProfileRepository {
         [userId]
       );
 
-      if (rows.length === 0) {
-        console.error(
-          `Sections data for id ${userId} not found in users_prfile_sections table`
-        );
-        return null;
-      }
-
       return rows.map(
         (row) => new UserProfileSection(row.id, row.title, row.description)
       );
@@ -114,8 +107,9 @@ export class MysqlProfileRepository implements ProfileRepository {
       await connection.beginTransaction();
 
       const placeholders = sectionIds.map(() => "?").join(", ");
-      
-      await connection.execute(`DELETE FROM users_profile_sections WHERE id IN (${placeholders}) AND fk_users_id = ?`,
+
+      await connection.execute(
+        `DELETE FROM users_profile_sections WHERE id IN (${placeholders}) AND fk_users_id = ?`,
         [...sectionIds, userId]
       );
 

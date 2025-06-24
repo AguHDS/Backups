@@ -3,22 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useFetch, useModalContext } from "../../../shared";
 import { RootState } from "../../../app/redux/store";
-import { Section } from "../types/section";
-
-interface ProfileStats {
-  bio: string;
-  profile_pic?: string;
-  partner: string;
-  friends: number;
-}
-
-interface UserProfile {
-  username: string;
-  role: string;
-  id: number;
-  userProfileData: ProfileStats;
-  userSectionData: Section[];
-}
+import { UserProfileWithFiles } from "../types/profileData"
 
 export const useProfileData = () => {
   const { isAuthenticated, userData } = useSelector(
@@ -26,7 +11,7 @@ export const useProfileData = () => {
   );
   const { username } = useParams();
   const navigate = useNavigate();
-  const { data, status, isLoading, error, fetchData } = useFetch<UserProfile>();
+  const { data, status, isLoading, error, fetchData } = useFetch<UserProfileWithFiles>();
   const { setIsModalOpen } = useModalContext();
 
   //check if the profile belongs to the authenticated user
