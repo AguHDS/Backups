@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, AuthFeedback } from "../../../shared/index.js";
 import { Bio } from "./Bio.js";
-import { FileUploader } from "./FileUploader.js";
+import { SectionFileManager } from "./SectionFileManager.js";
 import { useProfile } from "../context/ProfileContext.js";
 import { useSections } from "../context/SectionsContext.js";
 
@@ -12,13 +12,8 @@ interface Props {
   onBioChange: (bio: string) => void;
 }
 
-// right content (bio, titles, sections, files)
-export const ProfileRightContent = ({
-  updateData,
-  errorMessages,
-  status,
-  onBioChange,
-}: Props) => {
+// Right content (bio, titles, sections)
+export const ProfileRightContent = ({ updateData, errorMessages, status, onBioChange }: Props) => {
   const { isEditing } = useProfile();
   const { sections, updateSection, deleteSection, addSection } = useSections();
 
@@ -81,7 +76,7 @@ export const ProfileRightContent = ({
                             : null
                         }
                       />
-                      <FileUploader sectionIndex={index} />
+                      <SectionFileManager sectionIndex={index} />
                       <Button
                         onClick={() => deleteSection(section.id)}
                         className="flex justify-center mx-auto mt-5 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
@@ -94,7 +89,7 @@ export const ProfileRightContent = ({
                         {section.description}
                       </p>
                       <div className="mb-4">
-                        <FileUploader sectionIndex={index} />
+                        <SectionFileManager sectionIndex={index} />
                       </div>
                     </>
                   )}
