@@ -30,9 +30,8 @@ const processErrorMessages = (error: FetchError): string[] => {
   return ["An unexpected error occurred"];
 };
 
-// handles profile editing logic (bio, sections, files, validation logic)
-// and renders the full profile layout. This uses SectionsContext (in ProfileContextProvider) to access section states
-
+/* Handles profile editing logic for bio, sections, files
+   and renders the full profile. This uses SectionsContext (in ProfileContextProvider) to access section states */
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { isEditing, setIsEditing } = useProfile();
   const { status, setStatus, fetchData } = useFetch();

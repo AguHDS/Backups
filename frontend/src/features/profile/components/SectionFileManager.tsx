@@ -4,6 +4,7 @@ import { useProfile } from "../context/ProfileContext";
 import { useParams } from "react-router-dom";
 import { useSections } from "../context/SectionsContext";
 import { UploadedFile } from "../types/section";
+import { SectionFileGallery } from "./SectionFileGallery";
 
 interface Props {
   sectionIndex: number;
@@ -13,15 +14,22 @@ interface FileUploadResponse {
   files: UploadedFile[];
 }
 
-export const FileUploader = ({ sectionIndex }: Props) => {
+export const SectionFileManager = ({ sectionIndex }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isEditing, isOwnProfile } = useProfile();
   const { username } = useParams();
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
+  const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(new Set());
+  const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
+
   const { sections, renderFilesOnResponse } = useSections();
   const section = sections[sectionIndex];
-  const { id: sectionId, title: sectionTitle, files: uploadedFiles = [] } = section;
+  const {
+    id: sectionId,
+    title: sectionTitle,
+    files: uploadedFiles = [],
+  } = section;
 
   const handleButtonClick = () => fileInputRef.current?.click();
 
@@ -38,13 +46,27 @@ export const FileUploader = ({ sectionIndex }: Props) => {
     setReadyToUpload(false);
   };
 
+  const toggleFileSelection = (fileId: string) => {
+    setSelectedFileIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(fileId)) {
+        newSet.delete(fileId);
+      } else {
+        newSet.add(fileId);
+      }
+      return newSet;
+    });
+  };
+
   const handleSendFiles = async () => {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
 
     try {
       const response = await fetch(
-        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
+        `http://localhost:${
+          import.meta.env.VITE_BACKENDPORT
+        }/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
         {
           method: "POST",
           credentials: "include",
@@ -58,11 +80,9 @@ export const FileUploader = ({ sectionIndex }: Props) => {
       }
 
       const data: FileUploadResponse = await response.json();
-
       alert("Files uploaded successfully");
 
       renderFilesOnResponse(sectionId, data.files);
-
       setFiles([]);
       setReadyToUpload(false);
     } catch (error) {
@@ -72,28 +92,40 @@ export const FileUploader = ({ sectionIndex }: Props) => {
     }
   };
 
+  const handleDeleteSelectedFiles = () => {
+    if (selectedFileIds.size === 0) return;
+    setHiddenFileIds((prev) => new Set([...prev, ...selectedFileIds]));
+    setSelectedFileIds(new Set());
+  };
+
+  const visibleFiles = uploadedFiles.filter((file, i) => {
+    const fileId = file.publicId ?? `temp-${i}`;
+    return !hiddenFileIds.has(fileId);
+  });
+
   return (
     <div className="flex flex-col items-center w-full">
-      {/* Current files */}
-      <div className="p-4 overflow-y-auto border border-[#121212] bg-[#1e1e1e] h-[50vh] max-h-[50vh] min-w-[90%] max-w-[90%]">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-          {uploadedFiles.length > 0 ? (
-            uploadedFiles.map((file, i) => (
-              <div key={`${file.publicId}-${i}`} className="w-full h-[150px]">
-                <img
-                  src={file.url}
-                  alt={`Uploaded file ${i + 1}`}
-                  className="object-cover w-full h-full rounded"
-                />
-              </div>
-            ))
-          ) : (
-            <div className="text-[#999]">No files uploaded for this section</div>
-          )}
-        </div>
-      </div>
+      <SectionFileGallery
+        sectionId={sectionId ?? `temp-${sectionIndex}`}
+        uploadedFiles={visibleFiles.map((file, i) => ({
+          ...file,
+          publicId: file.publicId ?? `temp-${i}`,
+        }))}
+        isEditing={isEditing}
+        selectedFileIds={selectedFileIds}
+        toggleFileSelection={toggleFileSelection}
+      />
 
-      {/* Upload files buttons */}
+      {/* Delete selected files button (local-only for now) */}
+      {isEditing && isOwnProfile && selectedFileIds.size > 0 && (
+        <Button
+          label="Delete selected images"
+          className="mt-4 p-2 w-[200px] text-[#ccc] border border-[#444] bg-[#3a0000] hover:bg-[#550000]"
+          onClick={handleDeleteSelectedFiles}
+        />
+      )}
+
+      {/* Upload buttons */}
       {!isEditing && isOwnProfile && (
         <div className="flex flex-col items-center mt-4">
           {!readyToUpload ? (
