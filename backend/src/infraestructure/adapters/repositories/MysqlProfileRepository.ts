@@ -45,6 +45,20 @@ export class MysqlProfileRepository implements ProfileRepository {
       throw new Error("Error retrieving user section data from database");
     }
   }
+  async getSectionTitlesByIds(
+    sectionIds: number[]
+  ): Promise<{ id: number; title: string }[]> {
+    if (sectionIds.length === 0) return [];
+
+    const placeholders = sectionIds.map(() => "?").join(", ");
+    const [rows] = await promisePool.execute<RowDataPacket[]>(
+      `SELECT id, title FROM users_profile_sections WHERE id IN (${placeholders})`,
+      sectionIds
+    );
+
+    return rows.map((row) => ({ id: row.id, title: row.title }));
+  }
+
   async updateProfile(
     bio: string,
     sections: UserProfileSection[],
@@ -121,5 +135,17 @@ export class MysqlProfileRepository implements ProfileRepository {
     } finally {
       connection.release();
     }
+  }
+  async getFilesBySectionId(sectionIds: number[]): Promise<string[]> {
+    if (sectionIds.length === 0) return [];
+
+    const placeholders = sectionIds.map(() => "?").join(", ");
+
+    const [rows] = await promisePool.execute<RowDataPacket[]>(
+      `SELECT public_id FROM users_files WHERE section_id IN (${placeholders})`,
+      sectionIds
+    );
+
+    return rows.map((row) => row.public_id);
   }
 }

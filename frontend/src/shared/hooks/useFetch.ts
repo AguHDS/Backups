@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 
-interface FetchResponse<Data> {
-  data: Data | null;
+interface FetchResponse<T> {
+  data: T | null;
   isLoading: boolean;
   status: number | null;
   setStatus: (status: number | null) => void;

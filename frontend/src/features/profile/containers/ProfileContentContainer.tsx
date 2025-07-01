@@ -10,7 +10,7 @@ import {
   Graph,
   UserInfo,
   Storage,
-  ProfileContent,
+  ProfileRightContent,
 } from "../components";
 import { images } from "../../../assets/images";
 import { FetchedUserProfile } from "../types/profileData";
@@ -19,7 +19,8 @@ type ValidationError = { msg: string };
 type ApiError = { message: string };
 type FetchError = Error | ValidationError[] | ApiError | unknown;
 
-const processError = (error: FetchError): string[] => {
+// helper function to process error messages
+const processErrorMessages = (error: FetchError): string[] => {
   if (Array.isArray(error)) {
     return error.map((err: ValidationError) => err.msg);
   }
@@ -29,8 +30,8 @@ const processError = (error: FetchError): string[] => {
   return ["An unexpected error occurred"];
 };
 
-/* Handles profile editing logic (bio, sections, file uploads, validations),
-and renders the full profile layout. It's used inside SectionsContext (in ProfileContextProvider) to access sections state */
+// handles profile editing logic (bio, sections, files, validation logic)
+// and renders the full profile layout. This uses SectionsContext (in ProfileContextProvider) to access section states
 
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { isEditing, setIsEditing } = useProfile();
@@ -105,7 +106,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving profile:", error);
-      const messages = processError(error);
+      const messages = processErrorMessages(error);
       setErrorMessages(messages);
     }
   };
@@ -152,7 +153,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
             </div>
 
             {/* Right Content */}
-            <ProfileContent
+            <ProfileRightContent
               updateData={updateData}
               errorMessages={errorMessages}
               status={status!}

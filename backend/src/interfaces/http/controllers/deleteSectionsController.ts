@@ -1,12 +1,15 @@
 import { DeleteSectionsUseCase } from "../../../application/useCases/DeleteSectionsUseCase.js";
 import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
+import { CloudinaryRemover } from "../../../infraestructure/adapters/externalServices/CloudinaryRemover.js";
 
 const deleteSectionsUseCase = new DeleteSectionsUseCase(
-  new MysqlProfileRepository()
+  new MysqlProfileRepository(),
+  new CloudinaryRemover()
 );
 
 export const deleteSectionsController = async (req, res) => {
   try {
+    const { username } = req.params;
     const { sectionIds } = req.body;
 
     if (!Array.isArray(sectionIds) || sectionIds.some((id) => typeof id !== "number" || id <= 0)) {
@@ -22,7 +25,7 @@ export const deleteSectionsController = async (req, res) => {
       return;
     }
 
-    await deleteSectionsUseCase.execute(sectionIds, id);
+    await deleteSectionsUseCase.execute(sectionIds, id, username);
 
     res.status(200).json({ message: "Sections deleted successfully" });
   } catch (error) {
