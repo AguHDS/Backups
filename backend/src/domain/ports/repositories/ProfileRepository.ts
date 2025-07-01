@@ -18,6 +18,14 @@ export interface ProfileRepository {
   getSectionsByUserId(userId: number | string): Promise<UserProfileSection[]>;
 
   /**
+   * Retrieves titles of sections by their IDs
+   *
+   * @param sectionIds - An array of section IDs to retrieve titles for
+   * @returns A promise that resolves to an array of objects containing section ID and title
+  */
+  getSectionTitlesByIds(sectionIds: number[]): Promise<{ id: number; title: string }[]>
+
+  /**
    * Updates the bio and sections of a user profile
    *
    * @param bio - The new biography text
@@ -32,5 +40,13 @@ export interface ProfileRepository {
    * @param sectionIds - An array of section IDs to be deleted
    * @param userId - The ID of the user to whom the sections belong (for verification)
   */
-  deleteSectionsByIds(sectionIds: number[], userId: string): Promise<void>;
+  deleteSectionsByIds(sectionIds: number[], userId: string | number): Promise<void>;
+
+  /**
+   * Retrieves public ids of files associated with specific section to delete them from Cloudinary
+   *
+   * @param sectionIds - An array of section IDs to retrieve files for.
+   * @returns A promise that resolves to an array of public ids
+  */
+  getFilesBySectionId(sectionIds: number[]): Promise<string[]>;
 }

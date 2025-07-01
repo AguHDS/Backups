@@ -13,7 +13,7 @@ interface FileUploadResponse {
   files: UploadedFile[];
 }
 
-export const ImageUploader = ({ sectionIndex }: Props) => {
+export const FileUploader = ({ sectionIndex }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isEditing, isOwnProfile } = useProfile();
   const { username } = useParams();
@@ -74,7 +74,7 @@ export const ImageUploader = ({ sectionIndex }: Props) => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      {/* Imagenes actuales */}
+      {/* Current files */}
       <div className="p-4 overflow-y-auto border border-[#121212] bg-[#1e1e1e] h-[50vh] max-h-[50vh] min-w-[90%] max-w-[90%]">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
           {uploadedFiles.length > 0 ? (
@@ -88,12 +88,12 @@ export const ImageUploader = ({ sectionIndex }: Props) => {
               </div>
             ))
           ) : (
-            <div className="text-[#999]">No images uploaded for this section</div>
+            <div className="text-[#999]">No files uploaded for this section</div>
           )}
         </div>
       </div>
 
-      {/* Botones de subida */}
+      {/* Upload files buttons */}
       {!isEditing && isOwnProfile && (
         <div className="flex flex-col items-center mt-4">
           {!readyToUpload ? (

@@ -1,8 +1,8 @@
-import React from "react";
-import { Button, AuthFeedback } from "../../../shared";
-import { Bio } from "./Bio";
-import { ImageUploader } from "./ImageUploader";
-import { useProfile } from "../../../features/profile/context/ProfileContext";
+import React, { useState } from "react";
+import { Button, AuthFeedback } from "../../../shared/index.js";
+import { Bio } from "./Bio.js";
+import { FileUploader } from "./FileUploader.js";
+import { useProfile } from "../context/ProfileContext.js";
 import { useSections } from "../context/SectionsContext.js";
 
 interface Props {
@@ -12,7 +12,8 @@ interface Props {
   onBioChange: (bio: string) => void;
 }
 
-export const ProfileContent = ({
+// right content (bio, titles, sections, files)
+export const ProfileRightContent = ({
   updateData,
   errorMessages,
   status,
@@ -30,7 +31,6 @@ export const ProfileContent = ({
           <div className="h-1"></div>
           <div className="border-[#121212] border-solid w-full"></div>
 
-          {/* Mostrar mensaje si no hay secciones */}
           {sections.length === 0 ? (
             <p className="text-center text-gray-400 my-4">
               No sections yet. Add one to get started.
@@ -81,7 +81,7 @@ export const ProfileContent = ({
                             : null
                         }
                       />
-                      <ImageUploader sectionIndex={index} />
+                      <FileUploader sectionIndex={index} />
                       <Button
                         onClick={() => deleteSection(section.id)}
                         className="flex justify-center mx-auto mt-5 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
@@ -94,7 +94,7 @@ export const ProfileContent = ({
                         {section.description}
                       </p>
                       <div className="mb-4">
-                        <ImageUploader sectionIndex={index} />
+                        <FileUploader sectionIndex={index} />
                       </div>
                     </>
                   )}
