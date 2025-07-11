@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEditableProfile } from "../hooks/useEditableProfile";
-import { useProfile } from "../context/ProfileContext";
+import { useProfile, useSections, useFileDeletion } from "../context";
 import { useFetch } from "../../../shared";
-import { useSections } from "../context/SectionsContext";
 import {
   Header,
   ActionsAndProfileImg,
@@ -19,7 +18,7 @@ type ValidationError = { msg: string };
 type ApiError = { message: string };
 type FetchError = Error | ValidationError[] | ApiError | unknown;
 
-// helper function to process error messages
+// helper function to process error messages in edit mode
 const processErrorMessages = (error: FetchError): string[] => {
   if (Array.isArray(error)) {
     return error.map((err: ValidationError) => err.msg);
@@ -34,13 +33,12 @@ const processErrorMessages = (error: FetchError): string[] => {
    and renders the full profile. This uses SectionsContext (in ProfileContextProvider) to access section states */
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { isEditing, setIsEditing } = useProfile();
+  const { filesToDelete, clearFilesToDelete } = useFileDeletion();
   const { status, setStatus, fetchData } = useFetch();
   const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const { updateData, setUpdateData, reset } = useEditableProfile(
-    data.userProfileData.bio
-  );
-  const { sections, sectionsToDelete, setSectionsToDelete } = useSections();
+  const { updateData, setUpdateData, reset } = useEditableProfile(data.userProfileData.bio);
+  const { sections, setSections, sectionsToDelete, setSectionsToDelete } = useSections();
 
   useEffect(() => {
     if (isEditing) {
@@ -51,7 +49,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
 
   const validateFields = () => {
     const errors: string[] = [];
-
     if (!updateData.bio.trim()) errors.push("Bio cannot be empty");
 
     sections.forEach((section, index) => {
@@ -72,11 +69,9 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     }
 
     try {
+      // Delete sections
       if (sectionsToDelete.length > 0) {
-        await fetch(
-          `http://localhost:${
-            import.meta.env.VITE_BACKENDPORT
-          }/api/deleteSections/${username}`,
+        const res = await fetch(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/deleteSections/${username}`,
           {
             method: "DELETE",
             credentials: "include",
@@ -84,12 +79,39 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
             body: JSON.stringify({ sectionIds: sectionsToDelete }),
           }
         );
+        if (!res.ok) throw new Error("Failed to delete sections");
       }
 
-      await fetchData(
-        `http://localhost:${
-          import.meta.env.VITE_BACKENDPORT
-        }/api/updateProfile/${username}`,
+      // Delete marked files
+      if (filesToDelete.length > 0) {
+        const res = await fetch(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/deleteFiles/${username}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(filesToDelete),
+          }
+        );
+        if (!res.ok) throw new Error("Failed to delete files");
+      }
+
+      // Prevent deleted marked files to render after saving
+      setSections((prevSections) =>
+        prevSections.map((section) => {
+          const filesForSection = filesToDelete.find((f) => f.sectionId === section.id);
+          if (!filesForSection) return section;
+
+          return {
+            ...section,
+            files: (section.files || []).filter(
+              (file) => !filesForSection.publicIds.includes(file.publicId)
+            ),
+          };
+        })
+      );
+
+      // Update bio and sections
+      await fetchData(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/updateBioAndSections/${username}`,
         {
           method: "POST",
           credentials: "include",
@@ -102,6 +124,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       );
 
       setSectionsToDelete([]);
+      clearFilesToDelete();
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving profile:", error);

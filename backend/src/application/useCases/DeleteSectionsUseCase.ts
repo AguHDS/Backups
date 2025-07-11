@@ -20,7 +20,7 @@ export class DeleteSectionsUseCase {
     if (sectionIds.length === 0) throw new Error("NO_SECTIONS_ID");
 
     const publicIds = await this.profileRepo.getFilesBySectionId(sectionIds);
-    await this.fileRemover.deleteMany(publicIds);
+    await this.fileRemover.deleteFilesByPublicIds(publicIds);
 
     const sectionInfos = await this.profileRepo.getSectionTitlesByIds(sectionIds);
 

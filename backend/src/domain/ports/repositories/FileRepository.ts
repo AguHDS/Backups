@@ -13,8 +13,8 @@ export interface FileRepository {
   */
   findBySectionId(sectionId: number): Promise<UserFile[]>;
   /**
-   * Deletes a file from the database using its Cloudinary public ID
+   * Deletes files from the database using its Cloudinary public ID
    * @param publicId - The unique identifier of the file in Cloudinary
   */
-  delete(publicId: string): Promise<void>;
+  deleteFilesByPublicIds(publicIds: string[]): Promise<void>;
 }
