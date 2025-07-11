@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { SectionWithFile, UploadedFile } from "../types/section";
+
 interface SectionsContextType {
   sections: SectionWithFile[];
   setSections: React.Dispatch<React.SetStateAction<SectionWithFile[]>>;
@@ -13,6 +14,7 @@ interface SectionsContextType {
   addSection: () => void;
   deleteSection: (sectionId: number) => void;
   renderFilesOnResponse: (sectionId: number, newFiles: UploadedFile[]) => void;
+  updateSectionIds: (idMap: { tempId: number; newId: number }[]) => void;
 }
 
 const SectionsContext = createContext<SectionsContextType | undefined>(
@@ -52,7 +54,7 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
     setSectionsToDelete((prev) => [...prev, sectionId]);
   };
 
-  //renders images at the moment they are uploaded
+  // Render images at the moment they are uploaded
   const renderFilesOnResponse = (
     sectionId: number,
     newFiles: UploadedFile[]
@@ -69,6 +71,18 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
     );
   };
 
+  // Update the local state of sections by replacing temporary ids with real ids from the backend
+  const updateSectionIds = (idMap: { tempId: number; newId: number }[]) => {
+    setSections((prevSections) =>
+      prevSections.map((section) => {
+        // Find if this section's id matches any temporal id from the map
+        const match = idMap.find((n) => n.tempId === section.id);
+        // If it matches, replace it with the real one
+        return match ? { ...section, id: match.newId } : section;
+      })
+    );
+  };
+
   return (
     <SectionsContext.Provider
       value={{
@@ -80,6 +94,7 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
         addSection,
         deleteSection,
         renderFilesOnResponse,
+        updateSectionIds,
       }}
     >
       {children}

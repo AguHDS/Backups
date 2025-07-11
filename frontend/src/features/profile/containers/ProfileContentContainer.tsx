@@ -34,11 +34,11 @@ const processErrorMessages = (error: FetchError): string[] => {
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { isEditing, setIsEditing } = useProfile();
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
-  const { status, setStatus, fetchData } = useFetch();
+  const { status, setStatus } = useFetch();
   const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { updateData, setUpdateData, reset } = useEditableProfile(data.userProfileData.bio);
-  const { sections, setSections, sectionsToDelete, setSectionsToDelete } = useSections();
+  const { sections, setSections, sectionsToDelete, setSectionsToDelete, updateSectionIds } = useSections();
 
   useEffect(() => {
     if (isEditing) {
@@ -111,7 +111,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       );
 
       // Update bio and sections
-      await fetchData(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/updateBioAndSections/${username}`,
+      const response = await fetch(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/updateBioAndSections/${username}`,
         {
           method: "POST",
           credentials: "include",
@@ -122,6 +122,13 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
           }),
         }
       );
+
+      // Update temporal ids with the real ones to prevent backend errors
+      if (!response.ok) throw new Error("Failed to update profile");
+      const data = await response.json();
+      if (data.newlyCreatedSections) {
+        updateSectionIds(data.newlyCreatedSections);
+      }
 
       setSectionsToDelete([]);
       clearFilesToDelete();
@@ -150,7 +157,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         />
         <div className="p-[8px] bg-[#121212] border-[#272727] border-solid border-r border-b text-[#e0e0e0]">
           <div className="flex flex-col md:flex-row w-full">
-            {/* Left Sidebar */}
+            {/* Left Content */}
             <div className="bg-[#272727] p-2 flex-shrink-0 w-full md:w-[225px]">
               <ActionsAndProfileImg
                 profilePic={images.testImage}
@@ -173,7 +180,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 shared="1 GB"
               />
             </div>
-
             {/* Right Content */}
             <ProfileRightContent
               updateData={updateData}

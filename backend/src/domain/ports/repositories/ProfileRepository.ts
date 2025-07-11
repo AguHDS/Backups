@@ -31,8 +31,9 @@ export interface ProfileRepository {
    * @param bio - The new biography text
    * @param sections - List of updated profile sections
    * @param userId - The ID of the user to update (usually taken from refresh token)
+   * @returns An object with the temporal and real id from signed in the db, so the frontend can render them properly and prevents Cloudinary errors
   */
-  updateProfile(bio: string, sections: UserProfileSection[], userId: string | number): Promise<void>;
+  updateProfile(bio: string, sections: UserProfileSection[], userId: string | number): Promise<{ newlyCreatedSections: { tempId: number; newId: number }[] }>;
 
   /**
    * Deletes multiple user profile sections based on their IDs
