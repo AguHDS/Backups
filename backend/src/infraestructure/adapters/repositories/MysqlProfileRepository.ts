@@ -63,13 +63,15 @@ export class MysqlProfileRepository implements ProfileRepository {
     bio: string,
     sections: UserProfileSection[],
     userId: string
-  ): Promise<void> {
+  ): Promise<{ newlyCreatedSections: { tempId: number; newId: number }[] }> {
     const connection: PoolConnection = await promisePool.getConnection();
+    // New created sections with id === 0
+    const newlyCreatedSections: { tempId: number; newId: number }[] = [];
 
     try {
       await connection.beginTransaction();
 
-      //update user bio
+      // Update bio
       const [result] = await connection.execute<ResultSetHeader>(
         `UPDATE users_profile SET bio = ? WHERE fk_users_id = ?`,
         [bio, userId]
@@ -77,12 +79,12 @@ export class MysqlProfileRepository implements ProfileRepository {
 
       if (result.affectedRows === 0)
         throw new Error("No profile found for the given user ID");
-
-      //update sections array
+      
+      // Update sections array
       for (const section of sections) {
-        //if id is greater than 0, it means it's an existing section
+        // If id is greater than 0, it means it's an existing section
         if (section.id && section.id > 0) {
-          //update existing section
+          // Update existing section
           const [updateResult] = await connection.execute<ResultSetHeader>(
             "UPDATE users_profile_sections SET title = ?, description = ? WHERE id = ? AND fk_users_id = ?",
             [section.title, section.description, section.id, userId]
@@ -93,15 +95,22 @@ export class MysqlProfileRepository implements ProfileRepository {
               `Section with id ${section.id} not found for user ${userId}`
             );
         } else {
-          //id is 0, add a new section
-          await connection.execute<ResultSetHeader>(
+          // Insert new section because section.id === 0
+          const [insertResult] = await connection.execute<ResultSetHeader>(
             "INSERT INTO users_profile_sections (fk_users_id, title, description) VALUES (?, ?, ?)",
             [userId, section.title, section.description]
           );
+
+          // Save temporal and real id inserted in db
+          newlyCreatedSections.push({
+            tempId: section.id, // id that came from frontend (always 0)
+            newId: insertResult.insertId, // real id signed by db
+          });
         }
       }
 
       await connection.commit();
+      return { newlyCreatedSections };
     } catch (error) {
       await connection.rollback();
       console.error("Error updating profile", error);
@@ -110,6 +119,7 @@ export class MysqlProfileRepository implements ProfileRepository {
       connection.release();
     }
   }
+
   async deleteSectionsByIds(
     sectionIds: number[],
     userId: string

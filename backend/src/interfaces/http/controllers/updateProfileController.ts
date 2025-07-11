@@ -19,26 +19,16 @@ interface ProfileDataToUpdate {
 /** Updates bio and sections for specific user */
 export const updateProfileController = async (req: Request, res: Response) => {
   const cleanData: ProfileDataToUpdate = matchedData(req);
-
   const { id } = req.baseUserData;
 
   try {
-    await updateUserProfileUseCase.execute(cleanData.bio, cleanData.sections, id);
+    const { newlyCreatedSections } = await updateUserProfileUseCase.execute(cleanData.bio, cleanData.sections, id);
+
     console.log("Profile updated successfully!");
 
-    res.status(200).json({ message: "Profile updated successfully!" });
+    res.status(200).json({ message: "Profile updated successfully!", newlyCreatedSections });
   } catch (error) {
-    if (error instanceof Error) console.error("Error updating profile:", error);
-
-    switch (error.message) {
-      case "INVALID_BIO":
-        res.status(400).json({ message: "Invalid bio format" });
-        return;
-      case "INVALID_SECTIONS":
-        res.status(400).json({ message: "Invalid section format" });
-        return;
-    }
-
+    console.error("Failed to update profile", error);
     res.status(500).json({ message: "Failed to update profile" });
   }
 };

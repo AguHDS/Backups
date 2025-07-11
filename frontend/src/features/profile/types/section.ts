@@ -13,3 +13,4 @@ export interface UploadedFile {
 export interface SectionWithFile extends BaseSection {
   files?: UploadedFile[];
 }
+

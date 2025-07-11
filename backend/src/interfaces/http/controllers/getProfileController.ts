@@ -16,7 +16,6 @@ export const getProfileController = async (req: Request, res: Response) => {
 
     const profile = await getUserProfileUseCase.execute(id);
 
-    //in the future we will need to include the files
     const response: CustomResponse = {
       name,
       role,
@@ -36,7 +35,7 @@ export const getProfileController = async (req: Request, res: Response) => {
           files:
             section.files?.map((file) => ({
               url: file.url,
-              public_id: file.publicId,
+              publicId: file.publicId,
             })) ?? [],
         })) ?? [],
     };
