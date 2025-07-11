@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useSections } from "../context/SectionsContext";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
+import { useFileDeletion } from "../context";
 
 interface Props {
   sectionIndex: number;
@@ -21,18 +22,14 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
   const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(new Set());
+  const { addFilesToDelete } = useFileDeletion();
   const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
-
   const { sections, renderFilesOnResponse } = useSections();
   const section = sections[sectionIndex];
-  const {
-    id: sectionId,
-    title: sectionTitle,
-    files: uploadedFiles = [],
-  } = section;
-
+  const { id: sectionId, title: sectionTitle, files: uploadedFiles = [] } = section;
   const handleButtonClick = () => fileInputRef.current?.click();
 
+  // Handle selecting files from input
   const handleUploadFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files;
     if (!selected || selected.length === 0) return;
@@ -46,6 +43,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     setReadyToUpload(false);
   };
 
+  // Toggle selection checkbox for files (add/remove from set)
   const toggleFileSelection = (fileId: string) => {
     setSelectedFileIds((prev) => {
       const newSet = new Set(prev);
@@ -58,6 +56,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     });
   };
 
+  // Upload files to backend
   const handleSendFiles = async () => {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
@@ -80,9 +79,9 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       }
 
       const data: FileUploadResponse = await response.json();
-      alert("Files uploaded successfully");
 
       renderFilesOnResponse(sectionId, data.files);
+
       setFiles([]);
       setReadyToUpload(false);
     } catch (error) {
@@ -94,29 +93,41 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
 
   const handleDeleteSelectedFiles = () => {
     if (selectedFileIds.size === 0) return;
-    setHiddenFileIds((prev) => new Set([...prev, ...selectedFileIds]));
+
+    // Only include valid file publicIds
+    const idsToDelete = Array.from(selectedFileIds).filter((id) =>
+      uploadedFiles.some((file) => file.publicId === id)
+    );
+
+    if (idsToDelete.length === 0) {
+      alert("No valid images selected for deletion.");
+      return;
+    }
+
+    // Hide deleted files from UI
+    setHiddenFileIds((prev) => new Set([...prev, ...idsToDelete]));
+    // Add to context deletion list
+    addFilesToDelete(sectionId, idsToDelete);
+    // Reset local selection
     setSelectedFileIds(new Set());
   };
 
-  const visibleFiles = uploadedFiles.filter((file, i) => {
-    const fileId = file.publicId ?? `temp-${i}`;
-    return !hiddenFileIds.has(fileId);
-  });
+  const visibleFiles = uploadedFiles.filter(
+    (file) => !hiddenFileIds.has(file.publicId)
+  );
 
   return (
     <div className="flex flex-col items-center w-full">
+      {/* Display files inside sections */}
       <SectionFileGallery
-        sectionId={sectionId ?? `temp-${sectionIndex}`}
-        uploadedFiles={visibleFiles.map((file, i) => ({
-          ...file,
-          publicId: file.publicId ?? `temp-${i}`,
-        }))}
+        sectionId={sectionId}
+        uploadedFiles={visibleFiles}
         isEditing={isEditing}
         selectedFileIds={selectedFileIds}
         toggleFileSelection={toggleFileSelection}
       />
 
-      {/* Delete selected files button (local-only for now) */}
+      {/* Show delete button when files are selected */}
       {isEditing && isOwnProfile && selectedFileIds.size > 0 && (
         <Button
           label="Delete selected images"
@@ -125,7 +136,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
         />
       )}
 
-      {/* Upload buttons */}
+      {/* Upload file controls */}
       {!isEditing && isOwnProfile && (
         <div className="flex flex-col items-center mt-4">
           {!readyToUpload ? (

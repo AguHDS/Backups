@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
 
 /**
- * Check if the profile to edit belongs to the user making the request
+ * Check if the profile to edit belongs to the user making the request (requires /:username route param)
  * @param attachUserDataToReq - if true, attaches username, role and id from the refresh token to request object
 */
 

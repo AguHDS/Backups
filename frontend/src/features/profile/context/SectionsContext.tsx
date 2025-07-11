@@ -5,7 +5,11 @@ interface SectionsContextType {
   setSections: React.Dispatch<React.SetStateAction<SectionWithFile[]>>;
   sectionsToDelete: number[];
   setSectionsToDelete: React.Dispatch<React.SetStateAction<number[]>>;
-  updateSection: (index: number, field: "title" | "description", value: string) => void;
+  updateSection: (
+    index: number,
+    field: "title" | "description",
+    value: string
+  ) => void;
   addSection: () => void;
   deleteSection: (sectionId: number) => void;
   renderFilesOnResponse: (sectionId: number, newFiles: UploadedFile[]) => void;
@@ -14,12 +18,6 @@ interface SectionsContextType {
 const SectionsContext = createContext<SectionsContextType | undefined>(
   undefined
 );
-
-export const useSections = () => {
-  const context = useContext(SectionsContext);
-  if (!context) throw new Error("useSections must be used inside its provider");
-  return context;
-};
 
 interface Props {
   children: React.ReactNode;
@@ -55,7 +53,10 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
   };
 
   //renders images at the moment they are uploaded
-  const renderFilesOnResponse = (sectionId: number, newFiles: UploadedFile[]) => {
+  const renderFilesOnResponse = (
+    sectionId: number,
+    newFiles: UploadedFile[]
+  ) => {
     setSections((prev) =>
       prev.map((section) =>
         section.id === sectionId
@@ -84,4 +85,10 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
       {children}
     </SectionsContext.Provider>
   );
+};
+
+export const useSections = () => {
+  const context = useContext(SectionsContext);
+  if (!context) throw new Error("useSections must be used inside its provider");
+  return context;
 };

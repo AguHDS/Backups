@@ -3,9 +3,10 @@ import registration from "./registration.js";
 import logout from "./logout.js";
 import refreshToken from "./refreshToken.js";
 import getProfile from "./getProfile.js";
-import updateProfile from "./updateProfile.js";
-import deleteSections from "./deleteSections.js";
+import updateBioAndSections from "./updateBioAndSections.js";
 import uploadFiles from "./uploadFiles.js";
+import deleteSections from "./deleteSections.js";
+import deleteFiles from "./deleteFiles.js";
 
 export {
   login,
@@ -13,7 +14,8 @@ export {
   logout,
   refreshToken,
   getProfile,
-  updateProfile,
-  deleteSections,
+  updateBioAndSections,
   uploadFiles,
+  deleteSections,
+  deleteFiles
 };

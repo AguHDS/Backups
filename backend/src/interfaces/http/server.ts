@@ -15,9 +15,10 @@ import {
   logout,
   refreshToken,
   getProfile,
-  updateProfile,
+  updateBioAndSections,
+  uploadFiles,
   deleteSections,
-  uploadFiles
+  deleteFiles
 } from "./routes/index.js";
 
 const app: Express = express();
@@ -48,9 +49,10 @@ app.use("/api/registration", registration);
 app.use("/api/logout", logout);
 app.use("/api/refreshToken", refreshToken);
 app.use("/api/getProfile", getProfile);
-app.use("/api/updateProfile", updateProfile);
-app.use("/api/deleteSections", deleteSections);
+app.use("/api/updateBioAndSections", updateBioAndSections);
 app.use("/api/uploadFiles", uploadFiles);
+app.use("/api/deleteSections", deleteSections);
+app.use("/api/deleteFiles", deleteFiles);
 
 //proxy to redirect all requests that aren't defined here to vite's port, so the client can handle them
 app.use(
