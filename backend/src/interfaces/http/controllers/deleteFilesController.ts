@@ -12,9 +12,6 @@ const useCase = new DeleteFilesFromSectionsUseCase(
  * Handle deletion of selected files from sections
  */
 export const deleteFilesController = async (req, res) => {
-  console.log("UPDATE PROFILE called with sections:");
-  console.log(req.body);
-
   const payload: SectionFilesPayload[] = req.body;
 
   try {

@@ -6,6 +6,8 @@ import { useSections } from "../context/SectionsContext";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
+import { processErrorMessages } from "../../../shared/utils/errors";
+import { FeedbackMessages } from "../../../shared";
 
 interface Props {
   sectionIndex: number;
@@ -16,15 +18,17 @@ interface FileUploadResponse {
 }
 
 export const SectionFileManager = ({ sectionIndex }: Props) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isEditing, isOwnProfile } = useProfile();
-  const { username } = useParams();
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
   const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(new Set());
-  const { addFilesToDelete } = useFileDeletion();
+  const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isEditing, isOwnProfile } = useProfile();
   const { sections, renderFilesOnResponse } = useSections();
+  const { addFilesToDelete } = useFileDeletion();
+  const { username } = useParams();
+
   const section = sections[sectionIndex];
   const { id: sectionId, title: sectionTitle, files: uploadedFiles = [] } = section;
   const handleButtonClick = () => fileInputRef.current?.click();
@@ -35,23 +39,21 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     if (!selected || selected.length === 0) return;
 
     setFiles((prev) => [...prev, ...Array.from(selected)]);
+    setUploadErrors([]);
     setReadyToUpload(true);
   };
 
   const cancelUpload = () => {
     setFiles([]);
     setReadyToUpload(false);
+    setUploadErrors([]);
   };
 
   // Toggle selection checkbox for files (add/remove from set)
   const toggleFileSelection = (fileId: string) => {
     setSelectedFileIds((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(fileId)) {
-        newSet.delete(fileId);
-      } else {
-        newSet.add(fileId);
-      }
+      newSet.has(fileId) ? newSet.delete(fileId) : newSet.add(fileId);
       return newSet;
     });
   };
@@ -74,20 +76,24 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       );
 
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`Error uploading files, ${error}`);
+        let errorPayload: any;
+        try {
+          errorPayload = await response.json();
+        } catch {
+          errorPayload = await response.text();
+        }
+        throw errorPayload;
       }
 
       const data: FileUploadResponse = await response.json();
-
       renderFilesOnResponse(sectionId, data.files);
-
       setFiles([]);
       setReadyToUpload(false);
+      setUploadErrors([]);
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(`An error occurred. ${error.message}`);
-      }
+      const messages = processErrorMessages(error);
+      console.error("Upload error:", messages);
+      setUploadErrors(messages);
     }
   };
 
@@ -108,7 +114,6 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     setHiddenFileIds((prev) => new Set([...prev, ...idsToDelete]));
     // Add to context deletion list
     addFilesToDelete(sectionId, idsToDelete);
-    // Reset local selection
     setSelectedFileIds(new Set());
   };
 
@@ -163,6 +168,17 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
                   onClick={cancelUpload}
                 />
               </div>
+
+              {/* Show errors if any */}
+              {uploadErrors.length > 0 && (
+                <div className="w-full max-w-[80%]">
+                  <FeedbackMessages
+                    input={uploadErrors}
+                    status={null}
+                    message={null}
+                  />
+                </div>
+              )}
             </>
           )}
           <input

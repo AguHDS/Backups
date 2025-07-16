@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, AuthFeedback } from "../../../shared/index.js";
+import { Button, FeedbackMessages } from "../../../shared/index.js";
 import { Bio } from "./Bio.js";
 import { SectionFileManager } from "./SectionFileManager.js";
 import { useProfile } from "../context/ProfileContext.js";
@@ -67,7 +67,7 @@ export const ProfileRightContent = ({ updateData, errorMessages, status, onBioCh
                           updateSection(index, "description", e.target.value)
                         }
                       ></textarea>
-                      <AuthFeedback
+                      <FeedbackMessages
                         input={errorMessages}
                         status={status}
                         message={

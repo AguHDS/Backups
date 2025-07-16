@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useEditableProfile } from "../hooks/useEditableProfile";
+import { useEditBio } from "../hooks/useEditBio";
 import { useProfile, useSections, useFileDeletion } from "../context";
 import { useFetch } from "../../../shared";
 import {
@@ -13,21 +13,7 @@ import {
 } from "../components";
 import { images } from "../../../assets/images";
 import { FetchedUserProfile } from "../types/profileData";
-
-type ValidationError = { msg: string };
-type ApiError = { message: string };
-type FetchError = Error | ValidationError[] | ApiError | unknown;
-
-// helper function to process error messages in edit mode
-const processErrorMessages = (error: FetchError): string[] => {
-  if (Array.isArray(error)) {
-    return error.map((err: ValidationError) => err.msg);
-  }
-  if (error && typeof error === "object" && "message" in error) {
-    return [error.message as string];
-  }
-  return ["An unexpected error occurred"];
-};
+import { processErrorMessages } from "../../../shared/utils/errors";
 
 /* Handles profile editing logic for bio, sections, files
    and renders the full profile. This uses SectionsContext (in ProfileContextProvider) to access section states */
@@ -37,7 +23,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { status, setStatus } = useFetch();
   const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const { updateData, setUpdateData, reset } = useEditableProfile(data.userProfileData.bio);
+  const { updateData, setUpdateData, reset } = useEditBio(data.userProfileData.bio);
   const { sections, setSections, sectionsToDelete, setSectionsToDelete, updateSectionIds } = useSections();
 
   useEffect(() => {
