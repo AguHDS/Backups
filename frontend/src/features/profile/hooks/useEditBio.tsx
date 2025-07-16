@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 /* Manages editable profile bio state 
 allowing updates and reset to original value when editing is cancelled */
 
-export const useEditableProfile = (bio: string) => {
+export const useEditBio = (bio: string) => {
   const [updateData, setUpdateData] = useState({ bio });
 
   const reset = (originalBio: string) => {

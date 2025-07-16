@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useModalContext, AuthFeedback, Button, Input, TermsAndConditions, Modal } from "../../../shared";
+import { useModalContext, FeedbackMessages, Button, Input, TermsAndConditions, Modal } from "../../../shared";
 
 interface AuthInput {
   user: string;
@@ -103,7 +103,7 @@ export const SignUp = () => {
                       required={true}
                     />
                   </div>
-                  <AuthFeedback
+                  <FeedbackMessages
                     input={input.inputsWarnings}
                     status={status}
                     message={statusMessage}

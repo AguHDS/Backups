@@ -1,4 +1,4 @@
-export { AuthFeedback } from "./AuthFeedback/AuthFeedback";
+export { FeedbackMessages } from "./FeedbackMessages/FeedbackMessages";
 export { Button } from "./buttons/Button";
 export { Input } from "./inputs/Input";
 export { NotFound } from "./NotFound/NotFound";

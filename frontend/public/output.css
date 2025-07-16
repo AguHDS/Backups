@@ -569,6 +569,10 @@
   max-width: 56rem !important;
 }
 
+.max-w-\[80\%\] {
+  max-width: 80% !important;
+}
+
 .max-w-\[90\%\] {
   max-width: 90% !important;
 }

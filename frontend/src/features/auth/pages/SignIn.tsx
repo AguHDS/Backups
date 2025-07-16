@@ -1,7 +1,7 @@
 import { ChangeEvent, KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Button, Input, AuthFeedback } from "../../../shared";
+import { Button, Input, FeedbackMessages } from "../../../shared";
 
 interface AuthInput {
   user: string;
@@ -86,7 +86,7 @@ export const SignIn = () => {
                       required={true}
                     />
                   </div>
-                  <AuthFeedback
+                  <FeedbackMessages
                     input={input.inputsWarnings}
                     status={status}
                     message={statusMessage}
