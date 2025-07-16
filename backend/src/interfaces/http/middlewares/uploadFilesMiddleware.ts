@@ -2,33 +2,38 @@ import { Request, Response, NextFunction } from "express";
 import { MulterError } from "multer";
 import { upload } from "../../../infraestructure/config/multerConfig.js";
 
+const MAX_TOTAL_SIZE_BYTES = 3 * 1024 * 1024;
+
 /** Limit the size of files per request */
-export const uploadLimit = async (req: Request, res: Response, next: NextFunction) => {
-  upload.array("files", 5)(req, res, (err) => {
-    if (err) {
-      if (err instanceof MulterError) {
-        if (err.code === "LIMIT_UNEXPECTED_FILE") {
-           /* TODO: obtain file size and limit number to use them in the error messages */
-          console.error("Files limit exceeded per request");
-
-          res.status(400).json({ error: "Too many files. Max allowed is 5 per request" });
-          return;
-        }
-
-        if (err.code === "LIMIT_FILE_SIZE") {
-          // TODO Check case where user uploads more than 1 file and 1 file size is bigger than allowed
-          console.error("File size limit exceeded per request");
-
-          res.status(400).json({ error: "Files size exceeds the limit. Max allowed is 5MB per request" });
-          return;
-        }
-
-        res.status(500).json({ error: "Multer error during file upload", message: err.message });
-        return;
+export const uploadFilesMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  upload.array("files")(req, res, (err) => {
+    if (err instanceof MulterError) {
+      switch (err.code) {
+        case "LIMIT_FILE_SIZE":
+          return res.status(400).json({ error: "A file exceeds the maximum allowed size of 3MB" });
+        case "LIMIT_FILE_COUNT":
+          return res.status(400).json({ error: "Too many files. Maximum allowed is 20" });
+        default:
+          return res.status(500).json({ error: "File upload failed", message: err.message });
       }
+    }
 
-      res.status(500).json({ error: "Unexpected error occurred", message: err instanceof Error ? err.message : "Unknown error" });
-      return;
+    if (err) {
+      return res.status(500).json({
+        error: "Unexpected error during upload",
+        message: err instanceof Error ? err.message : "Unknown error",
+      });
+    }
+
+    const files = req.files as Express.Multer.File[];
+
+    const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+
+    // Total size of files can't exceed 3MB in a single request
+    if (totalSize > MAX_TOTAL_SIZE_BYTES) {
+      return res.status(400).json({
+        error: `Total file size is ${(totalSize / (1024 * 1024)).toFixed(2)}MB, which exceeds the 3MB limit`,
+      });
     }
 
     next();
