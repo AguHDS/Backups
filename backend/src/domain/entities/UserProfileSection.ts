@@ -5,6 +5,7 @@ export class UserProfileSection {
     public id: number,
     public title: string,
     public description: string,
-    public files?: UserFile[]
+    public files?: UserFile[],
+    public isPublic?: boolean
   ) {}
 }

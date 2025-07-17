@@ -44,10 +44,11 @@ CREATE TABLE `users_profile_sections` (
   `fk_users_id` int unsigned NOT NULL,
   `title` varchar(255) COLLATE utf8mb4_general_ci DEFAULT 'Section title',
   `description` varchar(500) COLLATE utf8mb4_general_ci DEFAULT 'No description',
+  `is_public` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `fk_user_profile_sections` (`fk_users_id`),
   CONSTRAINT `fk_user_profile_sections` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
 users_files
 CREATE TABLE `users_files` (

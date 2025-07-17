@@ -45,7 +45,7 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
   const addSection = () => {
     setSections((prev) => [
       ...prev,
-      { id: 0, title: "", description: "", files: [] },
+      { id: 0, title: "", description: "", files: [], isPublic: true }
     ]);
   };
 

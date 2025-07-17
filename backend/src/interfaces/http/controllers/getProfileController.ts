@@ -3,24 +3,38 @@ import { MysqlProfileRepository } from "../../../infraestructure/adapters/reposi
 import { GetUserProfileUseCase } from "../../../application/useCases/GetUserProfileUseCase.js";
 import { CustomResponse } from "../.././../shared/dtos/index.js";
 import { MysqlFileRepository } from "../../../infraestructure/adapters/repositories/MysqlFileRepository.js";
+import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
 
 const getUserProfileUseCase = new GetUserProfileUseCase(
   new MysqlProfileRepository(),
   new MysqlFileRepository()
 );
 
-/**  Respond with user profile data, comparing its id from users table with fk_users_id in users_profile table */
+/** Respond with user profile data, comparing its id from users table with fk_users_id in users_profile table */
 export const getProfileController = async (req: Request, res: Response) => {
   try {
+    const { username } = req.params;
+    // Profile owner's data
     const { name, role, id, email } = req.baseUserData;
 
-    const profile = await getUserProfileUseCase.execute(id);
+    let requesterId: number | null = null;
+
+    try {
+      // Get logged user's id for profile ownership validation
+      const decoded = decodeRefreshToken(req);
+      requesterId = Number(decoded.id);
+    } catch (err) {
+      requesterId = null;
+    }
+
+    const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(username, requesterId);
 
     const response: CustomResponse = {
-      name,
+      username: name,
       role,
       id,
       email,
+      isOwner,
       userProfileData: {
         bio: profile.bio,
         profile_pic: profile.profilePic,
@@ -32,6 +46,7 @@ export const getProfileController = async (req: Request, res: Response) => {
           id: section.id,
           title: section.title,
           description: section.description,
+          isPublic: section.isPublic,
           files:
             section.files?.map((file) => ({
               url: file.url,

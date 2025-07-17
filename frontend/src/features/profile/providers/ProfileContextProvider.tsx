@@ -8,7 +8,7 @@ making section state accessible via context inside ProfileContentContainer */
 
 export const ProfileContextProvider = ({ data }: FetchedUserProfile) => {
   return (
-    <SectionsProvider initialSections={data.userSectionData}>
+    <SectionsProvider initialSections={data.isOwner ? data.userSectionData : data.userSectionData.filter((section) => section.isPublic)}>
       <FileDeletionProvider>
         <ProfileContentContainer data={data} />
       </FileDeletionProvider>

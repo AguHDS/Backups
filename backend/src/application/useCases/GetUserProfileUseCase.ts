@@ -6,19 +6,18 @@ export class GetUserProfileUseCase {
   constructor(private readonly profileRepo: ProfileRepository, private readonly fileRepo: FileRepository) {}
 
   /**
-   * Retrieves a complete user profile by ID, including associated profile sections.
-   *
-   * @returns A fully populated UserProfile object, or throws if not found.
+   * Retrieves a complete user profile by username, including sections.
+   * Returns all sections if the requester is the owner, otherwise only public ones.
    */
-  async execute(userId: number | string): Promise<UserProfile> {
-    const profile = await this.profileRepo.getProfileById(userId);
-
+  async executeByUsername(username: string, requesterId: number | string): Promise<{ profile: UserProfile; isOwner: boolean }> {
+    const profile = await this.profileRepo.getProfileByUsername(username);
     if (!profile) {
       throw new Error("PROFILE_NOT_FOUND");
     }
 
+    const isOwner = Number(requesterId) === Number(profile.userId);
 
-    const sections = await this.profileRepo.getSectionsByUserId(userId);
+    const sections = await this.profileRepo.getSectionsByUserId(profile.userId, !isOwner);
 
     for (const section of sections) {
       const files = await this.fileRepo.findBySectionId(section.id);
@@ -27,6 +26,6 @@ export class GetUserProfileUseCase {
 
     profile.sections = sections;
 
-    return profile;
+    return { profile, isOwner };
   }
 }

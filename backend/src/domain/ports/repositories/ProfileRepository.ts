@@ -2,20 +2,20 @@ import { UserProfile, UserProfileSection } from "../../entities/index.js";
 
 export interface ProfileRepository {
   /**
-   * Retrieves bio, profile_pic, partner, friends by user ID.
+   * Retrieves bio, profile_pic, partner, friends by username.
    *
-   * @param userId - The ID of the user.
-   * @returns A UserProfile if found, or null if not found.
-  */
-  getProfileById(userId: number | string): Promise<UserProfile | null>;
+   * @param username - The unique username (e.g. from route param)
+   * @returns A UserProfile object including its internal userId, or null if not found
+   */
+  getProfileByUsername(username: string): Promise<UserProfile | null>;
 
   /**
-   * Retrieves all profile sections associated with a user.
+   * Retrieves profile sections associated with a user.
    *
    * @param userId - The ID of the user.
-   * @returns An array of profile sections with title, description, or an empty array if none exist.
-  */
-  getSectionsByUserId(userId: number | string): Promise<UserProfileSection[]>;
+   * @param onlyPublic - If true, only returns public sections.
+   */
+  getSectionsByUserId(userId: number | string, onlyPublic?: boolean): Promise<UserProfileSection[]>;
 
   /**
    * Retrieves titles of sections by their IDs

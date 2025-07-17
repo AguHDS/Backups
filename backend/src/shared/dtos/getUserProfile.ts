@@ -9,13 +9,15 @@ export interface ProfileSection {
   id: number;
   title: string;
   description: string;
+  isPublic: boolean;
 }
 
 export interface CustomResponse {
-  name: string;
+  username: string;
   role: string;
   id: number | string;
   email: string;
+  isOwner: boolean;
   userProfileData: ProfileContent;
   userSectionData: ProfileSection[];
 }
