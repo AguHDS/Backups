@@ -7,6 +7,33 @@ import {
 import { ProfileRepository } from "../../../domain/ports/repositories/ProfileRepository.js";
 
 export class MysqlProfileRepository implements ProfileRepository {
+    async getProfileByUsername(username: string): Promise<UserProfile | null> {
+    try {
+      // Needed to show public or private sections
+      const [rows] = await promisePool.execute<RowDataPacket[]>(
+        `SELECT u.id AS userId, up.bio, up.profile_pic, up.partner, up.friends
+        FROM users u
+        JOIN users_profile up ON up.fk_users_id = u.id
+        WHERE u.namedb = ?`,
+        [username]
+      );
+
+      if (rows.length === 0) return null;
+
+      const row = rows[0];
+
+      return new UserProfile(
+        row.userId,
+        row.bio,
+        row.friends,
+        row.profile_pic ?? undefined,
+        row.partner ?? undefined
+      );
+    } catch (error) {
+      console.error("Error retrieving profile by username:", error);
+      throw new Error("Database error while fetching profile by username");
+    }
+  }
   async getProfileById(userId: number): Promise<UserProfile | null> {
     try {
       const [rows] = await promisePool.execute<RowDataPacket[]>(
@@ -30,16 +57,25 @@ export class MysqlProfileRepository implements ProfileRepository {
       throw new Error("Database error while fetching user profile");
     }
   }
-  async getSectionsByUserId(userId: number): Promise<UserProfileSection[]> {
+  async getSectionsByUserId(userId: number, onlyPublic = false): Promise<UserProfileSection[]> {
     try {
-      const [rows] = await promisePool.execute<RowDataPacket[]>(
-        "SELECT id, fk_users_id, title, description FROM users_profile_sections WHERE fk_users_id = ?",
-        [userId]
-      );
+      console.log("onlyPublic is", onlyPublic);
+      const baseQuery = "SELECT id, fk_users_id, title, description, is_public FROM users_profile_sections WHERE fk_users_id = ?";
+      const query = onlyPublic ? `${baseQuery} AND is_public = true` : baseQuery;
 
+      const [rows] = await promisePool.execute<RowDataPacket[]>(query, [userId]);
+
+      
       return rows.map(
-        (row) => new UserProfileSection(row.id, row.title, row.description)
-      );
+      (row) =>
+        new UserProfileSection(
+          row.id,
+          row.title,
+          row.description,
+          undefined, // files aren't asigned yet
+          row.is_public === 1
+        )
+    );
     } catch (error) {
       console.error("Error retrieving user section data from database:", error);
       throw new Error("Error retrieving user section data from database");

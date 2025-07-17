@@ -33,7 +33,9 @@ export const useProfileData = () => {
         await fetchData(
           `http://localhost:${
             import.meta.env.VITE_BACKENDPORT
-          }/api/getProfile/${username}`
+          }/api/getProfile/${username}`, {
+            credentials: 'include',
+          }
         );
       } catch (error) {
         console.error("Error fetching profile data:", error);

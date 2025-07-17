@@ -12,6 +12,7 @@ export interface UserProfileBasic {
   username: string;
   role: string;
   id: number;
+  isOwner: boolean;
   userProfileData: ProfileStats;
   userSectionData: BaseSection[];
 }
