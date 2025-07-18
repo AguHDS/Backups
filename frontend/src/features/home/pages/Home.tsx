@@ -53,7 +53,7 @@ export const Home = () => {
         <div className="px-2 mx-4">
           <FeatureCard
             title="Daily quests"
-            description="By doing daily quests you can gain exp and upgrade your account level, gaining benefits, like additional storage space"
+            description="By doing daily quests you can gain exp and upgrade your account level, gaining benefits and improvements"
             icon={<FiActivity />}
             details={{
               text: "Complete daily challenges to earn experience points. Level up your account to unlock additional storage space and premium features. Track your progress and compete with other users.",

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
 import { GetUserProfileUseCase } from "../../../application/useCases/GetUserProfileUseCase.js";
-import { CustomResponse } from "../.././../shared/dtos/index.js";
+import { GetProfileResponse } from "../.././../shared/dtos/index.js";
 import { MysqlFileRepository } from "../../../infraestructure/adapters/repositories/MysqlFileRepository.js";
 import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
 
@@ -29,7 +29,7 @@ export const getProfileController = async (req: Request, res: Response) => {
 
     const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(username, requesterId);
 
-    const response: CustomResponse = {
+    const response: GetProfileResponse = {
       username: name,
       role,
       id,
