@@ -8,8 +8,8 @@ interface SectionsContextType {
   setSectionsToDelete: React.Dispatch<React.SetStateAction<number[]>>;
   updateSection: (
     index: number,
-    field: "title" | "description",
-    value: string
+    field: "title" | "description" | "isPublic",
+    value: string | boolean
   ) => void;
   addSection: () => void;
   deleteSection: (sectionId: number) => void;
@@ -32,11 +32,12 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
 
   const updateSection = (
     index: number,
-    field: "title" | "description",
-    value: string
+    field: "title" | "description" | "isPublic",
+    value: string | boolean
   ) => {
     setSections((prev) => {
       const updated = [...prev];
+      // Check which field is being updated
       updated[index] = { ...updated[index], [field]: value };
       return updated;
     });
@@ -45,7 +46,7 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
   const addSection = () => {
     setSections((prev) => [
       ...prev,
-      { id: 0, title: "", description: "", files: [], isPublic: true }
+      { id: 0, title: "", description: "", files: [], isPublic: true },
     ]);
   };
 

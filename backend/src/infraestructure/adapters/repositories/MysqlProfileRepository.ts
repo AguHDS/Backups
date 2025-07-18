@@ -7,7 +7,7 @@ import {
 import { ProfileRepository } from "../../../domain/ports/repositories/ProfileRepository.js";
 
 export class MysqlProfileRepository implements ProfileRepository {
-    async getProfileByUsername(username: string): Promise<UserProfile | null> {
+  async getProfileByUsername(username: string): Promise<UserProfile | null> {
     try {
       // Needed to show public or private sections
       const [rows] = await promisePool.execute<RowDataPacket[]>(
@@ -57,25 +57,31 @@ export class MysqlProfileRepository implements ProfileRepository {
       throw new Error("Database error while fetching user profile");
     }
   }
-  async getSectionsByUserId(userId: number, onlyPublic = false): Promise<UserProfileSection[]> {
+  async getSectionsByUserId(
+    userId: number,
+    onlyPublic = false
+  ): Promise<UserProfileSection[]> {
     try {
-      console.log("onlyPublic is", onlyPublic);
-      const baseQuery = "SELECT id, fk_users_id, title, description, is_public FROM users_profile_sections WHERE fk_users_id = ?";
-      const query = onlyPublic ? `${baseQuery} AND is_public = true` : baseQuery;
+      const baseQuery =
+        "SELECT id, fk_users_id, title, description, is_public FROM users_profile_sections WHERE fk_users_id = ?";
+      const query = onlyPublic
+        ? `${baseQuery} AND is_public = true`
+        : baseQuery;
 
-      const [rows] = await promisePool.execute<RowDataPacket[]>(query, [userId]);
+      const [rows] = await promisePool.execute<RowDataPacket[]>(query, [
+        userId,
+      ]);
 
-      
       return rows.map(
-      (row) =>
-        new UserProfileSection(
-          row.id,
-          row.title,
-          row.description,
-          undefined, // files aren't asigned yet
-          row.is_public === 1
-        )
-    );
+        (row) =>
+          new UserProfileSection(
+            row.id,
+            row.title,
+            row.description,
+            undefined, // files aren't asigned yet
+            row.is_public === 1
+          )
+      );
     } catch (error) {
       console.error("Error retrieving user section data from database:", error);
       throw new Error("Error retrieving user section data from database");
@@ -115,15 +121,22 @@ export class MysqlProfileRepository implements ProfileRepository {
 
       if (result.affectedRows === 0)
         throw new Error("No profile found for the given user ID");
-      
+
       // Update sections array
       for (const section of sections) {
-        // If id is greater than 0, it means it's an existing section
         if (section.id && section.id > 0) {
-          // Update existing section
+          // Update existing section including visibility
           const [updateResult] = await connection.execute<ResultSetHeader>(
-            "UPDATE users_profile_sections SET title = ?, description = ? WHERE id = ? AND fk_users_id = ?",
-            [section.title, section.description, section.id, userId]
+            `UPDATE users_profile_sections
+           SET title = ?, description = ?, is_public = ?
+           WHERE id = ? AND fk_users_id = ?`,
+            [
+              section.title,
+              section.description,
+              section.isPublic,
+              section.id,
+              userId,
+            ]
           );
 
           if (updateResult.affectedRows === 0)
@@ -131,13 +144,14 @@ export class MysqlProfileRepository implements ProfileRepository {
               `Section with id ${section.id} not found for user ${userId}`
             );
         } else {
-          // Insert new section because section.id === 0
+          // Insert new section including visibility
           const [insertResult] = await connection.execute<ResultSetHeader>(
-            "INSERT INTO users_profile_sections (fk_users_id, title, description) VALUES (?, ?, ?)",
-            [userId, section.title, section.description]
+            `INSERT INTO users_profile_sections (fk_users_id, title, description, is_public)
+           VALUES (?, ?, ?, ?)`,
+            [userId, section.title, section.description, section.isPublic]
           );
 
-          // Save temporal and real id inserted in db
+          // Save temporal and real id inserted in db (if id is 0 it means it's a new section)
           newlyCreatedSections.push({
             tempId: section.id, // id that came from frontend (always 0)
             newId: insertResult.insertId, // real id signed by db
