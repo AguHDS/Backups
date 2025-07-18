@@ -139,10 +139,7 @@ export class MysqlProfileRepository implements ProfileRepository {
             ]
           );
 
-          if (updateResult.affectedRows === 0)
-            throw new Error(
-              `Section with id ${section.id} not found for user ${userId}`
-            );
+          if (updateResult.affectedRows === 0) throw new Error(`Section with id ${section.id} not found for user ${userId}`);
         } else {
           // Insert new section including visibility
           const [insertResult] = await connection.execute<ResultSetHeader>(

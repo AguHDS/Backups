@@ -13,14 +13,14 @@ const getUserProfileUseCase = new GetUserProfileUseCase(
 /** Respond with user profile data, comparing its id from users table with fk_users_id in users_profile table */
 export const getProfileController = async (req: Request, res: Response) => {
   try {
-    const { username } = req.params;
     // Profile owner's data
+    const { username } = req.params;
     const { name, role, id, email } = req.baseUserData;
 
     let requesterId: number | null = null;
 
     try {
-      // Get logged user's id for profile ownership validation
+      // Get active user's id for profile ownership validation
       const decoded = decodeRefreshToken(req);
       requesterId = Number(decoded.id);
     } catch (err) {

@@ -1,2 +1,2 @@
 export { FeatureCard } from "./FeatureCard";
-export { Header } from "./Header";
+export { IntroOverview } from "./IntroOverview";

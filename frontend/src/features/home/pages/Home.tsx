@@ -1,5 +1,5 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
-import { FeatureCard, Header } from "../components";
+import { FeatureCard, IntroOverview } from "../components";
 import { useModalContext, Modal, Button, TermsAndConditions } from "../../../shared";
 import { images } from "../../../assets/images";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ export const Home = () => {
       <Modal>
         <TermsAndConditions onUnderstand={handleRedirect} />
       </Modal>
-      <Header />
+      <IntroOverview />
       <div className="text-center mb-16 flex justify-center">
         <Button
           label="Get Started"

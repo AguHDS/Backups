@@ -31,7 +31,7 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
       }
 
       const data: UserDataWithToken = await response.json();
-      console.log("accessToken renovado:", data);
+      console.log("[dev log]: accessToken renovado:", data);
 
       return data;
     } catch (error) {

@@ -6,8 +6,8 @@ export class GetUserProfileUseCase {
   constructor(private readonly profileRepo: ProfileRepository, private readonly fileRepo: FileRepository) {}
 
   /**
-   * Retrieves a complete user profile by username, including sections.
-   * Returns all sections if the requester is the owner, otherwise only public ones.
+   * Retrieves a complete user profile by username, including sections
+   * @returns All sections if the requester is the owner, otherwise only public ones
    */
   async executeByUsername(username: string, requesterId: number | string): Promise<{ profile: UserProfile; isOwner: boolean }> {
     const profile = await this.profileRepo.getProfileByUsername(username);
