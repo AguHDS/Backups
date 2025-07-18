@@ -1,23 +1,18 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useFetch, useModalContext } from "../../../shared";
-import { RootState } from "../../../app/redux/store";
 import { UserProfileWithFiles } from "../types/profileData"
 
 export const useProfileData = () => {
-  const { isAuthenticated, userData } = useSelector(
-    (state: RootState) => state.auth
-  );
   const { username } = useParams();
   const navigate = useNavigate();
   const { data, status, isLoading, error, fetchData } = useFetch<UserProfileWithFiles>();
   const { setIsModalOpen } = useModalContext();
 
-  //check if the profile belongs to the authenticated user
-  const isOwnProfile = !!(isAuthenticated && data && userData.id === data.id);
-
-  //spinner (loading)
+  // Check if the profile belongs to the authenticated user
+  const isOwnProfile = data?.isOwner ?? false;
+  
+  // Spinner (loading)
   useEffect(() => {
     setIsModalOpen(isLoading);
 
@@ -26,7 +21,7 @@ export const useProfileData = () => {
     };
   }, [isLoading, setIsModalOpen]);
 
-  //get profile data from database
+  // Get profile data from database
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
