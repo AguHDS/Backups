@@ -12,7 +12,7 @@ export interface ProfileSection {
   isPublic: boolean;
 }
 
-export interface CustomResponse {
+export interface GetProfileResponse {
   username: string;
   role: string;
   id: number | string;

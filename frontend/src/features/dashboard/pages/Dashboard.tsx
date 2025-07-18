@@ -1,5 +1,4 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
-import { Button } from "../../../shared";
 import { StatCard, AboutCard } from "../components";
 
 export const Dashboard = () => {
@@ -9,7 +8,7 @@ export const Dashboard = () => {
         {/* About section */}
         <div className="bg-[#232d42] p-8 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-200 mb-10 flex justify-center">
-            What is this app used for?
+            Welcome!
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <AboutCard
@@ -36,13 +35,6 @@ export const Dashboard = () => {
               }
             />
           </div>
-        </div>
-        {/* Main Button - will change this section eventually, a button here makes no sense */}
-        <div className="flex justify-center">
-          <Button
-            label="Backup Files"
-            className="backupsBtn my-10 flex items-center text-white px-8 py-4 rounded-lg shadow-md"
-          />
         </div>
         {/* Statics section */}
         <div className="flex flex-wrap gap-6 justify-between">
