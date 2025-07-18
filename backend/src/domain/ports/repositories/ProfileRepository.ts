@@ -10,10 +10,10 @@ export interface ProfileRepository {
   getProfileByUsername(username: string): Promise<UserProfile | null>;
 
   /**
-   * Retrieves profile sections associated with a user.
+   * Retrieves profile sections associated with a user
    *
-   * @param userId - The ID of the user.
-   * @param onlyPublic - If true, only returns public sections.
+   * @param userId - The ID of the user
+   * @param onlyPublic - If true, only returns public sections
    */
   getSectionsByUserId(userId: number | string, onlyPublic?: boolean): Promise<UserProfileSection[]>;
 
