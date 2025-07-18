@@ -13,7 +13,12 @@ interface Props {
 }
 
 // Right content (bio, titles, sections)
-export const ProfileRightContent = ({ updateData, errorMessages, status, onBioChange }: Props) => {
+export const ProfileRightContent = ({
+  updateData,
+  errorMessages,
+  status,
+  onBioChange,
+}: Props) => {
   const { isEditing } = useProfile();
   const { sections, updateSection, deleteSection, addSection } = useSections();
 
@@ -38,16 +43,31 @@ export const ProfileRightContent = ({ updateData, errorMessages, status, onBioCh
                 <div className="mb-6">
                   {isEditing ? (
                     <>
-                      <div className="flex justify-center">
-                        <input
-                          type="text"
-                          className="w-[25%] text-center bg-[#272727] text-white text-[18px] p-2 mb-4 border border-[#444]"
-                          placeholder="Title for Section"
-                          value={section.title}
-                          onChange={(e) =>
-                            updateSection(index, "title", e.target.value)
-                          }
-                        />
+                      <div className="relative w-full mb-4">
+                        <div className="absolute top-0 right-0">
+                          <select
+                            className="bg-[#272727] text-white border border-[#444] px-3 py-2 rounded text-sm"
+                            value={section.isPublic ? "public" : "private"}
+                            onChange={(e) =>
+                              updateSection(index, "isPublic", e.target.value === "public")
+                            }
+                          >
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                          </select>
+                        </div>
+
+                        <div className="flex justify-center">
+                          <input
+                            type="text"
+                            className="w-[25%] text-center bg-[#272727] text-white text-[18px] p-2 border border-[#444]"
+                            placeholder="Title for Section"
+                            value={section.title}
+                            onChange={(e) =>
+                              updateSection(index, "title", e.target.value)
+                            }
+                          />
+                        </div>
                       </div>
                     </>
                   ) : (
