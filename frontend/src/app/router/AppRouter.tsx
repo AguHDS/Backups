@@ -7,7 +7,7 @@ import {
   SignUp,
   SignIn,  
   PersistLogin, 
-  ProtectedRoute,
+  RequireAuth,
   Home,
   Profile,
   AccountSettings,
@@ -30,7 +30,7 @@ const { isAuthenticated } = useSelector((state: RootState) => state.auth);
         <Route path="/profile/:username" element={<Profile />} /> {/* :username is assigned in AccountOptions component */}
 
         {/* private routes */}
-        <Route element={<ProtectedRoute />}>
+        <Route element={<RequireAuth />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/account-settings" element={<AccountSettings />} />
         </Route>

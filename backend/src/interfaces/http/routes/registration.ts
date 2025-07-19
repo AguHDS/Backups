@@ -1,5 +1,5 @@
 import express from "express";
-import validatorRegistration from "../middlewares/validators/registrationValidator.js";
+import validatorRegistration from "../middlewares/express-validator/registrationValidator.js";
 import { registerController } from "../controllers/registrationController.js";
 import { registrationMiddleware } from "../middlewares/registrationMiddleware.js";
 
