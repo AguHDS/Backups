@@ -1,5 +1,5 @@
 import express from "express";
-import validatorUpdateProfile from "../middlewares/validators/updateProfileFields.js";
+import validatorUpdateProfile from "../middlewares/express-validator/updateProfileFields.js";
 import { updateBioAndSectionsController } from "../controllers/updateBioAndSectionsController.js";
 import { verifyUserOwnsProfile } from "../middlewares/verifyUserOwnsProfile.js";
 

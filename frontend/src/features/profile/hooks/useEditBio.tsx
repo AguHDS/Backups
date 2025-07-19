@@ -6,7 +6,7 @@ allowing updates and reset to original value when editing is cancelled */
 export const useEditBio = (bio: string) => {
   const [updateData, setUpdateData] = useState({ bio });
 
-  const reset = (originalBio: string) => {
+  const resetBio = (originalBio: string) => {
     setUpdateData({ bio: originalBio });
   };
 
@@ -17,6 +17,6 @@ export const useEditBio = (bio: string) => {
   return {
     updateData,
     setUpdateData,
-    reset,
+    resetBio,
   };
 };

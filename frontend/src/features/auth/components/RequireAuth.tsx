@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../../app/redux/store";
 import { getNewRefreshToken } from "../../../app/redux/features/authThunks";
 
-//check if the expiration time is valid
+// Check if the expiration time is valid
 const isAccessTokenValid = (accessToken: string | null): boolean => {
   if (!accessToken) return false;
 
@@ -20,8 +20,8 @@ const isAccessTokenValid = (accessToken: string | null): boolean => {
   }
 };
 
-//component that checks if the user is authenticated to access private routes
-export const ProtectedRoute = () => {
+// Check if user is authenticated to access private routes
+export const RequireAuth = () => {
   const { accessToken, isAuthenticated } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ export const ProtectedRoute = () => {
             navigate("/sign-in");
           }
         } catch (error) {
-          console.error("Error veryfing authentication (ProtectedRoute catch) :", error);
+          console.error("Error veryfing authentication (RequireAuth catch) :", error);
         }
       }
     };
