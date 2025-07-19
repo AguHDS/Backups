@@ -21,32 +21,35 @@ export const useFetch = <Data = unknown>(): FetchResponse<Data> => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = useCallback(async (url: string, options?: RequestInit) => {
-    setIsLoading(true);
-    setStatus(null);
-    setError(null);
-    setData(null);
+  setIsLoading(true);
+  setStatus(null);
+  setError(null);
+  setData(null);
 
-    try {
-      const response = await fetch(url, options);
+  try {
+    const response = await fetch(url, options);
+    const statusCode = response.status;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setStatus(response.status);
-        setError(typeof errorData === "string" ? errorData : JSON.stringify(errorData));
-        return;
-      }
+    const result = await response.json();
 
-      const result = await response.json();
-      setStatus(response.status);
-      setData(result);      
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error (useFetch)";
-      console.error(errorMessage);
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
+    setStatus(statusCode);
+
+    if (!response.ok) {
+      setError(result?.message || "Unexpected error");
+      setData(result);
+      return;
     }
-  }, []);
+
+    setData(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error (useFetch)";
+    console.error("❌ Fetch exception:", errorMessage);
+    setError(errorMessage);
+  } finally {
+    setIsLoading(false);
+  }
+}, []);
+
 
   return {
     data,

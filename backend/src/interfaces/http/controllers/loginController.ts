@@ -27,7 +27,7 @@ export const loginController = async (req: Request, res: Response) => {
 
     res.status(200).json({ accessToken, userData });
   }catch(err) {
-    console.error("Error in loginController");
+    console.error("Login failed");
     res.status(401).json({ message: err instanceof Error ? err.message : "Unauthorized" });
   }
 }

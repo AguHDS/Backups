@@ -31,7 +31,7 @@ export const registerController = async (req: Request, res: Response) => {
           return;
         case "USERNAME_AND_EMAIL_TAKEN":
           console.error(`User ${user} and ${email} already exist`);
-          res.status(409).json({ message: "Name and email are already taken" });
+          res.status(409).json({ message: "Username and email are already taken" });
           return;
       }
     }

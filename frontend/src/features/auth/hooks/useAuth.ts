@@ -4,15 +4,11 @@ import { useFetch } from "../../../shared";
 import { useDispatch } from "react-redux";
 import { login } from "../../../app/redux/features/authSlice";
 import { UserDataWithToken } from "../../../types";
-import {
-  getFormData,
-  validateLoginFields,
-  validateLoginStatus,
-} from "../helpers";
+import { getFormData, validateLoginFields } from "../helpers";
 
 type AuthResponse = UserDataWithToken | { message: string };
 
-interface AuthInput  {
+interface AuthInput {
   user: string;
   password: string;
   email: string;
@@ -20,9 +16,8 @@ interface AuthInput  {
 }
 
 /**
- * Validator for login and registration
-*/
-
+ * Custom hook for login and registration handling
+ */
 export const useAuth = () => {
   const [input, setInput] = useState<AuthInput>({
     user: "",
@@ -30,71 +25,61 @@ export const useAuth = () => {
     email: "",
     inputsWarnings: [],
   });
+
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const { data, status, fetchData } = useFetch<AuthResponse>();
+  const { data, status, error, fetchData } = useFetch<AuthResponse>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  //frontend input validation
+  // Local frontend validation
   const errorCheck = (): boolean => {
-    const warnings = validateLoginFields(
-      input.user,
-      input.password,
-      input.email
-    );
-    setInput((prev) => ({
-      ...prev,
-      inputsWarnings: [...warnings],
-    }));
-
+    const warnings = validateLoginFields(input.user, input.password, input.email);
+    setInput((prev) => ({ ...prev, inputsWarnings: warnings }));
     return warnings.length === 0;
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //if there is not input errors, consume /registration or /login
-    if (errorCheck()) {
-      const formData = getFormData(e.currentTarget);
+    if (!errorCheck()) return;
 
-      let endpoint = "";
-      if ("email" in formData) {
-        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/registration`;
-      } else {
-        endpoint = `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/login`;
-      }
+    const formData = getFormData(e.currentTarget);
+    const isRegistering = "email" in formData;
 
-      fetchData(endpoint, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-    }
+    const endpoint = isRegistering
+      ? `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/registration`
+      : `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/login`;
+
+    fetchData(endpoint, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
   };
 
   useEffect(() => {
     if (data === null || status === null) return;
 
-    const { message, redirect } = validateLoginStatus(status);
-    setStatusMessage(message);
+    // Show backend error (or null if successful)
+    setStatusMessage(error);
 
-    //if user registers, redirect without login
+    // Registration success
     if ("message" in data && data.message === "Registration completed") {
       navigate("/");
       window.location.reload();
       return;
     }
 
-    //if user logs in, setup redux global state and redirect
-    dispatch(login(data));
-    if (redirect) {
+    // Login success
+    if ("accessToken" in data && "userData" in data) {
+      dispatch(login(data));
       navigate("/dashboard");
       window.location.reload();
     }
-  }, [data, status, navigate, dispatch]);
+  }, [data, status, error, navigate, dispatch]);
 
   return {
     input,
@@ -103,4 +88,4 @@ export const useAuth = () => {
     statusMessage,
     handleSubmit,
   };
-}
+};
