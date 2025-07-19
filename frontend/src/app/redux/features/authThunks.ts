@@ -7,7 +7,7 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `http://localhost:3001/api/refreshToken`,
+        `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/refreshToken`,
         {
           method: "POST",
           credentials: "include",
@@ -15,7 +15,7 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
       );
       if (!response.ok) {
         const errorText = await response.text();
-        console.log("Couldn't get a new accessToken:", errorText);
+        console.error("Unauthorized");
 
         //no refresh token in cookies
         if (response.status === 401) {

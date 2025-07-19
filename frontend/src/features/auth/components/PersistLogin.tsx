@@ -29,7 +29,7 @@ export const PersistLogin = () => {
           await dispatch(getNewRefreshToken()).unwrap();
         }
       } catch (error) {
-        console.error("Failed trying to verify refresh token:", error);
+        console.error(`Error: ${error} (Unauthorized)`);
       } finally {
         setIsLoading(false);
       }
