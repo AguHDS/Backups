@@ -14,7 +14,7 @@ export interface ProfileSection {
 
 export interface GetProfileResponse {
   username: string;
-  role: string;
+  role: "user" | "admin"
   id: number | string;
   email: string;
   isOwner: boolean;

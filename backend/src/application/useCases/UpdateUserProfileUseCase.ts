@@ -18,10 +18,15 @@ export class UpdateUserProfileUseCase {
   async execute(
     bio: string,
     sections: UserProfileSection[],
-    userId: string | number
+    userId: string | number,
+    role: "user" | "admin"
   ): Promise<{ newlyCreatedSections: { tempId: number; newId: number }[] }> {
     if (!bio || typeof bio !== "string") throw new Error("INVALID_BIO");
     if (!Array.isArray(sections)) throw new Error("INVALID_SECTIONS");
+
+    if (role === "user" && sections.length > 1) {
+      throw new Error("LIMIT_EXCEEDED_FOR_USER_ROLE");
+    }
 
     return await this.profileRepo.updateProfile(bio, sections, userId);
   }

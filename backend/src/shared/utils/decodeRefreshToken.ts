@@ -3,8 +3,8 @@ import { verifyToken } from "../../infraestructure/auth/handleJwt.js";
 import { JwtPayload } from "jsonwebtoken";
 
 export interface DecodedRefresh extends JwtPayload {
-  name?: string;
-  role?: string;
+  name: string;
+  role: "user" | "admin";
   id: string;
   iat: number;
   exp: number;
