@@ -5,7 +5,9 @@ import { validationResult, matchedData } from "express-validator";
 export const loginMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400).json({ errors: errors.array() });
+    const messages = errors.array().map((e) => e.msg).join(", ");
+    console.error("Validation errors found:", messages);
+    res.status(400).json({ message: messages });
     return;
   }
 

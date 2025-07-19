@@ -5,8 +5,9 @@ import { validationResult, matchedData } from "express-validator";
 export const registrationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("Validation errors found", errors.array());
-    res.status(400).json({ errors: errors.array() });
+    const messages = errors.array().map((e) => e.msg).join(", ");
+    console.error("Validation errors found:", messages);
+    res.status(400).json({ message: messages });
     return;
   }
 

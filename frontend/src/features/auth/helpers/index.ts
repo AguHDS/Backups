@@ -1,2 +1,2 @@
 export { getFormData } from "./formData";
-export { validateLoginFields, validateLoginStatus } from "./validateSign&Login";
+export { validateLoginFields } from "./validateSign&Login";
