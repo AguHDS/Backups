@@ -23,8 +23,14 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { status, setStatus } = useFetch();
   const { username } = useParams();
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const { updateData, setUpdateData, reset } = useEditBio(data.userProfileData.bio);
-  const { sections, setSections, sectionsToDelete, setSectionsToDelete, updateSectionIds } = useSections();
+  const { updateData, setUpdateData, resetBio } = useEditBio(data.userProfileData.bio);
+  const {
+    sections,
+    setSections,
+    sectionsToDelete,
+    setSectionsToDelete,
+    updateSectionIds,
+  } = useSections();
 
   useEffect(() => {
     if (isEditing) {
@@ -57,7 +63,10 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     try {
       // Delete sections
       if (sectionsToDelete.length > 0) {
-        const res = await fetch(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/deleteSections/${username}`,
+        const res = await fetch(
+          `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/api/deleteSections/${username}`,
           {
             method: "DELETE",
             credentials: "include",
@@ -70,7 +79,10 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
 
       // Delete marked files
       if (filesToDelete.length > 0) {
-        const res = await fetch(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/deleteFiles/${username}`,
+        const res = await fetch(
+          `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/api/deleteFiles/${username}`,
           {
             method: "DELETE",
             credentials: "include",
@@ -84,7 +96,9 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       // Prevent deleted marked files to render after saving
       setSections((prevSections) =>
         prevSections.map((section) => {
-          const filesForSection = filesToDelete.find((f) => f.sectionId === section.id);
+          const filesForSection = filesToDelete.find(
+            (f) => f.sectionId === section.id
+          );
           if (!filesForSection) return section;
 
           return {
@@ -97,7 +111,10 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       );
 
       // Update bio and sections
-      const response = await fetch(`http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/updateBioAndSections/${username}`,
+      const response = await fetch(
+        `http://localhost:${
+          import.meta.env.VITE_BACKENDPORT
+        }/api/updateBioAndSections/${username}`,
         {
           method: "POST",
           credentials: "include",
@@ -109,8 +126,12 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         }
       );
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update profile");
+      }
+
       // Update temporal ids with the real ones to prevent backend errors
-      if (!response.ok) throw new Error("Failed to update profile");
       const data = await response.json();
       if (data.newlyCreatedSections) {
         updateSectionIds(data.newlyCreatedSections);
@@ -127,7 +148,10 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   };
 
   const handleCancel = () => {
-    reset(data.userProfileData.bio);
+    resetBio(data.userProfileData.bio);
+    setSections(data.userSectionData);
+    setSectionsToDelete([]);
+    clearFilesToDelete();
     setErrorMessages([]);
     setStatus(null);
     setIsEditing(false);

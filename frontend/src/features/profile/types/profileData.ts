@@ -10,7 +10,7 @@ export interface ProfileStats {
 // profile data without files
 export interface UserProfileBasic {
   username: string;
-  role: string;
+  role: "user" | "admin";
   id: number;
   isOwner: boolean;
   userProfileData: ProfileStats;

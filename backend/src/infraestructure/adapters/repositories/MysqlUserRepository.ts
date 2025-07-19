@@ -90,7 +90,7 @@ export class MysqlUserRepository implements UserRepository {
     name: string,
     email: string,
     pass: string,
-    role: string
+    role: "user" | "admin"
   ): Promise<void> {
     const connection = await promisePool.getConnection();
     try {

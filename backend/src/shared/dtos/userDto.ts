@@ -5,7 +5,7 @@ export interface UserId {
 export interface BaseUserData {
   id: number | string;
   name: string;
-  role: string;
+  role: "user" | "admin";
   email?: string;
 }
 
@@ -27,7 +27,7 @@ export interface UserSessionWithTokens {
   userData: {
     name: string;
     email?: string; //email is not necessary for refresh token renewal, but is included for convenience
-    role: string;
+    role: "user" | "admin";
     id: number;
   };
 }

@@ -6,6 +6,6 @@ export class UserProfileSection {
     public title: string,
     public description: string,
     public files?: UserFile[],
-   public isPublic: boolean = true
+    public isPublic: boolean = true
   ) {}
 }

@@ -1,15 +1,11 @@
 export interface UserSessionData {
   name: string;
   email: string;
-  role: string;
+  role: "user" | "admin";
   id: number;
 }
 
 export interface UserDataWithToken {
   accessToken: string;
-  userData: {
-    name: string;
-    role: string;
-    id: number;
-  };
+  userData: UserSessionData;
 }

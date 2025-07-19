@@ -19,10 +19,10 @@ If the refresh token is invalid:
 ### 3. During active session:
 
 When accessing protected routes:
-- ProtectedRoute component validates the access token.
+- RequireAuth component validates the access token.
 - If expired, it automatically requests new tokens.
 - Uses the valid refresh token cookie to maintain the session.
-- if the refresh token is expired, ProtectedRoute component redirects to sign-in
+- if the refresh token is expired, RequireAuth component redirects to sign-in
 
 This setup ensures:
 - Secure token storage (refresh token in httpOnly cookie).

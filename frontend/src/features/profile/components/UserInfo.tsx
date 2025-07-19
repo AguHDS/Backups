@@ -1,6 +1,6 @@
 interface Props {
   userStatus: string;
-  role: string;
+  role: "user" | "admin";
   friendsCounter: number;
   partner: string;
 }

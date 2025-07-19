@@ -26,6 +26,12 @@ export const ProfileRightContent = ({
     <div className="w-full mr-[5px] ml-[5px] scrollbar-container flex flex-col h-full min-h-[80vh]">
       <div className="bg-[#272727] w-full max-w-full flex-1">
         <div className="p-4 space-y-4 scrollbar-container flex-1">
+           <FeedbackMessages
+            input={errorMessages}
+            status={status}
+            message={errorMessages.length === 0 ? "Operation completed" : null}
+          />
+          
           <Bio bio={updateData.bio} onBioChange={onBioChange} />
 
           <div className="h-1"></div>
@@ -49,7 +55,11 @@ export const ProfileRightContent = ({
                             className="bg-[#272727] text-white border border-[#444] px-3 py-2 rounded text-sm"
                             value={section.isPublic ? "public" : "private"}
                             onChange={(e) =>
-                              updateSection(index, "isPublic", e.target.value === "public")
+                              updateSection(
+                                index,
+                                "isPublic",
+                                e.target.value === "public"
+                              )
                             }
                           >
                             <option value="public">Public</option>
@@ -87,15 +97,6 @@ export const ProfileRightContent = ({
                           updateSection(index, "description", e.target.value)
                         }
                       ></textarea>
-                      <FeedbackMessages
-                        input={errorMessages}
-                        status={status}
-                        message={
-                          errorMessages.length === 0
-                            ? "Operation completed"
-                            : null
-                        }
-                      />
                       <SectionFileManager sectionIndex={index} />
                       <Button
                         onClick={() => deleteSection(section.id)}
