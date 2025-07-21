@@ -1,10 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { UserDataWithToken } from "../../../types";
+import { resetJustRefreshed } from "./authSlice";
 
-export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { rejectValue: string | number }>(
+export const getNewRefreshToken = createAsyncThunk<
+  UserDataWithToken,
+  void,
+  { rejectValue: string | number; state: RootState; dispatch: any }
+>(
   "auth/refreshToken",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await fetch(
         `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/refreshToken`,
@@ -17,12 +22,10 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
         const errorText = await response.text();
         console.error("Unauthorized");
 
-        //no refresh token in cookies
         if (response.status === 401) {
           return rejectWithValue(401);
         }
 
-        //invalid or expired refresh token
         if (response.status === 403) {
           return rejectWithValue("Invalid or expired refresh token");
         }
@@ -31,11 +34,14 @@ export const getNewRefreshToken = createAsyncThunk<UserDataWithToken, void, { re
       }
 
       const data: UserDataWithToken = await response.json();
-      console.log("[dev log]: accessToken renovado:", data);
+
+      setTimeout(() => {
+        dispatch(resetJustRefreshed());
+      }, 20_000);
 
       return data;
     } catch (error) {
-      if(error instanceof Error) {
+      if (error instanceof Error) {
         console.error("Token authentication failed: ", error.message);
         return rejectWithValue(error.message);
       } else {
@@ -67,11 +73,9 @@ export const logout = createAsyncThunk<{ message: string }, void, { state: RootS
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.log("Couldn't end session for user:", errorText);
         throw new Error(errorText);
       }
 
-      console.log("Session ended");
       return { message: "Session ended" };
     } catch (error) {
       if(error instanceof Error) {

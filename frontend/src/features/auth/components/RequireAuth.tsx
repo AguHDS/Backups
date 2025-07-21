@@ -1,18 +1,15 @@
-import { useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 import { RootState, AppDispatch } from "../../../app/redux/store";
 import { getNewRefreshToken } from "../../../app/redux/features/authThunks";
 
-// Check if the expiration time is valid
 const isAccessTokenValid = (accessToken: string | null): boolean => {
   if (!accessToken) return false;
-
   try {
     const { exp } = jwtDecode(accessToken);
     const now = Math.floor(Date.now() / 1000);
-
     return exp !== undefined ? exp > now : false;
   } catch (error) {
     console.error("Error decoding token:", error);
@@ -20,24 +17,23 @@ const isAccessTokenValid = (accessToken: string | null): boolean => {
   }
 };
 
-// Check if user is authenticated to access private routes
 export const RequireAuth = () => {
-  const { accessToken, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { accessToken, isAuthenticated, hasJustRefreshed } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   useEffect(() => {
     const verifyAuthentication = async () => {
-      if (!isAuthenticated || !isAccessTokenValid(accessToken)) {
+      const tokenExpired = !isAccessTokenValid(accessToken);
+
+      if (!isAuthenticated || tokenExpired) {
+        if (hasJustRefreshed) return;
+
         try {
-          console.log("[Protected Route] trying to get new tokens");
-          const response = await dispatch(getNewRefreshToken());
-          if (response.payload === 401) {
-            console.error("[Protected Route] No refresh token in cookies. Redirecting to login");
-            navigate("/sign-in");
-          }
-        } catch (error) {
-          console.error("Error veryfing authentication (RequireAuth catch) :", error);
+          await dispatch(getNewRefreshToken()).unwrap();
+        } catch (err) {
+          console.error("Error during token rotation:", err);
+          navigate("/sign-in");
         }
       }
     };

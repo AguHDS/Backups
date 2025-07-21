@@ -5,7 +5,7 @@ import { tokenSign } from "../../../infraestructure/auth/handleJwt.js";
 import { RefreshTokenUseCase } from "../../../application/useCases/RefreshTokenUseCase.js";
 import { MysqlUserRepository, MysqlRefreshTokenRepository } from "../../../infraestructure/adapters/repositories/index.js";
 
-//dependency injection
+// Dependency injection
 const refreshTokenUseCase = new RefreshTokenUseCase(
   new MysqlUserRepository(),
   new MysqlRefreshTokenRepository(),
@@ -17,27 +17,23 @@ export const refreshTokenController = async (req: Request, res: Response) => {
   const connection = await promisePool.getConnection();
 
   try {
-    //begin a new transaction to ensure all db transactions are atomic to cancel them if one fails
     await connection.beginTransaction();
 
-    //alias destructuring and use id from previous refreshToken
-    const { id: userId } = req.refreshTokenId;
+    const { id } = req.refreshTokenId;
+    const { accessToken, refreshToken, userData, timeRemaining, refreshTokenRotated } = await refreshTokenUseCase.execute(id, connection);
 
-    const { accessToken, refreshToken, userData, timeRemaining } = await refreshTokenUseCase.execute(userId, connection);
-
-    //commit the db transaction once all steps succeed
     await connection.commit();
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: config.nodeEnv === "production", //use secure cookies only in production
-      maxAge: timeRemaining * 1000, //set calculated time remaining
-      sameSite: config.nodeEnv === "production" ? "none" : "lax", //adjust for cross-site requests in production
-    });
+    if (refreshTokenRotated) {
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: config.nodeEnv === "production", // Secure cookies only in production
+        maxAge: timeRemaining * 1000,
+        sameSite: config.nodeEnv === "production" ? "none" : "lax",
+      });
+    }
 
-    console.log("sending new access token and updating refresh token");
-
-    res.status(200).json({ accessToken, userData });
+    res.status(200).json({ accessToken, userData, refreshTokenRotated });
   } catch (error) {
     await connection.rollback();
 

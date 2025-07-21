@@ -8,7 +8,11 @@ export class RefreshTokenUseCase {
   constructor(
     private readonly userRepo: UserRepository,
     private readonly refreshRepo: RefreshTokenRepository,
-    private readonly tokenSign: (user: JwtUserData, type: "access" | "refresh", expiresIn: jwt.SignOptions["expiresIn"]) => Promise<string>
+    private readonly tokenSign: (
+      user: JwtUserData,
+      type: "access" | "refresh",
+      expiresIn: jwt.SignOptions["expiresIn"]
+    ) => Promise<string>
   ) {}
 
   /**
@@ -16,9 +20,8 @@ export class RefreshTokenUseCase {
    *
    * @param connection - A MySQL connection
    * @returns An object containing new tokens, user data, and time remaining for the refresh token
-   */
-
-  async execute(userId: number | string, connection: Connection): Promise<UserSessionWithTokens & { timeRemaining: number }> {
+  */
+  async execute(userId: number | string,connection: Connection): Promise<UserSessionWithTokens & { timeRemaining: number; refreshTokenRotated: boolean; }> {
     const user = await this.userRepo.findById(userId, connection);
     if (!user) throw new Error("USER_NOT_FOUND");
 
@@ -28,27 +31,47 @@ export class RefreshTokenUseCase {
       role: user.role,
     };
 
-    const accessToken = await this.tokenSign(jwtPayload, "access", "30s");
+    const accessToken = await this.tokenSign(jwtPayload, "access", "15m");
+    console.log(`[REFRESH] Access token generated for user ${user.id}`);
 
-    const refreshExpiresAt = await this.refreshRepo.getExpirationTime(user.id, connection);
+    const refreshExpiresAt = await this.refreshRepo.getExpirationTime(user.id,connection);
+    const lastRotatedAt = await this.refreshRepo.getLastRotatedAt(user.id,connection);
 
-    if (!refreshExpiresAt) throw new Error("REFRESH_TOKEN_NOT_FOUND");
+    if (!refreshExpiresAt || !lastRotatedAt) throw new Error("REFRESH_TOKEN_NOT_FOUND");
 
     const timeRemaining = Math.floor((refreshExpiresAt.getTime() - Date.now()) / 1000);
+    const secondsSinceRotation = Math.floor((Date.now() - lastRotatedAt.getTime()) / 1000);
 
     if (timeRemaining <= 0) throw new Error("REFRESH_TOKEN_EXPIRED");
 
-    //with the calculated time remaining, create a new refresh token
-    const refreshToken = await this.tokenSign(jwtPayload, "refresh", `${timeRemaining}s`);
+    // Cooldown for refresh token rotation
+    const ROTATION_COOLDOWN_SECONDS = 20;
+    const shouldRotateRefresh = secondsSinceRotation > ROTATION_COOLDOWN_SECONDS;
 
-    await this.refreshRepo.updateRefreshTokenFromDB(refreshToken, user.id, connection);
+    if (shouldRotateRefresh) {
+      const refreshToken = await this.tokenSign(jwtPayload, "refresh", `${timeRemaining}s`);
+      await this.refreshRepo.updateRefreshTokenWithRotation(refreshToken, user.id, connection);
 
-    return {
-      accessToken,
-      refreshToken,
-      userData: jwtPayload,
-      timeRemaining,
-    };
+      console.log(`[Backend] Token rotation completed for user ${user.id}`);
+
+      return {
+        accessToken,
+        refreshToken,
+        userData: jwtPayload,
+        timeRemaining,
+        refreshTokenRotated: true,
+      };
+    } else {
+      console.log(`[Backend] Only access token renewed for user ${user.id} (cooldown)`);
+
+      return {
+        accessToken,
+        refreshToken: "",
+        userData: jwtPayload,
+        timeRemaining,
+        refreshTokenRotated: false,
+      };
+    }
   }
 
   async hasRefreshInDB(userId: number): Promise<boolean> {

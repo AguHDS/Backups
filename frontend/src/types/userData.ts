@@ -8,4 +8,5 @@ export interface UserSessionData {
 export interface UserDataWithToken {
   accessToken: string;
   userData: UserSessionData;
+  refreshTokenRotated: boolean;
 }
