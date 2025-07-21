@@ -60,26 +60,26 @@ export const useAuth = () => {
     });
   };
 
-  useEffect(() => {
+ useEffect(() => {
+  const handleAuth = async () => {
     if (data === null || status === null) return;
 
-    // Show backend error (or null if successful)
     setStatusMessage(error);
 
-    // Registration success
     if ("message" in data && data.message === "Registration completed") {
       navigate("/");
-      window.location.reload();
       return;
     }
 
-    // Login success
     if ("accessToken" in data && "userData" in data) {
-      dispatch(login(data));
+      await dispatch(login(data)); //cada vez que se hace f5 se reinicia el refresh y deberia hacero solo cuando se renueva el access token
       navigate("/dashboard");
-      window.location.reload();
     }
-  }, [data, status, error, navigate, dispatch]);
+  };
+
+  handleAuth();
+}, [data, status, error, navigate, dispatch]);
+
 
   return {
     input,

@@ -2,6 +2,7 @@ import { UserRepository } from "../../domain/ports/repositories/UserRepository.j
 import { JwtUserData, UserSessionWithTokens } from "../../shared/dtos/index.js";
 import { tokenSign } from "../../infraestructure/auth/handleJwt.js";
 import { RefreshTokenRepository } from "../../domain/ports/repositories/RefreshTokenRepository.js";
+import bcrypt from "bcrypt";
 
 export class LoginUserUseCase {
   constructor(
@@ -30,14 +31,16 @@ export class LoginUserUseCase {
       id: user.id,
     };
 
-    const accessToken = await tokenSign(jwtPayload, "access", "30s");
-    const refreshToken = await tokenSign(jwtPayload, "refresh", "1m");
+    // Tokens para pruebas: access 10s, refresh 20s
+    const accessToken = await tokenSign(jwtPayload, "access", "15m");
+    const refreshToken = await tokenSign(jwtPayload, "refresh", "30d");
 
-    //set expiration date for refresh token to 65 seconds from now (1hr seconds for testing)
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+
     const expiresAt = new Date();
-    expiresAt.setSeconds(expiresAt.getSeconds() + 3600);
+    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
-    await this.saveRefreshToken.saveRefreshToDB(user.id, refreshToken, expiresAt);
+    await this.saveRefreshToken.saveRefreshToDB(user.id, hashedRefreshToken, expiresAt);
 
     return {
       accessToken,

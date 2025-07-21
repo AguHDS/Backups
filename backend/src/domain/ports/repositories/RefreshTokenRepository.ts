@@ -1,8 +1,5 @@
-import { Connection, ResultSetHeader } from "mysql2/promise";
+import { Connection } from "mysql2/promise";
 
-/**
- * Interface for managing refresh tokens in the database
- */
 export interface RefreshTokenRepository {
   /**
    * Stores a new refresh token in the database
@@ -10,16 +7,16 @@ export interface RefreshTokenRepository {
    * @param userId - ID of the user the token is associated with
    * @param token - The refresh token string
    * @param expiresAt - The expiration date and time of the token
-   */
+  */
   saveRefreshToDB(userId: number, token: string, expiresAt: Date): Promise<void>;
 
   /**
-   * Verifies whether the given refresh token exists and is still valid for the specified user
+   * Verifies whether the given refresh token exists and is valid for the specified user
    *
    * @param refreshToken - The token to verify
    * @param userId - The user ID associated with the token (foreign key to users table)
    * @returns A promise that resolves to true if the token is valid, false otherwise
-   */
+  */
   findValidToken(refreshToken: string, userId: string): Promise<boolean>;
 
   /**
@@ -28,22 +25,41 @@ export interface RefreshTokenRepository {
    * @param userId - The ID of the user
    * @param connection - A MySQL connection
    * @returns A promise that resolves with a expiration date, or null if no token exists
-   */
+  */
   getExpirationTime(userId: number, connection: Connection): Promise<Date | null>;
 
   /**
-   * Updates the refresh token stored in the database for a given user
+   * Retrieves the date and time when the refresh token was last rotated
    *
-   * @param refreshToken - The new refresh token to store
    * @param userId - The ID of the user
    * @param connection - A MySQL connection
-   * @returns A promise that resolves to the result of the SQL update operation
-   */
-  updateRefreshTokenFromDB(refreshToken: string, userId: number, connection: Connection): Promise<ResultSetHeader>;
+   * @returns A promise that resolves with the last rotation date, or null if no token exists
+  */
+  getLastRotatedAt(userId: number, connection: Connection): Promise<Date | null>;
 
-  /** Check if user has a refresh token in the database */
+  /**
+ * Updates the stored refresh token and sets a new rotation timestamp
+ *
+ * @param refreshToken - The new refresh token string to store (will be hashed)
+ * @param userId - The ID of the user associated with the token
+ * @param connection - A MySQL connection
+ * @returns A promise that resolves when the update is complete
+ */
+  updateRefreshTokenWithRotation(refreshToken: string, userId: number, connection: Connection): Promise<void>
+
+  /**
+   * Checks if a refresh token exists for the specified user
+   *
+   * @param userId - The ID of the user
+   * @returns A promise that resolves to true if a token exists, false otherwise
+  */
   searchRefreshToken(userId: number): Promise<boolean>;
 
-  /** Delete a user's refresh token from database */
+  /**
+   * Deletes the refresh token associated with the specified user from the database
+   *
+   * @param userId - The ID of the user
+   * @returns A promise that resolves when the token is deleted
+  */
   deleteRefreshFromDB(userId: number): Promise<void>;
 }

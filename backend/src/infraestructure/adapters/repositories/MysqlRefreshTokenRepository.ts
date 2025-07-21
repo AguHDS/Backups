@@ -1,9 +1,14 @@
 import promisePool from "../../../db/database.js";
 import { RefreshTokenRepository } from "../../../domain/ports/repositories/RefreshTokenRepository.js";
 import { RowDataPacket, Connection, ResultSetHeader } from "mysql2/promise";
+import bcrypt from "bcrypt";
 
 export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
-  async saveRefreshToDB(userId: number,token: string,expiresAt: Date): Promise<void> {
+  async saveRefreshToDB(
+    userId: number,
+    token: string,
+    expiresAt: Date
+  ): Promise<void> {
     try {
       //delete any existing refresh token for this user
       const [existingToken] = await promisePool.execute<RowDataPacket[]>(
@@ -29,20 +34,22 @@ export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
   }
 
   async findValidToken(refreshToken: string, userId: string): Promise<boolean> {
-    try {
-      const [results] = await promisePool.execute<RowDataPacket[]>(
-        "SELECT token, user_id, expires_at FROM refresh_tokens WHERE token = ? AND user_id = ? AND expires_at > NOW()",
-        [refreshToken, userId]
-      );
+    const [results] = await promisePool.execute<RowDataPacket[]>(
+      "SELECT token, expires_at FROM refresh_tokens WHERE user_id = ? AND expires_at > NOW()",
+      [userId]
+    );
 
-      return results.length > 0;
-    } catch (error) {
-      console.error("Error finding valid refresh token in database:", error);
-      throw error;
-    }
+    if (results.length === 0) return false;
+
+    const storedHashedToken = results[0].token;
+
+    return await bcrypt.compare(refreshToken, storedHashedToken);
   }
 
-  async getExpirationTime(userId: number, connection: Connection): Promise<Date | null> {
+  async getExpirationTime(
+    userId: number,
+    connection: Connection
+  ): Promise<Date | null> {
     try {
       const [results] = await connection.execute<RowDataPacket[]>(
         "SELECT expires_at FROM refresh_tokens WHERE user_id = ?",
@@ -58,22 +65,30 @@ export class MysqlRefreshTokenRepository implements RefreshTokenRepository {
     }
   }
 
-  async updateRefreshTokenFromDB(refreshToken: string, userId: number, connection: Connection): Promise<ResultSetHeader> {
-    try {
-      const [results] = await connection.execute<ResultSetHeader>(
-        "UPDATE refresh_tokens SET token = ? WHERE user_id = ?",
-        [refreshToken, userId]
-      );
+  async getLastRotatedAt(
+    userId: number,
+    connection: Connection
+  ): Promise<Date | null> {
+    const [results] = await connection.execute<RowDataPacket[]>(
+      "SELECT last_rotated_at FROM refresh_tokens WHERE user_id = ?",
+      [userId]
+    );
 
-      if (results.affectedRows === 0) {
-        throw new Error("Failed to update refresh token");
-      }
+    if (results.length === 0) return null;
 
-      return results;
-    } catch (error) {
-      console.error("Error in updateRefreshTokenFromDB:", error);
-      throw error;
-    }
+    return results[0].last_rotated_at as Date;
+  }
+
+  async updateRefreshTokenWithRotation(
+    refreshToken: string,
+    userId: number,
+    connection: Connection
+  ): Promise<void> {
+    const hashedToken = await bcrypt.hash(refreshToken, 10);
+    await connection.execute(
+      "UPDATE refresh_tokens SET token = ?, last_rotated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
+      [hashedToken, userId]
+    );
   }
 
   async deleteRefreshFromDB(userId: number): Promise<void> {

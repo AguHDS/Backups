@@ -14,7 +14,7 @@ import jwt from "jsonwebtoken";
 export const tokenSign = async (
   user: JwtUserData,
   type: "access" | "refresh" = "access",
-  expiresIn: jwt.SignOptions["expiresIn"] = "5m"
+  expiresIn: jwt.SignOptions["expiresIn"] = "15m"
 ): Promise<string> => {
   try {
     const secret =

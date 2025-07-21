@@ -1,7 +1,10 @@
 import config from "../../../infraestructure/config/environmentVars.js";
 import { Request, Response } from "express";
 import { LoginUserUseCase } from "../../../application/useCases/LoginUserUseCase.js";
-import { MysqlRefreshTokenRepository, MysqlUserRepository } from "../../../infraestructure/adapters/repositories/index.js";
+import {
+  MysqlRefreshTokenRepository,
+  MysqlUserRepository,
+} from "../../../infraestructure/adapters/repositories/index.js";
 import { compare } from "../../../infraestructure/auth/handlePassword.js";
 
 //dependency injection
@@ -20,14 +23,16 @@ export const loginController = async (req: Request, res: Response) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: config.nodeEnv === "production", //use secure cookies only in production
-      maxAge: 60 * 60 * 1000, //1hr for testing
-      sameSite: config.nodeEnv === "production" ? "none" : "lax", //adjust for cross-site requests in production
+      secure: config.nodeEnv === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: config.nodeEnv === "production" ? "none" : "lax",
     });
-
+    
     res.status(200).json({ accessToken, userData });
-  }catch(err) {
+  } catch (err) {
     console.error("Login failed");
-    res.status(401).json({ message: err instanceof Error ? err.message : "Unauthorized" });
+    res
+      .status(401)
+      .json({ message: err instanceof Error ? err.message : "Unauthorized" });
   }
-}
+};
