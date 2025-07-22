@@ -1,10 +1,10 @@
 export interface CloudinaryUploadResponse {
   url: string;
   public_id: string;
+  sizeInBytes: number;
 }
 
-export interface FileUploader {
-  /** Upload to Cloudinary */
+export interface CloudinaryFileUploader {
   upload(
     files: Express.Multer.File[],
     sectionId: string,

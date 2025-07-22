@@ -7,7 +7,7 @@ import { CloudinaryRemover } from "../../infraestructure/adapters/externalServic
 export class DeleteSectionsUseCase {
   constructor(
     private readonly profileRepo: ProfileRepository,
-    private readonly fileRemover: CloudinaryRemover
+    private readonly fileCloudinaryRemover: CloudinaryRemover
   ) {}
 
   /**
@@ -20,13 +20,13 @@ export class DeleteSectionsUseCase {
     if (sectionIds.length === 0) throw new Error("NO_SECTIONS_ID");
 
     const publicIds = await this.profileRepo.getFilesBySectionId(sectionIds);
-    await this.fileRemover.deleteFilesByPublicIds(publicIds);
+    await this.fileCloudinaryRemover.deleteFilesByPublicIds(publicIds);
 
     const sectionInfos = await this.profileRepo.getSectionTitlesByIds(sectionIds);
 
     for (const { id, title } of sectionInfos) {
       const folderPath = `user_files/${username} (id: ${userId})/section: ${title} (id: ${id})`;
-      await this.fileRemover.deleteFolder(folderPath);
+      await this.fileCloudinaryRemover.deleteFolder(folderPath);
     }
 
     await this.profileRepo.deleteSectionsByIds(sectionIds, userId);

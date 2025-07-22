@@ -2,22 +2,33 @@ import { Request, Response } from "express";
 import { CloudinaryUploader } from "../../../infraestructure/adapters/externalServices/CloudinaryUploader.js";
 import { UploadFilesUseCase } from "../../../application/useCases/UploadFilesUseCase.js";
 import { MysqlFileRepository } from "../../../infraestructure/adapters/repositories/MysqlFileRepository.js";
+import { MysqlStorageUsageRepository } from "../../../infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
 
-/** Upload files to Cloudinary */
+/** Upload files to Cloudinary and database */
 export const uploadFilesController = async (req: Request, res: Response) => {
   try {
     const { name, id } = req.baseUserData;
     const sectionId = req.query.sectionId as string;
     const sectionTitle = req.query.sectionTitle as string;
+    const files = req.files as Express.Multer.File[];
 
     const uploader = new CloudinaryUploader(name, id);
     const fileRepo = new MysqlFileRepository();
-    const uploadUseCase = new UploadFilesUseCase(uploader, fileRepo);
+    const storageUsageRepo = new MysqlStorageUsageRepository();
 
-    const files = req.files as Express.Multer.File[];
-    const results = await uploadUseCase.execute(files, sectionId, sectionTitle);
+    const uploadUseCase = new UploadFilesUseCase(
+      uploader,
+      fileRepo,
+      storageUsageRepo
+    );
 
-    console.log("Files uploaded to Cloudinary successfully!");
+    const results = await uploadUseCase.execute(
+      files,
+      sectionId,
+      sectionTitle,
+      id
+    );
+
     res.status(200).json({ files: results });
   } catch (error) {
     console.error("Upload error:", error);
