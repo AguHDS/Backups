@@ -27,7 +27,10 @@ export const getProfileController = async (req: Request, res: Response) => {
       requesterId = null;
     }
 
-    const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(username, requesterId);
+    const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(
+      username,
+      requesterId
+    );
 
     const response: GetProfileResponse = {
       username: name,
@@ -51,6 +54,9 @@ export const getProfileController = async (req: Request, res: Response) => {
             section.files?.map((file) => ({
               url: file.url,
               publicId: file.publicId,
+              sectionId: section.id,
+              sizeInBytes: file.sizeInBytes,
+              userId: file.userId,
             })) ?? [],
         })) ?? [],
     };
