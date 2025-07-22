@@ -18,6 +18,9 @@ import {
   updateBioAndSections,
   uploadFiles,
   deleteSections,
+  storage,
+  getStorage,
+  dashboard,
   deleteFiles
 } from "./routes/index.js";
 
@@ -52,6 +55,9 @@ app.use("/api/getProfile", getProfile);
 app.use("/api/updateBioAndSections", updateBioAndSections);
 app.use("/api/uploadFiles", uploadFiles);
 app.use("/api/deleteSections", deleteSections);
+app.use("/api/storage", storage);
+app.use("/api/getStorage", getStorage);
+app.use("/api/dashboard-summary", dashboard);
 app.use("/api/deleteFiles", deleteFiles);
 
 //proxy to redirect all requests that aren't defined here to vite's port, so the client can handle them
