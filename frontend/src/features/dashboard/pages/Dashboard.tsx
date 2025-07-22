@@ -1,7 +1,12 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
 import { StatCard, AboutCard } from "../components";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../app/redux/store";
+import { formatBytes } from "../../../shared/utils/formatBytes";
 
 export const Dashboard = () => {
+const { used } = useSelector((state: RootState) => state.dashboard);
+
   return (
     <div className="flex items-center justify-center my-10 px-4">
       <div className="w-[70%] space-y-9">
@@ -30,7 +35,7 @@ export const Dashboard = () => {
                 <>
                   by doing daily quests you can gain exp and upgrade your
                   account level, gaining benefits, like for example additional
-                  <span className="text-green-400">storage space</span>
+                  <span className="text-green-400"> storage space</span>
                 </>
               }
             />
@@ -55,7 +60,7 @@ export const Dashboard = () => {
             title="My storage"
             icon={<FiFolder className="text-3xl text-green-600" />}
             subtitle="Max. storage available: 446mb"
-            value="224mb used"
+            value={formatBytes(used)}
             color="text-2xl text-green-600"
           >
             <div className="mt-4 bg-gray-200 h-2 rounded-full">

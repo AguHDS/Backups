@@ -3,7 +3,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logout } from "../../../app/redux/features/authThunks";
+import { logout } from "../../../app/redux/features/thunks/authThunk";
 import { AppDispatch } from "../../../app/redux/store";
 
 interface Props {

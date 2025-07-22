@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEditBio } from "../hooks/useEditBio";
-import { useProfile, useSections, useFileDeletion } from "../context";
+import { useProfile, useSections, useFileDeletion, useStorageRefresh } from "../context";
+import { useProfileData } from "../hooks/useProfileData";
 import { useFetch } from "../../../shared";
 import {
   Header,
@@ -14,15 +15,21 @@ import {
 import { images } from "../../../assets/images";
 import { FetchedUserProfile } from "../types/profileData";
 import { processErrorMessages } from "../../../shared/utils/errors";
+import { formatBytes } from "../../../shared/utils/formatBytes";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../app/redux/store";
+import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
 
 /* Handles profile editing logic for bio, sections, files
    and renders the full profile. This uses SectionsContext (in ProfileContextProvider) to access section states */
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { isEditing, setIsEditing } = useProfile();
+  const { flag: storageRefreshFlag, refresh: refreshStorage } = useStorageRefresh();
+  const { usedBytes } = useProfileData(storageRefreshFlag);
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
   const { status, setStatus } = useFetch();
   const { username } = useParams();
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { updateData, setUpdateData, resetBio } = useEditBio(data.userProfileData.bio);
   const {
     sections,
@@ -38,6 +45,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       setStatus(null);
     }
   }, [isEditing]);
+  const dispatch = useDispatch<AppDispatch>();
 
   const validateFields = () => {
     const errors: string[] = [];
@@ -140,6 +148,9 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       setSectionsToDelete([]);
       clearFilesToDelete();
       setIsEditing(false);
+      // refresh storage stats from profile and dashboard
+      refreshStorage();
+      await dispatch(getDashboardSummary());
     } catch (error) {
       console.error("Error saving profile:", error);
       const messages = processErrorMessages(error);
@@ -186,7 +197,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
               <Storage
                 maxSpace="6 GB"
                 available="2 GB"
-                used="3 GB"
+                used={formatBytes(usedBytes)}
                 shared="1 GB"
               />
             </div>

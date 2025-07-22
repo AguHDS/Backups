@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { RootState, AppDispatch } from "../../../app/redux/store";
-import { getNewRefreshToken } from "../../../app/redux/features/authThunks";
+import { getNewRefreshToken } from "../../../app/redux/features/thunks/authThunk";
 
 const isAccessTokenValid = (accessToken: string | null): boolean => {
   if (!accessToken) return false;
@@ -17,6 +17,7 @@ const isAccessTokenValid = (accessToken: string | null): boolean => {
   }
 };
 
+// Triggers every time a user access a protected route and the access token is invalid/expired
 export const RequireAuth = () => {
   const { accessToken, isAuthenticated, hasJustRefreshed } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();

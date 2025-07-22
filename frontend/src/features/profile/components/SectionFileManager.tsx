@@ -1,13 +1,15 @@
 import React, { useRef, useState } from "react";
 import { Button } from "../../../shared";
-import { useProfile } from "../context/ProfileContext";
+import { useProfile, useSections, useStorageRefresh } from "../context";
 import { useParams } from "react-router-dom";
-import { useSections } from "../context/SectionsContext";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
 import { processErrorMessages } from "../../../shared/utils/errors";
 import { FeedbackMessages } from "../../../shared";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../app/redux/store";
+import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
 
 interface Props {
   sectionIndex: number;
@@ -26,7 +28,9 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isEditing, isOwnProfile } = useProfile();
   const { sections, renderFilesOnResponse } = useSections();
+  const { refresh: refreshStorage } = useStorageRefresh();
   const { addFilesToDelete } = useFileDeletion();
+  const dispatch = useDispatch<AppDispatch>();
   const { username } = useParams();
 
   const section = sections[sectionIndex];
@@ -90,6 +94,9 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       setFiles([]);
       setReadyToUpload(false);
       setUploadErrors([]);
+      // refresh storage stats from profile and dashboard
+      refreshStorage();
+      await dispatch(getDashboardSummary());
     } catch (error) {
       const messages = processErrorMessages(error);
       console.error("Upload error:", messages);

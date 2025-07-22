@@ -2,7 +2,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFetch } from "../../../shared";
 import { useDispatch } from "react-redux";
-import { login } from "../../../app/redux/features/authSlice";
+import { login } from "../../../app/redux/features/slices/authSlice";
 import { UserDataWithToken } from "../../../types";
 import { getFormData, validateLoginFields } from "../helpers";
 
@@ -72,8 +72,8 @@ export const useAuth = () => {
     }
 
     if ("accessToken" in data && "userData" in data) {
-      await dispatch(login(data)); //cada vez que se hace f5 se reinicia el refresh y deberia hacero solo cuando se renueva el access token
-      navigate("/dashboard");
+      await dispatch(login(data));
+      window.location.href = "/dashboard";
     }
   };
 

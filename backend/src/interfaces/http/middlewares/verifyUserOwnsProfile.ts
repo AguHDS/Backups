@@ -9,7 +9,6 @@ import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js"
 export const verifyUserOwnsProfile = (attachUserDataToReq = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("Verifying user owns profile... (verifyUserOwnsProfile middleware)");
       const decoded = decodeRefreshToken(req);
       const { name, role, id } = decoded;
       const { username } = req.params;

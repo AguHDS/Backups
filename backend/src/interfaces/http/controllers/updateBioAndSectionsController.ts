@@ -33,8 +33,6 @@ export const updateBioAndSectionsController = async (
       role
     );
 
-    console.log("Profile updated successfully!");
-
     res
       .status(200)
       .json({ message: "Profile updated successfully!", newlyCreatedSections });

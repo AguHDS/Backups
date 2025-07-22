@@ -9,6 +9,8 @@ export interface UploadedFile {
   publicId: string;
   url: string;
   sectionId: string;
+  sizeInBytes: number;
+  userId: number | string;
 }
 
 export interface SectionWithFile extends BaseSection {
