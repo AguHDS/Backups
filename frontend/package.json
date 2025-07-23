@@ -7,7 +7,9 @@
     "dev": "npx tsc --noEmit && concurrently \"vite\" \"wait-on http://localhost:5173 && npx tailwindcss -i ./src/main.css -o ./public/output.css --watch\"",
     "build": "vite build",
     "start": "vite preview",
-    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -23,6 +25,9 @@
     "tailwind-scrollbar": "^3.1.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jwt-decode": "^2.2.1",
     "@types/node": "^22.10.10",
     "@types/react": "^18.3.18",
@@ -33,6 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitest/coverage-v8": "^3.2.4",
     "concurrently": "^9.1.0",
     "dotenv": "^16.4.7",
     "dotenv-cli": "^7.4.4",
@@ -40,9 +46,12 @@
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
+    "eslint-plugin-vitest": "^0.5.4",
+    "jsdom": "^26.1.0",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.7.3",
     "vite": "^6.3.4",
+    "vitest": "^3.2.4",
     "wait-on": "^8.0.1"
   }
 }
