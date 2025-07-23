@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useFetch } from "../../../shared";
 import { useDispatch } from "react-redux";
 import { login } from "../../../app/redux/features/slices/authSlice";
-import { UserDataWithToken } from "../../../types";
+import { UserDataWithToken } from "../../../shared/types";
 import { getFormData, validateLoginFields } from "../helpers";
 
 type AuthResponse = UserDataWithToken | { message: string };

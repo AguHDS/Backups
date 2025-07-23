@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { UserDataWithToken } from "../../../../types";
+import { UserDataWithToken } from "../../../../shared/types";
 import { resetJustRefreshed } from "../slices/authSlice";
 
 export const getNewRefreshToken = createAsyncThunk<
