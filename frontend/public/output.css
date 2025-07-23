@@ -115,6 +115,10 @@
   pointer-events: none !important;
 }
 
+.static {
+  position: static !important;
+}
+
 .fixed {
   position: fixed !important;
 }

@@ -14,7 +14,7 @@ export const Bio = ({ bio, onBioChange }: Props) => {
         <>
           <div className="w-full mt-6">
             <h2 className="text-green-500 text-lg ml-2 mb-1 font-medium">
-              Bio
+              Biography
             </h2>
           </div>
           <textarea
