@@ -47,9 +47,10 @@ credentials)
 ### how to run the project locally
 Open visual studio terminal, step on frontend and backend folder and run:
 * for dev: __npm run dev__ <- if there are typescript errors, this run will fail and ask you to fix them
+* for tests: __npm run test__ <- run tests (backend or frontend)
+* for coverage: __npx vitest run --coverage__ <- create coverage (frontend)
 * for build dist: __npm run build__ <- create dist folder ready for production
 * for production: __npm start__ <- run the project production dist files
-
 
 Notes:<br><br>
 . Vite changes its port when it's running on production or development, make sure to change the frontend port in the .env files

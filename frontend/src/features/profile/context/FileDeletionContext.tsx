@@ -5,7 +5,7 @@ export type PendingDeletion = {
   publicIds: string[];
 };
 
-type FilesToDeleteContextType = {
+export type FilesToDeleteContextType = {
   filesToDelete: PendingDeletion[];
   addFilesToDelete: (sectionId: number, ids: string[]) => void;
   clearFilesToDelete: () => void;

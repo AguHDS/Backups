@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-interface ProfileContextType {
+export interface ProfileContextType {
     isEditing: boolean;
     setIsEditing: (value: boolean)=> void;
     isOwnProfile: boolean;
