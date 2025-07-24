@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-interface StorageRefreshContextType {
+export interface StorageRefreshContextType {
   flag: boolean;
   refresh: () => void;
 }

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { SectionWithFile, UploadedFile } from "../types/section";
 
-interface SectionsContextType {
+export interface SectionsContextType {
   sections: SectionWithFile[];
   setSections: React.Dispatch<React.SetStateAction<SectionWithFile[]>>;
   sectionsToDelete: number[];
