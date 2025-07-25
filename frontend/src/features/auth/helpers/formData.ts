@@ -1,5 +1,3 @@
-/** Get all entries  of the form and return them as an object */
-
 interface LoginFormData {
   user: string;
   password: string;
@@ -11,6 +9,7 @@ interface RegistrationFormData extends LoginFormData {
 
 type LoginAndSignFormData = LoginFormData | RegistrationFormData;
 
+// Get all entries  of the form and return them as an object
 export const getFormData = (form: HTMLFormElement): LoginAndSignFormData => {
   const formEntries: Record<string, string | boolean> = {};
 
