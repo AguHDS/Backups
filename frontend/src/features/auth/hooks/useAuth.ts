@@ -60,17 +60,18 @@ export const useAuth = () => {
     });
   };
 
- useEffect(() => {
+ useEffect(() => { //falta agregar test de esta parte
   const handleAuth = async () => {
     if (data === null || status === null) return;
-
     setStatusMessage(error);
 
+    // when registration is successful
     if ("message" in data && data.message === "Registration completed") {
       navigate("/");
       return;
     }
 
+    // when login is successful
     if ("accessToken" in data && "userData" in data) {
       await dispatch(login(data));
       window.location.href = "/dashboard";

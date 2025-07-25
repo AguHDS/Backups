@@ -4,12 +4,12 @@ private or public. You'll need to be validated as a user to access.
 
 ## some of the features that this app will have:
 
-* Strong securiy flow for accounts, using OAuth with token rotation and encrypting. More info in AuthFlow-info.md
-* Storage for authenticated user (with mb/gb limit)
-* Configs to make your uploads public/private, so other users are able to see them
-* Level system that will grant benefits such like more space to store
-* Minimum social media interactions between users
-* User profiles
+* Strong securiy flow for accounts, using token rotation. More info in AuthFlow-info.md
+* Storage for authenticated users
+* Switch to make your uploads public/private
+* Level system that will grant benefits
+* Daily quests to gain more exp on your account
+* Partner system
 
 many features aren't avialable yet since i'm working on them
 
@@ -23,12 +23,13 @@ Profile section
 
 ## main tools used:
 
-* typescript
-* node/express
-* react
-* redux-toolkit
-* mysql
-* tailwind
+* Typescript
+* Node/express
+* React
+* Redux-toolkit
+* Mysql
+* Tailwind
+* Vitest for tests
 
 ### First setup
 * once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies
