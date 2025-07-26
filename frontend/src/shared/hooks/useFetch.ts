@@ -53,10 +53,10 @@ export const useFetch = <Data = unknown>(): FetchResponse<Data> => {
 
   return {
     data,
-    isLoading,
-    status,
-    error,
-    setStatus,
     fetchData,
+    status,
+    setStatus,
+    isLoading,
+    error,
   };
 }

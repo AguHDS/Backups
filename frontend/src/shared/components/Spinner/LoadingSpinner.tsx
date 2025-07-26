@@ -11,7 +11,7 @@ export const LoadingSpinner = ({ size = "md", color = "text-gray-700" }: Props) 
   };
 
   return (
-    <div className="fixed inset-0 bg-opacity-5 bg-black flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-opacity-5 bg-black flex items-center justify-center z-50" role="status">
       <div className={`${sizeClasses[size]} ${color} animate-spin`}>
         <svg
           className="w-full h-full"
