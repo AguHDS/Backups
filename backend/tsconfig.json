@@ -1,19 +1,27 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "target": "ES2020",
     "sourceMap": true,
-    "rootDir": "./src",
+    "rootDir": "./",
     "outDir": "./dist",
+    "types": ["jest", "node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     /* "module": "ESNext",
     "moduleResolution": "node",
     "target": "ES2022",
     "strict": true,
-    "esModuleInterop": true,
+    
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
+    
     "resolveJsonModule": true,
     "rootDir": "./",
     "outDir": "./dist",
@@ -24,6 +32,6 @@
     "noUnusedLocals": true,
     "allowImportingTsExtensions": true, */ /* disable this for production */
   },
-  "include": ["src"],
+  "include": ["src", "tests"], 
   "exclude": ["node_modules", "dist"]
 }
