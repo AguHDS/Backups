@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getNewRefreshToken, logout } from "../thunks/authThunk";
 import { UserSessionData } from "../../../../shared/types";
 
-interface AuthState {
+export interface AuthState {
   accessToken: string | null;
   userData: Partial<UserSessionData>;
   status: "idle" | "loading" | "succeeded" | "failed";

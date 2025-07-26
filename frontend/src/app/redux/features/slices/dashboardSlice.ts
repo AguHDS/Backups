@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getDashboardSummary } from "../thunks/dashboardThunk";
 
-interface DashboardState {
+export interface DashboardState {
   used: number;
   partner?: string | null;
   totalFiles?: number;
