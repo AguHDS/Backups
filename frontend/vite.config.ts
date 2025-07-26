@@ -21,10 +21,17 @@ export default defineConfig({
     setupFiles: "./src/test/setup.ts",
     exclude: [...configDefaults.exclude, "e2e/**"],
     coverage: {
-      provider: 'v8',
+      provider: "v8",
       reporter: ["text", "html"],
       all: true,
       include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/app/main.tsx",
+        "src/app/App.tsx",
+        "src/app/AppProvider.tsx",
+        "src/**/index.ts",
+        "src/**/types/**",
+      ],
     },
   },
 });
