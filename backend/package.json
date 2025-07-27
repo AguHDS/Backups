@@ -8,7 +8,7 @@
     "dev": "npx tsc --noEmit && tsx watch ./src/index.ts",
     "build": "rimraf ./dist && tsc",
     "start": "node ./dist/index.js",
-    "test": "jest"
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
@@ -43,23 +43,24 @@
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.0",
-    "@types/jest": "^30.0.0",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
     "concurrently": "^9.1.2",
     "esbuild": "^0.25.4",
     "eslint": "^9.18.0",
-    "jest": "^30.0.5",
     "jest-mock-req-res": "^1.0.2",
     "rimraf": "^6.0.1",
     "supertest": "^7.1.4",
-    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.4"
   }
 }
