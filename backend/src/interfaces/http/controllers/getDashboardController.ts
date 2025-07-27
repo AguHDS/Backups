@@ -1,4 +1,3 @@
-// src/interfaces/http/controllers/getDashboardSummaryController.ts
 import { Request, Response } from "express";
 import { DashboardSummaryUseCase } from "../../../application/useCases/DashboardSummaryUseCase.js";
 import { MysqlStorageUsageRepository } from "../../../infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
