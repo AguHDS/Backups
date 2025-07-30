@@ -45,7 +45,7 @@ describe("refreshTokenController", () => {
       .mockResolvedValue({
         accessToken: "access-token",
         refreshToken: "refresh-token",
-        userData: { id: 123, name: "John", role: "user" },
+        userData: { id: 123, name: "testUser", role: "user" },
         timeRemaining: 3600,
         refreshTokenRotated: true,
       });
@@ -70,7 +70,7 @@ describe("refreshTokenController", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       accessToken: "access-token",
-      userData: { id: 123, name: "John", role: "user" },
+      userData: { id: 123, name: "testUser", role: "user" },
       refreshTokenRotated: true,
     });
     expect(mockConnection.release).toHaveBeenCalled();
