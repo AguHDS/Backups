@@ -25,7 +25,7 @@ export class MysqlProfileRepository implements ProfileRepository {
       return new UserProfile(
         row.userId,
         row.bio,
-        row.friends,
+        row.friends as number, // todo: change to same name than UserProfile (/)
         row.profile_pic ?? undefined,
         row.partner ?? undefined
       );
@@ -161,7 +161,7 @@ export class MysqlProfileRepository implements ProfileRepository {
     } catch (error) {
       await connection.rollback();
       console.error("Error updating profile", error);
-      throw new Error("Error updating profile");
+      throw error;
     } finally {
       connection.release();
     }
