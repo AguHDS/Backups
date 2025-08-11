@@ -14,6 +14,7 @@ export default defineConfig({
       exclude: [
         "**/index.ts",
         "**/dtos/**",
+        "**/domain/ports/repositories/**",
         "**/shared/dtos/**",
         "**/services/**",
         "**/infraestructure/config/**",
