@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { refreshTokenMiddleware } from "@/interfaces/http/middlewares/refreshTokenMiddleware.js";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
-import { NextFunction, Request, Response } from "express";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 import {
   decodeRefreshToken as realDecodeRefreshToken,
   DecodedRefresh,
@@ -13,15 +12,20 @@ vi.mock("@/shared/utils/decodeRefreshToken.js", () => ({
 }));
 
 describe("refreshTokenMiddleware", () => {
-  let req: Request;
-  let res: Response;
-  let next: NextFunction;
+  let req: any;
+  let res: any;
+  let next: any;
+  let clearResMocks: () => void;
+
   const decodeRefreshToken = vi.mocked(realDecodeRefreshToken);
 
   beforeEach(() => {
-    req = mockRequest();
-    res = mockResponse();
-    next = vi.fn();
+    req = getMockReq();
+    const mocks = getMockRes();
+    res = mocks.res;
+    next = mocks.next;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
   });
 
   afterEach(() => {
@@ -52,17 +56,13 @@ describe("refreshTokenMiddleware", () => {
     };
 
     decodeRefreshToken.mockReturnValue(decoded);
-    vi.spyOn(
-      MysqlRefreshTokenRepository.prototype,
-      "findValidToken"
-    ).mockResolvedValue(false);
+    vi.spyOn(MysqlRefreshTokenRepository.prototype, "findValidToken").mockResolvedValue(false);
 
     await refreshTokenMiddleware(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({
-      message:
-        "Refresh token not found, doesn't match, it's invalid or expired",
+      message: "Refresh token not found, doesn't match, it's invalid or expired",
     });
     expect(next).not.toHaveBeenCalled();
   });
@@ -79,17 +79,15 @@ describe("refreshTokenMiddleware", () => {
     };
 
     decodeRefreshToken.mockReturnValue(decoded);
-    vi.spyOn(
-      MysqlRefreshTokenRepository.prototype,
-      "findValidToken"
-    ).mockResolvedValue(true);
+    vi.spyOn(MysqlRefreshTokenRepository.prototype, "findValidToken").mockResolvedValue(true);
 
     await refreshTokenMiddleware(req, res, next);
 
     expect(decodeRefreshToken).toHaveBeenCalledWith(req);
-    expect(
-      MysqlRefreshTokenRepository.prototype.findValidToken
-    ).toHaveBeenCalledWith("token-valido", "user123");
+    expect(MysqlRefreshTokenRepository.prototype.findValidToken).toHaveBeenCalledWith(
+      "token-valido",
+      "user123"
+    );
     expect(req.refreshTokenId).toEqual({ id: "user123" });
     expect(next).toHaveBeenCalled();
   });

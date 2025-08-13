@@ -1,21 +1,26 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
 import { deleteSectionsController } from "@/interfaces/http/controllers/deleteSectionsController.js";
 import { DeleteSectionsUseCase } from "@/application/useCases/DeleteSectionsUseCase.js";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 
 describe("deleteSectionsController", () => {
-  let req;
-  let res;
-  let fakeExecute;
+  let req: any;
+  let res: any;
+  let clearResMocks: () => void;
+  let fakeExecute: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    req = mockRequest({
+    req = getMockReq({
       params: { username: "agustin" },
       body: { sectionIds: [1, 2, 3] },
-      baseUserData: { id: 42, name: "agustin", role: "user" },
     });
+    // Propiedad extendida propia de tu Request
+    (req as any).baseUserData = { id: 42, name: "agustin", role: "user" };
 
-    res = mockResponse();
+    const mocks = getMockRes();
+    res = mocks.res;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
 
     fakeExecute = vi
       .spyOn(DeleteSectionsUseCase.prototype, "execute")
@@ -49,7 +54,7 @@ describe("deleteSectionsController", () => {
   });
 
   it("should respond 401 if the user ID is missing", async () => {
-    delete req.baseUserData.id;
+    delete (req as any).baseUserData.id;
 
     await deleteSectionsController(req, res);
 

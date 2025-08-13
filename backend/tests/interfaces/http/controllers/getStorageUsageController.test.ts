@@ -1,20 +1,23 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
-import { Request, Response } from "express";
 import { getStorageUsageController } from "@/interfaces/http/controllers/getStorageUsageController.js";
 import { GetStorageUsageUseCase } from "@/application/useCases/GetStorageUsageUseCase.js";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 
 describe("getStorageUsageController", () => {
-  let req: Request;
-  let res: Response;
+  let req: any;
+  let res: any;
+  let clearResMocks: () => void;
   let fakeExecute: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    req = mockRequest({
+    req = getMockReq({
       params: { username: "agustin" },
-    }) as unknown as Request;
+    });
 
-    res = mockResponse() as unknown as Response;
+    const mocks = getMockRes();
+    res = mocks.res;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
 
     fakeExecute = vi
       .spyOn(GetStorageUsageUseCase.prototype, "execute")
