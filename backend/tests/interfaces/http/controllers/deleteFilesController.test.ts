@@ -1,18 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { deleteFilesController } from "@/interfaces/http/controllers/deleteFilesController.js";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
-import { Request, Response } from "express";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 import { DeleteFilesFromSectionsUseCase } from "@/application/useCases/DeleteFilesFromSectionsUseCase.js";
-import { BaseUserData } from "@/shared/dtos/userDto.js";
 
 describe("deleteFilesController", () => {
-  let req: Request;
-  let res: Response;
+  let req: any;
+  let res: any;
   let fakeExecute: ReturnType<typeof vi.spyOn>;
+  let clearResMocks: () => void;
 
   beforeEach(() => {
-    req = mockRequest();
-    res = mockResponse();
+    req = getMockReq();
+    const mocks = getMockRes();
+    res = mocks.res;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
 
     req.body = [
       {
@@ -20,11 +22,11 @@ describe("deleteFilesController", () => {
         publicIds: ["file1", "file2"],
       },
     ];
-    req.baseUserData = {
+    (req as any).baseUserData = {
       id: 123,
       name: "agustin",
       role: "user",
-    } satisfies BaseUserData;
+    };
 
     fakeExecute = vi
       .spyOn(DeleteFilesFromSectionsUseCase.prototype, "execute")

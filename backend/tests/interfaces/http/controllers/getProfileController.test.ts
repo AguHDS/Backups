@@ -1,35 +1,39 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
-import { Request, Response } from "express";
 import { getProfileController } from "@/interfaces/http/controllers/getProfileController.js";
 import { decodeRefreshToken } from "@/shared/utils/decodeRefreshToken.js";
 import { GetUserProfileUseCase } from "@/application/useCases/GetUserProfileUseCase.js";
 import { UserProfile } from "@/domain/entities/UserProfile.js";
 import { UserProfileSection } from "@/domain/entities/UserProfileSection.js";
 import { UserFile } from "@/domain/entities/UserFile.js";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 
 vi.mock("@/shared/utils/decodeRefreshToken.js", () => ({
   decodeRefreshToken: vi.fn(),
 }));
 
 describe("getProfileController", () => {
-  let req: Request;
-  let res: Response;
+  let req: any;
+  let res: any;
+  let clearResMocks: () => void;
   let fakeExecute: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    req = mockRequest({
+    req = getMockReq({
       params: { username: "testUser" },
-      baseUserData: {
-        id: 123,
-        name: "Test",
-        email: "test@email.com",
-        role: "user",
-      },
       cookies: { refreshToken: "valid.token" },
-    }) as unknown as Request;
+    });
 
-    res = mockResponse() as unknown as Response;
+    (req as any).baseUserData = {
+      id: 123,
+      name: "Test",
+      email: "test@email.com",
+      role: "user",
+    };
+
+    const mocks = getMockRes();
+    res = mocks.res;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
 
     const file = new UserFile(
       "img123",
@@ -60,7 +64,7 @@ describe("getProfileController", () => {
       .spyOn(GetUserProfileUseCase.prototype, "executeByUsername")
       .mockResolvedValue({ isOwner: true, profile });
 
-    (decodeRefreshToken as ReturnType<typeof vi.fn>).mockReturnValue({
+    (decodeRefreshToken as any).mockReturnValue({
       id: "123",
       name: "Test",
       role: "user",
@@ -131,7 +135,7 @@ describe("getProfileController", () => {
   });
 
   it("should use requesterId = null if there is not refresh token", async () => {
-    (decodeRefreshToken as ReturnType<typeof vi.fn>).mockImplementation(() => {
+    (decodeRefreshToken as any).mockImplementation(() => {
       throw new Error("NO_REFRESH_TOKEN");
     });
 

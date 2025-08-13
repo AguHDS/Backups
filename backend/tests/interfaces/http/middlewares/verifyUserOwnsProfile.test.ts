@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { verifyUserOwnsProfile } from "@/interfaces/http/middlewares/verifyUserOwnsProfile.js";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
-import { Request, Response, NextFunction } from "express";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 import {
   decodeRefreshToken as realDecodeRefreshToken,
   DecodedRefresh,
@@ -12,9 +11,11 @@ vi.mock("@/shared/utils/decodeRefreshToken.js", () => ({
 }));
 
 describe("verifyUserOwnsProfile", () => {
-  let req: Request;
-  let res: Response;
-  let next: NextFunction;
+  let req: any;
+  let res: any;
+  let next: any;
+  let clearResMocks: () => void;
+
   const decodeRefreshToken = vi.mocked(realDecodeRefreshToken);
 
   const validDecoded: DecodedRefresh = {
@@ -26,9 +27,12 @@ describe("verifyUserOwnsProfile", () => {
   };
 
   beforeEach(() => {
-    req = mockRequest();
-    res = mockResponse();
-    next = vi.fn();
+    req = getMockReq();
+    const mocks = getMockRes();
+    res = mocks.res;
+    next = mocks.next;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
   });
 
   afterEach(() => {
@@ -36,7 +40,7 @@ describe("verifyUserOwnsProfile", () => {
   });
 
   it("should call next() when token is valid and username matches", async () => {
-    req.params.username = "agustin";
+    req.params = { username: "agustin" };
     decodeRefreshToken.mockReturnValue(validDecoded);
 
     const middleware = verifyUserOwnsProfile();
@@ -47,7 +51,7 @@ describe("verifyUserOwnsProfile", () => {
   });
 
   it("should throw 403 when token is valid but username not matches", async () => {
-    req.params.username = "otro_usuario";
+    req.params = { username: "otro_usuario" };
     decodeRefreshToken.mockReturnValue(validDecoded);
 
     const middleware = verifyUserOwnsProfile();
@@ -73,12 +77,12 @@ describe("verifyUserOwnsProfile", () => {
 
   it("should call next() when having right data", async () => {
     decodeRefreshToken.mockReturnValue(validDecoded);
-    req.params.username = "agustin";
+    req.params = { username: "agustin" };
 
     const middleware = verifyUserOwnsProfile(true);
     await middleware(req, res, next);
 
-    expect(req.baseUserData).toEqual({
+    expect((req as any).baseUserData).toEqual({
       name: "agustin",
       role: "user",
       id: "123",

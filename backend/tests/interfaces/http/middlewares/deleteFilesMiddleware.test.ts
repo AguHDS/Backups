@@ -1,17 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { deleteFilesMiddleware } from "@/interfaces/http/middlewares/deleteFilesMiddleware.js";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
-import { Request, Response, NextFunction } from "express";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 
 describe("deleteFilesMiddleware", () => {
-  let req: Request;
-  let res: Response;
-  let next: NextFunction;
+  let req: any;
+  let res: any;
+  let next: any;
+  let clearResMocks: () => void;
 
   beforeEach(() => {
-    req = mockRequest();
-    res = mockResponse();
-    next = vi.fn();
+    req = getMockReq();
+    const mocks = getMockRes();
+    res = mocks.res;
+    next = mocks.next;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
   });
 
   it("should call next() if payload is valid", () => {

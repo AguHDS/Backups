@@ -1,20 +1,23 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import { mockRequest, mockResponse } from "jest-mock-req-res";
 import { getProfileMiddleware } from "@/interfaces/http/middlewares/getProfileMiddleware.js";
 import { MysqlUserRepository } from "@/infraestructure/adapters/repositories/MysqlUserRepository.js";
 import { User } from "@/domain/entities/User.js";
-import { NextFunction } from "express";
+import { getMockReq, getMockRes } from "vitest-mock-express";
 
 describe("getProfileMiddleware", () => {
   let req: any;
   let res: any;
-  let next: NextFunction;
+  let next: any;
+  let clearResMocks: () => void;
   let fakeFindByUsername: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    req = mockRequest({ params: { username: "agustin" } });
-    res = mockResponse();
-    next = vi.fn();
+    req = getMockReq({ params: { username: "agustin" } });
+    const mocks = getMockRes();
+    res = mocks.res;
+    next = mocks.next;
+    clearResMocks = mocks.mockClear;
+    clearResMocks();
 
     fakeFindByUsername = vi
       .spyOn(MysqlUserRepository.prototype, "findByUsername")
