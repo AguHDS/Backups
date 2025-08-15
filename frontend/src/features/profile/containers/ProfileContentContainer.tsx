@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEditBio } from "../hooks/useEditBio";
-import { useProfile, useSections, useFileDeletion, useStorageRefresh } from "../context";
+import {
+  useProfile,
+  useSections,
+  useFileDeletion,
+  useStorageRefresh,
+} from "../context";
 import { useProfileData } from "../hooks/useProfileData";
 import { useFetch } from "../../../shared";
 import {
   Header,
   ActionsAndProfileImg,
-  Graph,
   UserInfo,
-  Storage,
+  StorageGraph,
   ProfileRightContent,
 } from "../components";
 import { images } from "../../../assets/images";
 import { FetchedUserProfile } from "../types/profileData";
 import { processErrorMessages } from "../../../shared/utils/errors";
-import { formatBytes } from "../../../shared/utils/formatBytes";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../app/redux/store";
 import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
@@ -25,12 +28,15 @@ import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboar
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { isEditing, setIsEditing } = useProfile();
-  const { flag: storageRefreshFlag, refresh: refreshStorage } = useStorageRefresh();
+  const { flag: storageRefreshFlag, refresh: refreshStorage } =
+    useStorageRefresh();
   const { usedBytes } = useProfileData(storageRefreshFlag);
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
   const { status, setStatus } = useFetch();
   const { username } = useParams();
-  const { updateData, setUpdateData, resetBio } = useEditBio(data.userProfileData.bio);
+  const { updateData, setUpdateData, resetBio } = useEditBio(
+    data.userProfileData.bio
+  );
   const {
     sections,
     setSections,
@@ -193,13 +199,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 partner={data.userProfileData.partner}
               />
               <h3 className="text-center my-5">Storage</h3>
-              <Graph graphTestImage={images.graph} />
-              <Storage
-                maxSpace="6 GB"
-                available="2 GB"
-                used={formatBytes(usedBytes)}
-                shared="1 GB"
-              />
+              <StorageGraph usedBytes={usedBytes} available="1GB" />
             </div>
             {/* Right Content */}
             <ProfileRightContent
