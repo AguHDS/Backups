@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useFetch, useModalContext } from "../../../shared";
 import { UserProfileWithFiles } from "../types/profileData";
 
+// Returns general profile data, sections and its related data, storage, and isOwnProfile flag
 export const useProfileData = (refreshTrigger?: boolean) => {
   const [usedBytes, setUsedBytes] = useState<number>(0);
   const { username } = useParams();

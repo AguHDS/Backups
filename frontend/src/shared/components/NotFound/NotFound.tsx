@@ -3,7 +3,7 @@ import { Button } from "../../";
 
 export function NotFound() {
   return (
-    <div className="fixed inset-0 bg-[#] backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-[#374151] rounded-xl shadow-2xl w-full max-w-md transform transition-all">
         <div className="p-6">
           <h2 className="text-2xl text-gray-300 text-center mb-3">
