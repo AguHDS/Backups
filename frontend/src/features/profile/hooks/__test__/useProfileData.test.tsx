@@ -63,7 +63,7 @@ describe("useProfileData", () => {
             userProfileData: {
               bio: "Test bio",
               partner: "none",
-              friends: 0,
+              level: 0,
             },
             userSectionData: [],
           },
@@ -131,7 +131,7 @@ describe("useProfileData", () => {
             userProfileData: {
               bio: "Test bio",
               partner: "none",
-              friends: 0,
+              level: 0,
             },
             userSectionData: [],
           },

@@ -4,7 +4,7 @@ export interface ProfileStats {
   bio: string;
   profile_pic?: string;
   partner: string;
-  friends: number;
+  level: number;
 }
 
 // profile data without files

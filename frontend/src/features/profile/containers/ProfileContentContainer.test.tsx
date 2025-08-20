@@ -64,7 +64,7 @@ describe("ProfileContentContainer", () => {
     isOwner: true,
     userProfileData: {
       bio: "",
-      friends: 0,
+      level: 0,
       partner: "-",
     },
     userSectionData: initialSections,

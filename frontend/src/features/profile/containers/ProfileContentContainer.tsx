@@ -195,7 +195,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
               <UserInfo
                 userStatus="offline"
                 role={data.role}
-                friendsCounter={data.userProfileData.friends}
+                friendsCounter={data.userProfileData.level}
                 partner={data.userProfileData.partner}
               />
               <h3 className="text-center my-5">Storage</h3>

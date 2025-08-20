@@ -19,7 +19,7 @@ export const UserInfo = ({ userStatus, role, friendsCounter, partner }: Props) =
         </span>
       </li>
       <li className="bg-[#121212] p-1 flex justify-between">
-        <span>friends</span>
+        <span>level</span>
         <span>{friendsCounter}</span>
       </li>
       <li className="bg-[#121212] p-1 flex justify-between">

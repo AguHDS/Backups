@@ -8,7 +8,7 @@ type Props = {
   available?: string; // not implemented yet
 };
 
-const COLOR_USED = "#ffc533";
+const color = "#ffc533";
 
 export const StorageGraph = memo(function StorageGraph({
   usedBytes,
@@ -37,7 +37,7 @@ export const StorageGraph = memo(function StorageGraph({
               stroke="none"
               isAnimationActive
             >
-              <Cell key="used" fill={COLOR_USED} />
+              <Cell key="used" fill={color} />
               <Label
                 value="Storage"
                 position="center"
@@ -52,15 +52,15 @@ export const StorageGraph = memo(function StorageGraph({
 
       <div className="mt-2 flex flex-col w-full text-[12px]">
         <div className="flex my-[2px] justify-between items-center w-full">
-          <span className="px-1">total used</span>
-          <span className="px-1" style={{ color: COLOR_USED }}>
-            {formatBytes(safeUsed)}
+          <span className="px-1">total available</span>
+          <span className="px-1" style={{ color: "gray" }}>
+            {available}
           </span>
         </div>
         <div className="flex my-[2px] justify-between items-center w-full">
-          <span className="px-1">total available</span>
-          <span className="px-1" style={{ color: "brown" }}>
-            {available}
+          <span className="px-1">total used</span>
+          <span className="px-1" style={{ color: color }}>
+            {formatBytes(safeUsed)}
           </span>
         </div>
       </div>
