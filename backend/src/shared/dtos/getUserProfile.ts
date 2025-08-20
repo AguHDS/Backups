@@ -2,7 +2,7 @@ interface ProfileContent {
   bio: string;
   profile_pic?: string;
   partner: string;
-  friends: number;
+  level: number;
 }
 
 export interface ProfileSection {

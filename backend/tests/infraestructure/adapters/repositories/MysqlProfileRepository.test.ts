@@ -40,7 +40,7 @@ describe("MysqlProfileRepository", () => {
           bio: "Bio",
           profile_pic: "pic.jpg",
           partner: "Test",
-          friends: 42,
+          level: 42,
         },
       ],
     ]);
@@ -55,7 +55,7 @@ describe("MysqlProfileRepository", () => {
     expect(result?.bio).toBe("Bio");
     expect(result?.profilePic).toBe("pic.jpg");
     expect(result?.partner).toBe("Test");
-    expect(result?.friendsCount).toBe(42);
+    expect(result?.level).toBe(42);
   });
 
   it("should return null when no user is found by username", async () => {
@@ -73,7 +73,7 @@ describe("MysqlProfileRepository", () => {
           bio: "Bio text",
           profile_pic: null,
           partner: null,
-          friends: 3,
+          level: 3,
         },
       ],
     ]);
@@ -84,7 +84,7 @@ describe("MysqlProfileRepository", () => {
     expect(result?.bio).toBe("Bio text");
     expect(result?.profilePic).toBeUndefined();
     expect(result?.partner).toBeUndefined();
-    expect(result?.friendsCount).toBe(3);
+    expect(result?.level).toBe(3);
   });
 
   it("should return array of UserProfileSection with isPublic correctly mapped", async () => {

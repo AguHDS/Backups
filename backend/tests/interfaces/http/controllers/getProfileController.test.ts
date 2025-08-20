@@ -92,7 +92,7 @@ describe("getProfileController", () => {
         bio: "This is my profile",
         profile_pic: "profile-pic.jpg",
         partner: "Sofia",
-        friends: 10,
+        level: 10,
       },
       userSectionData: [
         {

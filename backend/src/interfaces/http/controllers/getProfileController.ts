@@ -42,7 +42,7 @@ export const getProfileController = async (req: Request, res: Response) => {
         bio: profile.bio,
         profile_pic: profile.profilePic,
         partner: profile.partner,
-        friends: profile.friendsCount,
+        level: profile.level,
       },
       userSectionData:
         profile.sections?.map((section) => ({

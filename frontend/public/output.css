@@ -115,10 +115,6 @@
   pointer-events: none !important;
 }
 
-.pointer-events-auto {
-  pointer-events: auto !important;
-}
-
 .visible {
   visibility: visible !important;
 }
@@ -141,10 +137,6 @@
 
 .inset-0 {
   inset: 0px !important;
-}
-
-.inset-2 {
-  inset: 0.5rem !important;
 }
 
 .left-2 {
@@ -189,10 +181,6 @@
 
 .z-50 {
   z-index: 50 !important;
-}
-
-.z-0 {
-  z-index: 0 !important;
 }
 
 .m-0 {
@@ -481,10 +469,6 @@
   height: 100vh !important;
 }
 
-.h-0 {
-  height: 0px !important;
-}
-
 .max-h-\[350px\] {
   max-height: 350px !important;
 }
@@ -643,10 +627,6 @@
   cursor: pointer !important;
 }
 
-.cursor-not-allowed {
-  cursor: not-allowed !important;
-}
-
 .select-none {
   -webkit-user-select: none !important;
      -moz-user-select: none !important;
@@ -691,10 +671,6 @@
 
 .items-center {
   align-items: center !important;
-}
-
-.justify-normal {
-  justify-content: normal !important;
 }
 
 .justify-end {
@@ -1022,27 +998,6 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
 }
 
-.bg-black\/40 {
-  background-color: rgb(0 0 0 / 0.4) !important;
-}
-
-.bg-black\/60 {
-  background-color: rgb(0 0 0 / 0.6) !important;
-}
-
-.bg-black\/20 {
-  background-color: rgb(0 0 0 / 0.2) !important;
-}
-
-.bg-gray-800 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity)) !important;
-}
-
-.bg-black\/70 {
-  background-color: rgb(0 0 0 / 0.7) !important;
-}
-
 .bg-opacity-30 {
   --tw-bg-opacity: 0.3 !important;
 }
@@ -1053,10 +1008,6 @@
 
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5 !important;
-}
-
-.bg-opacity-70 {
-  --tw-bg-opacity: 0.7 !important;
 }
 
 .object-contain {
@@ -1407,10 +1358,6 @@
   opacity: 0.75 !important;
 }
 
-.opacity-50 {
-  opacity: 0.5 !important;
-}
-
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;
@@ -1466,16 +1413,6 @@
 .ring-blue-500 {
   --tw-ring-opacity: 1 !important;
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity)) !important;
-}
-
-.brightness-75 {
-  --tw-brightness: brightness(.75) !important;
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow) !important;
-}
-
-.grayscale {
-  --tw-grayscale: grayscale(100%) !important;
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow) !important;
 }
 
 .filter {
