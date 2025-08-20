@@ -8,6 +8,7 @@
 # ignore some personal folders and files
 practica/
 to-do.txt
+todo.txt
 /backend/db/tables_code.txt
 z_comm.txt
 z_aprender.txt

@@ -25,7 +25,7 @@ export class MysqlProfileRepository implements ProfileRepository {
       return new UserProfile(
         row.userId,
         row.bio,
-        row.level as number, // todo: change to same name than UserProfile (/)
+        row.level,
         row.profile_pic ?? undefined,
         row.partner ?? undefined
       );

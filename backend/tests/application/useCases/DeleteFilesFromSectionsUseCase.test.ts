@@ -23,6 +23,9 @@ describe("DeleteFilesFromSectionsUseCase", () => {
     getUsedStorage: vi.fn(),
     addToUsedStorage: vi.fn(),
     decreaseFromUsedStorage: vi.fn(),
+    getMaxStorage: vi.fn(),
+    getRemainingStorage: vi.fn(),
+    tryReserveStorage: vi.fn(),
   };
 
   const useCase = new DeleteFilesFromSectionsUseCase(

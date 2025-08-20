@@ -1,9 +1,14 @@
-import promisePool from "../../../db/database.js";
-import { RowDataPacket } from "mysql2/promise";
-import { StorageUsageRepository } from "../../../domain/ports/repositories/StorageUsageRepository.js";
+import promisePool from "@/db/database.js";
+import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
+import { StorageUsageRepository } from "@/domain/ports/repositories/StorageUsageRepository.js";
 
-export class  MysqlStorageUsageRepository implements StorageUsageRepository {
-  async addToUsedStorage(userId: number | string, delta: number): Promise<void> {
+const DEFAULT_MAX_STORAGE = 104857600; // 100MB
+
+export class MysqlStorageUsageRepository implements StorageUsageRepository {
+  async addToUsedStorage(
+    userId: number | string,
+    delta: number
+  ): Promise<void> {
     const query = `
       INSERT INTO user_storage_usage (user_id, total_bytes)
       VALUES (?, ?)
@@ -11,7 +16,10 @@ export class  MysqlStorageUsageRepository implements StorageUsageRepository {
     await promisePool.execute(query, [userId, delta]);
   }
 
-  async decreaseFromUsedStorage (userId: number | string, delta: number): Promise<void> {
+  async decreaseFromUsedStorage(
+    userId: number | string,
+    delta: number
+  ): Promise<void> {
     const query = `
       UPDATE user_storage_usage
       SET total_bytes = GREATEST(total_bytes - ?, 0)
@@ -23,5 +31,47 @@ export class  MysqlStorageUsageRepository implements StorageUsageRepository {
     const query = `SELECT total_bytes FROM user_storage_usage WHERE user_id = ?`;
     const [rows] = await promisePool.execute<RowDataPacket[]>(query, [userId]);
     return rows.length > 0 ? Number((rows as any)[0].total_bytes) : 0;
+  }
+
+  async getMaxStorage(userId: number | string): Promise<number> {
+    const query = `SELECT max_bytes FROM user_storage_limits WHERE user_id = ?`;
+    const [rows] = await promisePool.execute<RowDataPacket[]>(query, [userId]);
+    return rows.length > 0
+      ? Number((rows as any)[0].max_bytes)
+      : DEFAULT_MAX_STORAGE;
+  }
+
+  async getRemainingStorage(userId: number | string): Promise<number> {
+    const [used, max] = await Promise.all([
+      this.getUsedStorage(userId),
+      this.getMaxStorage(userId),
+    ]);
+    const remaining = max - used;
+    return remaining > 0 ? remaining : 0;
+  }
+
+  async tryReserveStorage(
+    userId: number | string,
+    delta: number
+  ): Promise<boolean> {
+    const query = `
+      INSERT INTO user_storage_usage (user_id, total_bytes)
+      VALUES (?, 0)
+      ON DUPLICATE KEY UPDATE total_bytes = total_bytes`;
+    await promisePool.execute(query, [userId]);
+
+    const updateQuery = `
+      UPDATE user_storage_usage u
+      JOIN user_storage_limits l ON l.user_id = u.user_id
+      SET u.total_bytes = u.total_bytes + ?
+      WHERE u.user_id = ?
+        AND (u.total_bytes + ?) <= l.max_bytes`;
+    const [result] = await promisePool.execute<ResultSetHeader>(updateQuery, [
+      delta,
+      userId,
+      delta,
+    ]);
+
+    return (result.affectedRows ?? 0) > 0;
   }
 }

@@ -8,11 +8,18 @@ export class GetStorageUsageUseCase {
     private readonly storageRepo: StorageUsageRepository
   ) {}
 
-  async execute(username: string): Promise<{ used: number }> {
+  async execute(
+    username: string
+  ): Promise<{ used: number; limit: number; remaining: number }> {
     const user = await this.userRepo.findByUsername(username);
     if (!user) throw new Error("USER_NOT_FOUND");
 
-    const used = await this.storageRepo.getUsedStorage(user.id);
-    return { used };
+    const [used, limit] = await Promise.all([
+      this.storageRepo.getUsedStorage(user.id),
+      this.storageRepo.getMaxStorage(user.id),
+    ]);
+
+    const remaining = Math.max(limit - used, 0);
+    return { used, limit, remaining };
   }
 }
