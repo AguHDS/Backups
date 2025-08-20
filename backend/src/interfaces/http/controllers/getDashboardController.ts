@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+/* import { Request, Response } from "express";
 import { DashboardSummaryUseCase } from "../../../application/useCases/DashboardSummaryUseCase.js";
 import { MysqlStorageUsageRepository } from "../../../infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
 
 const dashboardSummaryUseCase = new DashboardSummaryUseCase(
   new MysqlStorageUsageRepository(),
 );
-
+ */
 /** Get dashboard stats for authenticated user */
-export const getDashboardController = async (req: Request, res: Response) => {
+/* export const getDashboardController = async (req: Request, res: Response) => {
   try {
     const { id } = req.refreshTokenId;
 
@@ -18,3 +18,4 @@ export const getDashboardController = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Failed to get dashboard summary" });
   }
 };
+ */

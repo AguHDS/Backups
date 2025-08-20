@@ -30,7 +30,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { isEditing, setIsEditing } = useProfile();
   const { flag: storageRefreshFlag, refresh: refreshStorage } =
     useStorageRefresh();
-  const { usedBytes } = useProfileData(storageRefreshFlag);
+  const { usedBytes, limitBytes, remainingBytes } = useProfileData(storageRefreshFlag);
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
   const { status, setStatus } = useFetch();
   const { username } = useParams();
@@ -199,7 +199,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 partner={data.userProfileData.partner}
               />
               <h3 className="text-center my-5">Storage</h3>
-              <StorageGraph usedBytes={usedBytes} available="1GB" />
+              <StorageGraph usedBytes={usedBytes} limitBytes={limitBytes} remainingBytes={remainingBytes} />
             </div>
             {/* Right Content */}
             <ProfileRightContent

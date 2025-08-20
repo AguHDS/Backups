@@ -26,6 +26,15 @@ CREATE TABLE `refresh_tokens` (
   CONSTRAINT `fk_refresh_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
+user_storage_limits
+CREATE TABLE `user_storage_limits` (
+  `user_id` int unsigned NOT NULL,
+  `max_bytes` bigint unsigned NOT NULL DEFAULT '104857600',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_user_storage_limits_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3
+
 users_profile
 CREATE TABLE `users_profile` (
   `fk_users_id` int unsigned NOT NULL,

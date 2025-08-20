@@ -10,9 +10,7 @@ describe("getStorageUsageController", () => {
   let fakeExecute: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    req = getMockReq({
-      params: { username: "agustin" },
-    });
+    req = getMockReq({ params: { username: "agustin" } });
 
     const mocks = getMockRes();
     res = mocks.res;
@@ -21,7 +19,11 @@ describe("getStorageUsageController", () => {
 
     fakeExecute = vi
       .spyOn(GetStorageUsageUseCase.prototype, "execute")
-      .mockResolvedValue({ used: 123456 });
+      .mockResolvedValue({
+        used: 123456,
+        limit: 104857600,
+        remaining: 104734144,
+      });
   });
 
   afterEach(() => {
@@ -33,7 +35,13 @@ describe("getStorageUsageController", () => {
 
     expect(fakeExecute).toHaveBeenCalledWith("agustin");
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ used: 123456 });
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        used: 123456,
+        limit: 104857600,
+        remaining: 104734144,
+      })
+    );
   });
 
   it("should respond with 404 if the user does not exist", async () => {

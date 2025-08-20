@@ -44,7 +44,7 @@ describe("GetUserProfileUseCase", () => {
     const username = "subject_1";
     const requesterId = 1;
 
-    const profile = new UserProfile(userId, "bio");
+    const profile = new UserProfile(userId, "bio", 0);
     const sections = [new UserProfileSection(10, "title", "desc")];
     const files = [new UserFile("pub1", "url1", "10", 1000, userId)];
 
@@ -67,7 +67,7 @@ describe("GetUserProfileUseCase", () => {
     const username = "subject_1";
     const requesterId = 999;
 
-    const profile = new UserProfile(userId, "bio");
+    const profile = new UserProfile(userId, "bio", 0);
     const sections = [new UserProfileSection(10, "public", "desc")];
     const files = [new UserFile("pub2", "url2", "10", 1000, userId)];
 

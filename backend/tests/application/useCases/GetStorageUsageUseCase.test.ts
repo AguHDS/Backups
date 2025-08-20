@@ -15,7 +15,10 @@ describe("GetStorageUsageUseCase", () => {
   const mockStorageRepo: StorageUsageRepository = {
     getUsedStorage: vi.fn(),
     addToUsedStorage: vi.fn(),
-    decreaseFromUsedStorage: vi.fn()
+    decreaseFromUsedStorage: vi.fn(),
+    getMaxStorage: vi.fn(),
+    getRemainingStorage: vi.fn(),
+    tryReserveStorage: vi.fn()
   };
 
   const useCase = new GetStorageUsageUseCase(mockUserRepo, mockStorageRepo);
@@ -24,18 +27,36 @@ describe("GetStorageUsageUseCase", () => {
     vi.clearAllMocks();
   });
 
-  it("should return used storage for a valid username", async () => {
+  it("should return used, limit and remaining storage for a valid username", async () => {
     const username = "subject";
     const mockUser = new User(1, username, "subject@example.com", "hashedpass", "user");
 
     (mockUserRepo.findByUsername as any).mockResolvedValue(mockUser);
-    (mockStorageRepo.getUsedStorage as any).mockResolvedValue(123456);
+    (mockStorageRepo.getUsedStorage as any).mockResolvedValue(500);
+    (mockStorageRepo.getMaxStorage as any).mockResolvedValue(1000);
 
     const result = await useCase.execute(username);
 
-    expect(result).toEqual({ used: 123456 });
+    expect(result).toEqual({ used: 500, limit: 1000, remaining: 500 });
     expect(mockUserRepo.findByUsername).toHaveBeenCalledWith(username);
     expect(mockStorageRepo.getUsedStorage).toHaveBeenCalledWith(mockUser.id);
+    expect(mockStorageRepo.getMaxStorage).toHaveBeenCalledWith(mockUser.id);
+  });
+
+  it("should clamp remaining to 0 if used exceeds limit", async () => {
+    const username = "subject";
+    const mockUser = new User(1, username, "subject@example.com", "hashedpass", "user");
+
+    (mockUserRepo.findByUsername as any).mockResolvedValue(mockUser);
+    (mockStorageRepo.getUsedStorage as any).mockResolvedValue(1500);
+    (mockStorageRepo.getMaxStorage as any).mockResolvedValue(1000);
+
+    const result = await useCase.execute(username);
+
+    expect(result).toEqual({ used: 1500, limit: 1000, remaining: 0 });
+    expect(mockUserRepo.findByUsername).toHaveBeenCalledWith(username);
+    expect(mockStorageRepo.getUsedStorage).toHaveBeenCalledWith(mockUser.id);
+    expect(mockStorageRepo.getMaxStorage).toHaveBeenCalledWith(mockUser.id);
   });
 
   it("should throw USER_NOT_FOUND if user does not exist", async () => {
@@ -44,5 +65,6 @@ describe("GetStorageUsageUseCase", () => {
     await expect(useCase.execute("ghost")).rejects.toThrow("USER_NOT_FOUND");
     expect(mockUserRepo.findByUsername).toHaveBeenCalledWith("ghost");
     expect(mockStorageRepo.getUsedStorage).not.toHaveBeenCalled();
+    expect(mockStorageRepo.getMaxStorage).not.toHaveBeenCalled();
   });
 });

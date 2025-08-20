@@ -5,21 +5,45 @@ import { Button } from "@/shared/components/buttons/Button";
 
 type Props = {
   usedBytes: number;
-  available?: string; // not implemented yet
+  limitBytes: number; 
+  remainingBytes: number;
 };
 
-const color = "#ffc533";
+const COLOR_USED = "#ffc533";
+const COLOR_FREE = "#3a3a3a";
 
 export const StorageGraph = memo(function StorageGraph({
   usedBytes,
-  available,
+  limitBytes = 0,
+  remainingBytes,
 }: Props) {
-  const safeUsed = Math.max(0, usedBytes);
-  const data = [{ name: "Storage", value: safeUsed || 1, key: "used" }];
+  const used = Math.max(0, usedBytes);
+  const limit = Math.max(0, limitBytes);
+  const remaining =
+    typeof remainingBytes === "number"
+      ? Math.max(0, remainingBytes)
+      : Math.max(limit - used, 0);
+
+  const totalForChart = limit > 0 ? limit : used || 1;
+
+  const data =
+    limit > 0
+      ? [
+          { name: "Used", value: Math.min(used, limit), key: "used" },
+          {
+            name: "Free",
+            value: Math.max(totalForChart - Math.min(used, limit), 0),
+            key: "free",
+          },
+        ]
+      : [{ name: "Used", value: used || 1, key: "used" }];
+
+  const percent =
+    limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
 
   return (
     <div
-      className={`bg-[#222222] mt-4 rounded-2xl p-2 text-slate-200 `}
+      className="bg-[#222222] mt-4 rounded-2xl p-2 text-slate-200"
       style={{ minHeight: 180 }}
       aria-label="Graph for used storage"
     >
@@ -37,9 +61,10 @@ export const StorageGraph = memo(function StorageGraph({
               stroke="none"
               isAnimationActive
             >
-              <Cell key="used" fill={color} />
+              <Cell key="used" fill={COLOR_USED} />
+              {limit > 0 && <Cell key="free" fill={COLOR_FREE} />}
               <Label
-                value="Storage"
+                value={limit > 0 ? `${percent}%` : "Storage"}
                 position="center"
                 fill="#fff"
                 fontSize={14}
@@ -54,16 +79,23 @@ export const StorageGraph = memo(function StorageGraph({
         <div className="flex my-[2px] justify-between items-center w-full">
           <span className="px-1">total available</span>
           <span className="px-1" style={{ color: "gray" }}>
-            {available}
+            {limit > 0 ? formatBytes(limit) : "—"}
           </span>
         </div>
         <div className="flex my-[2px] justify-between items-center w-full">
           <span className="px-1">total used</span>
-          <span className="px-1" style={{ color: color }}>
-            {formatBytes(safeUsed)}
+          <span className="px-1" style={{ color: COLOR_USED }}>
+            {formatBytes(used)}
+          </span>
+        </div>
+        <div className="flex my-[2px] justify-between items-center w-full">
+          <span className="px-1">remaining</span>
+          <span className="px-1" style={{ color: "gray" }}>
+            {limit > 0 ? formatBytes(remaining) : "—"}
           </span>
         </div>
       </div>
+
       <Button
         label="Show more"
         className="mx-auto flex mt-4 text-blue-500 text-xs hover:underline cursor-pointer bg-transparent border-none shadow-none p-0"
