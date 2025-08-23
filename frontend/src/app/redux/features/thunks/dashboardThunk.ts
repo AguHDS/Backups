@@ -1,4 +1,4 @@
-/* import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 
 export const getDashboardSummary = createAsyncThunk<
@@ -20,4 +20,3 @@ export const getDashboardSummary = createAsyncThunk<
     return rejectWithValue("Unknown error");
   }
 });
- */

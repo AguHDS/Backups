@@ -1,11 +1,11 @@
-/* import { FiFolder, FiUsers, FiActivity } from "react-icons/fi"; */
-import { /* StatCard,  */ AboutCard } from "../components";
-/* import { useSelector } from "react-redux";
+import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
+import { StatCard,  AboutCard } from "../components";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../app/redux/store";
-import { formatBytes } from "../../../shared/utils/formatBytes"; */
+import { formatBytes } from "../../../shared/utils/formatBytes";
 
 export const Dashboard = () => {
-/* const { used } = useSelector((state: RootState) => state.dashboard); */
+const { used } = useSelector((state: RootState) => state.dashboard);
 
   return (
     <div className="flex items-center justify-center my-10 px-4">
@@ -42,7 +42,7 @@ export const Dashboard = () => {
           </div>
         </div>
         {/* Statics section */}
-{/*         <div className="flex flex-wrap gap-6 justify-between">
+        <div className="flex flex-wrap gap-6 justify-between">
           <StatCard
             type="partner"
             title="My partnership"
@@ -74,7 +74,7 @@ export const Dashboard = () => {
             value="448 files saved"
             color="text-2xl text-purple-500"
           ></StatCard>
-        </div> */}
+        </div>
       </div>
     </div>
   );
