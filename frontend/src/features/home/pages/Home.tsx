@@ -2,8 +2,8 @@ import { AboutCard } from "@/features/dashboard/components";
 
 export const Home = () => {
   return (
-    <div className="flex items-center justify-center my-10 px-4">
-      <div className="bg-[#232d42] p-8 shadow-lg max-w-[70%] mx-auto">
+    <div className="flex items-center h-[47vh] justify-center my-14 px-4">
+      <div className="bg-[#232d42] p-8 shadow-lg max-w-[70%] mx-auto max-h-full overflow-y-auto overflow-x-hidden scrollbar-thin">
         <h2 className="text-3xl font-bold text-gray-200 flex justify-center mb-2 mt-0 relative top-0 h-[50px]">
           Welcome to Backups!
         </h2>
