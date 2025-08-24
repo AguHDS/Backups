@@ -4,10 +4,10 @@ interface Props {
   profilePic: string;
   giftIcon: string;
   msgIcon: string;
-  addFriendIcon: string;
+  addPartnerIcon: string;
 }
 
-export const ActionsAndProfileImg = ({ profilePic, giftIcon, msgIcon, addFriendIcon }: Props) => {
+export const ActionsAndProfileImg = ({ profilePic, giftIcon, msgIcon, addPartnerIcon }: Props) => {
   return (
     <>
       <div className="block text-center">
@@ -20,7 +20,7 @@ export const ActionsAndProfileImg = ({ profilePic, giftIcon, msgIcon, addFriendI
       <div className="flex justify-center items-center mt-2">
         <Link
           to="/dashboard"
-          title="Share GB"
+          title="Give a gift"
           className="h-[30px] mx-[2px] w-[45px] flex items-center justify-center"
         >
           <img src={giftIcon} className="h-6 w-7 object-contain" alt="Gift" />
@@ -33,13 +33,13 @@ export const ActionsAndProfileImg = ({ profilePic, giftIcon, msgIcon, addFriendI
           <img src={msgIcon} className="h-6 w-7 object-contain" alt="Message" />
         </Link>
         <span
-          title="Add friend"
+          title="Add partner"
           className="h-[30px] mx-[2px] w-[45px] flex items-center justify-center"
         >
           <img
-            src={addFriendIcon}
+            src={addPartnerIcon}
             className="h-6 w-7 object-contain"
-            alt="Add Friend"
+            alt="Add partner"
           />
         </span>
       </div>

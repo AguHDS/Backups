@@ -7,7 +7,7 @@ describe("ActionsAndProfileImg", () => {
     profilePic: "https://example.com/profile.jpg",
     giftIcon: "https://example.com/gift.png",
     msgIcon: "https://example.com/msg.png",
-    addFriendIcon: "https://example.com/add.png",
+    addPartnerIcon: "https://example.com/add.png",
   };
 
   const renderWithRouter = (ui: React.ReactElement) => render(<BrowserRouter>{ui}</BrowserRouter>);

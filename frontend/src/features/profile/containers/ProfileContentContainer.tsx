@@ -190,7 +190,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 profilePic={images.testImage}
                 giftIcon={images.giftIcon}
                 msgIcon={images.msgIcon}
-                addFriendIcon={images.addFriend}
+                addPartnerIcon={images.addFriend}
               />
               <UserInfo
                 userStatus="offline"
