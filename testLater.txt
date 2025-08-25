@@ -1,0 +1,99 @@
+Bien y ahora una ultima duda, como puedo chequear que realmente funcione lo del rollbackUpload? que deberia de hacer? explicame primero claramente que es lo que hace eso y como deberia chequear que funciona, deberia ver reflejado en cloudinary o algun lado de la app que no se han subido ciertos archivos cuando cierta condicion pasa?
+ChatGPT Plus
+
+Te explico claro y corto:
+
+Qué hace rollbackUpload
+
+Borra en Cloudinary los public_id que se alcanzaron a subir.
+
+Libera la “reserva” de bytes hecha al inicio (eso lo hace el catch del use case con decreaseFromUsedStorage(userId, incomingBytes)).
+
+Objetivo: dejar DB y Cloudinary consistentes si algo falla después de reservar (por ejemplo, no hay cupo para el excedente o saveMany falla).
+
+Cuándo se activa
+
+Excedente sin cupo: confirmedBytes > incomingBytes y tryReserveStorage(extra) devuelve false.
+
+Fallo post-subida: cualquier error en upload(...) o fileRepo.saveMany(...).
+
+Cómo verificar que funciona
+A) Prueba de integración (lo ideal)
+
+Prepara datos
+
+Usuario con user_storage_limits.max_bytes pequeño (p. ej., 1.5 MB).
+
+user_storage_usage.total_bytes en 0.
+
+Caso 1: excedente sin cupo
+
+Envía archivos cuyo file.size (incoming) sea 1.0 MB, pero que Cloudinary reporte bytes algo mayores (simúlalo subiendo un archivo real cuyo bytes sea mayor que tu file.size o ajustando el test doble/middleware).
+
+Asegúrate de que confirmedBytes > incomingBytes y que el “extra” supere el límite restante (para forzar extraOk=false).
+
+Esperado:
+
+Respuesta HTTP 409 con code: STORAGE_QUOTA_EXCEEDED.
+
+En DB: user_storage_usage.total_bytes igual que antes de la request (rollback de la reserva).
+
+En Cloudinary: no existan los public_id subidos (fueron borrados). Puedes listar con el panel o API y comprobar que no están.
+
+Caso 2: falla en saveMany
+
+Mockea fileRepo.saveMany para lanzar error.
+
+Esperado:
+
+Respuesta HTTP 500 (o el código que decidas).
+
+En DB: los bytes reservados al inicio fueron revertidos.
+
+En Cloudinary: los public_id fueron eliminados.
+
+Caso 3: falla de cleanup
+
+Mockea cloudinary.api.delete_resources para fallar.
+
+Esperado:
+
+La respuesta al cliente sigue siendo el error principal (409/500).
+
+En logs: warning tipo “Cloudinary cleanup failed”.
+
+En DB: la reserva liberada igualmente.
+
+En Cloudinary: puede quedar residuo (está bien; priorizamos no romper el flujo). Luego puedes ejecutar un job de limpieza si quisieras.
+
+B) Prueba unitaria (rápida, sin Cloudinary real)
+
+Mockea cloudinaryUploader.upload para devolver un array con public_id y sizeInBytes.
+
+Mockea tryReserveStorage para:
+
+aceptar la reserva inicial,
+
+rechazar la reserva del “extra”.
+
+Mockea deleteByPublicIds y verifica que se llamó con los IDs correctos.
+
+Verifica que decreaseFromUsedStorage(userId, incomingBytes) se llamó en el catch.
+
+C) Verificación manual sin tests automatizados
+
+Sube un archivo grande para rozar el límite y provocar el caso de excedente.
+
+Tras la respuesta de error:
+
+Mira el dashboard de Cloudinary en la carpeta del usuario/section: no deberían quedar esos archivos.
+
+Consulta tu endpoint /getStorageUsage: used no debe haber aumentado.
+
+Con eso confirmás que rollbackUpload:
+
+borra en Cloudinary lo ya subido,
+
+deja el contador de bytes igual que antes, y
+
+devuelve un error consistente al cliente.
