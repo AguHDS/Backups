@@ -13,10 +13,7 @@ private or public. You'll need to be validated as a user to access.
 
 many features aren't avialable yet since i'm working on them
 
-### some previews of sections (changes on the frontend will be made)
-
-Dashboard section
-![Showcase](DashboardShowcase.png)
+### Profile preview (more changes in the UI/UX are expected)
 
 Profile section
 ![Showcase](Profile_Showcase.png)

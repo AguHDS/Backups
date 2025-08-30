@@ -9,8 +9,8 @@ type Props = {
   remainingBytes: number;
 };
 
-const COLOR_USED = "#ffc533";
-const COLOR_FREE = "#3a3a3a";
+const COLOR_USED = "#33b4ffff";
+const COLOR_FREE = "#646464ff";
 
 export const StorageGraph = memo(function StorageGraph({
   usedBytes,
@@ -77,19 +77,19 @@ export const StorageGraph = memo(function StorageGraph({
 
       <div className="mt-2 flex flex-col w-full text-[12px]">
         <div className="flex my-[2px] justify-between items-center w-full">
-          <span className="px-1">total available</span>
+          <span className="px-1">Max. available</span>
           <span className="px-1" style={{ color: "gray" }}>
             {limit > 0 ? formatBytes(limit) : "—"}
           </span>
         </div>
         <div className="flex my-[2px] justify-between items-center w-full">
-          <span className="px-1">total used</span>
+          <span className="px-1">Total used</span>
           <span className="px-1" style={{ color: COLOR_USED }}>
             {formatBytes(used)}
           </span>
         </div>
         <div className="flex my-[2px] justify-between items-center w-full">
-          <span className="px-1">remaining</span>
+          <span className="px-1">Remaining</span>
           <span className="px-1" style={{ color: "gray" }}>
             {limit > 0 ? formatBytes(remaining) : "—"}
           </span>

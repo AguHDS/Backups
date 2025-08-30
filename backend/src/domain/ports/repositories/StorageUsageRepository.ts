@@ -6,7 +6,13 @@ export interface StorageUsageRepository {
    * @param delta - The number of bytes to add to the user's usage
    */
   addToUsedStorage(userId: number | string, delta: number): Promise<void>;
-
+  /**
+   * Sets or updates the maximum storage quota for the user
+   *
+   * @param userId - Id of current user
+   * @param maxBytes - Maximum storage in bytes to set for the user
+   */
+  setMaxStorage(userId: number | string, maxBytes: number): Promise<void>;
   /**
    * Decreases the user's storage usage for files by a specified number of bytes
    * Ensures the result does not go below zero
