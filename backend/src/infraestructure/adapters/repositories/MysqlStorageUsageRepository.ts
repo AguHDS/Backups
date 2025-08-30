@@ -16,6 +16,18 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     await promisePool.execute(query, [userId, delta]);
   }
 
+  async setMaxStorage(
+    userId: number | string,
+    maxBytes: number
+  ): Promise<void> {
+    const query = `
+    INSERT INTO user_storage_limits (user_id, max_bytes)
+    VALUES (?, ?)
+    ON DUPLICATE KEY UPDATE max_bytes = VALUES(max_bytes)
+  `;
+    await promisePool.execute(query, [userId, maxBytes]);
+  }
+
   async decreaseFromUsedStorage(
     userId: number | string,
     delta: number
@@ -54,18 +66,13 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     userId: number | string,
     delta: number
   ): Promise<boolean> {
-    const query = `
-      INSERT INTO user_storage_usage (user_id, total_bytes)
-      VALUES (?, 0)
-      ON DUPLICATE KEY UPDATE total_bytes = total_bytes`;
-    await promisePool.execute(query, [userId]);
-
     const updateQuery = `
-      UPDATE user_storage_usage u
-      JOIN user_storage_limits l ON l.user_id = u.user_id
-      SET u.total_bytes = u.total_bytes + ?
-      WHERE u.user_id = ?
-        AND (u.total_bytes + ?) <= l.max_bytes`;
+    UPDATE user_storage_usage u
+    JOIN user_storage_limits l ON l.user_id = u.user_id
+    SET u.total_bytes = u.total_bytes + ?
+    WHERE u.user_id = ?
+      AND (u.total_bytes + ?) <= l.max_bytes
+  `;
     const [result] = await promisePool.execute<ResultSetHeader>(updateQuery, [
       delta,
       userId,

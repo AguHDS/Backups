@@ -1,7 +1,10 @@
 import promisePool from "../../../db/database.js";
 import { User } from "../../../domain/entities/User.js";
-import { UserRepository, NameAndEmailCheckResult } from "../../../domain/ports/repositories/UserRepository.js";
-import { RowDataPacket, ResultSetHeader , Connection } from "mysql2/promise";
+import {
+  UserRepository,
+  NameAndEmailCheckResult,
+} from "../../../domain/ports/repositories/UserRepository.js";
+import { RowDataPacket, ResultSetHeader, Connection } from "mysql2/promise";
 
 interface UserRow extends RowDataPacket {
   namedb: string;
@@ -35,13 +38,13 @@ export class MysqlUserRepository implements UserRepository {
         "SELECT * FROM users WHERE id = ?",
         [id]
       );
-  
+
       if (rows.length === 0) {
         return null;
       }
-  
+
       const row = rows[0];
-  
+
       return new User(row.id, row.namedb, row.emaildb, row.passdb, row.role);
     } catch (error) {
       console.error("Error retrieving user from database:", error);
@@ -91,31 +94,33 @@ export class MysqlUserRepository implements UserRepository {
     email: string,
     pass: string,
     role: "user" | "admin"
-  ): Promise<void> {
+  ): Promise<number> {
     const connection = await promisePool.getConnection();
     try {
       await connection.beginTransaction();
 
-      //insert new user in users table
+      // Insert new user in users table
       const [userResult] = await connection.execute<ResultSetHeader>(
         "INSERT INTO users (namedb, emaildb, passdb, role) VALUES (?, ?, ?, ?)",
         [name, email, pass, role]
       );
 
-      //add foreign key to users_profile table
       const userId = userResult.insertId;
+
+      // Add foreign key to users_profile table
       await connection.execute(
         "INSERT INTO users_profile (fk_users_id) VALUES (?)",
         [userId]
       );
 
-      //add foreign key to users_profile_sections table
+      // Add foreign key to users_profile_sections table
       await connection.execute(
         "INSERT INTO users_profile_sections (fk_users_id) VALUES (?)",
         [userId]
       );
 
       await connection.commit();
+      return userId;
     } catch (error) {
       await connection.rollback();
       console.error("Error adding new user and profile", error);
