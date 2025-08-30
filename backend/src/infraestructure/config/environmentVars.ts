@@ -5,7 +5,7 @@ interface Config {
   jwtRefreshSecret: string;
   nodeEnv: string;
   dbHost: string;
-  dbDatabase: string;
+  dbSchema: string;
   dbUser: string;
   dbPassword: string;
   cloudinaryName: string;
@@ -20,7 +20,7 @@ const requiredVariables = [
   "JWT_REFRESH_SECRET",
   "NODE_ENV",
   "DB_HOST",
-  "DB_DATABASE",
+  "DB_SCHEMA",
   "DB_USER",
   "DB_PASSWORD",
   "CLOUDINARY_NAME",
@@ -48,7 +48,7 @@ const config: Config = {
   jwtRefreshSecret: getEnvVariable("JWT_REFRESH_SECRET"),
   nodeEnv: getEnvVariable("NODE_ENV"),
   dbHost: getEnvVariable("DB_HOST"),
-  dbDatabase: getEnvVariable("DB_DATABASE"),
+  dbDatabase: getEnvVariable("DB_SCHEMA"),
   dbUser: getEnvVariable("DB_USER"),
   dbPassword: getEnvVariable("DB_PASSWORD"),
   cloudinaryName: getEnvVariable("CLOUDINARY_NAME"),
