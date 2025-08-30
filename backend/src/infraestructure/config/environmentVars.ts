@@ -48,7 +48,7 @@ const config: Config = {
   jwtRefreshSecret: getEnvVariable("JWT_REFRESH_SECRET"),
   nodeEnv: getEnvVariable("NODE_ENV"),
   dbHost: getEnvVariable("DB_HOST"),
-  dbDatabase: getEnvVariable("DB_SCHEMA"),
+  dbSchema: getEnvVariable("DB_SCHEMA"),
   dbUser: getEnvVariable("DB_USER"),
   dbPassword: getEnvVariable("DB_PASSWORD"),
   cloudinaryName: getEnvVariable("CLOUDINARY_NAME"),
