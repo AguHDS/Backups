@@ -1513,6 +1513,14 @@
   height: 8px !important;
 }
 
+.scrollbar-track-\[\#1e1e1e\] {
+  --scrollbar-track: #1e1e1e !important;
+}
+
+.scrollbar-thumb-gray-600 {
+  --scrollbar-thumb: #4b5563 !important;
+}
+
 body {
   background-color: rgb(17 24 39);
   margin: 0;
@@ -1627,24 +1635,36 @@ h1:focus-visible {
 
 /* tailwind-scrollbar */
 
-.scrollbar-container > .overflow-y-auto::-webkit-scrollbar {
-  width: 8px;
+*::-webkit-scrollbar {
+  width: 6px;
+  /* delgada */
+  height: 6px;
+  /* horizontal también */
 }
 
-.scrollbar-container > .overflow-y-auto::-webkit-scrollbar-thumb {
-  background-color: #333;
+*::-webkit-scrollbar-track {
+  background-color: #1e1e1e;
+  /* track oscuro */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  /* gris (gray-600) */
   border-radius: 4px;
 }
 
-.scrollbar-container > .overflow-y-auto::-webkit-scrollbar-track {
-  background-color: #1a1a1a;
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+  /* gris más claro al hover */
 }
 
-/* Firefox support */
+/* Firefox */
 
-.scrollbar-container > .overflow-y-auto {
+* {
   scrollbar-width: thin;
-  scrollbar-color: #333 #1a1a1a;
+  /* delgada */
+  scrollbar-color: #4b5563 #1e1e1e;
+  /* thumb | track */
 }
 
 .peer:checked ~ .peer-checked\:bg-blue-500 {
