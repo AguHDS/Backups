@@ -3,7 +3,7 @@ module.exports = {
   env: {
     browser: true,
     es2020: true,
-    "vitest/globals": true,
+    node: true,
   },
   extends: [
     "eslint:recommended",
@@ -27,6 +27,7 @@ module.exports = {
     },
   },
   plugins: ["react-refresh", "@typescript-eslint"],
+
   rules: {
     "react/jsx-no-target-blank": "off",
     "react-refresh/only-export-components": [
@@ -37,4 +38,23 @@ module.exports = {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "warn",
   },
+
+  overrides: [
+    {
+      files: [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+      ],
+      env: {
+        node: true,
+      },
+      rules: {
+        "@typescript-eslint/no-explicit-any": "off",
+        "react-refresh/only-export-components": "off",
+        "@typescript-eslint/no-empty-function": "off",
+      },
+    },
+  ],
 };

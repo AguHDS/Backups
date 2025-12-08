@@ -40,7 +40,7 @@ export const RequireAuth = () => {
     };
 
     verifyAuthentication();
-  }, [isAuthenticated, accessToken, dispatch, navigate]);
+  }, [isAuthenticated, accessToken, hasJustRefreshed,dispatch, navigate]);
 
   return <>{isAuthenticated ? <Outlet /> : null}</>;
 };

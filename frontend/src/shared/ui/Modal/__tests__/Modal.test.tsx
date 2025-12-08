@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
-import { Modal } from "./Modal";
-import { ModalContext } from "./ModalContext";
+import { Modal } from "../Modal";
+import { ModalContext } from "../ModalContext";
 
 const modalRoot = document.createElement("div");
 modalRoot.setAttribute("id", "modal-root");

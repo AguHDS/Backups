@@ -25,6 +25,7 @@ export const getProfileController = async (req: Request, res: Response) => {
       requesterId = Number(decoded.id);
     } catch (err) {
       requesterId = null;
+      console.error(err);
     }
 
     const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(

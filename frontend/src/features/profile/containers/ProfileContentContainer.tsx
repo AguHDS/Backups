@@ -50,7 +50,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       setErrorMessages([]);
       setStatus(null);
     }
-  }, [isEditing]);
+  }, [isEditing, setStatus]);
   const dispatch = useDispatch<AppDispatch>();
 
   const validateFields = () => {

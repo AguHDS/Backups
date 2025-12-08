@@ -1,6 +1,6 @@
-import { Request } from "express";
-import { RefreshTokenId } from "./jwtUserData.ts";
-import {
+import type { Request } from "express";
+import type { RefreshTokenId } from "./jwtUserData.ts";
+import type {
   UserSession,
   UserAndPassword,
   BaseUserData,

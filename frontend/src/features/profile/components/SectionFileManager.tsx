@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "../../../shared";
 import { useProfile, useSections, useStorageRefresh } from "../context";
 import { useParams } from "react-router-dom";
@@ -10,6 +10,7 @@ import { FeedbackMessages } from "../../../shared";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../app/redux/store";
 import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
+import { useFetch } from "../../../shared/hooks/useFetch";
 
 interface Props {
   sectionIndex: number;
@@ -22,7 +23,9 @@ interface FileUploadResponse {
 export const SectionFileManager = ({ sectionIndex }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
-  const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(new Set());
+  const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(
+    new Set()
+  );
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,10 +35,38 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const { addFilesToDelete } = useFileDeletion();
   const dispatch = useDispatch<AppDispatch>();
   const { username } = useParams();
+  const { 
+    data: uploadData, 
+    fetchData, 
+    status, 
+    error, 
+    isLoading 
+  } = useFetch<FileUploadResponse>();
 
   const section = sections[sectionIndex];
-  const { id: sectionId, title: sectionTitle, files: uploadedFiles = [] } = section;
+  const {
+    id: sectionId,
+    title: sectionTitle,
+    files: uploadedFiles = [],
+  } = section;
   const handleButtonClick = () => fileInputRef.current?.click();
+
+  useEffect(() => {
+    if (status !== null && !isLoading) {
+      if (status >= 200 && status < 300 && uploadData) {
+        renderFilesOnResponse(sectionId, uploadData.files);
+        setFiles([]);
+        setReadyToUpload(false);
+        setUploadErrors([]);
+        refreshStorage();
+        dispatch(getDashboardSummary());
+      } else if (status >= 400) {
+        const messages = processErrorMessages(error || uploadData);
+        console.error("Upload error:", messages);
+        setUploadErrors(messages);
+      }
+    }
+  }, [status, isLoading, uploadData, error, sectionId, renderFilesOnResponse, refreshStorage, dispatch]);
 
   // Handle selecting files from input
   const handleUploadFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,51 +88,30 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const toggleFileSelection = (fileId: string) => {
     setSelectedFileIds((prev) => {
       const newSet = new Set(prev);
-      newSet.has(fileId) ? newSet.delete(fileId) : newSet.add(fileId);
+      if (newSet.has(fileId)) {
+        newSet.delete(fileId);
+      } else {
+        newSet.add(fileId);
+      }
       return newSet;
     });
   };
 
-  // Upload files to backend
+  // Upload files to backend usando useFetch
   const handleSendFiles = async () => {
+    if (files.length === 0) return;
+
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
 
-    try {
-      const response = await fetch(
-        `http://localhost:${
-          import.meta.env.VITE_BACKENDPORT
-        }/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        let errorPayload: any;
-        try {
-          errorPayload = await response.json();
-        } catch {
-          errorPayload = await response.text();
-        }
-        throw errorPayload;
+    await fetchData(
+      `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
+      {
+        method: "POST",
+        credentials: "include",
+        body: formData,
       }
-
-      const data: FileUploadResponse = await response.json();
-      renderFilesOnResponse(sectionId, data.files);
-      setFiles([]);
-      setReadyToUpload(false);
-      setUploadErrors([]);
-      // refresh storage stats from profile and dashboard
-      refreshStorage();
-      await dispatch(getDashboardSummary());
-    } catch (error) {
-      const messages = processErrorMessages(error);
-      console.error("Upload error:", messages);
-      setUploadErrors(messages);
-    }
+    );
   };
 
   const handleDeleteSelectedFiles = () => {
@@ -177,11 +187,11 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
               </div>
 
               {/* Show errors if any */}
-              {uploadErrors.length > 0 && (
-                <div className="w-full max-w-[80%]">
+              {(uploadErrors.length > 0 || error) && (
+                <div className="w-full max-w-[80%] mt-4">
                   <FeedbackMessages
-                    input={uploadErrors}
-                    status={null}
+                    input={uploadErrors.length > 0 ? uploadErrors : [error!]}
+                    status={status}
                     message={null}
                   />
                 </div>

@@ -3,7 +3,7 @@ import { Button, FeedbackMessages } from "../../../shared/index.js";
 import { Bio } from "./Bio.js";
 import { SectionFileManager } from "./SectionFileManager.js";
 import { useProfile } from "../context/ProfileContext.js";
-import { useSections } from "../context/SectionsContext.js";
+import { useSections } from "../context/Sections/SectionsProvider.js";
 
 interface Props {
   updateData: { bio: string };

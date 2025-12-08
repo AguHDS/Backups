@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-import { SectionWithFile, UploadedFile } from "../types/section";
+import { createContext, useState, ReactNode } from "react";
+import { SectionWithFile, UploadedFile } from "../../types/section";
 
 export interface SectionsContextType {
   sections: SectionWithFile[];
@@ -17,16 +17,19 @@ export interface SectionsContextType {
   updateSectionIds: (idMap: { tempId: number; newId: number }[]) => void;
 }
 
-const SectionsContext = createContext<SectionsContextType | undefined>(
+export const SectionsContext = createContext<SectionsContextType | undefined>(
   undefined
 );
 
-interface Props {
-  children: React.ReactNode;
+interface SectionsProviderProps {
+  children: ReactNode;
   initialSections: SectionWithFile[];
 }
 
-export const SectionsProvider = ({ children, initialSections }: Props) => {
+export const SectionsProvider = ({
+  children,
+  initialSections,
+}: SectionsProviderProps) => {
   const [sections, setSections] = useState<SectionWithFile[]>(initialSections);
   const [sectionsToDelete, setSectionsToDelete] = useState<number[]>([]);
 
@@ -37,7 +40,6 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
   ) => {
     setSections((prev) => {
       const updated = [...prev];
-      // Check which field is being updated
       updated[index] = { ...updated[index], [field]: value };
       return updated;
     });
@@ -55,7 +57,6 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
     setSectionsToDelete((prev) => [...prev, sectionId]);
   };
 
-  // Render images at the moment they are uploaded
   const renderFilesOnResponse = (
     sectionId: number,
     newFiles: UploadedFile[]
@@ -72,13 +73,10 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
     );
   };
 
-  // Update the local state of sections by replacing temporary ids with real ids from the backend
   const updateSectionIds = (idMap: { tempId: number; newId: number }[]) => {
     setSections((prevSections) =>
       prevSections.map((section) => {
-        // Find if this section's id matches any temporal id from the map
         const match = idMap.find((n) => n.tempId === section.id);
-        // If it matches, replace it with the real one
         return match ? { ...section, id: match.newId } : section;
       })
     );
@@ -101,10 +99,4 @@ export const SectionsProvider = ({ children, initialSections }: Props) => {
       {children}
     </SectionsContext.Provider>
   );
-};
-
-export const useSections = () => {
-  const context = useContext(SectionsContext);
-  if (!context) throw new Error("useSections must be used inside its provider");
-  return context;
 };
