@@ -1513,14 +1513,6 @@
   height: 8px !important;
 }
 
-.scrollbar-track-\[\#1e1e1e\] {
-  --scrollbar-track: #1e1e1e !important;
-}
-
-.scrollbar-thumb-gray-600 {
-  --scrollbar-thumb: #4b5563 !important;
-}
-
 body {
   background-color: rgb(17 24 39);
   margin: 0;

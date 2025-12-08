@@ -1,5 +1,5 @@
 import { Button } from "../../../shared/components";
-import { useProfile } from "../context/ProfileContext";
+import { useProfile } from "../context/profile/profileContext";
 
 interface Props {
   username: string;

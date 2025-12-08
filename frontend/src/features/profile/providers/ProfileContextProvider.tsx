@@ -1,7 +1,7 @@
-import { SectionsProvider } from "../context/Sections/SectionsProvider";
+import { SectionsProvider } from "../context/sections/SectionsProvider";
 import { ProfileContentContainer } from "../containers/ProfileContentContainer";
 import { FetchedUserProfile } from "../types/profileData";
-import { FileDeletionProvider } from "../context/FileDeletion/FileDeletionContext";
+import { FileDeletionProvider } from "../context/fileDeletion/FileDeletionProvider";
 import { StorageRefreshProvider } from "../context/storageRefresh/StorageRefreshProvider";
 
 /* ProfileContextProvider wraps the profile in SectionsProvider
