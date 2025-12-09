@@ -2,6 +2,26 @@ import { FileRepository } from "../../../domain/ports/repositories/FileRepositor
 import { UserFile } from "../../../domain/entities/UserFile.js";
 import promisePool from "../../../db/database.js";
 
+// Definir tipo para las filas de la base de datos
+interface UserFileRow {
+  public_id: string;
+  url: string;
+  section_id: number;
+  size_in_bytes: number;
+  user_id: number;
+}
+
+// Helper para transformar las filas de la base de datos
+function mapRowToUserFile(row: UserFileRow): UserFile {
+  return new UserFile(
+    row.public_id,
+    row.url,
+    row.section_id,
+    row.size_in_bytes,
+    row.user_id
+  );
+}
+
 export class MysqlFileRepository implements FileRepository {
   async save(file: UserFile): Promise<void> {
     const query = `
@@ -53,18 +73,13 @@ export class MysqlFileRepository implements FileRepository {
     WHERE section_id = ?`;
 
     try {
+      // Usar aserción de tipo específica en lugar de any
       const [rows] = await promisePool.execute(query, [sectionId]);
 
-      return (rows as any[]).map(
-        (row) =>
-          new UserFile(
-            row.public_id,
-            row.url,
-            row.section_id,
-            row.size_in_bytes,
-            row.user_id
-          )
-      );
+      // Asegurar que rows es un array de UserFileRow
+      const fileRows = rows as UserFileRow[];
+      
+      return fileRows.map(mapRowToUserFile);
     } catch (error) {
       console.error("Error retrieving files by section:", error);
       throw new Error("Could not retrieve files");
@@ -88,18 +103,12 @@ export class MysqlFileRepository implements FileRepository {
     try {
       const [rows] = await promisePool.execute(selectQuery, publicIds);
 
+      // Asegurar que rows es un array de UserFileRow
+      const fileRows = rows as UserFileRow[];
+      
       await promisePool.execute(deleteQuery, publicIds);
 
-      return (rows as any[]).map(
-        (row) =>
-          new UserFile(
-            row.public_id,
-            row.url,
-            row.section_id,
-            row.size_in_bytes,
-            row.user_id
-          )
-      );
+      return fileRows.map(mapRowToUserFile);
     } catch (error) {
       console.error("Error deleting files:", error);
       throw new Error("Could not delete files");

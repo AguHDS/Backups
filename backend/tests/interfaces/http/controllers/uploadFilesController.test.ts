@@ -6,6 +6,19 @@ import { UserFile } from "@/domain/entities/UserFile.js";
 import { Readable } from "stream";
 import type { MockInstance } from "vitest";
 
+interface MockMulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer: Buffer;
+  stream: Readable;
+}
+
 vi.mock("@/infraestructure/adapters/externalServices/CloudinaryUploader.js", () => ({
   CloudinaryUploader: vi.fn(),
 }));
@@ -34,7 +47,7 @@ describe("uploadFilesController", () => {
     json = vi.fn();
     status = vi.fn().mockReturnValue({ json });
 
-    const mockedFile: Express.Multer.File = {
+    const mockedFile: MockMulterFile = {
       fieldname: "files",
       originalname: "file1.jpg",
       encoding: "7bit",
@@ -69,7 +82,7 @@ describe("uploadFilesController", () => {
 
   it("should call use case and return uploaded files", async () => {
     const expectedFiles: UserFile[] = [
-      new UserFile("abc123", "http://cloudinary.com/file.jpg", "section123", 1024, 1),
+      new UserFile("abc123", "http://cloudinary.com/file.jpg", 3, 1024, 1),
     ];
 
     const UploadFilesUseCaseMock = UploadFilesUseCase as unknown as MockInstance;

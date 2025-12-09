@@ -5,7 +5,11 @@ import { MysqlRefreshTokenRepository } from "../../../infraestructure/adapters/r
 const mysqlRefreshTokenRepository = new MysqlRefreshTokenRepository();
 
 /** Validates refresh token received in cookies by the client */
-export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const refreshTokenMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const cookies = req.cookies;
 
@@ -19,11 +23,21 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
     const decoded = decodeRefreshToken(req);
     const { id } = decoded;
 
-    const tokenData = await mysqlRefreshTokenRepository.findValidToken(refreshToken, id);
+    const tokenData = await mysqlRefreshTokenRepository.findValidToken(
+      refreshToken,
+      id
+    );
 
     if (!tokenData) {
-      console.error("Refresh token not found, doesn't match, it's invalid or expired");
-      res.status(403).json({ message: "Refresh token not found, doesn't match, it's invalid or expired" });
+      console.error(
+        "Refresh token not found, doesn't match, it's invalid or expired"
+      );
+      res
+        .status(403)
+        .json({
+          message:
+            "Refresh token not found, doesn't match, it's invalid or expired",
+        });
       return;
     }
 
@@ -31,10 +45,11 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 
     next();
   } catch (error) {
-    if (error instanceof Error)
-      console.error("Error in refreshTokenMiddleware:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
-    switch (error.message) {
+    console.error("Error in refreshTokenMiddleware:", error);
+
+    switch (errorMessage) {
       case "NO_REFRESH_TOKEN":
         res.status(401).json({ message: "No refresh token in cookies" });
         return;

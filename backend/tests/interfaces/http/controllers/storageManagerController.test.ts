@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type MockInstance } from "vitest";
 import { storageManagerController } from "@/interfaces/http/controllers/storageManagerController.js";
 import { StorageManagerUseCase } from "@/application/useCases/StorageManagerUseCase.js";
 import { Request, Response } from "express";
@@ -24,7 +24,7 @@ describe("storageManagerController", () => {
 
     executeMock = vi
       .spyOn(StorageManagerUseCase.prototype, "execute")
-      .mockResolvedValue({ totalBytesUsed: 1024 });
+      .mockResolvedValue({ totalBytesUsed: 1024 }) as MockInstance;
 
     vi.clearAllMocks();
   });

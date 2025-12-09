@@ -26,14 +26,23 @@ export class UploadFilesUseCase {
   ): Promise<UserFile[]> {
     if (!files || files.length === 0) throw new Error("No files provided");
 
-    // pre-check with request size
+    const numericSectionId = parseInt(sectionId, 10);
+    if (isNaN(numericSectionId) || numericSectionId <= 0) {
+      throw new Error(`Invalid sectionId: "${sectionId}". Must be a positive integer.`);
+    }
+
+    const numericUserId = typeof userId === 'string' ? parseInt(userId, 10) : userId;
+    if (typeof numericUserId !== 'number' || isNaN(numericUserId) || numericUserId <= 0) {
+      throw new Error(`Invalid userId: "${userId}". Must be a positive number.`);
+    }
+
     const incomingBytes = files.reduce((sum, f) => sum + (f.size ?? 0), 0);
     if (incomingBytes <= 0) throw new Error("Invalid files payload");
 
-    const remaining = await this.storageUsageRepo.getRemainingStorage(userId);
+    const remaining = await this.storageUsageRepo.getRemainingStorage(numericUserId);
     if (incomingBytes > remaining) {
-      const used = await this.storageUsageRepo.getUsedStorage(userId);
-      const limit = await this.storageUsageRepo.getMaxStorage(userId);
+      const used = await this.storageUsageRepo.getUsedStorage(numericUserId);
+      const limit = await this.storageUsageRepo.getMaxStorage(numericUserId);
       const err: Error & { details?: QuotaErrorPayload } = new Error("Storage quota exceeded");
       err.details = {
         code: "STORAGE_QUOTA_EXCEEDED",
@@ -45,17 +54,15 @@ export class UploadFilesUseCase {
       throw err;
     }
 
-    // atomic reserve
     const reserved = await this.storageUsageRepo.tryReserveStorage(
-      userId,
+      numericUserId,
       incomingBytes
     );
     if (!reserved) {
-      // reread status to respond with fresh data
       const [usedNow, limitNow, remainingNow] = await Promise.all([
-        this.storageUsageRepo.getUsedStorage(userId),
-        this.storageUsageRepo.getMaxStorage(userId),
-        this.storageUsageRepo.getRemainingStorage(userId),
+        this.storageUsageRepo.getUsedStorage(numericUserId),
+        this.storageUsageRepo.getMaxStorage(numericUserId),
+        this.storageUsageRepo.getRemainingStorage(numericUserId),
       ]);
       const err: Error & { details?: QuotaErrorPayload } = new Error("Storage quota exceeded");
       err.details = {
@@ -79,27 +86,24 @@ export class UploadFilesUseCase {
 
       uploadedPublicIds = uploaded.map((f) => f.public_id);
 
-      // confirmed bytes by Cloudinary
       const confirmedBytes = uploaded.reduce((sum, f) => sum + (f.sizeInBytes ?? 0), 0);
 
-      // adjust if different from reservation
       if (confirmedBytes > incomingBytes) {
         const extra = confirmedBytes - incomingBytes;
         const extraOk = await this.storageUsageRepo.tryReserveStorage(
-          userId,
+          numericUserId,
           extra
         );
         if (!extraOk) {
-          // there is no quota for the surplus: upload and reserve rollback
           await this.rollbackUpload(uploadedPublicIds);
           await this.storageUsageRepo.decreaseFromUsedStorage(
-            userId,
+            numericUserId,
             incomingBytes
           );
           const [usedNow, limitNow, remainingNow] = await Promise.all([
-            this.storageUsageRepo.getUsedStorage(userId),
-            this.storageUsageRepo.getMaxStorage(userId),
-            this.storageUsageRepo.getRemainingStorage(userId),
+            this.storageUsageRepo.getUsedStorage(numericUserId),
+            this.storageUsageRepo.getMaxStorage(numericUserId),
+            this.storageUsageRepo.getRemainingStorage(numericUserId),
           ]);
           const err: Error & { details?: QuotaErrorPayload } = new Error("Storage quota exceeded after upload");
           err.details = {
@@ -112,22 +116,21 @@ export class UploadFilesUseCase {
           throw err;
         }
       } else if (confirmedBytes < incomingBytes) {
-        // leftover: we return the difference
         const surplus = incomingBytes - confirmedBytes;
         if (surplus > 0) {
-          await this.storageUsageRepo.decreaseFromUsedStorage(userId, surplus);
+          await this.storageUsageRepo.decreaseFromUsedStorage(numericUserId, surplus);
         }
       }
 
-      // persist metadata
+      // Persist metadata
       const fileEntities = uploaded.map(
         (file) =>
           new UserFile(
             file.public_id,
             file.url,
-            sectionId,
+            numericSectionId,
             file.sizeInBytes,
-            userId
+            numericUserId
           )
       );
 
@@ -135,13 +138,12 @@ export class UploadFilesUseCase {
 
       return fileEntities;
     } catch (e) {
-      // upload or save failed: delete whatever is in Cloudinary and release the initial reservation
+      // Handle errors: clean up resources
       if (uploadedPublicIds.length > 0) {
         await this.rollbackUpload(uploadedPublicIds);
       }
-      // release the reservation made at the beginning
       await this.storageUsageRepo.decreaseFromUsedStorage(
-        userId,
+        numericUserId,
         incomingBytes
       );
       throw e;
@@ -150,12 +152,12 @@ export class UploadFilesUseCase {
 
   private async rollbackUpload(publicIds: string[]) {
     if (!publicIds || publicIds.length === 0) return;
-    // if the uploader exposes the method, we use its contract
+    
     if (typeof this.cloudinaryUploader.deleteByPublicIds === "function") {
       try {
         await this.cloudinaryUploader.deleteByPublicIds(publicIds);
       } catch (cleanupErr) {
-       console.warn("Cloudinary cleanup failed", { publicIds, cleanupErr });
+        console.warn("Cloudinary cleanup failed", { publicIds, cleanupErr });
       }
     }
   }

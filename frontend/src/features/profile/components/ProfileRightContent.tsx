@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, FeedbackMessages } from "../../../shared/index.js";
+import { Button, FeedbackMessages } from "../../../shared/index";
 import { Bio } from "./Bio.js";
-import { SectionFileManager } from "./SectionFileManager.js";
-import { useProfile } from "../context/ProfileContext.js";
-import { useSections } from "../context/SectionsContext.js";
+import { SectionFileManager } from "./SectionFileManager";
+import { useProfile } from "../context/profile/profileContext.js";
+import { useSections } from "../context/sections/sectionsContext.js";
 
 interface Props {
   updateData: { bio: string };

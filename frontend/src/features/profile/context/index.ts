@@ -1,4 +1,4 @@
-export { useFileDeletion } from "./FileDeletionContext";
-export { useProfile } from "./ProfileContext";
-export { useSections } from "./SectionsContext";
-export { useStorageRefresh } from "./StorageRefreshContext";
+export { useFileDeletion } from "./fileDeletion/fileDeletionContext";
+export { useProfile } from "./profile/profileContext";
+export { useSections } from "./sections/sectionsContext";
+export { useStorageRefresh } from "./storageRefresh/storageRefreshContext";

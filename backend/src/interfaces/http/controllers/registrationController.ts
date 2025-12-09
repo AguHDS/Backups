@@ -10,8 +10,12 @@ const registerUserUseCase = new RegisterUserUseCase(
   encrypt
 );
 
-/** Register a new user in our database */
+/** Register new user */
 export const registerController = async (req: Request, res: Response) => {
+  if(!req.userSession) {
+    res.status(400).json({ message: "Invalid request: missing user session data" });
+    return;
+  }
   const { user, email, password } = req.userSession;
 
   console.log(`Registering user: ${user} with email: ${email} and password: ${password}`);

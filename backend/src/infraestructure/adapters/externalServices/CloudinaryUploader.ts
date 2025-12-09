@@ -13,7 +13,7 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
     sectionId: string,
     sectionTitle: string
   ): Promise<CloudinaryUploadResponse[]> {
-    // cada usuario tiene su carpeta en Cloudinary
+    // each user has a folder in Cloudinary
     const folder = `user_files/${this.username} (id: ${this.userId})/section: ${sectionTitle} (id: ${sectionId})`;
 
     const uploadPromises = files.map((file) => {
@@ -21,7 +21,18 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
         const stream = cloudinary.uploader.upload_stream(
           { folder },
           (error, result) => {
-            if (error) return reject(error);
+            if (error) {
+              return reject(new Error(`Cloudinary upload failed: ${error.message}`));
+            }
+            
+            if (!result) {
+              return reject(new Error("Cloudinary upload failed: No result returned"));
+            }
+
+            if (!result.secure_url || !result.public_id || result.bytes === undefined) {
+              return reject(new Error("Cloudinary upload failed: Incomplete result data"));
+            }
+
             resolve({
               url: result.secure_url,
               public_id: result.public_id,
@@ -41,6 +52,12 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
    */
   async deleteByPublicIds(publicIds: string[]): Promise<void> {
     if (!publicIds || publicIds.length === 0) return;
-    await cloudinary.api.delete_resources(publicIds);
+    
+    try {
+      await cloudinary.api.delete_resources(publicIds);
+    } catch (error) {
+      console.error("Failed to delete resources from Cloudinary:", error);
+      throw new Error(`Failed to delete files from Cloudinary: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
   }
 }

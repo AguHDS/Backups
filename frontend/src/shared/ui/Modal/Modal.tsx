@@ -1,8 +1,6 @@
-import { useRef, useEffect, ReactNode, MouseEvent } from "react";
+import { useRef, useEffect, ReactNode, MouseEvent, useCallback } from "react";
 import { createPortal } from "react-dom";
-
-//context
-import { useModalContext } from "./ModalContext";
+import { useModalContext } from "./context/useModalContext";
 
 interface Props {
   children: ReactNode;
@@ -15,16 +13,20 @@ export const Modal = ({ children, isSpinner = false }: Props) => {
 
   const modalRoot = document.getElementById("modal-root");
 
-  useEffect(() => {
-    if (!modalRoot) {
-      console.error("Modal root not found");
-    }
-
-    const handleEsc = (e: KeyboardEvent) => {
+  const handleEsc = useCallback(
+    (e: KeyboardEvent) => {
       if (e.key === "Escape" && !isSpinner) {
         setIsModalOpen(false);
       }
-    };
+    },
+    [isSpinner, setIsModalOpen]
+  );
+
+  useEffect(() => {
+    if (!modalRoot) {
+      console.error("Modal root not found");
+      return;
+    }
 
     if (isModalOpen) {
       document.addEventListener("keydown", handleEsc);
@@ -35,7 +37,7 @@ export const Modal = ({ children, isSpinner = false }: Props) => {
     return () => {
       document.removeEventListener("keydown", handleEsc);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, handleEsc, modalRoot]);
 
   const closeModal = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -50,9 +52,7 @@ export const Modal = ({ children, isSpinner = false }: Props) => {
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onClick={closeModal}
     >
-      <div ref={modalRef}>
-        {children}
-      </div>
+      <div ref={modalRef}>{children}</div>
     </div>,
     modalRoot
   );

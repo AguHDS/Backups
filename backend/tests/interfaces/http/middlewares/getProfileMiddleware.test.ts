@@ -1,4 +1,12 @@
-import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
+import {
+  describe,
+  it,
+  beforeEach,
+  afterEach,
+  expect,
+  vi,
+  type MockInstance,
+} from "vitest";
 import { getProfileMiddleware } from "@/interfaces/http/middlewares/getProfileMiddleware.js";
 import { MysqlUserRepository } from "@/infraestructure/adapters/repositories/MysqlUserRepository.js";
 import { User } from "@/domain/entities/User.js";
@@ -23,7 +31,7 @@ describe("getProfileMiddleware", () => {
       .spyOn(MysqlUserRepository.prototype, "findByUsername")
       .mockResolvedValue(
         new User(123, "Agustin", "agus@email.com", "hashed123", "user")
-      );
+      ) as MockInstance;
   });
 
   afterEach(() => {

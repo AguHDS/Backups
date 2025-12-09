@@ -15,6 +15,10 @@ export const getProfileController = async (req: Request, res: Response) => {
   try {
     // Profile owner's data
     const { username } = req.params;
+    if (!req.baseUserData) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
     const { name, role, id, email } = req.baseUserData;
 
     let requesterId: number | null = null;
@@ -25,12 +29,23 @@ export const getProfileController = async (req: Request, res: Response) => {
       requesterId = Number(decoded.id);
     } catch (err) {
       requesterId = null;
+      console.error(err);
+    }
+
+    if (!requesterId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
     }
 
     const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(
       username,
       requesterId
     );
+
+    if (!email || !profile.partner) {
+      res.status(400).json({ message: "Incomplete user data" });
+      return;
+    }
 
     const response: GetProfileResponse = {
       username: name,
@@ -63,12 +78,19 @@ export const getProfileController = async (req: Request, res: Response) => {
 
     res.status(200).json(response);
   } catch (error) {
-    if (error instanceof Error)
-      console.error("Failed to get user profile:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
-    switch (error.message) {
+    console.error("Failed to get user profile:", error);
+
+    switch (errorMessage) {
       case "PROFILE_NOT_FOUND":
         res.status(404).json({ message: "Profile not found" });
+        return;
+      case "USER_NOT_FOUND":
+        res.status(404).json({ message: "User not found" });
+        return;
+      case "UNAUTHORIZED":
+        res.status(401).json({ message: "Unauthorized" });
         return;
       default:
         res.status(500).json({ message: "Failed to get user profile" });

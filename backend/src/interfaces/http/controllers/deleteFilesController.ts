@@ -15,6 +15,10 @@ const useCase = new DeleteFilesFromSectionsUseCase(
  */
 export const deleteFilesController = async (req: Request, res: Response) => {
   const payload: SectionFilesPayload[] = req.body;
+  if(!req.baseUserData) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
   const { id } = req.baseUserData;
 
   try {

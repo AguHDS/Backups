@@ -1,4 +1,4 @@
-import { StorageUsageRepository } from "../../domain/ports/repositories/StorageUsageRepository.js";
+import type { StorageUsageRepository } from "../../domain/ports/repositories/StorageUsageRepository.js";
 
 /** Dashboard summary for authenticated user */
 export class DashboardSummaryUseCase {

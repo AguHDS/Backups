@@ -1,8 +1,8 @@
-import { SectionsProvider } from "../context/SectionsContext";
+import { SectionsProvider } from "../context/sections/SectionsProvider";
 import { ProfileContentContainer } from "../containers/ProfileContentContainer";
 import { FetchedUserProfile } from "../types/profileData";
-import { FileDeletionProvider } from "../context/FileDeletionContext";
-import { StorageRefreshProvider } from "../context/StorageRefreshContext";
+import { FileDeletionProvider } from "../context/fileDeletion/FileDeletionProvider";
+import { StorageRefreshProvider } from "../context/storageRefresh/StorageRefreshProvider";
 
 /* ProfileContextProvider wraps the profile in SectionsProvider
 making section state accessible via context inside ProfileContentContainer */

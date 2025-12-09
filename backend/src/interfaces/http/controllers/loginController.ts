@@ -16,6 +16,10 @@ const loginUserUseCase = new LoginUserUseCase(
 
 /** Send new tokens and user data */
 export const loginController = async (req: Request, res: Response) => {
+  if(!req.userAndPassword) {
+    res.status(400).json({ message: "User and password are required" });
+    return;
+  }
   const { user, password } = req.userAndPassword;
 
   try {

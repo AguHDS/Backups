@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
+import { describe, it, beforeEach, afterEach, expect, vi, type MockInstance } from "vitest";
 import { getStorageUsageController } from "@/interfaces/http/controllers/getStorageUsageController.js";
 import { GetStorageUsageUseCase } from "@/application/useCases/GetStorageUsageUseCase.js";
 import { getMockReq, getMockRes } from "vitest-mock-express";
@@ -23,7 +23,7 @@ describe("getStorageUsageController", () => {
         used: 123456,
         limit: 104857600,
         remaining: 104734144,
-      });
+      }) as MockInstance;
   });
 
   afterEach(() => {

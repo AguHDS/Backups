@@ -1,4 +1,4 @@
-import { useProfile } from "../context/ProfileContext";
+import { useProfile } from "../context/profile/profileContext";
 
 interface Props {
   bio: string;

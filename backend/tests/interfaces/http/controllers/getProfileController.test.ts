@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
+import { describe, it, beforeEach, afterEach, expect, vi, type MockInstance } from "vitest";
 import { getProfileController } from "@/interfaces/http/controllers/getProfileController.js";
 import { decodeRefreshToken } from "@/shared/utils/decodeRefreshToken.js";
 import { GetUserProfileUseCase } from "@/application/useCases/GetUserProfileUseCase.js";
@@ -38,7 +38,7 @@ describe("getProfileController", () => {
     const file = new UserFile(
       "img123",
       "https://cdn.com/image.jpg",
-      "1",
+      1,
       2048,
       123
     );
@@ -62,7 +62,7 @@ describe("getProfileController", () => {
 
     fakeExecute = vi
       .spyOn(GetUserProfileUseCase.prototype, "executeByUsername")
-      .mockResolvedValue({ isOwner: true, profile });
+      .mockResolvedValue({ isOwner: true, profile }) as MockInstance;;
 
     (decodeRefreshToken as any).mockReturnValue({
       id: "123",

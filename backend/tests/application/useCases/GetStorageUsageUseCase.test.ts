@@ -5,21 +5,22 @@ import type { StorageUsageRepository } from "@/domain/ports/repositories/Storage
 import { User } from "@/domain/entities/User.js";
 
 describe("GetStorageUsageUseCase", () => {
-  const mockUserRepo: UserRepository = {
+  const mockUserRepo = {
     findByUsername: vi.fn(),
     findById: vi.fn(),
     isNameOrEmailTaken: vi.fn(),
     insertNewUser: vi.fn()
-  };
+  } as UserRepository;
 
-  const mockStorageRepo: StorageUsageRepository = {
+  const mockStorageRepo = {
     getUsedStorage: vi.fn(),
     addToUsedStorage: vi.fn(),
+    setMaxStorage: vi.fn(),
     decreaseFromUsedStorage: vi.fn(),
     getMaxStorage: vi.fn(),
     getRemainingStorage: vi.fn(),
     tryReserveStorage: vi.fn()
-  };
+  } as StorageUsageRepository;
 
   const useCase = new GetStorageUsageUseCase(mockUserRepo, mockStorageRepo);
 
@@ -31,9 +32,9 @@ describe("GetStorageUsageUseCase", () => {
     const username = "subject";
     const mockUser = new User(1, username, "subject@example.com", "hashedpass", "user");
 
-    (mockUserRepo.findByUsername as any).mockResolvedValue(mockUser);
-    (mockStorageRepo.getUsedStorage as any).mockResolvedValue(500);
-    (mockStorageRepo.getMaxStorage as any).mockResolvedValue(1000);
+    mockUserRepo.findByUsername = vi.fn().mockResolvedValue(mockUser);
+    mockStorageRepo.getUsedStorage = vi.fn().mockResolvedValue(500);
+    mockStorageRepo.getMaxStorage = vi.fn().mockResolvedValue(1000);
 
     const result = await useCase.execute(username);
 
@@ -47,9 +48,9 @@ describe("GetStorageUsageUseCase", () => {
     const username = "subject";
     const mockUser = new User(1, username, "subject@example.com", "hashedpass", "user");
 
-    (mockUserRepo.findByUsername as any).mockResolvedValue(mockUser);
-    (mockStorageRepo.getUsedStorage as any).mockResolvedValue(1500);
-    (mockStorageRepo.getMaxStorage as any).mockResolvedValue(1000);
+    mockUserRepo.findByUsername = vi.fn().mockResolvedValue(mockUser);
+    mockStorageRepo.getUsedStorage = vi.fn().mockResolvedValue(1500);
+    mockStorageRepo.getMaxStorage = vi.fn().mockResolvedValue(1000);
 
     const result = await useCase.execute(username);
 
@@ -60,7 +61,7 @@ describe("GetStorageUsageUseCase", () => {
   });
 
   it("should throw USER_NOT_FOUND if user does not exist", async () => {
-    (mockUserRepo.findByUsername as any).mockResolvedValue(null);
+    mockUserRepo.findByUsername = vi.fn().mockResolvedValue(null);
 
     await expect(useCase.execute("ghost")).rejects.toThrow("USER_NOT_FOUND");
     expect(mockUserRepo.findByUsername).toHaveBeenCalledWith("ghost");

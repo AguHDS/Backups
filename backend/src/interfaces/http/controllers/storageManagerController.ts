@@ -8,6 +8,10 @@ const getStorageUseCase = new StorageManagerUseCase(
 
 /** Handle amounth of storage for authenticated user */
 export const storageManagerController = async (req: Request, res: Response) => {
+  if (!req.refreshTokenId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
   const { id } = req.refreshTokenId;
   try {
     const result = await getStorageUseCase.execute(id);
