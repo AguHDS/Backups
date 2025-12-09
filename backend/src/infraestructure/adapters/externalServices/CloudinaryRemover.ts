@@ -32,7 +32,7 @@ export class CloudinaryRemover {
     try {
       await cloudinary.api.delete_folder(folderPath);
     } catch (error) {
-      console.warn(`Could not delete folder ${folderPath}:`, error.message);
+      if(error instanceof Error) console.warn(`Could not delete folder ${folderPath}:`, error.message);
     }
   }
 }

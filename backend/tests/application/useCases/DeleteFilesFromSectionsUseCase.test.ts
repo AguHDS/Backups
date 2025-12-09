@@ -22,6 +22,7 @@ describe("DeleteFilesFromSectionsUseCase", () => {
   const mockStorageRepo: StorageUsageRepository = {
     getUsedStorage: vi.fn(),
     addToUsedStorage: vi.fn(),
+    setMaxStorage: vi.fn(),
     decreaseFromUsedStorage: vi.fn(),
     getMaxStorage: vi.fn(),
     getRemainingStorage: vi.fn(),
@@ -54,9 +55,9 @@ describe("DeleteFilesFromSectionsUseCase", () => {
 
     // Simulate deleted files with different users
     const deletedFiles: UserFile[] = [
-      new UserFile("img1", "url1", "123", 1000, 1), // belongs to user
-      new UserFile("img2", "url2", "123", 2000, 2), // belongs to other user
-      new UserFile("img3", "url3", "456", 500, 1), // belongs to user
+      new UserFile("img1", "url1", 123, 1000, 1), // belongs to user
+      new UserFile("img2", "url2", 123, 2000, 2), // belongs to other user
+      new UserFile("img3", "url3", 456, 500, 1), // belongs to user
     ];
 
     (mockFileRepo.deleteFilesByPublicIds as any).mockResolvedValueOnce(
@@ -112,7 +113,7 @@ describe("DeleteFilesFromSectionsUseCase", () => {
 
     // Deleted file belongs to other user
     const deletedFiles: UserFile[] = [
-      new UserFile("img1", "url1", "4", 1000, 1),
+      new UserFile("img1", "url1", 4, 1000, 1),
     ];
 
     (mockFileRepo.deleteFilesByPublicIds as any).mockResolvedValueOnce(
@@ -135,7 +136,7 @@ describe("DeleteFilesFromSectionsUseCase", () => {
       { sectionId: 3, publicIds: ["img1"] },
     ];
 
-    const deletedFiles: UserFile[] = [new UserFile("img1", "url", "3", 300, 1)];
+    const deletedFiles: UserFile[] = [new UserFile("img1", "url", 3, 300, 1)];
 
     (mockFileRepo.deleteFilesByPublicIds as any).mockResolvedValueOnce(
       deletedFiles

@@ -46,7 +46,7 @@ describe("GetUserProfileUseCase", () => {
 
     const profile = new UserProfile(userId, "bio", 0);
     const sections = [new UserProfileSection(10, "title", "desc")];
-    const files = [new UserFile("pub1", "url1", "10", 1000, userId)];
+    const files = [new UserFile("pub1", "url1", 10, 1000, userId)];
 
     mockProfileRepo.getProfileByUsername.mockResolvedValue(profile);
     mockProfileRepo.getSectionsByUserId.mockResolvedValue(sections);
@@ -69,7 +69,7 @@ describe("GetUserProfileUseCase", () => {
 
     const profile = new UserProfile(userId, "bio", 0);
     const sections = [new UserProfileSection(10, "public", "desc")];
-    const files = [new UserFile("pub2", "url2", "10", 1000, userId)];
+    const files = [new UserFile("pub2", "url2", 10, 1000, userId)];
 
     mockProfileRepo.getProfileByUsername.mockResolvedValue(profile);
     mockProfileRepo.getSectionsByUserId.mockResolvedValue(sections);

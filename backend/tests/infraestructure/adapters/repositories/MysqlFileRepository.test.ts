@@ -17,7 +17,7 @@ const mockedQuery = promisePool.query as unknown as ReturnType<typeof vi.fn>;
 describe("MysqlFileRepository", () => {
   const repository = new MysqlFileRepository();
 
-  const sampleFile = new UserFile("pid123", "url", "sec1", 999, 5);//etestear
+  const sampleFile = new UserFile("pid123", "url", 1, 999, 5);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,8 +33,8 @@ describe("MysqlFileRepository", () => {
 
   it("should save many files", async () => {
     const files = [
-      new UserFile("id1", "url1", "s1", 100, 1),
-      new UserFile("id2", "url2", "s2", 200, 2),
+      new UserFile("id1", "url1", 1, 100, 1),
+      new UserFile("id2", "url2", 1, 200, 2),
     ];
 
     await repository.saveMany(files);

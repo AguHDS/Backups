@@ -4,7 +4,7 @@ import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js"
 /**
  * Check if the profile to edit belongs to the user making the request (requires /:username route param)
  * @param attachUserDataToReq - if true, attaches username, role and id from the refresh token to request object
-*/
+ */
 
 export const verifyUserOwnsProfile = (attachUserDataToReq = false) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -15,7 +15,9 @@ export const verifyUserOwnsProfile = (attachUserDataToReq = false) => {
 
       //make params username optional
       if (username && name !== username) {
-        res.status(403).json({ message: "You don't have permission for this profile" });
+        res
+          .status(403)
+          .json({ message: "You don't have permission for this profile" });
         return;
       }
 
@@ -25,9 +27,11 @@ export const verifyUserOwnsProfile = (attachUserDataToReq = false) => {
 
       next();
     } catch (error) {
-      if (error instanceof Error) console.error("Authorization error:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      
+      console.error("Authorization error:", error);
 
-      switch (error.message) {
+      switch (errorMessage) {
         case "NO_REFRESH_TOKEN":
           res.status(401).json({ message: "No refresh token in cookies" });
           return;

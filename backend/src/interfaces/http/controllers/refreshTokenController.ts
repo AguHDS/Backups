@@ -19,6 +19,10 @@ export const refreshTokenController = async (req: Request, res: Response) => {
   try {
     await connection.beginTransaction();
 
+    if(!req.refreshTokenId) {
+      res.status(400).json({ message: "Refresh token ID is missing in the request" });
+      return;
+    }
     const { id } = req.refreshTokenId;
     const { accessToken, refreshToken, userData, timeRemaining, refreshTokenRotated } = await refreshTokenUseCase.execute(id, connection);
 

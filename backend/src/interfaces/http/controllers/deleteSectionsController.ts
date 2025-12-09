@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { DeleteSectionsUseCase } from "../../../application/useCases/DeleteSectionsUseCase.js";
 import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
 import { CloudinaryRemover } from "../../../infraestructure/adapters/externalServices/CloudinaryRemover.js";
@@ -7,17 +8,24 @@ const deleteSectionsUseCase = new DeleteSectionsUseCase(
   new CloudinaryRemover()
 );
 
-export const deleteSectionsController = async (req, res) => {
+export const deleteSectionsController = async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
     const { sectionIds } = req.body;
 
-    if (!Array.isArray(sectionIds) || sectionIds.some((id) => typeof id !== "number" || id <= 0)) {
+    if (
+      !Array.isArray(sectionIds) ||
+      sectionIds.some((id) => typeof id !== "number" || id <= 0)
+    ) {
       res.status(400).json({ message: "Invalid sectionIds array" });
       return;
     }
 
-    //userId from refresh token
+    if (!req.baseUserData) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    // userId from refresh token
     const { id } = req.baseUserData;
 
     if (!id) {
@@ -29,14 +37,17 @@ export const deleteSectionsController = async (req, res) => {
 
     res.status(200).json({ message: "Sections deleted successfully" });
   } catch (error) {
-    if (error instanceof Error) console.error("Error deleting sections:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
-    switch (error.message) {
+    console.error("Error deleting sections:", error);
+
+    switch (errorMessage) {
       case "NO_SECTIONS_ID":
         res.status(400).json({ message: "Sections ID missing." });
         return;
+      default:
+        res.status(500).json({ message: "Failed to delete sections" });
+        return;
     }
-
-    res.status(500).json({ message: "Failed to delete sections" });
   }
 };

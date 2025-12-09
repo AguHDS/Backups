@@ -23,6 +23,10 @@ export const updateBioAndSectionsController = async (
   res: Response
 ) => {
   const cleanData: ProfileDataToUpdate = matchedData(req);
+  if (!req.baseUserData) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
   const { id, role } = req.baseUserData;
 
   try {
@@ -43,7 +47,7 @@ export const updateBioAndSectionsController = async (
     if (errorMessage === "LIMIT_EXCEEDED_FOR_USER_ROLE") {
       console.error("Users with role 'user' only can have one section");
       res.status(400).json({ message: "User role only can have one section" });
-      return 
+      return;
     }
 
     console.error("Unexpected error updating profile:", error);

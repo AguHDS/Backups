@@ -3,11 +3,17 @@ import { CloudinaryUploader } from "../../../infraestructure/adapters/externalSe
 import { UploadFilesUseCase } from "../../../application/useCases/UploadFilesUseCase.js";
 import { MysqlFileRepository } from "../../../infraestructure/adapters/repositories/MysqlFileRepository.js";
 import { MysqlStorageUsageRepository } from "../../../infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
+import { BaseUserData } from "../../../shared/dtos/userDto.js";
 
 /** Upload files to Cloudinary and database */
 export const uploadFilesController = async (req: Request, res: Response) => {
   try {
-    const { name, id } = req.baseUserData;
+    const baseUserData = req.baseUserData as BaseUserData | undefined;
+    if (!baseUserData) {
+      res.status(401).json({ message: "Authentication required" });
+      return;
+    }
+    const { name, id } = baseUserData;
     const sectionId = req.query.sectionId as string;
     const sectionTitle = req.query.sectionTitle as string;
     const files = req.files as Express.Multer.File[];

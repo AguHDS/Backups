@@ -82,7 +82,7 @@ describe("uploadFilesController", () => {
 
   it("should call use case and return uploaded files", async () => {
     const expectedFiles: UserFile[] = [
-      new UserFile("abc123", "http://cloudinary.com/file.jpg", "section123", 1024, 1),
+      new UserFile("abc123", "http://cloudinary.com/file.jpg", 3, 1024, 1),
     ];
 
     const UploadFilesUseCaseMock = UploadFilesUseCase as unknown as MockInstance;

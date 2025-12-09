@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from "vitest";
 import { deleteFilesController } from "@/interfaces/http/controllers/deleteFilesController.js";
 import { getMockReq, getMockRes } from "vitest-mock-express";
 import { DeleteFilesFromSectionsUseCase } from "@/application/useCases/DeleteFilesFromSectionsUseCase.js";
@@ -30,7 +30,7 @@ describe("deleteFilesController", () => {
 
     fakeExecute = vi
       .spyOn(DeleteFilesFromSectionsUseCase.prototype, "execute")
-      .mockResolvedValue(undefined);
+      .mockResolvedValue(undefined) as MockInstance;
   });
 
   afterEach(() => {

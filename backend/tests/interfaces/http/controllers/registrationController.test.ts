@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type MockInstance  } from "vitest";
 import { registerController } from "@/interfaces/http/controllers/registrationController.js";
 import { RegisterUserUseCase } from "@/application/useCases/RegisterUserUseCase.js";
 import { Request, Response } from "express";
@@ -32,7 +32,7 @@ describe("registerController", () => {
 
     executeMock = vi
       .spyOn(RegisterUserUseCase.prototype, "execute")
-      .mockResolvedValue(undefined);
+      .mockResolvedValue(undefined) as MockInstance;
 
     vi.clearAllMocks();
   });
