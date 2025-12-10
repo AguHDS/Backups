@@ -1,4 +1,4 @@
-import { Button } from "../../../shared";
+import { Button } from "@/shared";
 
 export const AccountSettings = () => {
   return (

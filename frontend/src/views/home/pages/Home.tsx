@@ -1,4 +1,4 @@
-import { AboutCard } from "@/features/dashboard/components";
+import { AboutCard } from "@/views/dashboard/components";
 
 export const Home = () => {
   return (

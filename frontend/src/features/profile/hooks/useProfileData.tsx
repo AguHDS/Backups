@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useFetch, useModalContext } from "../../../shared";
+import { useFetch, useModalContext } from "@/shared";
 import { UserProfileWithFiles } from "../types/profileData";
 
 interface ProfileStorage {

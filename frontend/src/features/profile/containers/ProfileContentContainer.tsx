@@ -8,7 +8,7 @@ import {
   useStorageRefresh,
 } from "../context";
 import { useProfileData } from "../hooks/useProfileData";
-import { useFetch } from "../../../shared";
+import { useFetch } from "@/shared";
 import {
   Header,
   ActionsAndProfileImg,
@@ -16,12 +16,12 @@ import {
   StorageGraph,
   ProfileRightContent,
 } from "../components";
-import { images } from "../../../assets/images";
+import { images } from "@/assets/images";
 import { FetchedUserProfile } from "../types/profileData";
-import { processErrorMessages } from "../../../shared/utils/errors";
+import { processErrorMessages } from "@/shared/utils/errors";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../app/redux/store";
-import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
+import { AppDispatch } from "@/app/redux/store";
+import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
 
 /* Handles profile editing logic for bio, sections, files
    and renders the full profile. This uses SectionsContext (in ProfileContextProvider) to access section states */

@@ -1,16 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Button } from "../../../shared";
+import { Button } from "@/shared";
 import { useProfile, useSections, useStorageRefresh } from "../context";
 import { useParams } from "react-router-dom";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
-import { processErrorMessages } from "../../../shared/utils/errors";
-import { FeedbackMessages } from "../../../shared";
+import { processErrorMessages } from "@/shared/utils/errors";
+import { FeedbackMessages } from "@/shared";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../app/redux/store";
-import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
-import { useFetch } from "../../../shared/hooks/useFetch";
+import { AppDispatch } from "@/app/redux/store";
+import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
+import { useFetch } from "@/shared/hooks/useFetch";
 
 interface Props {
   sectionIndex: number;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, FeedbackMessages } from "../../../shared/index";
+import { Button, FeedbackMessages } from "@/shared/index";
 import { Bio } from "./Bio.js";
 import { SectionFileManager } from "./SectionFileManager";
 import { useProfile } from "../context/Profile/profileContext.js";

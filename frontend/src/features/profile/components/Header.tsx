@@ -1,4 +1,4 @@
-import { Button } from "../../../shared/components";
+import { Button } from "@/shared/components";
 import { useProfile } from "../context/Profile/profileContext";
 
 interface Props {

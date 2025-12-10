@@ -1,8 +1,8 @@
 import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
 import { StatCard,  AboutCard } from "../components";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../app/redux/store";
-import { formatBytes } from "../../../shared/utils/formatBytes";
+import { RootState } from "@/app/redux/store";
+import { formatBytes } from "@/shared/utils/formatBytes";
 
 export const Dashboard = () => {
 const { used } = useSelector((state: RootState) => state.dashboard);
