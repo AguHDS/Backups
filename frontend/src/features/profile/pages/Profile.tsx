@@ -1,7 +1,7 @@
 import { useProfileData } from "../hooks/useProfileData";
-import { ProfileProvider } from "../context/profile/ProfileProvider";
+import { ProfileProvider } from "../context/Profile/ProfileProvider";
 import { Modal, LoadingSpinner } from "../../../shared";
-import { ProfileContextProvider } from "../providers/ProfileContextProvider";
+import { ProfileContextProvider } from "../Providers/ProfileContextProvider";
 
 /* ProfileContextProvider wraps the profile in SectionsContext. ProfileContentContainer contains the logic and uses sections context */
 

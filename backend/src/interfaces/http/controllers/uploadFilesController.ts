@@ -13,6 +13,7 @@ export const uploadFilesController = async (req: Request, res: Response) => {
       res.status(401).json({ message: "Authentication required" });
       return;
     }
+
     const { name, id } = baseUserData;
     const sectionId = req.query.sectionId as string;
     const sectionTitle = req.query.sectionTitle as string;
@@ -35,11 +36,31 @@ export const uploadFilesController = async (req: Request, res: Response) => {
       id
     );
 
-    res.status(200).json({ files: results });
-  } catch (error) {
-    console.error("Upload error:", error);
-    res.status(500).json({
-      message: error instanceof Error ? error.message : "Unknown error",
+    res.status(200).json({
+      success: true,
+      message: `Uploaded ${results.length} files`,
+      files: results,
     });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      (error as any).details?.code === "STORAGE_QUOTA_EXCEEDED"
+    ) {
+      const details = (error as any).details;
+
+      res.status(409).json({
+        success: false,
+        code: "STORAGE_QUOTA_EXCEEDED",
+        message: error.message,
+        details: details,
+      });
+    } else {
+      console.error("Upload error:", error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : "Unknown error",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
   }
 };

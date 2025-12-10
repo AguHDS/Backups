@@ -57,7 +57,6 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     `;
 
     const [rows] = await promisePool.execute<UsedStorageRow[]>(query, [userId]);
-
     return rows.length > 0 ? rows[0].total_bytes : 0;
   }
 
@@ -69,7 +68,6 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     `;
 
     const [rows] = await promisePool.execute<MaxStorageRow[]>(query, [userId]);
-
     return rows.length > 0 ? rows[0].max_bytes : DEFAULT_MAX_STORAGE;
   }
 

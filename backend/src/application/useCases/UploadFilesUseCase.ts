@@ -11,6 +11,14 @@ type QuotaErrorPayload = {
   attempted?: number;
 };
 
+// Custom error class to fix rollback situations
+class AlreadyRolledBackError extends Error {
+  constructor(message: string, public details?: QuotaErrorPayload) {
+    super(message);
+    this.name = "AlreadyRolledBackError";
+  }
+}
+
 export class UploadFilesUseCase {
   constructor(
     private readonly cloudinaryUploader: CloudinaryFileUploader,
@@ -28,22 +36,38 @@ export class UploadFilesUseCase {
 
     const numericSectionId = parseInt(sectionId, 10);
     if (isNaN(numericSectionId) || numericSectionId <= 0) {
-      throw new Error(`Invalid sectionId: "${sectionId}". Must be a positive integer.`);
+      throw new Error(
+        `Invalid sectionId: "${sectionId}". Must be a positive integer.`
+      );
     }
 
-    const numericUserId = typeof userId === 'string' ? parseInt(userId, 10) : userId;
-    if (typeof numericUserId !== 'number' || isNaN(numericUserId) || numericUserId <= 0) {
-      throw new Error(`Invalid userId: "${userId}". Must be a positive number.`);
+    const numericUserId =
+      typeof userId === "string" ? parseInt(userId, 10) : userId;
+    if (
+      typeof numericUserId !== "number" ||
+      isNaN(numericUserId) ||
+      numericUserId <= 0
+    ) {
+      throw new Error(
+        `Invalid userId: "${userId}". Must be a positive number.`
+      );
     }
 
     const incomingBytes = files.reduce((sum, f) => sum + (f.size ?? 0), 0);
     if (incomingBytes <= 0) throw new Error("Invalid files payload");
 
-    const remaining = await this.storageUsageRepo.getRemainingStorage(numericUserId);
+    // Check initial quota
+    const remaining = await this.storageUsageRepo.getRemainingStorage(
+      numericUserId
+    );
+
     if (incomingBytes > remaining) {
       const used = await this.storageUsageRepo.getUsedStorage(numericUserId);
       const limit = await this.storageUsageRepo.getMaxStorage(numericUserId);
-      const err: Error & { details?: QuotaErrorPayload } = new Error("Storage quota exceeded");
+
+      const err: Error & { details?: QuotaErrorPayload } = new Error(
+        "Storage quota exceeded"
+      );
       err.details = {
         code: "STORAGE_QUOTA_EXCEEDED",
         used,
@@ -54,17 +78,22 @@ export class UploadFilesUseCase {
       throw err;
     }
 
+    // Reserve initial storage
     const reserved = await this.storageUsageRepo.tryReserveStorage(
       numericUserId,
       incomingBytes
     );
+
     if (!reserved) {
       const [usedNow, limitNow, remainingNow] = await Promise.all([
         this.storageUsageRepo.getUsedStorage(numericUserId),
         this.storageUsageRepo.getMaxStorage(numericUserId),
         this.storageUsageRepo.getRemainingStorage(numericUserId),
       ]);
-      const err: Error & { details?: QuotaErrorPayload } = new Error("Storage quota exceeded");
+
+      const err: Error & { details?: QuotaErrorPayload } = new Error(
+        "Storage quota exceeded"
+      );
       err.details = {
         code: "STORAGE_QUOTA_EXCEEDED",
         used: usedNow,
@@ -75,8 +104,10 @@ export class UploadFilesUseCase {
       throw err;
     }
 
-    // upload to Cloudinary
+    // Upload to Cloudinary
     let uploadedPublicIds: string[] = [];
+    let confirmedBytes = 0;
+
     try {
       const uploaded = await this.cloudinaryUploader.upload(
         files,
@@ -85,27 +116,36 @@ export class UploadFilesUseCase {
       );
 
       uploadedPublicIds = uploaded.map((f) => f.public_id);
+      confirmedBytes = uploaded.reduce(
+        (sum, f) => sum + (f.sizeInBytes ?? 0),
+        0
+      );
 
-      const confirmedBytes = uploaded.reduce((sum, f) => sum + (f.sizeInBytes ?? 0), 0);
-
+      // Handle byte difference
       if (confirmedBytes > incomingBytes) {
         const extra = confirmedBytes - incomingBytes;
+
         const extraOk = await this.storageUsageRepo.tryReserveStorage(
           numericUserId,
           extra
         );
+
         if (!extraOk) {
           await this.rollbackUpload(uploadedPublicIds);
           await this.storageUsageRepo.decreaseFromUsedStorage(
             numericUserId,
             incomingBytes
           );
+
           const [usedNow, limitNow, remainingNow] = await Promise.all([
             this.storageUsageRepo.getUsedStorage(numericUserId),
             this.storageUsageRepo.getMaxStorage(numericUserId),
             this.storageUsageRepo.getRemainingStorage(numericUserId),
           ]);
-          const err: Error & { details?: QuotaErrorPayload } = new Error("Storage quota exceeded after upload");
+
+          const err = new AlreadyRolledBackError(
+            "Storage quota exceeded after upload"
+          );
           err.details = {
             code: "STORAGE_QUOTA_EXCEEDED",
             used: usedNow,
@@ -118,7 +158,10 @@ export class UploadFilesUseCase {
       } else if (confirmedBytes < incomingBytes) {
         const surplus = incomingBytes - confirmedBytes;
         if (surplus > 0) {
-          await this.storageUsageRepo.decreaseFromUsedStorage(numericUserId, surplus);
+          await this.storageUsageRepo.decreaseFromUsedStorage(
+            numericUserId,
+            surplus
+          );
         }
       }
 
@@ -135,29 +178,40 @@ export class UploadFilesUseCase {
       );
 
       await this.fileRepo.saveMany(fileEntities);
-
       return fileEntities;
     } catch (e) {
-      // Handle errors: clean up resources
-      if (uploadedPublicIds.length > 0) {
-        await this.rollbackUpload(uploadedPublicIds);
+      // Only rollback if it is NOT an AlreadyRolledBackError
+      if (!(e instanceof AlreadyRolledBackError)) {
+        if (uploadedPublicIds.length > 0) {
+          await this.rollbackUpload(uploadedPublicIds);
+        }
+
+        // Calculate how many bytes to reverse:
+        const bytesToRevert =
+          confirmedBytes > 0 ? confirmedBytes : incomingBytes;
+
+        await this.storageUsageRepo.decreaseFromUsedStorage(
+          numericUserId,
+          bytesToRevert
+        );
       }
-      await this.storageUsageRepo.decreaseFromUsedStorage(
-        numericUserId,
-        incomingBytes
-      );
+
       throw e;
     }
   }
 
   private async rollbackUpload(publicIds: string[]) {
     if (!publicIds || publicIds.length === 0) return;
-    
+
     if (typeof this.cloudinaryUploader.deleteByPublicIds === "function") {
       try {
         await this.cloudinaryUploader.deleteByPublicIds(publicIds);
       } catch (cleanupErr) {
-        console.warn("Cloudinary cleanup failed", { publicIds, cleanupErr });
+        console.warn("Cloudinary cleanup failed", {
+          publicIds,
+          error:
+            cleanupErr instanceof Error ? cleanupErr.message : "Unknown error",
+        });
       }
     }
   }

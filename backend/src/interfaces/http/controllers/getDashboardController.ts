@@ -13,7 +13,7 @@ export const getDashboardController = async (req: Request, res: Response) => {
 
     const result = await dashboardSummaryUseCase.execute(id);
     res.status(200).json(result); */
-    res.send(200);
+    res.sendStatus(200);
   } catch (err) {
     console.error("Error getting dashboard summary:", err);
     res.status(500).json({ message: "Failed to get dashboard summary" });
