@@ -388,6 +388,10 @@
   display: none !important;
 }
 
+.aspect-square {
+  aspect-ratio: 1 / 1 !important;
+}
+
 .size-5 {
   width: 1.25rem !important;
   height: 1.25rem !important;
@@ -423,10 +427,6 @@
 
 .h-8 {
   height: 2rem !important;
-}
-
-.h-\[150px\] {
-  height: 150px !important;
 }
 
 .h-\[1px\] {
@@ -643,6 +643,10 @@
 
 .resize-none {
   resize: none !important;
+}
+
+.resize {
+  resize: both !important;
 }
 
 .list-inside {

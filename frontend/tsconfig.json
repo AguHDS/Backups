@@ -22,7 +22,8 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
 
     "baseUrl": "./src",

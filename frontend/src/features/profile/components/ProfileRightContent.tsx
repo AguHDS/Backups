@@ -1,4 +1,4 @@
-import React from "react";
+import { memo, Fragment } from "react";
 import { Button, FeedbackMessages } from "@/shared/index";
 import { Bio } from "./Bio.js";
 import { SectionFileManager } from "./SectionFileManager";
@@ -12,8 +12,18 @@ interface Props {
   onBioChange: (bio: string) => void;
 }
 
+// Custom comparison to prevent unnecessary re-renders
+const arePropsEqual = (prevProps: Props, nextProps: Props) => {
+  return (
+    prevProps.updateData.bio === nextProps.updateData.bio &&
+    prevProps.errorMessages.length === nextProps.errorMessages.length &&
+    prevProps.status === nextProps.status &&
+    prevProps.onBioChange === nextProps.onBioChange
+  );
+};
+
 // Right content (bio, titles, sections)
-export const ProfileRightContent = ({
+export const ProfileRightContent = memo(({
   updateData,
   errorMessages,
   status,
@@ -43,7 +53,7 @@ export const ProfileRightContent = ({
             </p>
           ) : (
             sections.map((section, index) => (
-              <React.Fragment
+              <Fragment
                 key={section.id !== 0 ? section.id : `new-${index}`}
               >
                 <div className="mb-6">
@@ -117,7 +127,7 @@ export const ProfileRightContent = ({
                 </div>
                 <div className="h-1"></div>
                 <div className="border-[#121212] border-solid w-full"></div>
-              </React.Fragment>
+              </Fragment>
             ))
           )}
         </div>
@@ -134,4 +144,4 @@ export const ProfileRightContent = ({
       </div>
     </div>
   );
-};
+}, arePropsEqual);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useEditBio } from "../hooks/useEditBio";
 import {
@@ -67,7 +67,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     return errors;
   };
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const errors = validateFields();
     if (errors.length > 0) {
       setErrorMessages(errors);
@@ -162,9 +162,22 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       const messages = processErrorMessages(error);
       setErrorMessages(messages);
     }
-  };
+  }, [
+    sections,
+    sectionsToDelete,
+    filesToDelete,
+    updateData.bio,
+    username,
+    setSections,
+    setSectionsToDelete,
+    clearFilesToDelete,
+    setIsEditing,
+    refreshStorage,
+    dispatch,
+    updateSectionIds,
+  ]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     resetBio(data.userProfileData.bio);
     setSections(data.userSectionData);
     setSectionsToDelete([]);
@@ -172,7 +185,21 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     setErrorMessages([]);
     setStatus(null);
     setIsEditing(false);
-  };
+  }, [
+    data.userProfileData.bio,
+    data.userSectionData,
+    resetBio,
+    setSections,
+    setSectionsToDelete,
+    clearFilesToDelete,
+    setStatus,
+    setIsEditing,
+  ]);
+
+  const handleBioChange = useCallback(
+    (bio: string) => setUpdateData({ bio }),
+    [setUpdateData]
+  );
 
   return (
     <div className="mx-auto flex justify-center mt-5">
@@ -206,7 +233,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
               updateData={updateData}
               errorMessages={errorMessages}
               status={status!}
-              onBioChange={(bio) => setUpdateData({ bio })}
+              onBioChange={handleBioChange}
             />
           </div>
         </div>

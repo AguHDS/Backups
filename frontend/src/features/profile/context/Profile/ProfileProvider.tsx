@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useMemo } from "react";
 
 export interface ProfileContextType {
   isEditing: boolean;
@@ -19,8 +19,13 @@ export const ProfileProvider = ({
 }: ProfileProviderProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  const contextValue = useMemo(
+    () => ({ isEditing, setIsEditing, isOwnProfile }),
+    [isEditing, isOwnProfile]
+  );
+
   return (
-    <ProfileContext.Provider value={{ isEditing, setIsEditing, isOwnProfile }}>
+    <ProfileContext.Provider value={contextValue}>
       {children}
     </ProfileContext.Provider>
   );
