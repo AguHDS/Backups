@@ -16,19 +16,19 @@ const NOOP = () => {};
 
 // Custom comparison function for memo
 const arePropsEqual = (prevProps: Props, nextProps: Props) => {
-  // Check if arrays have same length and same items
   if (prevProps.uploadedFiles.length !== nextProps.uploadedFiles.length) {
     return false;
   }
-  
-  // Check if all publicIds are the same
+
   for (let i = 0; i < prevProps.uploadedFiles.length; i++) {
-    if (prevProps.uploadedFiles[i].publicId !== nextProps.uploadedFiles[i].publicId) {
+    if (
+      prevProps.uploadedFiles[i].publicId !==
+      nextProps.uploadedFiles[i].publicId
+    ) {
       return false;
     }
   }
-  
-  // Check other props
+
   return (
     prevProps.sectionId === nextProps.sectionId &&
     prevProps.isEditing === nextProps.isEditing &&
@@ -37,7 +37,6 @@ const arePropsEqual = (prevProps: Props, nextProps: Props) => {
   );
 };
 
-// Renders the file gallery inside a section
 export const SectionFileGallery = memo(({
   uploadedFiles,
   sectionId,
@@ -45,51 +44,47 @@ export const SectionFileGallery = memo(({
   selectedFileIds = EMPTY_SET,
   toggleFileSelection = NOOP,
 }: Props) => {
-  // filter files without a valid publicId (can't be displayed or interacted with)
   const validFiles = useMemo(
     () => uploadedFiles.filter((file) => !!file.publicId),
     [uploadedFiles]
   );
-  
+
   const lastSelectedIndexRef = useRef<number | null>(null);
 
-  const handleClick = useCallback((
-    fileId: string,
-    index: number,
-    e: React.MouseEvent<HTMLDivElement>
-  ) => {
-    if (!isEditing) return;
+  const handleClick = useCallback(
+    (fileId: string, index: number, e: React.MouseEvent<HTMLDivElement>) => {
+      if (!isEditing) return;
 
-    // handle multi selection with shift key
-    if (e.shiftKey && lastSelectedIndexRef.current !== null) {
-      const start = Math.min(lastSelectedIndexRef.current, index);
-      const end = Math.max(lastSelectedIndexRef.current, index);
+      if (e.shiftKey && lastSelectedIndexRef.current !== null) {
+        const start = Math.min(lastSelectedIndexRef.current, index);
+        const end = Math.max(lastSelectedIndexRef.current, index);
 
-      for (let i = start; i <= end; i++) {
-        toggleFileSelection(validFiles[i].publicId!);
+        for (let i = start; i <= end; i++) {
+          toggleFileSelection(validFiles[i].publicId!);
+        }
+      } else {
+        toggleFileSelection(fileId);
       }
-    } else {
-      // single file selection
-      toggleFileSelection(fileId);
-    }
 
-    lastSelectedIndexRef.current = index + 1;
-  }, [isEditing, toggleFileSelection, validFiles]);
+      lastSelectedIndexRef.current = index + 1;
+    },
+    [isEditing, toggleFileSelection, validFiles]
+  );
 
   return (
     <div className="p-4 overflow-y-auto border border-[#121212] bg-[#1e1e1e] h-[50vh] max-h-[50vh] min-w-[90%] max-w-[90%]">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         {validFiles.length > 0 ? (
           validFiles.map((file, i) => {
-            const fileId = file.publicId!; // use publicId as stable identifier
+            const fileId = file.publicId!;
             const isSelected = selectedFileIds.has(fileId);
 
             return (
               <div
                 key={fileId}
-                className={`relative w-full aspect-square cursor-pointer ${
-                  isEditing && isSelected ? "ring-4 ring-blue-500" : ""
-                }`}
+                className={`relative aspect-square w-full overflow-hidden rounded cursor-pointer
+                  ${isEditing && isSelected ? "ring-4 ring-blue-500" : ""}
+                `}
                 onClick={(e) => handleClick(fileId, i, e)}
               >
                 {isEditing && (
@@ -101,18 +96,19 @@ export const SectionFileGallery = memo(({
                     readOnly
                   />
                 )}
+
                 <CloudinaryImage
                   publicId={fileId}
                   alt={`Uploaded file ${i + 1}`}
-                  className="object-cover w-full h-full rounded"
-                  width={400}
-                  height={400}
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
               </div>
             );
           })
         ) : (
-          <div className="text-[#999]">No files uploaded for this section</div>
+          <div className="text-[#999]">
+            No files uploaded for this section
+          </div>
         )}
       </div>
     </div>
