@@ -11,6 +11,7 @@ export interface UploadedFile {
   sectionId: string;
   sizeInBytes: number;
   userId: number | string;
+  originalName?: string;
 }
 
 export interface SectionWithFile extends BaseSection {
