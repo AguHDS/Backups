@@ -54,7 +54,7 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
   const sectionTitle = section.title;
   const uploadedFiles = section.files || [];
   
-  const handleButtonClick = useCallback(() => fileInputRef.current?.click(), []);
+  const handleButtonClick = () => fileInputRef.current?.click();
 
   useEffect(() => {
     if (status !== null && !isLoading) {
@@ -83,11 +83,11 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
     setReadyToUpload(true);
   }, []);
 
-  const cancelUpload = useCallback(() => {
+  const cancelUpload = () => {
     setFiles([]);
     setReadyToUpload(false);
     setUploadErrors([]);
-  }, []);
+  };
 
   // Toggle selection checkbox for files (add/remove from set)
   const toggleFileSelection = useCallback((fileId: string) => {

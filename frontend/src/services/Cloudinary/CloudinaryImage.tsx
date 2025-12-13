@@ -1,7 +1,6 @@
 import {
   AdvancedImage,
   lazyload,
-  placeholder,
 } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { cld } from "./cloudinaryConfig";
@@ -15,6 +14,17 @@ interface CloudinaryImageProps {
   height?: number;
   lazy?: boolean;
 }
+
+// Custom comparison to prevent unnecessary re-renders
+const arePropsEqual = (prevProps: CloudinaryImageProps, nextProps: CloudinaryImageProps) => {
+  return (
+    prevProps.publicId === nextProps.publicId &&
+    prevProps.width === nextProps.width &&
+    prevProps.height === nextProps.height &&
+    prevProps.lazy === nextProps.lazy &&
+    prevProps.className === nextProps.className
+  );
+};
 
 export const CloudinaryImage = memo(({
   publicId,
@@ -37,12 +47,12 @@ export const CloudinaryImage = memo(({
     const pluginArray = [];
 
     if (lazy) {
-      // Use simple lazyload without rootMargin to avoid premature loading
-      pluginArray.push(lazyload());
+      // Configure lazyload to only load when image is visible
+      // No rootMargin to prevent loading images outside viewport
+      pluginArray.push(lazyload({ 
+        rootMargin: '0px'
+      }));
     }
-
-    // Use vectorize placeholder mode for better performance
-    pluginArray.push(placeholder({ mode: 'vectorize' }));
 
     return pluginArray;
   }, [lazy]);
@@ -55,4 +65,4 @@ export const CloudinaryImage = memo(({
       plugins={plugins}
     />
   );
-});
+}, arePropsEqual);
