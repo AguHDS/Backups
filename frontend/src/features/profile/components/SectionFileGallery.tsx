@@ -26,6 +26,7 @@ export const SectionFileGallery = ({
 
   const lastSelectedIndexRef = useRef<number | null>(null);
 
+  // Handle click with shift-selection support
   const handleClick = useCallback(
     (fileId: string, index: number, e: React.MouseEvent<HTMLDivElement>) => {
       if (!isEditing) return;
@@ -34,16 +35,28 @@ export const SectionFileGallery = ({
         const start = Math.min(lastSelectedIndexRef.current, index);
         const end = Math.max(lastSelectedIndexRef.current, index);
 
+        const shouldSelect = !selectedFileIds.has(fileId);
+
+        const filesToToggle = [];
         for (let i = start; i <= end; i++) {
-          toggleFileSelection(validFiles[i].publicId!);
+          const currentFileId = validFiles[i].publicId!;
+          const isCurrentlySelected = selectedFileIds.has(currentFileId);
+
+          if (shouldSelect && !isCurrentlySelected) {
+            filesToToggle.push(currentFileId);
+          } else if (!shouldSelect && isCurrentlySelected) {
+            filesToToggle.push(currentFileId);
+          }
         }
+
+        filesToToggle.forEach(toggleFileSelection);
       } else {
         toggleFileSelection(fileId);
       }
 
-      lastSelectedIndexRef.current = index + 1;
+      lastSelectedIndexRef.current = index;
     },
-    [isEditing, toggleFileSelection, validFiles]
+    [isEditing, toggleFileSelection, validFiles, selectedFileIds]
   );
 
   return (
