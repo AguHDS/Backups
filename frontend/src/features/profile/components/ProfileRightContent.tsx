@@ -12,18 +12,8 @@ interface Props {
   onBioChange: (bio: string) => void;
 }
 
-// Custom comparison to prevent unnecessary re-renders
-const arePropsEqual = (prevProps: Props, nextProps: Props) => {
-  return (
-    prevProps.updateData.bio === nextProps.updateData.bio &&
-    prevProps.errorMessages.length === nextProps.errorMessages.length &&
-    prevProps.status === nextProps.status &&
-    prevProps.onBioChange === nextProps.onBioChange
-  );
-};
-
 // Right content (bio, titles, sections)
-export const ProfileRightContent = memo(({
+export const ProfileRightContent = ({
   updateData,
   errorMessages,
   status,
@@ -36,12 +26,12 @@ export const ProfileRightContent = memo(({
     <div className="w-full mr-[5px] ml-[5px] scrollbar-container flex flex-col h-full min-h-[80vh]">
       <div className="bg-[#272727] w-full max-w-full flex-1">
         <div className="p-4 space-y-4 scrollbar-container flex-1">
-           <FeedbackMessages
+          <FeedbackMessages
             input={errorMessages}
             status={status}
             message={errorMessages.length === 0 ? "Operation completed" : null}
           />
-          
+
           <Bio bio={updateData.bio} onBioChange={onBioChange} />
 
           <div className="h-1"></div>
@@ -53,9 +43,7 @@ export const ProfileRightContent = memo(({
             </p>
           ) : (
             sections.map((section, index) => (
-              <Fragment
-                key={section.id !== 0 ? section.id : `new-${index}`}
-              >
+              <Fragment key={section.id !== 0 ? section.id : `new-${index}`}>
                 <div className="mb-6">
                   {isEditing ? (
                     <>
@@ -144,4 +132,4 @@ export const ProfileRightContent = memo(({
       </div>
     </div>
   );
-}, arePropsEqual);
+};

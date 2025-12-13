@@ -1,6 +1,11 @@
 import { useRef, useState, useEffect, useCallback, memo, useMemo } from "react";
 import { Button } from "@/shared";
-import { useProfile, useSection, useSections, useStorageRefresh } from "../context";
+import {
+  useProfile,
+  useSection,
+  useSections,
+  useStorageRefresh,
+} from "../context";
 import { useParams } from "react-router-dom";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
@@ -20,12 +25,7 @@ interface FileUploadResponse {
   files: UploadedFile[];
 }
 
-// Custom comparison to prevent re-renders when section data hasn't changed
-const arePropsEqual = (prevProps: Props, nextProps: Props) => {
-  return prevProps.sectionIndex === nextProps.sectionIndex;
-};
-
-export const SectionFileManager = memo(({ sectionIndex }: Props) => {
+export const SectionFileManager = ({ sectionIndex }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
   const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(
@@ -40,12 +40,12 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
   const { addFilesToDelete } = useFileDeletion();
   const dispatch = useDispatch<AppDispatch>();
   const { username } = useParams();
-  const { 
-    data: uploadData, 
-    fetchData, 
-    status, 
-    error, 
-    isLoading 
+  const {
+    data: uploadData,
+    fetchData,
+    status,
+    error,
+    isLoading,
   } = useFetch<FileUploadResponse>();
 
   // Use specific section hook to avoid re-renders when other sections change
@@ -53,7 +53,7 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
   const sectionId = section.id;
   const sectionTitle = section.title;
   const uploadedFiles = section.files || [];
-  
+
   const handleButtonClick = () => fileInputRef.current?.click();
 
   useEffect(() => {
@@ -71,17 +71,29 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
         setUploadErrors(messages);
       }
     }
-  }, [status, isLoading, uploadData, error, sectionId, renderFilesOnResponse, refreshStorage, dispatch]);
+  }, [
+    status,
+    isLoading,
+    uploadData,
+    error,
+    sectionId,
+    renderFilesOnResponse,
+    refreshStorage,
+    dispatch,
+  ]);
 
   // Handle selecting files from input
-  const handleUploadFiles = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files;
-    if (!selected || selected.length === 0) return;
+  const handleUploadFiles = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selected = e.target.files;
+      if (!selected || selected.length === 0) return;
 
-    setFiles((prev) => [...prev, ...Array.from(selected)]);
-    setUploadErrors([]);
-    setReadyToUpload(true);
-  }, []);
+      setFiles((prev) => [...prev, ...Array.from(selected)]);
+      setUploadErrors([]);
+      setReadyToUpload(true);
+    },
+    []
+  );
 
   const cancelUpload = () => {
     setFiles([]);
@@ -110,7 +122,9 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
     files.forEach((file) => formData.append("files", file));
 
     await fetchData(
-      `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
+      `http://localhost:${
+        import.meta.env.VITE_BACKENDPORT
+      }/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
       {
         method: "POST",
         credentials: "include",
@@ -148,7 +162,6 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
     <div className="flex flex-col items-center w-full">
       {/* Display files inside sections */}
       <SectionFileGallery
-        sectionId={sectionId}
         uploadedFiles={visibleFiles}
         isEditing={isEditing}
         selectedFileIds={selectedFileIds}
@@ -216,4 +229,4 @@ export const SectionFileManager = memo(({ sectionIndex }: Props) => {
       )}
     </div>
   );
-}, arePropsEqual);
+};

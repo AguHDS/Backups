@@ -4,7 +4,6 @@ import { CloudinaryImage } from "@/services/Cloudinary";
 
 interface Props {
   uploadedFiles: UploadedFile[];
-  sectionId: number | string;
   isEditing?: boolean;
   selectedFileIds?: Set<string>;
   toggleFileSelection?: (fileId: string) => void;
@@ -14,32 +13,8 @@ interface Props {
 const EMPTY_SET = new Set<string>();
 const NOOP = () => {};
 
-// Custom comparison function for memo
-const arePropsEqual = (prevProps: Props, nextProps: Props) => {
-  if (prevProps.uploadedFiles.length !== nextProps.uploadedFiles.length) {
-    return false;
-  }
-
-  for (let i = 0; i < prevProps.uploadedFiles.length; i++) {
-    if (
-      prevProps.uploadedFiles[i].publicId !==
-      nextProps.uploadedFiles[i].publicId
-    ) {
-      return false;
-    }
-  }
-
-  return (
-    prevProps.sectionId === nextProps.sectionId &&
-    prevProps.isEditing === nextProps.isEditing &&
-    prevProps.selectedFileIds === nextProps.selectedFileIds &&
-    prevProps.toggleFileSelection === nextProps.toggleFileSelection
-  );
-};
-
-export const SectionFileGallery = memo(({
+export const SectionFileGallery = ({
   uploadedFiles,
-  sectionId,
   isEditing = false,
   selectedFileIds = EMPTY_SET,
   toggleFileSelection = NOOP,
@@ -106,11 +81,9 @@ export const SectionFileGallery = memo(({
             );
           })
         ) : (
-          <div className="text-[#999]">
-            No files uploaded for this section
-          </div>
+          <div className="text-[#999]">No files uploaded for this section</div>
         )}
       </div>
     </div>
   );
-}, arePropsEqual);
+};
