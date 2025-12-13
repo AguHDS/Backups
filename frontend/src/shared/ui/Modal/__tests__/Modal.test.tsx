@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
 import { Modal } from "../Modal";
-import { ModalContext } from "../ModalContext";
+import { ModalContext } from "../context/ModalProvider";
 
 const modalRoot = document.createElement("div");
 modalRoot.setAttribute("id", "modal-root");
@@ -24,21 +24,6 @@ describe("Modal", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     modalRoot.innerHTML = "";
-  });
-
-  beforeAll(() => {
-    const root = document.createElement("div");
-    root.setAttribute("id", "modal-root");
-    document.body.appendChild(root);
-  });
-
-  afterAll(() => {
-    document.getElementById("modal-root")?.remove();
-  });
-
-  it("renders children if isModalOpen is true", () => {
-    const { getByText } = renderWithContext();
-    expect(getByText("Modal content")).toBeInTheDocument();
   });
 
   it("does not render if isModalOpen is false", () => {

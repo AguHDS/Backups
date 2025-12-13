@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useCallback, useMemo } from "react";
 
 export type PendingDeletion = {
   sectionId: number;
@@ -23,7 +23,7 @@ export const FileDeletionProvider = ({
 }: FileDeletionProviderProps) => {
   const [filesToDelete, setFilesToDelete] = useState<PendingDeletion[]>([]);
 
-  const addFilesToDelete = (sectionId: number, newIds: string[]) => {
+  const addFilesToDelete = useCallback((sectionId: number, newIds: string[]) => {
     setFilesToDelete((prev) => {
       const existing = prev.find((entry) => entry.sectionId === sectionId);
 
@@ -40,16 +40,19 @@ export const FileDeletionProvider = ({
         return [...prev, { sectionId, publicIds: newIds }];
       }
     });
-  };
+  }, []);
 
-  const clearFilesToDelete = () => {
+  const clearFilesToDelete = useCallback(() => {
     setFilesToDelete([]);
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({ filesToDelete, addFilesToDelete, clearFilesToDelete }),
+    [filesToDelete, addFilesToDelete, clearFilesToDelete]
+  );
 
   return (
-    <FileDeletionContext.Provider
-      value={{ filesToDelete, addFilesToDelete, clearFilesToDelete }}
-    >
+    <FileDeletionContext.Provider value={contextValue}>
       {children}
     </FileDeletionContext.Provider>
   );

@@ -1,16 +1,16 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Button } from "../../../shared";
-import { useProfile, useSections, useStorageRefresh } from "../context";
+import { useRef, useState, useEffect, useCallback, memo, useMemo } from "react";
+import { Button } from "@/shared";
+import { useProfile, useSection, useSections, useStorageRefresh } from "../context";
 import { useParams } from "react-router-dom";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
-import { processErrorMessages } from "../../../shared/utils/errors";
-import { FeedbackMessages } from "../../../shared";
+import { processErrorMessages } from "@/shared/utils/errors";
+import { FeedbackMessages } from "@/shared";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../app/redux/store";
-import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
-import { useFetch } from "../../../shared/hooks/useFetch";
+import { AppDispatch } from "@/app/redux/store";
+import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
+import { useFetch } from "@/shared/hooks/useFetch";
 
 interface Props {
   sectionIndex: number;
@@ -20,7 +20,12 @@ interface FileUploadResponse {
   files: UploadedFile[];
 }
 
-export const SectionFileManager = ({ sectionIndex }: Props) => {
+// Custom comparison to prevent re-renders when section data hasn't changed
+const arePropsEqual = (prevProps: Props, nextProps: Props) => {
+  return prevProps.sectionIndex === nextProps.sectionIndex;
+};
+
+export const SectionFileManager = memo(({ sectionIndex }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);
   const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(
@@ -30,7 +35,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isEditing, isOwnProfile } = useProfile();
-  const { sections, renderFilesOnResponse } = useSections();
+  const { renderFilesOnResponse } = useSections();
   const { refresh: refreshStorage } = useStorageRefresh();
   const { addFilesToDelete } = useFileDeletion();
   const dispatch = useDispatch<AppDispatch>();
@@ -43,12 +48,12 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     isLoading 
   } = useFetch<FileUploadResponse>();
 
-  const section = sections[sectionIndex];
-  const {
-    id: sectionId,
-    title: sectionTitle,
-    files: uploadedFiles = [],
-  } = section;
+  // Use specific section hook to avoid re-renders when other sections change
+  const section = useSection(sectionIndex);
+  const sectionId = section.id;
+  const sectionTitle = section.title;
+  const uploadedFiles = section.files || [];
+  
   const handleButtonClick = () => fileInputRef.current?.click();
 
   useEffect(() => {
@@ -69,14 +74,14 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   }, [status, isLoading, uploadData, error, sectionId, renderFilesOnResponse, refreshStorage, dispatch]);
 
   // Handle selecting files from input
-  const handleUploadFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadFiles = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files;
     if (!selected || selected.length === 0) return;
 
     setFiles((prev) => [...prev, ...Array.from(selected)]);
     setUploadErrors([]);
     setReadyToUpload(true);
-  };
+  }, []);
 
   const cancelUpload = () => {
     setFiles([]);
@@ -85,7 +90,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   };
 
   // Toggle selection checkbox for files (add/remove from set)
-  const toggleFileSelection = (fileId: string) => {
+  const toggleFileSelection = useCallback((fileId: string) => {
     setSelectedFileIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(fileId)) {
@@ -95,10 +100,10 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       }
       return newSet;
     });
-  };
+  }, []);
 
-  // Upload files to backend usando useFetch
-  const handleSendFiles = async () => {
+  // Upload files
+  const handleSendFiles = useCallback(async () => {
     if (files.length === 0) return;
 
     const formData = new FormData();
@@ -112,9 +117,9 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
         body: formData,
       }
     );
-  };
+  }, [files, fetchData, username, sectionId, sectionTitle]);
 
-  const handleDeleteSelectedFiles = () => {
+  const handleDeleteSelectedFiles = useCallback(() => {
     if (selectedFileIds.size === 0) return;
 
     // Only include valid file publicIds
@@ -132,10 +137,11 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     // Add to context deletion list
     addFilesToDelete(sectionId, idsToDelete);
     setSelectedFileIds(new Set());
-  };
+  }, [selectedFileIds, uploadedFiles, addFilesToDelete, sectionId]);
 
-  const visibleFiles = uploadedFiles.filter(
-    (file) => !hiddenFileIds.has(file.publicId)
+  const visibleFiles = useMemo(
+    () => uploadedFiles.filter((file) => !hiddenFileIds.has(file.publicId)),
+    [uploadedFiles, hiddenFileIds]
   );
 
   return (
@@ -210,4 +216,4 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       )}
     </div>
   );
-};
+}, arePropsEqual);

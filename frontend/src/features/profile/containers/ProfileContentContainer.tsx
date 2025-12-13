@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useEditBio } from "../hooks/useEditBio";
 import {
@@ -7,8 +7,8 @@ import {
   useFileDeletion,
   useStorageRefresh,
 } from "../context";
-import { useProfileData } from "../hooks/useProfileData";
-import { useFetch } from "../../../shared";
+import { useStorageData } from "../hooks/useStorageData";
+import { useFetch } from "@/shared";
 import {
   Header,
   ActionsAndProfileImg,
@@ -16,21 +16,21 @@ import {
   StorageGraph,
   ProfileRightContent,
 } from "../components";
-import { images } from "../../../assets/images";
+import { images } from "@/assets/images";
 import { FetchedUserProfile } from "../types/profileData";
-import { processErrorMessages } from "../../../shared/utils/errors";
+import { processErrorMessages } from "@/shared/utils/errors";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../../app/redux/store";
-import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
+import { AppDispatch } from "@/app/redux/store";
+import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
 
 /* Handles profile editing logic for bio, sections, files
-   and renders the full profile. This uses SectionsContext (in ProfileContextProvider) to access section states */
+   and renders the full profile. This uses SectionsContext to access section states */
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { isEditing, setIsEditing } = useProfile();
   const { flag: storageRefreshFlag, refresh: refreshStorage } =
     useStorageRefresh();
-  const { usedBytes, limitBytes, remainingBytes } = useProfileData(storageRefreshFlag);
+  const { usedBytes, limitBytes, remainingBytes } = useStorageData(storageRefreshFlag);
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
   const { status, setStatus } = useFetch();
   const { username } = useParams();
@@ -67,7 +67,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     return errors;
   };
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const errors = validateFields();
     if (errors.length > 0) {
       setErrorMessages(errors);
@@ -162,9 +162,22 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       const messages = processErrorMessages(error);
       setErrorMessages(messages);
     }
-  };
+  }, [
+    sections,
+    sectionsToDelete,
+    filesToDelete,
+    updateData.bio,
+    username,
+    setSections,
+    setSectionsToDelete,
+    clearFilesToDelete,
+    setIsEditing,
+    refreshStorage,
+    dispatch,
+    updateSectionIds,
+  ]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     resetBio(data.userProfileData.bio);
     setSections(data.userSectionData);
     setSectionsToDelete([]);
@@ -172,7 +185,18 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     setErrorMessages([]);
     setStatus(null);
     setIsEditing(false);
-  };
+  }, [
+    data.userProfileData.bio,
+    data.userSectionData,
+    resetBio,
+    setSections,
+    setSectionsToDelete,
+    clearFilesToDelete,
+    setStatus,
+    setIsEditing,
+  ]);
+
+  const handleBioChange = (bio: string) => setUpdateData({ bio });
 
   return (
     <div className="mx-auto flex justify-center mt-5">
@@ -206,7 +230,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
               updateData={updateData}
               errorMessages={errorMessages}
               status={status!}
-              onBioChange={(bio) => setUpdateData({ bio })}
+              onBioChange={handleBioChange}
             />
           </div>
         </div>

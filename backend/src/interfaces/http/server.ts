@@ -1,14 +1,13 @@
 import express, { Express, Response } from "express";
 import cookieParser from "cookie-parser";
-/* import { initializeSocket } from "./livechat-socketHandler/socketHandler.ts"; */
 
-//cors
+// cors
 import cors from "cors";
 import credentials from "./middlewares/corsCredentials.js";
 import { createProxyMiddleware, Options } from "http-proxy-middleware";
 import allowedOrigins from "../../config/allowedOrigins.js";
 
-//routes
+// routes
 import {
   login,
   registration,
@@ -26,7 +25,7 @@ import {
 
 const app: Express = express();
 
-//CORS setup
+// CORS setup
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -36,17 +35,17 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // Habilitar envío de cookies
+    credentials: true,
   })
 );
 
-//middlewares
+// middlewares
 app.use(express.json());
 app.use(credentials);
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//API routes
+// API routes
 app.use("/api/login", login);
 app.use("/api/registration", registration);
 app.use("/api/logout", logout);
@@ -60,16 +59,16 @@ app.use("/api/getStorage", getStorage);
 app.use("/api/dashboard-summary", dashboard);
 app.use("/api/deleteFiles", deleteFiles);
 
-//proxy to redirect all requests that aren't defined here to vite's port, so the client can handle them
+const VITE_PORT =
+  process.env.NODE_ENV === "preview" ? 4173 : 5173;
+
 app.use(
   "/",
   createProxyMiddleware({
-    target: `http://localhost:5173`,
+    target: `http://localhost:${VITE_PORT}`,
     changeOrigin: true,
   } as Options)
 );
-
-/* const io = initializeSocket(server); */
 
 app.get("/favicon.ico", (req, res: Response) => {
   res.status(204).end();

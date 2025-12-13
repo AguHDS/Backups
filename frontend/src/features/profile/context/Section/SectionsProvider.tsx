@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useCallback, useMemo } from "react";
 import { SectionWithFile, UploadedFile } from "../../types/section";
 
 export interface SectionsContextType {
@@ -33,7 +33,7 @@ export const SectionsProvider = ({
   const [sections, setSections] = useState<SectionWithFile[]>(initialSections);
   const [sectionsToDelete, setSectionsToDelete] = useState<number[]>([]);
 
-  const updateSection = (
+  const updateSection = useCallback((
     index: number,
     field: "title" | "description" | "isPublic",
     value: string | boolean
@@ -43,21 +43,21 @@ export const SectionsProvider = ({
       updated[index] = { ...updated[index], [field]: value };
       return updated;
     });
-  };
+  }, []);
 
-  const addSection = () => {
+  const addSection = useCallback(() => {
     setSections((prev) => [
       ...prev,
       { id: 0, title: "", description: "", files: [], isPublic: true },
     ]);
-  };
+  }, []);
 
-  const deleteSection = (sectionId: number) => {
+  const deleteSection = useCallback((sectionId: number) => {
     setSections((prev) => prev.filter((s) => s.id !== sectionId));
     setSectionsToDelete((prev) => [...prev, sectionId]);
-  };
+  }, []);
 
-  const renderFilesOnResponse = (
+  const renderFilesOnResponse = useCallback((
     sectionId: number,
     newFiles: UploadedFile[]
   ) => {
@@ -71,31 +71,42 @@ export const SectionsProvider = ({
           : section
       )
     );
-  };
+  }, []);
 
-  const updateSectionIds = (idMap: { tempId: number; newId: number }[]) => {
+  const updateSectionIds = useCallback((idMap: { tempId: number; newId: number }[]) => {
     setSections((prevSections) =>
       prevSections.map((section) => {
         const match = idMap.find((n) => n.tempId === section.id);
         return match ? { ...section, id: match.newId } : section;
       })
     );
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      sections,
+      setSections,
+      sectionsToDelete,
+      setSectionsToDelete,
+      updateSection,
+      addSection,
+      deleteSection,
+      renderFilesOnResponse,
+      updateSectionIds,
+    }),
+    [
+      sections,
+      sectionsToDelete,
+      updateSection,
+      addSection,
+      deleteSection,
+      renderFilesOnResponse,
+      updateSectionIds,
+    ]
+  );
 
   return (
-    <SectionsContext.Provider
-      value={{
-        sections,
-        setSections,
-        sectionsToDelete,
-        setSectionsToDelete,
-        updateSection,
-        addSection,
-        deleteSection,
-        renderFilesOnResponse,
-        updateSectionIds,
-      }}
-    >
+    <SectionsContext.Provider value={contextValue}>
       {children}
     </SectionsContext.Provider>
   );

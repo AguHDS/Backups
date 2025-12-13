@@ -2,8 +2,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { RootState, AppDispatch } from "../../../app/redux/store";
-import { getNewRefreshToken } from "../../../app/redux/features/thunks/authThunk";
+import { RootState, AppDispatch } from "@/app/redux/store";
+import { getNewRefreshToken } from "@/app/redux/features/thunks/authThunk";
 
 const isAccessTokenValid = (accessToken: string | null): boolean => {
   if (!accessToken) return false;

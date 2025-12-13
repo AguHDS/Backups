@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { LoadingSpinner, Modal, useModalContext } from "../../../shared";
+import { LoadingSpinner, Modal, useModalContext } from "@/shared";
 import { useSelector, useDispatch } from "react-redux";
-import { getNewRefreshToken } from "../../../app/redux/features/thunks/authThunk";
-import { getDashboardSummary } from "../../../app/redux/features/thunks/dashboardThunk";
-import { RootState, AppDispatch } from "../../../app/redux/store";
-import { store } from "../../../app/redux/store";
+import { getNewRefreshToken } from "@/app/redux/features/thunks/authThunk";
+import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
+import { RootState, AppDispatch } from "@/app/redux/store";
+import { store } from "@/app/redux/store";
 
 // PersistLogin will try to get new tokens every time the app is reloaded
 export const PersistLogin = () => {

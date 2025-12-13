@@ -1,14 +1,17 @@
 import { useProfileData } from "../hooks/useProfileData";
-import { ProfileProvider } from "../context/profile/ProfileProvider";
-import { Modal, LoadingSpinner } from "../../../shared";
-import { ProfileContextProvider } from "../providers/ProfileContextProvider";
-
-/* ProfileContextProvider wraps the profile in SectionsContext. ProfileContentContainer contains the logic and uses sections context */
+import { ProfileProvider } from "../context/Profile/ProfileProvider";
+import { Modal, LoadingSpinner } from "@/shared";
+import { SectionsProvider } from "../context/Section/SectionsProvider";
+import { FileDeletionProvider } from "../context/FileDeletion/FileDeletionProvider";
+import { StorageRefreshProvider } from "../context/StorageRefresh/StorageRefreshProvider";
+import { ProfileContentContainer } from "../containers/ProfileContentContainer";
 
 export const Profile = () => {
   const { data, error, isLoading, isOwnProfile } = useProfileData();
 
   if (!data) return null;
+
+  const safeSections = data.userSectionData ?? [];
 
   return (
     <ProfileProvider isOwnProfile={isOwnProfile}>
@@ -26,7 +29,21 @@ export const Profile = () => {
         </div>
       )}
 
-      {!isLoading && data && <ProfileContextProvider data={data} />}
+      {!isLoading && data && (
+        <SectionsProvider
+          initialSections={
+            data.isOwner
+              ? safeSections
+              : safeSections.filter((section) => section.isPublic)
+          }
+        >
+          <FileDeletionProvider>
+            <StorageRefreshProvider>
+              <ProfileContentContainer data={data} />
+            </StorageRefreshProvider>
+          </FileDeletionProvider>
+        </SectionsProvider>
+      )}
     </ProfileProvider>
   );
 };

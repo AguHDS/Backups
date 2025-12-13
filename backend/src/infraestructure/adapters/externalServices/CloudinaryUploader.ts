@@ -1,4 +1,7 @@
-import { CloudinaryFileUploader, CloudinaryUploadResponse } from "../../../domain/ports/externalServices/CloudinaryFileUploader.js";
+import {
+  CloudinaryFileUploader,
+  CloudinaryUploadResponse,
+} from "../../../domain/ports/externalServices/CloudinaryFileUploader.js";
 import { cloudinary } from "../../../services/cloudinary.js";
 import streamifier from "streamifier";
 
@@ -22,15 +25,25 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
           { folder },
           (error, result) => {
             if (error) {
-              return reject(new Error(`Cloudinary upload failed: ${error.message}`));
-            }
-            
-            if (!result) {
-              return reject(new Error("Cloudinary upload failed: No result returned"));
+              return reject(
+                new Error(`Cloudinary upload failed: ${error.message}`)
+              );
             }
 
-            if (!result.secure_url || !result.public_id || result.bytes === undefined) {
-              return reject(new Error("Cloudinary upload failed: Incomplete result data"));
+            if (!result) {
+              return reject(
+                new Error("Cloudinary upload failed: No result returned")
+              );
+            }
+
+            if (
+              !result.secure_url ||
+              !result.public_id ||
+              result.bytes === undefined
+            ) {
+              return reject(
+                new Error("Cloudinary upload failed: Incomplete result data")
+              );
             }
 
             resolve({
@@ -52,12 +65,16 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
    */
   async deleteByPublicIds(publicIds: string[]): Promise<void> {
     if (!publicIds || publicIds.length === 0) return;
-    
+
     try {
       await cloudinary.api.delete_resources(publicIds);
     } catch (error) {
       console.error("Failed to delete resources from Cloudinary:", error);
-      throw new Error(`Failed to delete files from Cloudinary: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(
+        `Failed to delete files from Cloudinary: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   }
 }

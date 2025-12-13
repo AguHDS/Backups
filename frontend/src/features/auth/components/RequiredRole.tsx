@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import { RootState } from "../../../app/redux/store";
+import { RootState } from "@/app/redux/store";
 
 interface RequireRoleProps {
   allowedRoles: ("user" | "admin")[];

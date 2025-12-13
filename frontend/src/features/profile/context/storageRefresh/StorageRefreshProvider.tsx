@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useCallback, useMemo } from "react";
 
 export interface StorageRefreshContextType {
   flag: boolean;
@@ -16,10 +16,15 @@ export const StorageRefreshProvider = ({
 }) => {
   const [flag, setFlag] = useState(false);
 
-  const refresh = () => setFlag((prev) => !prev);
+  const refresh = useCallback(() => setFlag((prev) => !prev), []);
+
+  const contextValue = useMemo(
+    () => ({ flag, refresh }),
+    [flag, refresh]
+  );
 
   return (
-    <StorageRefreshContext.Provider value={{ flag, refresh }}>
+    <StorageRefreshContext.Provider value={contextValue}>
       {children}
     </StorageRefreshContext.Provider>
   );

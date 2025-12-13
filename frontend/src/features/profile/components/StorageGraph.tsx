@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from "recharts";
-import { formatBytes } from "../../../shared/utils/formatBytes";
+import { formatBytes } from "@/shared/utils/formatBytes";
 import { Button } from "@/shared/components/buttons/Button";
 
 type Props = {
