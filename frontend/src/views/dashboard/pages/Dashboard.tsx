@@ -1,11 +1,11 @@
-import { FiFolder, FiUsers, FiActivity } from "react-icons/fi";
-import { StatCard,  AboutCard } from "../components";
+import { FiFolder, FiActivity } from "react-icons/fi";
+import { StatCard, AboutCard } from "../components";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { formatBytes } from "@/shared/utils/formatBytes";
 
 export const Dashboard = () => {
-const { used } = useSelector((state: RootState) => state.dashboard);
+  const { used } = useSelector((state: RootState) => state.dashboard);
 
   return (
     <div className="flex items-center justify-center my-10 px-4">
@@ -17,17 +17,10 @@ const { used } = useSelector((state: RootState) => state.dashboard);
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <AboutCard
-              title="Partner System"
-              subtitle={
-                <>Being partner with another user will allow you both to share
-                <span className="text-green-400"> storage space </span>with each other</> 
-              }
-            />
-            <AboutCard
               title="Store your files"
               subtitle="backup your files in a secure way, and edit your privacy
                 settings in case you want to make them public or private and
-                show them in your profile" 
+                show them in your profile"
             />
             <AboutCard
               title="Daily quests"
@@ -43,19 +36,6 @@ const { used } = useSelector((state: RootState) => state.dashboard);
         </div>
         {/* Statics section */}
         <div className="flex flex-wrap gap-6 justify-between">
-          <StatCard
-            type="partner"
-            title="My partnership"
-            icon={<FiUsers className="text-3xl text-yellow-600" />}
-            subtitle="You're partner with:"
-            value="perzian"
-            color="text-md text-yellow-500"
-          >
-            <div className="relative top-4">
-              <div className="text-blue-500 my-1">space gived: 4GB</div>
-              <div className="text-blue-500 my-1">space received: 2GB</div>
-            </div>
-          </StatCard>
           <StatCard
             title="My storage"
             icon={<FiFolder className="text-3xl text-green-600" />}

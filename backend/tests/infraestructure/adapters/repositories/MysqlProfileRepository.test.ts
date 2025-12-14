@@ -39,7 +39,6 @@ describe("MysqlProfileRepository", () => {
           userId: 1,
           bio: "Bio",
           profile_pic: "pic.jpg",
-          partner: "Test",
           level: 42,
         },
       ],
@@ -54,7 +53,6 @@ describe("MysqlProfileRepository", () => {
     expect(result).toBeInstanceOf(UserProfile);
     expect(result?.bio).toBe("Bio");
     expect(result?.profilePic).toBe("pic.jpg");
-    expect(result?.partner).toBe("Test");
     expect(result?.level).toBe(42);
   });
 
@@ -72,7 +70,6 @@ describe("MysqlProfileRepository", () => {
         {
           bio: "Bio text",
           profile_pic: null,
-          partner: null,
           level: 3,
         },
       ],
@@ -83,7 +80,6 @@ describe("MysqlProfileRepository", () => {
     expect(result).toBeInstanceOf(UserProfile);
     expect(result?.bio).toBe("Bio text");
     expect(result?.profilePic).toBeUndefined();
-    expect(result?.partner).toBeUndefined();
     expect(result?.level).toBe(3);
   });
 

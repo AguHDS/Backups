@@ -1,7 +1,6 @@
 interface ProfileContent {
   bio: string;
   profile_pic?: string;
-  partner: string;
   level: number;
 }
 

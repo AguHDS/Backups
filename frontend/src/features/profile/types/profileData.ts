@@ -3,7 +3,6 @@ import { SectionWithFile, BaseSection } from "./section";
 export interface ProfileStats {
   bio: string;
   profile_pic?: string;
-  partner: string;
   level: number;
 }
 

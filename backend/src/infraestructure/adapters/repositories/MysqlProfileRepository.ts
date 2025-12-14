@@ -11,7 +11,7 @@ export class MysqlProfileRepository implements ProfileRepository {
     try {
       // Needed to show public or private sections
       const [rows] = await promisePool.execute<RowDataPacket[]>(
-        `SELECT u.id AS userId, up.bio, up.profile_pic, up.partner, up.level
+        `SELECT u.id AS userId, up.bio, up.profile_pic, up.level
         FROM users u
         JOIN users_profile up ON up.fk_users_id = u.id
         WHERE u.namedb = ?`,
@@ -27,7 +27,6 @@ export class MysqlProfileRepository implements ProfileRepository {
         row.bio,
         row.level,
         row.profile_pic ?? undefined,
-        row.partner ?? undefined
       );
     } catch (error) {
       console.error("Error retrieving profile by username:", error);
@@ -37,7 +36,7 @@ export class MysqlProfileRepository implements ProfileRepository {
   async getProfileById(userId: number): Promise<UserProfile | null> {
     try {
       const [rows] = await promisePool.execute<RowDataPacket[]>(
-        "SELECT bio, profile_pic, partner, level FROM users_profile WHERE fk_users_id = ?",
+        "SELECT bio, profile_pic, level FROM users_profile WHERE fk_users_id = ?",
         [userId]
       );
 
@@ -50,7 +49,6 @@ export class MysqlProfileRepository implements ProfileRepository {
         row.bio,
         row.level,
         row.profile_pic ?? undefined,
-        row.partner ?? undefined
       );
     } catch (error) {
       console.error("Error retrieving user from database:", error);

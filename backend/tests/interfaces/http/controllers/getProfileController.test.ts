@@ -56,7 +56,6 @@ describe("getProfileController", () => {
       "This is my profile",
       10,
       "profile-pic.jpg",
-      "Sofia",
       [section]
     );
 
@@ -91,7 +90,6 @@ describe("getProfileController", () => {
       userProfileData: {
         bio: "This is my profile",
         profile_pic: "profile-pic.jpg",
-        partner: "Sofia",
         level: 10,
       },
       userSectionData: [

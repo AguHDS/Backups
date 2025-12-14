@@ -53,7 +53,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   }, [isEditing, setStatus]);
   const dispatch = useDispatch<AppDispatch>();
 
-  const validateFields = () => {
+
+  const validateFields = useCallback(() => {
     const errors: string[] = [];
     if (!updateData.bio.trim()) errors.push("Bio cannot be empty");
 
@@ -65,7 +66,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     });
 
     return errors;
-  };
+  }, [updateData.bio, sections]);
 
   const handleSave = useCallback(async () => {
     const errors = validateFields();
@@ -175,6 +176,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     refreshStorage,
     dispatch,
     updateSectionIds,
+    validateFields
   ]);
 
   const handleCancel = useCallback(() => {
@@ -212,15 +214,10 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
             <div className="bg-[#272727] p-2 flex-shrink-0 w-full md:w-[225px]">
               <ActionsAndProfileImg
                 profilePic={images.testImage}
-                giftIcon={images.giftIcon}
-                msgIcon={images.msgIcon}
-                addPartnerIcon={images.addFriend}
               />
               <UserInfo
                 userStatus="offline"
                 role={data.role}
-                friendsCounter={data.userProfileData.level}
-                partner={data.userProfileData.partner}
               />
               <h3 className="text-center my-5">Storage</h3>
               <StorageGraph usedBytes={usedBytes} limitBytes={limitBytes} remainingBytes={remainingBytes} />

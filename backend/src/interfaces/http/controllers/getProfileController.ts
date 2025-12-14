@@ -42,7 +42,7 @@ export const getProfileController = async (req: Request, res: Response) => {
       requesterId
     );
 
-    if (!email || !profile.partner) {
+    if (!email) {
       res.status(400).json({ message: "Incomplete user data" });
       return;
     }
@@ -56,7 +56,6 @@ export const getProfileController = async (req: Request, res: Response) => {
       userProfileData: {
         bio: profile.bio,
         profile_pic: profile.profilePic,
-        partner: profile.partner,
         level: profile.level,
       },
       userSectionData:

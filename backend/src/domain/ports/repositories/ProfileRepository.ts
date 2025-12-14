@@ -2,7 +2,7 @@ import { UserProfile, UserProfileSection } from "../../entities/index.js";
 
 export interface ProfileRepository {
   /**
-   * Retrieves bio, profile_pic, partner, and level by username.
+   * Retrieves bio, profile_pic and level by username.
    *
    * @param username - The unique username (e.g. from route param)
    * @returns A UserProfile object including its internal userId, or null if not found

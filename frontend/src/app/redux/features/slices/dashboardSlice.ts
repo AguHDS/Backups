@@ -3,7 +3,6 @@ import { getDashboardSummary } from "../thunks/dashboardThunk";
 
 export interface DashboardState {
   used: number;
-  partner?: string | null;
   totalFiles?: number;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -11,7 +10,6 @@ export interface DashboardState {
 
 const initialState: DashboardState = {
   used: 0,
-  partner: null,
   totalFiles: 0,
   status: "idle",
   error: null,

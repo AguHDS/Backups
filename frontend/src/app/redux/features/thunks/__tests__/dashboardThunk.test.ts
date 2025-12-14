@@ -19,7 +19,6 @@ const mockGetState = vi.fn(
     },
     dashboard: {
       used: 0,
-      partner: null,
       totalFiles: 0,
       status: "idle",
       error: null,

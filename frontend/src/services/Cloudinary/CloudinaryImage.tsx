@@ -61,3 +61,5 @@ export const CloudinaryImage = memo(({
     />
   );
 }, arePropsEqual);
+
+CloudinaryImage.displayName = "CloudinaryImage";

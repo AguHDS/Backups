@@ -9,7 +9,6 @@ private or public. You'll need to be validated as a user to access.
 * Switch to make your uploads public/private
 * Level system that will grant benefits
 * Daily quests to gain more exp on your account
-* Partner system
 
 many features aren't avialable yet since i'm working on them
 
