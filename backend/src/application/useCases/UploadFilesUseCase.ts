@@ -170,7 +170,6 @@ export class UploadFilesUseCase {
         (file) =>
           new UserFile(
             file.public_id,
-            file.url,
             numericSectionId,
             file.sizeInBytes,
             numericUserId
