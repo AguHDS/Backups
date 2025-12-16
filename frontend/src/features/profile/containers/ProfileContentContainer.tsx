@@ -28,11 +28,9 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [imageRefreshKey, setImageRefreshKey] = useState<number>(0);
-
   const [profileImagePublicId, setProfileImagePublicId] = useState<string>(
     data.userProfileData.profile_pic || ""
   );
-
   const { isEditing, setIsEditing } = useProfile();
   const { flag: storageRefreshFlag, refresh: refreshStorage } =
     useStorageRefresh();
@@ -40,21 +38,17 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     useStorageData(storageRefreshFlag);
 
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
-
   const {
     fetchData,
     data: uploadResponse,
     status,
     setStatus,
   } = useFetch<{ data: { public_id: string } }>();
-
   const { username } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-
-  const { updateData, setUpdateData, resetBio } = useEditBio(
+  const { updateData, setUpdateData } = useEditBio(
     data.userProfileData.bio
   );
-
   const {
     sections,
     setSections,
@@ -62,7 +56,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     setSectionsToDelete,
     updateSectionIds,
   } = useSections();
-
+  
   // Preview image when selected
   useEffect(() => {
     if (!selectedImage) {

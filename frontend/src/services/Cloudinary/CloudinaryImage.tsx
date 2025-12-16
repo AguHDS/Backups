@@ -1,4 +1,3 @@
-// frontend\src\services\Cloudinary\CloudinaryImage.tsx
 import { AdvancedImage, lazyload } from "@cloudinary/react";
 import { fill } from "@cloudinary/url-gen/actions/resize";
 import { cld } from "./cloudinaryConfig";
@@ -11,7 +10,7 @@ interface CloudinaryImageProps {
   lazy?: boolean;
   size?: number;
   onClick?: () => void;
-  cacheBust?: number; // ← Nueva prop para bust de caché
+  cacheBust?: number;
 }
 
 const arePropsEqual = (
@@ -24,7 +23,7 @@ const arePropsEqual = (
     prevProps.className === nextProps.className &&
     prevProps.size === nextProps.size &&
     prevProps.onClick === nextProps.onClick &&
-    prevProps.cacheBust === nextProps.cacheBust // ← Incluir cacheBust en comparación
+    prevProps.cacheBust === nextProps.cacheBust
   );
 };
 
@@ -45,15 +44,13 @@ export const CloudinaryImage = memo(
         .format("auto")
         .quality("auto");
       
-      // Si hay cacheBust, forzar nueva versión para evitar caché
+      // If there is cacheBust, force new version to avoid cache
       if (cacheBust) {
-        // Cloudinary permite usar el parámetro "version" para bust de caché
-        // Añadimos un timestamp basado en cacheBust
         image.setVersion(cacheBust.toString());
       }
       
       return image;
-    }, [publicId, size, cacheBust]); // ← Incluir cacheBust en dependencias
+    }, [publicId, size, cacheBust]);
 
     const plugins = useMemo(() => {
       if (!lazy) return [];
