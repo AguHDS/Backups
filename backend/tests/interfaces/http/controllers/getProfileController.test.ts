@@ -37,7 +37,6 @@ describe("getProfileController", () => {
 
     const file = new UserFile(
       "img123",
-      "https://cdn.com/image.jpg",
       1,
       2048,
       123
@@ -100,7 +99,6 @@ describe("getProfileController", () => {
           isPublic: true,
           files: [
             {
-              url: "https://cdn.com/image.jpg",
               publicId: "img123",
               sectionId: 1,
               sizeInBytes: 2048,

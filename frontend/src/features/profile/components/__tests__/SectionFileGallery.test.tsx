@@ -7,21 +7,18 @@ describe("SectionFileGallery", () => {
   const mockFiles: UploadedFile[] = [
     {
       publicId: "file1",
-      url: "https://example.com/file1.jpg",
       sectionId: "section-1",
       sizeInBytes: 1024,
       userId: 42,
     },
     {
       publicId: "file2",
-      url: "https://example.com/file2.jpg",
       sectionId: "section-1",
       sizeInBytes: 2048,
       userId: 42,
     },
     {
       publicId: null as unknown as string,
-      url: "https://example.com/invalid.jpg",
       sectionId: "section-1",
       sizeInBytes: 0,
       userId: 42,

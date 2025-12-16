@@ -17,7 +17,7 @@ const mockedQuery = promisePool.query as unknown as ReturnType<typeof vi.fn>;
 describe("MysqlFileRepository", () => {
   const repository = new MysqlFileRepository();
 
-  const sampleFile = new UserFile("pid123", "url", 1, 999, 5);
+  const sampleFile = new UserFile("pid123", 1, 999, 5);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -27,14 +27,14 @@ describe("MysqlFileRepository", () => {
     await repository.save(sampleFile);
     expect(mockedExecute).toHaveBeenCalledWith(
       expect.stringContaining("INSERT INTO users_files"),
-      [sampleFile.publicId, sampleFile.url, sampleFile.sectionId, sampleFile.sizeInBytes, sampleFile.userId]
+      [sampleFile.publicId, sampleFile.sectionId, sampleFile.sizeInBytes, sampleFile.userId]
     );
   });
 
   it("should save many files", async () => {
     const files = [
-      new UserFile("id1", "url1", 1, 100, 1),
-      new UserFile("id2", "url2", 1, 200, 2),
+      new UserFile("id1", 1, 100, 1),
+      new UserFile("id2", 1, 200, 2),
     ];
 
     await repository.saveMany(files);
@@ -42,8 +42,8 @@ describe("MysqlFileRepository", () => {
     expect(mockedQuery).toHaveBeenCalledWith(
       expect.stringContaining("INSERT INTO users_files"),
       [[
-        ["id1", "url1", "s1", 100, 1],
-        ["id2", "url2", "s2", 200, 2]
+        ["id1", "s1", 100, 1],
+        ["id2", "s2", 200, 2]
       ]]
     );
   });
@@ -55,8 +55,8 @@ describe("MysqlFileRepository", () => {
 
   it("should find files by section ID", async () => {
     const dbRows = [
-      { public_id: "p1", url: "u1", section_id: "s1", size_in_bytes: 10, user_id: 1 },
-      { public_id: "p2", url: "u2", section_id: "s1", size_in_bytes: 20, user_id: 1 },
+      { public_id: "p1", section_id: "s1", size_in_bytes: 10, user_id: 1 },
+      { public_id: "p2", section_id: "s1", size_in_bytes: 20, user_id: 1 },
     ];
 
     mockedExecute.mockResolvedValueOnce([dbRows]);
@@ -75,7 +75,7 @@ describe("MysqlFileRepository", () => {
   it("should delete files by public IDs and return them", async () => {
     const publicIds = ["pid1", "pid2"];
     const dbRows = [
-      { public_id: "pid1", url: "u1", section_id: "s1", size_in_bytes: 10, user_id: 1 },
+      { public_id: "pid1", section_id: "s1", size_in_bytes: 10, user_id: 1 },
     ];
 
     mockedExecute
