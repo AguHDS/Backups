@@ -26,7 +26,7 @@ export class MysqlProfileRepository implements ProfileRepository {
         row.userId,
         row.bio,
         row.level,
-        row.profile_pic ?? undefined,
+        row.profile_pic ?? undefined
       );
     } catch (error) {
       console.error("Error retrieving profile by username:", error);
@@ -48,7 +48,7 @@ export class MysqlProfileRepository implements ProfileRepository {
         userId,
         row.bio,
         row.level,
-        row.profile_pic ?? undefined,
+        row.profile_pic ?? undefined
       );
     } catch (error) {
       console.error("Error retrieving user from database:", error);
@@ -137,7 +137,10 @@ export class MysqlProfileRepository implements ProfileRepository {
             ]
           );
 
-          if (updateResult.affectedRows === 0) throw new Error(`Section with id ${section.id} not found for user ${userId}`);
+          if (updateResult.affectedRows === 0)
+            throw new Error(
+              `Section with id ${section.id} not found for user ${userId}`
+            );
         } else {
           // Insert new section including visibility
           const [insertResult] = await connection.execute<ResultSetHeader>(
@@ -202,5 +205,25 @@ export class MysqlProfileRepository implements ProfileRepository {
     );
 
     return rows.map((row) => row.public_id);
+  }
+  async updateProfilePicture(
+    userId: number,
+    profilePicPublicId: string
+  ): Promise<void> {
+    try {
+      const [result] = await promisePool.execute<ResultSetHeader>(
+        `UPDATE users_profile 
+       SET profile_pic = ? 
+       WHERE fk_users_id = ?`,
+        [profilePicPublicId, userId]
+      );
+
+      if (result.affectedRows === 0) {
+        throw new Error("No profile found for the given user ID");
+      }
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+      throw new Error("Database error while updating profile picture");
+    }
   }
 }

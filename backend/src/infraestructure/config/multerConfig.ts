@@ -1,6 +1,6 @@
 import multer from "multer";
 
-//define the file storage in RAM instead of disk
+// Define the file storage in RAM instead of disk
 const storage = multer.memoryStorage();
 
 export const upload = multer({

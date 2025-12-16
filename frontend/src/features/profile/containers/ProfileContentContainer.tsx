@@ -27,6 +27,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageRefreshKey, setImageRefreshKey] = useState<number>(0);
 
   const [profileImagePublicId, setProfileImagePublicId] = useState<string>(
     data.userProfileData.profile_pic || ""
@@ -75,10 +76,11 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     return () => URL.revokeObjectURL(tempUrl);
   }, [selectedImage]);
 
-  // Update public_id AFTER UPLOAD
+  // Updates profile picture after successful upload
   useEffect(() => {
     if (uploadResponse?.data?.public_id) {
       setProfileImagePublicId(uploadResponse.data.public_id);
+      setImageRefreshKey(prev => prev + 1);
       setPreviewUrl(null); // Clear preview after successful upload
       setSelectedImage(null);
     }
@@ -226,6 +228,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 previewUrl={previewUrl}
                 isEditing={isEditing}
                 onSelectImage={setSelectedImage}
+                refreshKey={imageRefreshKey}
               />
 
               <UserInfo userStatus="offline" role={data.role} />
