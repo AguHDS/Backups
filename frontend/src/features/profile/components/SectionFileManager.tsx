@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback, memo, useMemo } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/shared";
 import {
   useProfile,
@@ -52,7 +52,10 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const section = useSection(sectionIndex);
   const sectionId = section.id;
   const sectionTitle = section.title;
-  const uploadedFiles = section.files || [];
+  const uploadedFiles = useMemo(
+    () => section.files || [],
+    [section.files]
+  );
 
   const handleButtonClick = () => fileInputRef.current?.click();
 

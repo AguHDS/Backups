@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "npx tsc --noEmit && tsx watch ./src/index.ts",
+    "dev": "npx tsc --noEmit -p tsconfig.dev.json && tsx watch ./src/index.ts",
     "build": "rimraf ./dist && tsc",
     "start": "node ./dist/index.js",
     "lint": "eslint . --ext .ts",

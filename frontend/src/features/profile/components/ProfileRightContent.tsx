@@ -1,4 +1,4 @@
-import { memo, Fragment } from "react";
+import { Fragment } from "react";
 import { Button, FeedbackMessages } from "@/shared/index";
 import { Bio } from "./Bio.js";
 import { SectionFileManager } from "./SectionFileManager";

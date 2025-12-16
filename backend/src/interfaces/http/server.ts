@@ -16,6 +16,7 @@ import {
   getProfile,
   updateBioAndSections,
   uploadFiles,
+  profilePicture,
   deleteSections,
   storage,
   getStorage,
@@ -53,6 +54,7 @@ app.use("/api/refreshToken", refreshToken);
 app.use("/api/getProfile", getProfile);
 app.use("/api/updateBioAndSections", updateBioAndSections);
 app.use("/api/uploadFiles", uploadFiles);
+app.use("/api/profilePicture", profilePicture);
 app.use("/api/deleteSections", deleteSections);
 app.use("/api/storage", storage);
 app.use("/api/getStorage", getStorage);

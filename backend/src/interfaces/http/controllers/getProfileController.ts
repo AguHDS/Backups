@@ -42,7 +42,7 @@ export const getProfileController = async (req: Request, res: Response) => {
       requesterId
     );
 
-    if (!email || !profile.partner) {
+    if (!email) {
       res.status(400).json({ message: "Incomplete user data" });
       return;
     }
@@ -56,7 +56,6 @@ export const getProfileController = async (req: Request, res: Response) => {
       userProfileData: {
         bio: profile.bio,
         profile_pic: profile.profilePic,
-        partner: profile.partner,
         level: profile.level,
       },
       userSectionData:
@@ -67,9 +66,8 @@ export const getProfileController = async (req: Request, res: Response) => {
           isPublic: section.isPublic,
           files:
             section.files?.map((file) => ({
-              url: file.url,
               publicId: file.publicId,
-              sectionId: section.id,
+              sectionId: section.id.toString(),
               sizeInBytes: file.sizeInBytes,
               userId: file.userId,
             })) ?? [],
@@ -78,7 +76,8 @@ export const getProfileController = async (req: Request, res: Response) => {
 
     res.status(200).json(response);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
 
     console.error("Failed to get user profile:", error);
 

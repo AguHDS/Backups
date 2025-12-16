@@ -11,12 +11,12 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
     private readonly userId: string | number
   ) {}
 
-  async upload(
+  // Upload files for sections
+  async uploadFilesToSection(
     files: Express.Multer.File[],
     sectionId: string,
     sectionTitle: string
   ): Promise<CloudinaryUploadResponse[]> {
-    // each user has a folder in Cloudinary
     const folder = `user_files/${this.username} (id: ${this.userId})/section: ${sectionTitle} (id: ${sectionId})`;
 
     const uploadPromises = files.map((file) => {
@@ -36,40 +36,124 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
               );
             }
 
-            if (
-              !result.secure_url ||
-              !result.public_id ||
-              result.bytes === undefined
-            ) {
+            if (!result.public_id || result.bytes === undefined) {
               return reject(
                 new Error("Cloudinary upload failed: Incomplete result data")
               );
             }
 
             resolve({
-              url: result.secure_url,
               public_id: result.public_id,
               sizeInBytes: result.bytes,
             });
           }
         );
+
         streamifier.createReadStream(file.buffer).pipe(stream);
       });
     });
 
-    return await Promise.all(uploadPromises);
+    return Promise.all(uploadPromises);
   }
 
-  /**
-   * For rollback of files when upload fails or not enough space
-   */
+  // Upload profile picture
+  async uploadProfilePicture(
+    file: Express.Multer.File
+  ): Promise<CloudinaryUploadResponse> {
+    const folder = `user_files/${this.username} (id: ${this.userId})/profile_picture`;
+
+    // Generate unique public_id
+    const timestamp = Date.now();
+    const uniquePublicId = `profile_pic_${timestamp}`;
+
+    return new Promise<CloudinaryUploadResponse>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          public_id: uniquePublicId,
+          overwrite: false,
+          invalidate: true,
+          transformation: [
+            { width: 400, height: 400, crop: "fill" },
+            { quality: "auto" },
+            { fetch_format: "auto" },
+          ],
+          resource_type: "image",
+          // Context for tracking (optional)
+          context: `uploaded=${timestamp}|user=${this.userId}`,
+        },
+        (error, result) => {
+          if (error) {
+            return reject(
+              new Error(`Cloudinary upload failed: ${error.message}`)
+            );
+          }
+
+          if (!result) {
+            return reject(
+              new Error("Cloudinary upload failed: No result returned")
+            );
+          }
+
+          if (!result.public_id || result.bytes === undefined) {
+            return reject(
+              new Error("Cloudinary upload failed: Incomplete result data")
+            );
+          }
+
+          const fullPublicId = result.public_id;
+
+          resolve({
+            public_id: fullPublicId,
+            sizeInBytes: result.bytes,
+          });
+        }
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(stream);
+    });
+  }
+
+  // Delete specific profile picture
+  async deleteProfilePicture(publicId: string): Promise<void> {
+    if (!publicId || publicId.trim() === "") {
+      return;
+    }
+
+    try {
+      const result = await cloudinary.uploader.destroy(publicId);
+
+      if (result.result === "not found" || result.result !== "ok") {
+        console.warn(
+          `Profile picture not found or already deleted: ${publicId}`
+        );
+        return;
+      }
+
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
+      if (
+        errorMessage.includes("Not found") ||
+        errorMessage.includes("does not exist") ||
+        errorMessage.includes("invalid")
+      ) {
+        console.warn(`Profile picture already deleted: ${publicId}`);
+        return;
+      }
+
+      throw new Error(`Failed to delete profile picture: ${errorMessage}`);
+    }
+  }
+
+  // Delete multiple resources
   async deleteByPublicIds(publicIds: string[]): Promise<void> {
     if (!publicIds || publicIds.length === 0) return;
 
     try {
       await cloudinary.api.delete_resources(publicIds);
     } catch (error) {
-      console.error("Failed to delete resources from Cloudinary:", error);
       throw new Error(
         `Failed to delete files from Cloudinary: ${
           error instanceof Error ? error.message : "Unknown error"

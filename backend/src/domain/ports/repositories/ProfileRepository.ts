@@ -2,12 +2,18 @@ import { UserProfile, UserProfileSection } from "../../entities/index.js";
 
 export interface ProfileRepository {
   /**
-   * Retrieves bio, profile_pic, partner, and level by username.
+   * Retrieves bio, profile_pic and level by username
    *
    * @param username - The unique username (e.g. from route param)
    * @returns A UserProfile object including its internal userId, or null if not found
    */
   getProfileByUsername(username: string): Promise<UserProfile | null>;
+
+  /**
+   * Gets user profile by ID
+   */
+  getProfileById(userId: number): Promise<UserProfile | null>;
+
 
   /**
    * Retrieves profile sections associated with a user
@@ -50,4 +56,13 @@ export interface ProfileRepository {
    * @returns A promise that resolves to an array of public ids
   */
   getFilesBySectionId(sectionIds: number[]): Promise<string[]>;
+
+
+  /**
+   * Updates the profile picture public ID for a user
+   *
+   * @param userId - The ID of the user whose profile picture is to be updated
+   * @param newPublicId - The new profile picture public ID
+   */
+  updateProfilePicture(userId: number, newPublicId: string): Promise<void>;
 }

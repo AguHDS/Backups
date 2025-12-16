@@ -57,7 +57,6 @@ describe("CloudinaryUploader", () => {
     mockedCloudinaryUploader.mockImplementation((_options, cb) => {
       setTimeout(() => {
         cb(null, {
-          secure_url: "https://example.com/image.png",
           public_id: "public-id-1",
           bytes: 12345,
         });
@@ -65,7 +64,7 @@ describe("CloudinaryUploader", () => {
       return {} as any;
     });
 
-    const result = await uploader.upload(
+    const result = await uploader.uploadFilesToSection(
       [fakeFile],
       "section123",
       "Profile Images"
@@ -73,7 +72,6 @@ describe("CloudinaryUploader", () => {
 
     expect(result).toEqual([
       {
-        url: "https://example.com/image.png",
         public_id: "public-id-1",
         sizeInBytes: 12345,
       },
@@ -94,7 +92,7 @@ describe("CloudinaryUploader", () => {
     });
 
     await expect(
-      uploader.upload([fakeFile], "section123", "Profile Images")
+      uploader.uploadFilesToSection([fakeFile], "section123", "Profile Images")
     ).rejects.toThrow("Upload failed");
 
     expect(mockedCloudinaryUploader).toHaveBeenCalledTimes(1);

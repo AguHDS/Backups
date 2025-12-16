@@ -39,7 +39,12 @@ export const uploadFilesController = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: `Uploaded ${results.length} files`,
-      files: results,
+      files: results.map((file) => ({
+        publicId: file.publicId,
+        sectionId: file.sectionId.toString(),
+        sizeInBytes: file.sizeInBytes,
+        userId: file.userId,
+      })),
     });
   } catch (error) {
     if (

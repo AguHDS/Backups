@@ -1,4 +1,4 @@
-import { useRef, memo, useCallback, useMemo } from "react";
+import { useRef, useCallback, useMemo } from "react";
 import { UploadedFile } from "../types/section";
 import { CloudinaryImage } from "@/services/Cloudinary";
 import { ImageOverview } from "./ImageOverview";

@@ -6,7 +6,6 @@ export class UserProfile {
     public bio: string,
     public level: number,
     public profilePic?: string,
-    public partner?: string,
     public sections?: UserProfileSection[]
   ) {}
 }

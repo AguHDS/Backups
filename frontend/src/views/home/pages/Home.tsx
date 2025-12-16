@@ -11,17 +11,6 @@ export const Home = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
           <AboutCard
-            title="Partner System"
-            subtitle={
-              <div>
-                Being partner with another user will allow you both to share
-                <span className="text-green-400"> storage space </span>with each
-                other
-                <h3>Coming soon!</h3>
-              </div>
-            }
-          />
-          <AboutCard
             title="Store your files"
             subtitle="backup your files in a secure way, and edit your privacy
                   settings in case you want to make them public or private and

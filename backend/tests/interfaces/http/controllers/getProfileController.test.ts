@@ -37,7 +37,6 @@ describe("getProfileController", () => {
 
     const file = new UserFile(
       "img123",
-      "https://cdn.com/image.jpg",
       1,
       2048,
       123
@@ -56,7 +55,6 @@ describe("getProfileController", () => {
       "This is my profile",
       10,
       "profile-pic.jpg",
-      "Sofia",
       [section]
     );
 
@@ -91,7 +89,6 @@ describe("getProfileController", () => {
       userProfileData: {
         bio: "This is my profile",
         profile_pic: "profile-pic.jpg",
-        partner: "Sofia",
         level: 10,
       },
       userSectionData: [
@@ -102,7 +99,6 @@ describe("getProfileController", () => {
           isPublic: true,
           files: [
             {
-              url: "https://cdn.com/image.jpg",
               publicId: "img123",
               sectionId: 1,
               sizeInBytes: 2048,

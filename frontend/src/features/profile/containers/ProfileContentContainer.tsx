@@ -23,18 +23,30 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";
 import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
 
-/* Handles profile editing logic for bio, sections, files
-   and renders the full profile. This uses SectionsContext to access section states */
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageRefreshKey, setImageRefreshKey] = useState<number>(0);
+  const [profileImagePublicId, setProfileImagePublicId] = useState<string>(
+    data.userProfileData.profile_pic || ""
+  );
   const { isEditing, setIsEditing } = useProfile();
   const { flag: storageRefreshFlag, refresh: refreshStorage } =
     useStorageRefresh();
-  const { usedBytes, limitBytes, remainingBytes } = useStorageData(storageRefreshFlag);
+  const { usedBytes, limitBytes, remainingBytes } =
+    useStorageData(storageRefreshFlag);
+
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
-  const { status, setStatus } = useFetch();
+  const {
+    fetchData,
+    data: uploadResponse,
+    status,
+    setStatus,
+  } = useFetch<{ data: { public_id: string } }>();
   const { username } = useParams();
-  const { updateData, setUpdateData, resetBio } = useEditBio(
+  const dispatch = useDispatch<AppDispatch>();
+  const { updateData, setUpdateData } = useEditBio(
     data.userProfileData.bio
   );
   const {
@@ -44,6 +56,29 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     setSectionsToDelete,
     updateSectionIds,
   } = useSections();
+  
+  // Preview image when selected
+  useEffect(() => {
+    if (!selectedImage) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const tempUrl = URL.createObjectURL(selectedImage);
+    setPreviewUrl(tempUrl);
+
+    return () => URL.revokeObjectURL(tempUrl);
+  }, [selectedImage]);
+
+  // Updates profile picture after successful upload
+  useEffect(() => {
+    if (uploadResponse?.data?.public_id) {
+      setProfileImagePublicId(uploadResponse.data.public_id);
+      setImageRefreshKey(prev => prev + 1);
+      setPreviewUrl(null); // Clear preview after successful upload
+      setSelectedImage(null);
+    }
+  }, [uploadResponse]);
 
   useEffect(() => {
     if (isEditing) {
@@ -51,9 +86,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       setStatus(null);
     }
   }, [isEditing, setStatus]);
-  const dispatch = useDispatch<AppDispatch>();
 
-  const validateFields = () => {
+  const validateFields = useCallback(() => {
     const errors: string[] = [];
     if (!updateData.bio.trim()) errors.push("Bio cannot be empty");
 
@@ -65,7 +99,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     });
 
     return errors;
-  };
+  }, [updateData.bio, sections]);
 
   const handleSave = useCallback(async () => {
     const errors = validateFields();
@@ -75,9 +109,26 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     }
 
     try {
-      // Delete sections
+      // Upload profile picture
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append("profilePicture", selectedImage);
+
+        await fetchData(
+          `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/api/profilePicture/${username}`,
+          {
+            method: "POST",
+            body: formData,
+            credentials: "include",
+          }
+        );
+      }
+
+      // Delete/update logic
       if (sectionsToDelete.length > 0) {
-        const res = await fetch(
+        await fetch(
           `http://localhost:${
             import.meta.env.VITE_BACKENDPORT
           }/api/deleteSections/${username}`,
@@ -88,12 +139,10 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
             body: JSON.stringify({ sectionIds: sectionsToDelete }),
           }
         );
-        if (!res.ok) throw new Error("Failed to delete sections");
       }
 
-      // Delete marked files
       if (filesToDelete.length > 0) {
-        const res = await fetch(
+        await fetch(
           `http://localhost:${
             import.meta.env.VITE_BACKENDPORT
           }/api/deleteFiles/${username}`,
@@ -104,27 +153,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
             body: JSON.stringify(filesToDelete),
           }
         );
-        if (!res.ok) throw new Error("Failed to delete files");
       }
 
-      // Prevent deleted marked files to render after saving
-      setSections((prevSections) =>
-        prevSections.map((section) => {
-          const filesForSection = filesToDelete.find(
-            (f) => f.sectionId === section.id
-          );
-          if (!filesForSection) return section;
-
-          return {
-            ...section,
-            files: (section.files || []).filter(
-              (file) => !filesForSection.publicIds.includes(file.publicId)
-            ),
-          };
-        })
-      );
-
-      // Update bio and sections
       const response = await fetch(
         `http://localhost:${
           import.meta.env.VITE_BACKENDPORT
@@ -140,29 +170,27 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update profile");
-      }
-
-      // Update temporal ids with the real ones to prevent backend errors
-      const data = await response.json();
-      if (data.newlyCreatedSections) {
-        updateSectionIds(data.newlyCreatedSections);
+      const responseData = await response.json();
+      if (responseData.newlyCreatedSections) {
+        updateSectionIds(responseData.newlyCreatedSections);
       }
 
       setSectionsToDelete([]);
       clearFilesToDelete();
+      setSelectedImage(null);
+      setPreviewUrl(null);
       setIsEditing(false);
-      // refresh storage stats from profile and dashboard
+
       refreshStorage();
       await dispatch(getDashboardSummary());
     } catch (error) {
       console.error("Error saving profile:", error);
-      const messages = processErrorMessages(error);
-      setErrorMessages(messages);
+      setErrorMessages(processErrorMessages(error));
     }
   }, [
+    validateFields,
+    selectedImage,
+    fetchData,
     sections,
     sectionsToDelete,
     filesToDelete,
@@ -177,60 +205,37 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     updateSectionIds,
   ]);
 
-  const handleCancel = useCallback(() => {
-    resetBio(data.userProfileData.bio);
-    setSections(data.userSectionData);
-    setSectionsToDelete([]);
-    clearFilesToDelete();
-    setErrorMessages([]);
-    setStatus(null);
-    setIsEditing(false);
-  }, [
-    data.userProfileData.bio,
-    data.userSectionData,
-    resetBio,
-    setSections,
-    setSectionsToDelete,
-    clearFilesToDelete,
-    setStatus,
-    setIsEditing,
-  ]);
-
-  const handleBioChange = (bio: string) => setUpdateData({ bio });
-
   return (
     <div className="mx-auto flex justify-center mt-5">
       <div className="w-[80vw] max-w-full">
         <Header
           username={data.username}
           onSave={handleSave}
-          onCancel={handleCancel}
+          onCancel={() => setIsEditing(false)}
         />
-        <div className="p-[8px] bg-[#121212] border-[#272727] border-solid border-r border-b text-[#e0e0e0]">
+
+        <div className="p-[8px] bg-[#121212] border-[#272727] border-r border-b">
           <div className="flex flex-col md:flex-row w-full">
-            {/* Left Content */}
-            <div className="bg-[#272727] p-2 flex-shrink-0 w-full md:w-[225px]">
+            <div className="bg-[#272727] p-2 w-full md:w-[225px]">
               <ActionsAndProfileImg
-                profilePic={images.testImage}
-                giftIcon={images.giftIcon}
-                msgIcon={images.msgIcon}
-                addPartnerIcon={images.addFriend}
+                profilePic={profileImagePublicId}
+                previewUrl={previewUrl}
+                isEditing={isEditing}
+                onSelectImage={setSelectedImage}
+                refreshKey={imageRefreshKey}
               />
-              <UserInfo
-                userStatus="offline"
-                role={data.role}
-                friendsCounter={data.userProfileData.level}
-                partner={data.userProfileData.partner}
-              />
+
+              <UserInfo userStatus="offline" role={data.role} />
+
               <h3 className="text-center my-5">Storage</h3>
-              <StorageGraph usedBytes={usedBytes} limitBytes={limitBytes} remainingBytes={remainingBytes} />
+              <StorageGraph {...{ usedBytes, limitBytes, remainingBytes }} />
             </div>
-            {/* Right Content */}
+
             <ProfileRightContent
               updateData={updateData}
               errorMessages={errorMessages}
               status={status!}
-              onBioChange={handleBioChange}
+              onBioChange={(bio) => setUpdateData({ bio })}
             />
           </div>
         </div>

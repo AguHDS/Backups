@@ -109,7 +109,7 @@ export class UploadFilesUseCase {
     let confirmedBytes = 0;
 
     try {
-      const uploaded = await this.cloudinaryUploader.upload(
+      const uploaded = await this.cloudinaryUploader.uploadFilesToSection(
         files,
         sectionId,
         sectionTitle
@@ -170,7 +170,6 @@ export class UploadFilesUseCase {
         (file) =>
           new UserFile(
             file.public_id,
-            file.url,
             numericSectionId,
             file.sizeInBytes,
             numericUserId

@@ -45,7 +45,6 @@ CREATE TABLE `users_profile` (
   `fk_users_id` int unsigned NOT NULL,
   `bio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'No bio available',
   `profile_pic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `partner` varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '-',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `level` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`fk_users_id`),

@@ -1,19 +1,30 @@
 import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import { UploadFilesUseCase } from "@/application/useCases/UploadFilesUseCase.js";
-import type { CloudinaryFileUploader, CloudinaryUploadResponse } from "@/domain/ports/externalServices/CloudinaryFileUploader.js";
+import type {
+  CloudinaryFileUploader,
+  CloudinaryUploadResponse,
+} from "@/domain/ports/externalServices/CloudinaryFileUploader.js";
 import type { FileRepository } from "@/domain/ports/repositories/FileRepository.js";
 import { UserFile } from "@/domain/entities/UserFile.js";
 import type { MysqlStorageUsageRepository } from "@/infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
 
 describe("UploadFilesUseCase", () => {
-  let uploader: CloudinaryFileUploader & { deleteByPublicIds?: Mock };
+  let uploader: CloudinaryFileUploader & {
+    uploadFilesToSection: Mock;
+    uploadProfilePicture: Mock;
+    deleteProfilePicture: Mock;
+    deleteByPublicIds: Mock;
+  };
+  
   let fileRepo: FileRepository;
   let storageRepo: MysqlStorageUsageRepository;
   let useCase: UploadFilesUseCase;
 
   beforeEach(() => {
     uploader = {
-      upload: vi.fn(),
+      uploadFilesToSection: vi.fn(),
+      uploadProfilePicture: vi.fn(),
+      deleteProfilePicture: vi.fn(),
       deleteByPublicIds: vi.fn(),
     };
 
@@ -76,15 +87,15 @@ describe("UploadFilesUseCase", () => {
     const incomingBytes = 4000;
 
     const uploaded: CloudinaryUploadResponse[] = [
-      { public_id: "pub/a", url: "http://cdn/a.png", sizeInBytes: 1500 },
-      { public_id: "pub/b", url: "http://cdn/b.jpg", sizeInBytes: 2500 },
+      { public_id: "pub/a", sizeInBytes: 1500 },
+      { public_id: "pub/b", sizeInBytes: 2500 },
     ];
 
     (storageRepo.getRemainingStorage as unknown as Mock).mockResolvedValue(
       999999
     );
     (storageRepo.tryReserveStorage as unknown as Mock).mockResolvedValue(true);
-    (uploader.upload as Mock).mockResolvedValue(uploaded);
+    (uploader.uploadFilesToSection as Mock).mockResolvedValue(uploaded);
     (fileRepo.saveMany as Mock).mockResolvedValue(undefined);
 
     const result = await useCase.execute(
@@ -99,7 +110,7 @@ describe("UploadFilesUseCase", () => {
       userId,
       incomingBytes
     );
-    expect(uploader.upload).toHaveBeenCalledWith(
+    expect(uploader.uploadFilesToSection).toHaveBeenCalledWith(
       files,
       sectionId,
       sectionTitle
@@ -143,7 +154,7 @@ describe("UploadFilesUseCase", () => {
       },
     });
 
-    expect(uploader.upload).not.toHaveBeenCalled();
+    expect(uploader.uploadFilesToSection).not.toHaveBeenCalled();
     expect(storageRepo.tryReserveStorage).not.toHaveBeenCalled();
   });
 
@@ -177,7 +188,7 @@ describe("UploadFilesUseCase", () => {
       },
     });
 
-    expect(uploader.upload).not.toHaveBeenCalled();
+    expect(uploader.uploadFilesToSection).not.toHaveBeenCalled();
   });
 
   it("confirmed > incoming: extra reserve OK and the complete one", async () => {
@@ -189,8 +200,8 @@ describe("UploadFilesUseCase", () => {
     const incomingBytes = 2000;
 
     const uploaded: CloudinaryUploadResponse[] = [
-      { public_id: "pub/a", url: "http://cdn/a.png", sizeInBytes: 1500 },
-      { public_id: "pub/b", url: "http://cdn/b.jpg", sizeInBytes: 1000 },
+      { public_id: "pub/a", sizeInBytes: 1500 },
+      { public_id: "pub/b", sizeInBytes: 1000 },
     ];
     const confirmedBytes = 2500;
     const extra = confirmedBytes - incomingBytes;
@@ -201,7 +212,7 @@ describe("UploadFilesUseCase", () => {
     (storageRepo.tryReserveStorage as unknown as Mock)
       .mockResolvedValueOnce(true) // initial reserve
       .mockResolvedValueOnce(true); // extra reserve
-    (uploader.upload as Mock).mockResolvedValue(uploaded);
+    (uploader.uploadFilesToSection as Mock).mockResolvedValue(uploaded);
     (fileRepo.saveMany as Mock).mockResolvedValue(undefined);
 
     const result = await useCase.execute(files, "S", "T", userId);
@@ -229,8 +240,8 @@ describe("UploadFilesUseCase", () => {
     const incomingBytes = 4000;
 
     const uploaded: CloudinaryUploadResponse[] = [
-      { public_id: "pub/a", url: "http://cdn/a.png", sizeInBytes: 1000 },
-      { public_id: "pub/b", url: "http://cdn/b.jpg", sizeInBytes: 500 },
+      { public_id: "pub/a", sizeInBytes: 1000 },
+      { public_id: "pub/b", sizeInBytes: 500 },
     ];
     const confirmed = 1500;
     const surplus = incomingBytes - confirmed;
@@ -239,7 +250,7 @@ describe("UploadFilesUseCase", () => {
       999999
     );
     (storageRepo.tryReserveStorage as unknown as Mock).mockResolvedValue(true);
-    (uploader.upload as Mock).mockResolvedValue(uploaded);
+    (uploader.uploadFilesToSection as Mock).mockResolvedValue(uploaded);
     (fileRepo.saveMany as Mock).mockResolvedValue(undefined);
 
     await useCase.execute(files, "S", "T", userId);
@@ -262,7 +273,9 @@ describe("UploadFilesUseCase", () => {
       999999
     );
     (storageRepo.tryReserveStorage as unknown as Mock).mockResolvedValue(true);
-    (uploader.upload as Mock).mockRejectedValue(new Error("cloud fail"));
+    (uploader.uploadFilesToSection as Mock).mockRejectedValue(
+      new Error("cloud fail")
+    );
 
     await expect(useCase.execute(files, "S", "T", userId)).rejects.toThrow(
       "cloud fail"
@@ -284,15 +297,15 @@ describe("UploadFilesUseCase", () => {
     const incomingBytes = 2000;
 
     const uploaded: CloudinaryUploadResponse[] = [
-      { public_id: "pub/a", url: "http://cdn/a.png", sizeInBytes: 1000 },
-      { public_id: "pub/b", url: "http://cdn/b.jpg", sizeInBytes: 1000 },
+      { public_id: "pub/a", sizeInBytes: 1000 },
+      { public_id: "pub/b", sizeInBytes: 1000 },
     ];
 
     (storageRepo.getRemainingStorage as unknown as Mock).mockResolvedValue(
       999999
     );
     (storageRepo.tryReserveStorage as unknown as Mock).mockResolvedValue(true);
-    (uploader.upload as Mock).mockResolvedValue(uploaded);
+    (uploader.uploadFilesToSection as Mock).mockResolvedValue(uploaded);
     (fileRepo.saveMany as Mock).mockRejectedValue(new Error("db fail"));
 
     await expect(useCase.execute(files, "S", "T", userId)).rejects.toThrow(

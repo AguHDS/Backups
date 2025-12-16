@@ -40,7 +40,6 @@ describe("getNewRefreshToken thunk", () => {
     },
     dashboard: {
       used: 0,
-      partner: null,
       totalFiles: 0,
       status: "idle",
       error: null,
