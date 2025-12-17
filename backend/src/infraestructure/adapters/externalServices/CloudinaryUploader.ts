@@ -84,28 +84,40 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
         },
         (error, result) => {
           if (error) {
+            console.error(
+              `[Cloudinary] Upload failed for user ${this.userId}:`,
+              error
+            );
             return reject(
               new Error(`Cloudinary upload failed: ${error.message}`)
             );
           }
 
           if (!result) {
+            console.error(
+              `[Cloudinary] No result returned for user ${this.userId}`
+            );
             return reject(
               new Error("Cloudinary upload failed: No result returned")
             );
           }
 
           if (!result.public_id || result.bytes === undefined) {
+            console.error(
+              `[Cloudinary] Incomplete result for user ${this.userId}:`,
+              result
+            );
             return reject(
               new Error("Cloudinary upload failed: Incomplete result data")
             );
           }
 
           const fullPublicId = result.public_id;
+          const compressedSize = result.bytes;
 
           resolve({
             public_id: fullPublicId,
-            sizeInBytes: result.bytes,
+            sizeInBytes: compressedSize, // real size after Cloudinary compression
           });
         }
       );
@@ -125,11 +137,10 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
 
       if (result.result === "not found" || result.result !== "ok") {
         console.warn(
-          `Profile picture not found or already deleted: ${publicId}`
+          `[Cloudinary] Profile picture not found or already deleted: ${publicId}`
         );
         return;
       }
-
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
@@ -139,10 +150,16 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
         errorMessage.includes("does not exist") ||
         errorMessage.includes("invalid")
       ) {
-        console.warn(`Profile picture already deleted: ${publicId}`);
+        console.warn(
+          `[Cloudinary] Profile picture already deleted: ${publicId}`
+        );
         return;
       }
 
+      console.error(
+        `[Cloudinary] Failed to delete profile picture ${publicId}:`,
+        error
+      );
       throw new Error(`Failed to delete profile picture: ${errorMessage}`);
     }
   }
@@ -154,6 +171,7 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
     try {
       await cloudinary.api.delete_resources(publicIds);
     } catch (error) {
+      console.error(`[Cloudinary] Failed to delete resources:`, error);
       throw new Error(
         `Failed to delete files from Cloudinary: ${
           error instanceof Error ? error.message : "Unknown error"

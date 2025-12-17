@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 import { DeleteSectionsUseCase } from "../../../application/useCases/DeleteSectionsUseCase.js";
 import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
+import { MysqlFileRepository } from "../../../infraestructure/adapters/repositories/MysqlFileRepository.js"; // ← NUEVO
 import { CloudinaryRemover } from "../../../infraestructure/adapters/externalServices/CloudinaryRemover.js";
+import { MysqlStorageUsageRepository } from "../../../infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
 
 const deleteSectionsUseCase = new DeleteSectionsUseCase(
   new MysqlProfileRepository(),
-  new CloudinaryRemover()
+  new MysqlFileRepository(),
+  new CloudinaryRemover(),
+  new MysqlStorageUsageRepository()
 );
 
 export const deleteSectionsController = async (req: Request, res: Response) => {
@@ -37,7 +41,8 @@ export const deleteSectionsController = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Sections deleted successfully" });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
 
     console.error("Error deleting sections:", error);
 

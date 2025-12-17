@@ -9,12 +9,11 @@ import { ProfileRepository } from "../../../domain/ports/repositories/ProfileRep
 export class MysqlProfileRepository implements ProfileRepository {
   async getProfileByUsername(username: string): Promise<UserProfile | null> {
     try {
-      // Needed to show public or private sections
       const [rows] = await promisePool.execute<RowDataPacket[]>(
         `SELECT u.id AS userId, up.bio, up.profile_pic, up.level
-        FROM users u
-        JOIN users_profile up ON up.fk_users_id = u.id
-        WHERE u.namedb = ?`,
+      FROM users u
+      JOIN users_profile up ON up.fk_users_id = u.id
+      WHERE u.namedb = ?`,
         [username]
       );
 
@@ -206,6 +205,7 @@ export class MysqlProfileRepository implements ProfileRepository {
 
     return rows.map((row) => row.public_id);
   }
+
   async updateProfilePicture(
     userId: number,
     profilePicPublicId: string
@@ -213,8 +213,8 @@ export class MysqlProfileRepository implements ProfileRepository {
     try {
       const [result] = await promisePool.execute<ResultSetHeader>(
         `UPDATE users_profile 
-       SET profile_pic = ? 
-       WHERE fk_users_id = ?`,
+     SET profile_pic = ?
+     WHERE fk_users_id = ?`,
         [profilePicPublicId, userId]
       );
 
