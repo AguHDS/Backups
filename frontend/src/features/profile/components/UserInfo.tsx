@@ -5,7 +5,7 @@ interface Props {
 
 export const UserInfo = ({ userStatus, role }: Props) => {
   return (
-    <ul className="mt-5 border-t border-solid border-[#141414] p-0 list-none">
+    <ul className="mt-5 text-gray-400 border-t border-solid border-[#141414] p-0 list-none">
       <li className="bg-[#121212] p-1 flex justify-between">
         <span>status</span>
         <span className="text-gray-400">{userStatus}</span>

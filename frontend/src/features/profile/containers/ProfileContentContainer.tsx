@@ -13,7 +13,7 @@ import {
   Header,
   ActionsAndProfileImg,
   UserInfo,
-  StorageGraph,
+  StorageChart,
   ProfileRightContent,
 } from "../components";
 import { images } from "@/assets/images";
@@ -227,8 +227,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
 
               <UserInfo userStatus="offline" role={data.role} />
 
-              <h3 className="text-center my-5">Storage</h3>
-              <StorageGraph {...{ usedBytes, limitBytes, remainingBytes }} />
+              <h3 className="text-center text-gray-300 my-5">Storage</h3>
+              <StorageChart {...{ usedBytes, limitBytes, remainingBytes }} />
             </div>
 
             <ProfileRightContent

@@ -1,24 +1,35 @@
-import { memo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from "recharts";
 import { formatBytes } from "@/shared/utils/formatBytes";
 import { Button } from "@/shared/components/buttons/Button";
 
 type Props = {
   usedBytes: number;
-  limitBytes: number; 
+  limitBytes: number;
   remainingBytes: number;
 };
 
-const COLOR_USED = "#33b4ffff";
 const COLOR_FREE = "#646464ff";
 
-export const StorageGraph = memo(function StorageGraph({
+function getUsageColor(percent: number) {
+  const p = Math.min(100, Math.max(0, percent));
+  const hue = 210 - (210 * p) / 100;
+  return `hsl(${hue}, 85%, 55%)`;
+}
+
+function getRemainingColor(percent: number) {
+  const p = Math.min(100, Math.max(0, percent));
+  const hue = (120 * p) / 100;
+  return `hsl(${hue}, 80%, 45%)`;
+}
+
+export function StorageChart({
   usedBytes,
   limitBytes = 0,
   remainingBytes,
 }: Props) {
   const used = Math.max(0, usedBytes);
   const limit = Math.max(0, limitBytes);
+
   const remaining =
     typeof remainingBytes === "number"
       ? Math.max(0, remainingBytes)
@@ -38,8 +49,14 @@ export const StorageGraph = memo(function StorageGraph({
         ]
       : [{ name: "Used", value: used || 1, key: "used" }];
 
-  const percent =
+  const usedPercent =
     limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+
+  const remainingPercent =
+    limit > 0 ? Math.min(100, Math.round((remaining / limit) * 100)) : 0;
+
+  const usedColor = getUsageColor(usedPercent);
+  const remainingColor = getRemainingColor(remainingPercent);
 
   return (
     <div
@@ -61,10 +78,10 @@ export const StorageGraph = memo(function StorageGraph({
               stroke="none"
               isAnimationActive
             >
-              <Cell key="used" fill={COLOR_USED} />
+              <Cell key="used" fill={usedColor} />
               {limit > 0 && <Cell key="free" fill={COLOR_FREE} />}
               <Label
-                value={limit > 0 ? `${percent}%` : "Storage"}
+                value={limit > 0 ? `${usedPercent}%` : "Storage"}
                 position="center"
                 fill="#fff"
                 fontSize={14}
@@ -77,20 +94,22 @@ export const StorageGraph = memo(function StorageGraph({
 
       <div className="mt-2 flex flex-col w-full text-[12px]">
         <div className="flex my-[2px] justify-between items-center w-full">
-          <span className="px-1">Max. available</span>
-          <span className="px-1" style={{ color: "gray" }}>
+          <span className="px-1">Max. Available</span>
+          <span className="px-1" style={{ color: "white" }}>
             {limit > 0 ? formatBytes(limit) : "—"}
           </span>
         </div>
+
         <div className="flex my-[2px] justify-between items-center w-full">
           <span className="px-1">Total used</span>
-          <span className="px-1" style={{ color: COLOR_USED }}>
+          <span className="px-1" style={{ color: usedColor }}>
             {formatBytes(used)}
           </span>
         </div>
+
         <div className="flex my-[2px] justify-between items-center w-full">
           <span className="px-1">Remaining</span>
-          <span className="px-1" style={{ color: "gray" }}>
+          <span className="px-1" style={{ color: remainingColor }}>
             {limit > 0 ? formatBytes(remaining) : "—"}
           </span>
         </div>
@@ -102,4 +121,4 @@ export const StorageGraph = memo(function StorageGraph({
       />
     </div>
   );
-});
+}
