@@ -37,191 +37,129 @@ export class UpdateProfilePictureUseCase {
       throw new Error("Invalid file type. Only images are allowed");
     }
 
-    const incomingBytes = file.size;
-
-    if (incomingBytes <= 0) {
+    if (file.size <= 0) {
       throw new Error("Invalid file");
     }
 
-    // 1. Get current profile to check if a profile picture already exists
     const currentProfile = await this.profileRepository.getProfileById(userId);
     const oldPublicId = currentProfile?.profilePic || null;
 
-    // 2. Check storage quota
-    const remaining = await this.storageUsageRepo.getRemainingStorage(userId);
+    const currentProfilePicSize =
+      await this.storageUsageRepo.getProfilePictureSize(userId);
 
-    if (incomingBytes > remaining) {
-      const [used, limit] = await Promise.all([
-        this.storageUsageRepo.getUsedStorage(userId),
-        this.storageUsageRepo.getMaxStorage(userId),
-      ]);
+    // upload to Cloudinary first before verifying quota
+    const uploaded = await this.cloudinaryUploader.uploadProfilePicture(file);
 
-      const err: Error & { details?: QuotaErrorPayload } = new Error(
-        "Storage quota exceeded"
-      );
-      err.details = {
-        code: "STORAGE_QUOTA_EXCEEDED",
-        used,
-        limit,
-        remaining,
-        attempted: incomingBytes,
-      };
-      throw err;
-    }
+    const newPublicId = uploaded.public_id;
+    const cloudinaryBytes = uploaded.sizeInBytes;
 
-    // 3. Reserve storage
-    const reserved = await this.storageUsageRepo.tryReserveStorage(
-      userId,
-      incomingBytes
-    );
+    // calculate size with real size from Cloudinary
+    const storageChange = cloudinaryBytes - currentProfilePicSize;
 
-    if (!reserved) {
-      const [usedNow, limitNow, remainingNow] = await Promise.all([
-        this.storageUsageRepo.getUsedStorage(userId),
-        this.storageUsageRepo.getMaxStorage(userId),
-        this.storageUsageRepo.getRemainingStorage(userId),
-      ]);
+    // verify quota only if size is bigger
+    if (storageChange > 0) {
+      const remaining = await this.storageUsageRepo.getRemainingStorage(userId);
 
-      const err: Error & { details?: QuotaErrorPayload } = new Error(
-        "Storage quota exceeded"
-      );
-      err.details = {
-        code: "STORAGE_QUOTA_EXCEEDED",
-        used: usedNow,
-        limit: limitNow,
-        remaining: remainingNow,
-        attempted: incomingBytes,
-      };
-      throw err;
-    }
-
-    let newPublicId: string = "";
-    let confirmedBytes = 0;
-
-    try {
-      // 4. Upload the new profile picture to Cloudinary using a unique public_id
-      const uploaded = await this.cloudinaryUploader.uploadProfilePicture(file);
-
-      newPublicId = uploaded.public_id;
-      confirmedBytes = uploaded.sizeInBytes;
-
-      // 5. Handle byte difference between expected and confirmed size
-      await this.handleByteDifference(
-        userId,
-        incomingBytes,
-        confirmedBytes,
-        newPublicId
-      );
-
-      // 6. Delete the old profile picture if it exists
-      if (oldPublicId && oldPublicId.trim() !== "") {
+      if (storageChange > remaining) {
+        // Rollback: delete uploaded image from Cloudinary
         try {
-          await this.cloudinaryUploader.deleteProfilePicture(oldPublicId);
-        } catch {
-          // If the old image cannot be deleted, rollback everything to avoid having two active profile pictures
-          throw new Error("Failed to delete old profile picture");
+          await this.cloudinaryUploader.deleteProfilePicture(newPublicId);
+        } catch (rollbackError) {
+          console.warn(
+            `[ProfilePicture] Rollback warning: failed to delete image:`,
+            rollbackError
+          );
         }
-      }
 
-      // 7. Only now update the database with the new public_id
-      await this.profileRepository.updateProfilePicture(userId, newPublicId);
-
-      return { public_id: newPublicId };
-    } catch (error) {
-      // Rollback in case of error
-      await this.rollbackUpload(
-        userId,
-        newPublicId,
-        confirmedBytes,
-        incomingBytes,
-        oldPublicId
-      );
-      throw error;
-    }
-  }
-
-  private async handleByteDifference(
-    userId: number,
-    incomingBytes: number,
-    confirmedBytes: number,
-    newPublicId: string
-  ): Promise<void> {
-    if (confirmedBytes > incomingBytes) {
-      const extra = confirmedBytes - incomingBytes;
-
-      const extraOk = await this.storageUsageRepo.tryReserveStorage(
-        userId,
-        extra
-      );
-
-      if (!extraOk) {
-        await this.cloudinaryUploader.deleteProfilePicture(newPublicId);
-        await this.storageUsageRepo.decreaseFromUsedStorage(
-          userId,
-          incomingBytes
-        );
-
-        const [usedNow, limitNow, remainingNow] = await Promise.all([
+        const [used, limit] = await Promise.all([
           this.storageUsageRepo.getUsedStorage(userId),
           this.storageUsageRepo.getMaxStorage(userId),
-          this.storageUsageRepo.getRemainingStorage(userId),
         ]);
 
         const err: Error & { details?: QuotaErrorPayload } = new Error(
-          "Storage quota exceeded after upload"
+          "Storage quota exceeded"
         );
         err.details = {
           code: "STORAGE_QUOTA_EXCEEDED",
-          used: usedNow,
-          limit: limitNow,
-          remaining: remainingNow,
-          attempted: confirmedBytes,
+          used,
+          limit,
+          remaining,
+          attempted: storageChange,
         };
         throw err;
       }
-    } else if (confirmedBytes < incomingBytes) {
-      const surplus = incomingBytes - confirmedBytes;
-      if (surplus > 0) {
-        await this.storageUsageRepo.decreaseFromUsedStorage(userId, surplus);
+    }
+
+    try {
+      // Update storage in DB using Cloudinary size
+      await this.storageUsageRepo.updateProfilePictureSize(
+        userId,
+        cloudinaryBytes, // real size from Cloudinary
+        currentProfilePicSize // old size from db
+      );
+
+      await this.profileRepository.updateProfilePicture(userId, newPublicId);
+
+      // deletes old picture if exists
+      if (oldPublicId && oldPublicId.trim() !== "") {
+        try {
+          await this.cloudinaryUploader.deleteProfilePicture(oldPublicId);
+        } catch (deleteError) {
+          console.warn(
+            `[ProfilePicture] Could not delete old picture:`,
+            deleteError
+          );
+        }
       }
+
+      return { public_id: newPublicId };
+    } catch (error) {
+      console.error(`[ProfilePicture] Error during update:`, error);
+
+      // Rollback
+      await this.rollbackUpload(
+        userId,
+        newPublicId,
+        cloudinaryBytes,
+        oldPublicId,
+        currentProfilePicSize
+      );
+
+      throw error;
     }
   }
 
   private async rollbackUpload(
     userId: number,
     newPublicId: string,
-    confirmedBytes: number,
-    incomingBytes: number,
-    oldPublicId?: string | null
+    newFileSize: number,
+    oldPublicId?: string | null,
+    oldFileSize?: number
   ): Promise<void> {
-    // 1. Delete the newly uploaded image if it exists
+    // Deletes new uploaded image
     if (newPublicId) {
       try {
         await this.cloudinaryUploader.deleteProfilePicture(newPublicId);
-      } catch {
-        // Ignore rollback deletion errors
+      } catch (error) {
+        console.error(
+          `[ProfilePicture] Rollback: failed to delete new image:`,
+          error
+        );
       }
     }
 
-    // 2. Revert storage usage
-    const bytesToRevert = confirmedBytes > 0 ? confirmedBytes : incomingBytes;
-
-    try {
-      await this.storageUsageRepo.decreaseFromUsedStorage(
-        userId,
-        bytesToRevert
-      );
-    } catch {
-      // Ignore storage rollback errors
-    }
-
-    // 3. Restore the old public_id in the database if it existed
-    // This ensures the user keeps the previous profile picture if the upload fails
-    if (oldPublicId && oldPublicId.trim() !== "") {
+    if (oldFileSize !== undefined) {
       try {
-        await this.profileRepository.updateProfilePicture(userId, oldPublicId);
-      } catch {
-        // Critical, but do not throw to avoid hiding the original error
+        await this.storageUsageRepo.updateProfilePictureSize(
+          userId,
+          oldFileSize, // restores old size
+          newFileSize // remove new size
+        );
+      } catch (error) {
+        console.error(
+          `[ProfilePicture] Rollback: failed to revert storage:`,
+          error
+        );
       }
     }
   }

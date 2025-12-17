@@ -37,6 +37,7 @@ CREATE TABLE `user_storage_usage` (
   `user_id` int unsigned NOT NULL,
   `total_bytes` bigint NOT NULL DEFAULT '0',
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `profile_pic_size` bigint unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`user_id`),
   CONSTRAINT `fk_user_storage` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
@@ -60,7 +61,7 @@ CREATE TABLE `users_profile_sections` (
   PRIMARY KEY (`id`),
   KEY `fk_user_profile_sections` (`fk_users_id`),
   CONSTRAINT `fk_user_profile_sections` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
 CREATE TABLE `users_files` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,

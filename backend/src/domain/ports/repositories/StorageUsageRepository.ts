@@ -50,8 +50,29 @@ export interface StorageUsageRepository {
   getRemainingStorage(userId: number | string): Promise<number>;
 
   /**
+   * Gets the current profile picture size from storage usage
+   *
+   * @param userId - Id of current user
+   * @returns The size in bytes of the current profile picture
+   */
+  getProfilePictureSize(userId: number | string): Promise<number>;
+
+  /**
+   * Updates the profile picture size and adjusts total storage accordingly
+   *
+   * @param userId - Id of current user
+   * @param newSize - The new size of the profile picture in bytes
+   * @param oldSize - The old size of the profile picture in bytes (default: 0)
+   */
+  updateProfilePictureSize(
+    userId: number | string,
+    newSize: number,
+    oldSize?: number
+  ): Promise<void>;
+
+  /**
    * Attempts to atomically reserve additional storage for the user
-   * it should fail if the requested space exceeds the user's maximum allowed quota
+   * Used for files in sections
    *
    * @param userId - Id of current user, usually taken from refresh token
    * @param delta - The number of bytes to attempt to reserve

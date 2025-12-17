@@ -22,6 +22,15 @@ export interface FileRepository {
   /**
    * Deletes files from the database using its Cloudinary public ID
    * @param publicId - The unique identifier of the file in Cloudinary
+   * @return A promise that resolves to an array of deleted UserFile entities
    */
   deleteFilesByPublicIds(publicIds: string[]): Promise<UserFile[]>;
+  /**
+   * Retrieves files with their sizes associated with specific sections
+   * @param sectionIds - An array of section IDs to retrieve files for
+   * @returns A promise that resolves to an array of files with public ids and sizes
+   */
+  getFilesWithSizeBySectionId(
+    sectionIds: number[]
+  ): Promise<{ public_id: string; size_in_bytes: number }[]>;
 }

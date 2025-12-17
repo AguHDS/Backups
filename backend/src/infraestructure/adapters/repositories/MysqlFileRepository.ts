@@ -1,6 +1,7 @@
 import { FileRepository } from "../../../domain/ports/repositories/FileRepository.js";
 import { UserFile } from "../../../domain/entities/UserFile.js";
 import promisePool from "../../../db/database.js";
+import type { RowDataPacket } from "mysql2";
 
 // Definir tipo para las filas de la base de datos
 interface UserFileRow {
@@ -109,5 +110,23 @@ export class MysqlFileRepository implements FileRepository {
       console.error("Error deleting files:", error);
       throw new Error("Could not delete files");
     }
+  }
+
+  async getFilesWithSizeBySectionId(
+    sectionIds: number[]
+  ): Promise<{ public_id: string; size_in_bytes: number }[]> {
+    if (sectionIds.length === 0) return [];
+
+    const placeholders = sectionIds.map(() => "?").join(", ");
+
+    const [rows] = await promisePool.execute<RowDataPacket[]>(
+      `SELECT public_id, size_in_bytes FROM users_files WHERE section_id IN (${placeholders})`,
+      sectionIds
+    );
+
+    return rows.map((row) => ({
+      public_id: row.public_id,
+      size_in_bytes: row.size_in_bytes,
+    }));
   }
 }
