@@ -17,7 +17,7 @@ import {
   ProfileRightContent,
 } from "../components";
 import { FetchedUserProfile } from "../types/profileData";
-import { processErrorMessages } from "@/shared/utils/errors";
+import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";
 import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";

@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
-import { processErrorMessages } from "@/shared/utils/errors";
+import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import { ValidationMessages } from "@/shared";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";

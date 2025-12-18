@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { processErrorMessages } from "../errors";
+import { processErrorMessages } from "../processErrorMessages";
 
 describe("processErrorMessages", () => {
   it("should return messages from an array of validation errors", () => {
