@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Button, FeedbackMessages } from "@/shared/index";
+import { Button, ValidationMessages } from "@/shared/index";
 import { Bio } from "./Bio.js";
 import { SectionFileManager } from "./SectionFileManager";
 import { useProfile } from "../context/Profile/profileContext.js";
@@ -26,7 +26,7 @@ export const ProfileRightContent = ({
     <div className="w-full mr-[5px] ml-[5px] scrollbar-container flex flex-col h-full min-h-[80vh]">
       <div className="bg-[#272727] w-full max-w-full flex-1">
         <div className="p-4 space-y-4 scrollbar-container flex-1">
-          <FeedbackMessages
+          <ValidationMessages
             input={errorMessages}
             status={status}
             message={errorMessages.length === 0 ? "Operation completed" : null}

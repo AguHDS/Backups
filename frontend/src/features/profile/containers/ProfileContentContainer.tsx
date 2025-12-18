@@ -16,7 +16,6 @@ import {
   StorageChart,
   ProfileRightContent,
 } from "../components";
-import { images } from "@/assets/images";
 import { FetchedUserProfile } from "../types/profileData";
 import { processErrorMessages } from "@/shared/utils/errors";
 import { useDispatch } from "react-redux";

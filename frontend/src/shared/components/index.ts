@@ -1,4 +1,4 @@
-export { FeedbackMessages } from "./FeedbackMessages/FeedbackMessages";
+export { ValidationMessages } from "./ValidationMessages/ValidationMessages";
 export { Button } from "./buttons/Button";
 export { Input } from "./inputs/Input";
 export { NotFound } from "./NotFound/NotFound";

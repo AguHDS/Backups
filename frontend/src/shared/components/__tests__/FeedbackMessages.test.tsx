@@ -1,54 +1,84 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import { FeedbackMessages } from "../FeedbackMessages/FeedbackMessages";
-import styles from "../FeedbackMessages/feedbackMessages.module.css";
+import { ValidationMessages } from "../ValidationMessages/ValidationMessages";
 
 describe("FeedbackMessages", () => {
   it("renders nothing if input is empty and status is null", () => {
-    render(<FeedbackMessages input={[]} status={null} message={null} />);
-    expect(screen.queryByText(/./)).toBeNull();
+    const { container } = render(
+      <ValidationMessages input={[]} status={null} message={null} />
+    );
+
+    expect(container.firstChild).toBeNull();
   });
 
-  it("renders input warnings", () => {
+  it("renders input warnings with warning styles", () => {
     const warnings = ["Field is required", "Username too short"];
-    render(<FeedbackMessages input={warnings} status={null} message={null} />);
+
+    render(
+      <ValidationMessages input={warnings} status={null} message={null} />
+    );
+
     for (const msg of warnings) {
-      expect(screen.getByText(msg)).toBeInTheDocument();
-      expect(screen.getByText(msg)).toHaveClass(styles.warningsLoginAndSign);
+      const element = screen.getByText(msg);
+
+      expect(element).not.toBeNull();
+      expect(element.classList.contains("flex")).toBe(true);
+      expect(element.classList.contains("justify-center")).toBe(true);
+      expect(element.classList.contains("text-center")).toBe(true);
+      expect(element.classList.contains("text-red-600")).toBe(true);
+      expect(element.classList.contains("mb-0")).toBe(true);
+      expect(element.classList.contains("relative")).toBe(true);
     }
   });
 
-  it("renders success message with correct class when status is 200", () => {
+  it("renders success message with success styles when status is 200", () => {
     render(
-      <FeedbackMessages
+      <ValidationMessages
         input={[]}
         status={200}
         message="Account created successfully"
       />
     );
-    const message = screen.getByText("Account created successfully");
-    expect(message).toBeInTheDocument();
-    expect(message).toHaveClass(styles.loginAndSignSuccesfull);
+
+    const element = screen.getByText("Account created successfully");
+
+    expect(element).not.toBeNull();
+    expect(element.classList.contains("flex")).toBe(true);
+    expect(element.classList.contains("justify-center")).toBe(true);
+    expect(element.classList.contains("text-green-600")).toBe(true);
+    expect(element.classList.contains("mb-0")).toBe(true);
+    expect(element.classList.contains("relative")).toBe(true);
   });
 
-  it("renders error message with correct class when status is 400", () => {
+  it("renders error message with warning styles when status is 400", () => {
     render(
-      <FeedbackMessages input={[]} status={400} message="Invalid credentials" />
+      <ValidationMessages
+        input={[]}
+        status={400}
+        message="Invalid credentials"
+      />
     );
-    const message = screen.getByText("Invalid credentials");
-    expect(message).toBeInTheDocument();
-    expect(message).toHaveClass(styles.warningsLoginAndSign);
+
+    const element = screen.getByText("Invalid credentials");
+
+    expect(element).not.toBeNull();
+    expect(element.classList.contains("flex")).toBe(true);
+    expect(element.classList.contains("justify-center")).toBe(true);
+    expect(element.classList.contains("text-red-600")).toBe(true);
+    expect(element.classList.contains("mb-0")).toBe(true);
+    expect(element.classList.contains("relative")).toBe(true);
   });
 
   it("renders both input warnings and status message together", () => {
     render(
-      <FeedbackMessages
+      <ValidationMessages
         input={["Missing password"]}
         status={500}
         message="Server error"
       />
     );
-    expect(screen.getByText("Missing password")).toBeInTheDocument();
-    expect(screen.getByText("Server error")).toBeInTheDocument();
+
+    expect(screen.getByText("Missing password")).not.toBeNull();
+    expect(screen.getByText("Server error")).not.toBeNull();
   });
 });

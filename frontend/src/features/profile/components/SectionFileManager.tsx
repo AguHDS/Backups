@@ -11,7 +11,7 @@ import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
 import { processErrorMessages } from "@/shared/utils/errors";
-import { FeedbackMessages } from "@/shared";
+import { ValidationMessages } from "@/shared";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";
 import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
@@ -211,7 +211,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
               {/* Show errors if any */}
               {(uploadErrors.length > 0 || error) && (
                 <div className="w-full max-w-[80%] mt-4">
-                  <FeedbackMessages
+                  <ValidationMessages
                     input={uploadErrors.length > 0 ? uploadErrors : [error!]}
                     status={status}
                     message={null}

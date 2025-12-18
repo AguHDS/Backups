@@ -1,21 +1,23 @@
-import styles from "./feedbackMessages.module.css";
-
 interface Props {
   input: string[];
   status: number | null;
   message: string | null;
 }
 
-// Render feedbacks and warnings in forms
-
-export const FeedbackMessages = ({ input, status, message }: Props) => {
+/**
+ * Render validation and warnings for forms
+ */
+export const ValidationMessages = ({ input, status, message }: Props) => {
   return (
     <div>
       {/* render warnings */}
       {input &&
         input.length > 0 &&
         input.map((error, index) => (
-          <p key={index} className={styles.warningsLoginAndSign}>
+          <p
+            key={index}
+            className="flex justify-center text-center text-red-600 mb-0 relative"
+          >
             {error}
           </p>
         ))}
@@ -25,11 +27,13 @@ export const FeedbackMessages = ({ input, status, message }: Props) => {
         <p
           className={
             status >= 200 && status < 300
-              ? `${styles.loginAndSignSuccesfull}`
-              : `${styles.warningsLoginAndSign}`
+              ? "flex justify-center text-green-600 mb-0 relative"
+              : "flex justify-center text-center text-red-600 mb-0 relative"
           }
-        >{message}</p>
+        >
+          {message}
+        </p>
       )}
     </div>
   );
-}
+};
