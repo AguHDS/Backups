@@ -22,6 +22,17 @@ export const processErrorMessages = (error: FetchError): string[] => {
   if (typeof error === "object" && error !== null) {
     const apiError = error as ApiError;
 
+    if (
+      apiError.message?.includes("only can have one section") ||
+      apiError.message?.includes("User role only can have one section")
+    ) {
+      return ["Users with 'user' role can only have one section"];
+    }
+
+    if (apiError.message?.includes("Admin users can have up to")) {
+      return [apiError.message];
+    }
+
     if (apiError.code === "STORAGE_QUOTA_EXCEEDED" && apiError.details) {
       const details = apiError.details;
       return [
@@ -54,6 +65,19 @@ export const processErrorMessages = (error: FetchError): string[] => {
     if (apiError.code && apiError.code !== "INTERNAL_SERVER_ERROR") {
       return [`Error: ${apiError.code}`];
     }
+  }
+
+  if (error instanceof Error) {
+    const errorMessage = error.message;
+    
+    if (
+      errorMessage.includes("only can have one section") ||
+      errorMessage.includes("User role only can have one section")
+    ) {
+      return ["Users with 'user' role can only have one section"];
+    }
+    
+    return [errorMessage];
   }
 
   if (typeof error === "string") {

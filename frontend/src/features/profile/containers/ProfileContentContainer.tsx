@@ -8,7 +8,6 @@ import {
   useStorageRefresh,
 } from "../context";
 import { useStorageData } from "../hooks/useStorageData";
-import { useFetch } from "@/shared";
 import {
   Header,
   ActionsAndProfileImg,
@@ -31,32 +30,27 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [profileImagePublicId, setProfileImagePublicId] = useState<string>(
     data.userProfileData.profile_pic || ""
   );
-  const [profilePictureStatus, setProfilePictureStatus] = useState<
-    number | null
-  >(null);
-  const [profilePictureErrors, setProfilePictureErrors] = useState<string[]>(
-    []
+  const [profilePictureErrors, setProfilePictureErrors] = useState<string[]>([]);
+  const [currentBio, setCurrentBio] = useState<string>(
+    data.userProfileData.bio
   );
-
   const { isEditing, setIsEditing } = useProfile();
-
   const { flag: storageRefreshFlag, refresh: refreshStorage } =
     useStorageRefresh();
   const { usedBytes, limitBytes, remainingBytes } =
     useStorageData(storageRefreshFlag);
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
-  const {
-    fetchData,
-    data: uploadResponse,
-    status: uploadStatus,
-    reset: resetFetch,
-    error: uploadError,
-  } = useFetch<{ data: { public_id: string } }>();
   const { username } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const { updateData, setUpdateData } = useEditBio(data.userProfileData.bio);
-  const { sections, sectionsToDelete, setSectionsToDelete, updateSectionIds } =
-    useSections();
+  const { updateData, setUpdateData, resetBio } = useEditBio(currentBio);
+  const {
+    sections,
+    sectionsToDelete,
+    setSectionsToDelete,
+    updateSectionIds,
+    resetSections,
+    updateInitialSections,
+  } = useSections();
   const isInitialMount = useRef(true);
 
   // Preview image when selected
@@ -72,41 +66,12 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     return () => URL.revokeObjectURL(tempUrl);
   }, [selectedImage]);
 
-  // Handle profile picture upload response
-  useEffect(() => {
-    if (uploadStatus === null) return;
-
-    setProfilePictureStatus(uploadStatus);
-
-    if (uploadStatus >= 200 && uploadStatus < 300) {
-      if (uploadResponse?.data?.public_id) {
-        setProfileImagePublicId(uploadResponse.data.public_id);
-        setImageRefreshKey((prev) => prev + 1);
-      }
-      setProfilePictureErrors([]);
-    } else if (uploadStatus >= 400) {
-      const errorData = uploadResponse || uploadError;
-      const messages = processErrorMessages(errorData);
-      setProfilePictureErrors(messages);
-    }
-  }, [uploadStatus, uploadResponse, uploadError]);
-
-  useEffect(() => {
-    if (isEditing) {
-      setErrorMessages([]);
-      setProfilePictureErrors([]);
-      setProfilePictureStatus(null);
-      resetFetch();
-    }
-  }, [isEditing, resetFetch]);
 
   useEffect(() => {
     if (isInitialMount.current) {
-      resetFetch();
-      setProfilePictureStatus(null);
       isInitialMount.current = false;
     }
-  }, [resetFetch]);
+  }, []);
 
   const validateFields = useCallback(() => {
     const errors: string[] = [];
@@ -122,34 +87,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     return errors;
   }, [updateData.bio, sections]);
 
-  const handleUploadProfilePicture = useCallback(async (): Promise<boolean> => {
-    if (!selectedImage) return true; // No hay imagen para subir, continuar
-
-    const formData = new FormData();
-    formData.append("profilePicture", selectedImage);
-
-    await fetchData(
-      `http://localhost:${
-        import.meta.env.VITE_BACKENDPORT
-      }/api/profilePicture/${username}`,
-      {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      }
-    );
-
-    // Wait for the status to update
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    // Return true if upload was successful, false otherwise
-    return (
-      profilePictureStatus !== null &&
-      profilePictureStatus >= 200 &&
-      profilePictureStatus < 300
-    );
-  }, [selectedImage, fetchData, username, profilePictureStatus]);
-
   const handleSave = useCallback(async () => {
     const errors = validateFields();
     if (errors.length > 0) {
@@ -158,88 +95,139 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     }
 
     try {
-      let profilePictureSuccess = true;
-
       if (selectedImage) {
-        profilePictureSuccess = await handleUploadProfilePicture();
-        if (!profilePictureSuccess) {
-          console.log("Profile picture upload failed, stopping save process");
-          return;
-        }
-      }
+        setProfilePictureErrors([]);
+        
+        const formData = new FormData();
+        formData.append("profilePicture", selectedImage);
 
-      if (profilePictureSuccess) {
-        if (sectionsToDelete.length > 0) {
-          await fetch(
-            `http://localhost:${
-              import.meta.env.VITE_BACKENDPORT
-            }/api/deleteSections/${username}`,
-            {
-              method: "DELETE",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ sectionIds: sectionsToDelete }),
-            }
-          );
-        }
-
-        // Delete files if any
-        if (filesToDelete.length > 0) {
-          await fetch(
-            `http://localhost:${
-              import.meta.env.VITE_BACKENDPORT
-            }/api/deleteFiles/${username}`,
-            {
-              method: "DELETE",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(filesToDelete),
-            }
-          );
-        }
-
-        // Update bio and sections
-        const response = await fetch(
+        const uploadResult = await fetch(
           `http://localhost:${
             import.meta.env.VITE_BACKENDPORT
-          }/api/updateBioAndSections/${username}`,
+          }/api/profilePicture/${username}`,
           {
             method: "POST",
+            body: formData,
             credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              bio: updateData.bio,
-              sections,
-            }),
           }
         );
 
-        const responseData = await response.json();
-        if (responseData.newlyCreatedSections) {
-          updateSectionIds(responseData.newlyCreatedSections);
+        if (!uploadResult.ok) {
+          let errorData;
+          try {
+            errorData = await uploadResult.json();
+          } catch {
+            errorData = { message: `HTTP Error ${uploadResult.status}` };
+          }
+          
+          const errorMessage = errorData.message || "Failed to upload profile picture";
+          setProfilePictureErrors([errorMessage]);
+        } else {
+          const uploadResponse = await uploadResult.json();
+          if (uploadResponse.data?.public_id) {
+            setProfileImagePublicId(uploadResponse.data.public_id);
+            setImageRefreshKey((prev) => prev + 1);
+            setProfilePictureErrors([]);
+          }
         }
-
-        setSectionsToDelete([]);
-        clearFilesToDelete();
-        setSelectedImage(null);
-        setPreviewUrl(null);
-        setErrorMessages([]);
-        setProfilePictureErrors([]);
-        setProfilePictureStatus(null);
-        resetFetch();
-        setIsEditing(false);
-
-        refreshStorage();
-        await dispatch(getDashboardSummary());
       }
+
+      
+      // Delete sections if any
+      if (sectionsToDelete.length > 0) {
+        await fetch(
+          `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/api/deleteSections/${username}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sectionIds: sectionsToDelete }),
+          }
+        );
+      }
+
+      // Delete files if any
+      if (filesToDelete.length > 0) {
+        await fetch(
+          `http://localhost:${
+            import.meta.env.VITE_BACKENDPORT
+          }/api/deleteFiles/${username}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(filesToDelete),
+          }
+        );
+      }
+
+      // Update bio and sections
+      const response = await fetch(
+        `http://localhost:${
+          import.meta.env.VITE_BACKENDPORT
+        }/api/updateBioAndSections/${username}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bio: updateData.bio,
+            sections,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { message: `HTTP Error ${response.status}` };
+        }
+        throw new Error(errorData.message || errorData.error || "Failed to update profile");
+      }
+
+      const responseData = await response.json();
+      if (responseData.newlyCreatedSections) {
+        updateSectionIds(responseData.newlyCreatedSections);
+      }
+
+      setCurrentBio(updateData.bio);
+      
+      const sectionsWithUpdatedIds = sections.map((section) => {
+        if (responseData.newlyCreatedSections) {
+          const newId = responseData.newlyCreatedSections.find(
+            (item: { tempId: number }) => item.tempId === section.id
+          );
+          if (newId) {
+            return { ...section, id: newId.newId };
+          }
+        }
+        return section;
+      });
+
+      updateInitialSections(sectionsWithUpdatedIds);
+
+      setSectionsToDelete([]);
+      clearFilesToDelete();
+      setSelectedImage(null);
+      setPreviewUrl(null);
+      setErrorMessages([]);
+      setIsEditing(false);
+
+      refreshStorage();
+      await dispatch(getDashboardSummary());
+
     } catch (error) {
       console.error("Error saving profile:", error);
-      setErrorMessages(processErrorMessages(error));
+      const messages = processErrorMessages(error);
+      setErrorMessages(messages);
     }
   }, [
     validateFields,
     selectedImage,
-    handleUploadProfilePicture,
     sections,
     sectionsToDelete,
     filesToDelete,
@@ -247,11 +235,11 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     username,
     setSectionsToDelete,
     clearFilesToDelete,
-    resetFetch,
     setIsEditing,
     refreshStorage,
     dispatch,
     updateSectionIds,
+    updateInitialSections,
   ]);
 
   const handleCancel = useCallback(() => {
@@ -259,20 +247,15 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     setPreviewUrl(null);
     setErrorMessages([]);
     setProfilePictureErrors([]);
-    setProfilePictureStatus(null);
-    resetFetch();
+    resetSections();
+    resetBio(currentBio);
     setIsEditing(false);
-  }, [resetFetch, setIsEditing]);
+  }, [resetSections, resetBio, currentBio, setIsEditing]);
 
-  const handleSelectImage = useCallback(
-    (file: File) => {
-      setSelectedImage(file);
-      setProfilePictureErrors([]);
-      setProfilePictureStatus(null);
-      resetFetch();
-    },
-    [resetFetch]
-  );
+  const handleSelectImage = useCallback((file: File) => {
+    setSelectedImage(file);
+    setProfilePictureErrors([]);
+  }, []);
 
   return (
     <div className="mx-auto flex justify-center mt-5">
@@ -299,7 +282,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 <div className="mt-2">
                   <ValidationMessages
                     input={profilePictureErrors}
-                    status={profilePictureStatus}
+                    status={null}
                     message={null}
                   />
                 </div>

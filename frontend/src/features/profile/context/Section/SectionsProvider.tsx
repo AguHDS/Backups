@@ -1,7 +1,14 @@
-import { createContext, useState, ReactNode, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { SectionWithFile, UploadedFile } from "../../types/section";
 
-export interface SectionsContextType {
+interface SectionsContextType {
   sections: SectionWithFile[];
   setSections: React.Dispatch<React.SetStateAction<SectionWithFile[]>>;
   sectionsToDelete: number[];
@@ -15,6 +22,8 @@ export interface SectionsContextType {
   deleteSection: (sectionId: number) => void;
   renderFilesOnResponse: (sectionId: number, newFiles: UploadedFile[]) => void;
   updateSectionIds: (idMap: { tempId: number; newId: number }[]) => void;
+  resetSections: () => void;
+  updateInitialSections: (newSections: SectionWithFile[]) => void;
 }
 
 export const SectionsContext = createContext<SectionsContextType | undefined>(
@@ -30,20 +39,25 @@ export const SectionsProvider = ({
   children,
   initialSections,
 }: SectionsProviderProps) => {
+  const initialSectionsRef = useRef<SectionWithFile[]>(initialSections);
+
   const [sections, setSections] = useState<SectionWithFile[]>(initialSections);
   const [sectionsToDelete, setSectionsToDelete] = useState<number[]>([]);
 
-  const updateSection = useCallback((
-    index: number,
-    field: "title" | "description" | "isPublic",
-    value: string | boolean
-  ) => {
-    setSections((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], [field]: value };
-      return updated;
-    });
-  }, []);
+  const updateSection = useCallback(
+    (
+      index: number,
+      field: "title" | "description" | "isPublic",
+      value: string | boolean
+    ) => {
+      setSections((prev) => {
+        const updated = [...prev];
+        updated[index] = { ...updated[index], [field]: value };
+        return updated;
+      });
+    },
+    []
+  );
 
   const addSection = useCallback(() => {
     setSections((prev) => [
@@ -57,29 +71,49 @@ export const SectionsProvider = ({
     setSectionsToDelete((prev) => [...prev, sectionId]);
   }, []);
 
-  const renderFilesOnResponse = useCallback((
-    sectionId: number,
-    newFiles: UploadedFile[]
-  ) => {
-    setSections((prev) =>
-      prev.map((section) =>
-        section.id === sectionId
-          ? {
-              ...section,
-              files: [...(section.files || []), ...newFiles],
-            }
-          : section
-      )
-    );
-  }, []);
+  const renderFilesOnResponse = useCallback(
+    (sectionId: number, newFiles: UploadedFile[]) => {
+      setSections((prev) =>
+        prev.map((section) =>
+          section.id === sectionId
+            ? {
+                ...section,
+                files: [...(section.files || []), ...newFiles],
+              }
+            : section
+        )
+      );
+    },
+    []
+  );
 
-  const updateSectionIds = useCallback((idMap: { tempId: number; newId: number }[]) => {
-    setSections((prevSections) =>
-      prevSections.map((section) => {
-        const match = idMap.find((n) => n.tempId === section.id);
-        return match ? { ...section, id: match.newId } : section;
-      })
-    );
+  const updateSectionIds = useCallback(
+    (idMap: { tempId: number; newId: number }[]) => {
+      setSections((prevSections) => {
+        const updatedSections = prevSections.map((section) => {
+          const match = idMap.find((n) => n.tempId === section.id);
+          return match ? { ...section, id: match.newId } : section;
+        });
+
+        initialSectionsRef.current = updatedSections;
+
+        return updatedSections;
+      });
+    },
+    []
+  );
+
+  const updateInitialSections = useCallback(
+    (newSections: SectionWithFile[]) => {
+      initialSectionsRef.current = [...newSections];
+      setSections([...newSections]);
+    },
+    []
+  );
+
+  const resetSections = useCallback(() => {
+    setSections([...initialSectionsRef.current]);
+    setSectionsToDelete([]);
   }, []);
 
   const contextValue = useMemo(
@@ -93,6 +127,8 @@ export const SectionsProvider = ({
       deleteSection,
       renderFilesOnResponse,
       updateSectionIds,
+      resetSections,
+      updateInitialSections,
     }),
     [
       sections,
@@ -102,6 +138,8 @@ export const SectionsProvider = ({
       deleteSection,
       renderFilesOnResponse,
       updateSectionIds,
+      resetSections,
+      updateInitialSections,
     ]
   );
 
