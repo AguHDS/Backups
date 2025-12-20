@@ -10,6 +10,18 @@ interface Props {
 export const Header = ({ username, onSave, onCancel }: Props) => {
   const { isEditing, setIsEditing, isOwnProfile } = useProfile();
 
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
   return (
     <div className="w-full">
       <h1 className="bg-[#222] border font-serif border-t-[#222] border-b-[#585858] border-l-[#272727] border-r-[#272727] text-[#e0e0e0] font-verdana font-bold text-sm m-0 p-[5px_9px] text-left flex items-center justify-between">
@@ -31,9 +43,9 @@ export const Header = ({ username, onSave, onCancel }: Props) => {
               className="text-blue-500 text-sm hover:underline cursor-pointer bg-transparent border-none shadow-none"
               onClick={() => {
                 if (isEditing) {
-                  onCancel?.();
+                  handleCancel();
                 } else {
-                  setIsEditing(true);
+                  handleEditClick();
                 }
               }}
             />
