@@ -19,7 +19,7 @@ const validatorRegistration: ValidationChain[] = [
     .notEmpty()
     .withMessage("Email cannot be empty")
     .matches(/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/)
-    .withMessage("The email is invalid"),
+    .withMessage("Email is invalid"),
 ];
 
 export default validatorRegistration;
