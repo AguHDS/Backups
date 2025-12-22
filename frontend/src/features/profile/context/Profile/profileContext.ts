@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { ProfileContext, ProfileContextType } from "./ProfileProvider";
+import { ProfileContext } from "./ProfileProvider";
 
-export const useProfile = (): ProfileContextType => {
+export const useProfile = () => {
   const context = useContext(ProfileContext);
   if (!context) {
     throw new Error("useProfile must be used within a ProfileProvider");

@@ -1,7 +1,7 @@
 import { useContext, useMemo } from "react";
-import { SectionsContext, SectionsContextType } from "./SectionsProvider";
+import { SectionsContext } from "./SectionsProvider";
 
-export const useSections = (): SectionsContextType => {
+export const useSections = () => {
   const context = useContext(SectionsContext);
   if (!context) {
     throw new Error("useSections must be used within a SectionsProvider");

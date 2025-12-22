@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
-import { processErrorMessages } from "@/shared/utils/errors";
+import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import { ValidationMessages } from "@/shared";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";
@@ -46,16 +46,14 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     status,
     error,
     isLoading,
+    reset: resetFetch,
   } = useFetch<FileUploadResponse>();
 
   // Use specific section hook to avoid re-renders when other sections change
   const section = useSection(sectionIndex);
   const sectionId = section.id;
   const sectionTitle = section.title;
-  const uploadedFiles = useMemo(
-    () => section.files || [],
-    [section.files]
-  );
+  const uploadedFiles = useMemo(() => section.files || [], [section.files]);
 
   const handleButtonClick = () => fileInputRef.current?.click();
 
@@ -69,8 +67,14 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
         refreshStorage();
         dispatch(getDashboardSummary());
       } else if (status >= 400) {
-        const messages = processErrorMessages(error || uploadData);
-        console.error("Upload error:", messages);
+        const errorData = uploadData || error;
+        const messages = processErrorMessages(errorData);
+        console.error("Upload error details:", {
+          status,
+          messages,
+          data: uploadData,
+          error,
+        });
         setUploadErrors(messages);
       }
     }
@@ -91,17 +95,20 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       const selected = e.target.files;
       if (!selected || selected.length === 0) return;
 
-      setFiles((prev) => [...prev, ...Array.from(selected)]);
+      resetFetch();
       setUploadErrors([]);
+
+      setFiles((prev) => [...prev, ...Array.from(selected)]);
       setReadyToUpload(true);
     },
-    []
+    [resetFetch]
   );
 
   const cancelUpload = () => {
     setFiles([]);
     setReadyToUpload(false);
     setUploadErrors([]);
+    resetFetch();
   };
 
   // Toggle selection checkbox for files (add/remove from set)
@@ -161,6 +168,8 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     [uploadedFiles, hiddenFileIds]
   );
 
+  const hasErrorsToShow = uploadErrors.length > 0 || (error && status !== null);
+
   return (
     <div className="flex flex-col items-center w-full">
       {/* Display files inside sections */}
@@ -209,7 +218,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
               </div>
 
               {/* Show errors if any */}
-              {(uploadErrors.length > 0 || error) && (
+              {hasErrorsToShow && (
                 <div className="w-full max-w-[80%] mt-4">
                   <ValidationMessages
                     input={uploadErrors.length > 0 ? uploadErrors : [error!]}

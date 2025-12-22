@@ -22,15 +22,20 @@ export const ProfileRightContent = ({
   const { isEditing } = useProfile();
   const { sections, updateSection, deleteSection, addSection } = useSections();
 
+  const shouldShowSuccess =
+    status && status >= 200 && status < 300 && errorMessages.length === 0;
+
   return (
     <div className="w-full mr-[5px] ml-[5px] scrollbar-container flex flex-col h-full min-h-[80vh]">
       <div className="bg-[#272727] w-full max-w-full flex-1">
         <div className="p-4 space-y-4 scrollbar-container flex-1">
-          <ValidationMessages
-            input={errorMessages}
-            status={status}
-            message={errorMessages.length === 0 ? "Operation completed" : null}
-          />
+          {(errorMessages.length > 0 || shouldShowSuccess) && (
+            <ValidationMessages
+              input={errorMessages}
+              status={status}
+              message={shouldShowSuccess ? "Operation completed" : null}
+            />
+          )}
 
           <Bio bio={updateData.bio} onBioChange={onBioChange} />
 

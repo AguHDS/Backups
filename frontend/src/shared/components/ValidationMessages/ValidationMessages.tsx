@@ -5,7 +5,8 @@ interface Props {
 }
 
 /**
- * Render validation and warnings for forms
+ * Render validation and warnings for forms.
+ * Can be used along with processErrorMessages utility
  */
 export const ValidationMessages = ({ input, status, message }: Props) => {
   return (

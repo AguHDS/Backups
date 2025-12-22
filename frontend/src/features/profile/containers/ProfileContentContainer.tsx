@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useEditBio } from "../hooks/useEditBio";
 import {
@@ -8,7 +8,6 @@ import {
   useStorageRefresh,
 } from "../context";
 import { useStorageData } from "../hooks/useStorageData";
-import { useFetch } from "@/shared";
 import {
   Header,
   ActionsAndProfileImg,
@@ -17,7 +16,8 @@ import {
   ProfileRightContent,
 } from "../components";
 import { FetchedUserProfile } from "../types/profileData";
-import { processErrorMessages } from "@/shared/utils/errors";
+import { processErrorMessages } from "@/shared/utils/processErrorMessages";
+import { ValidationMessages } from "@/shared";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/app/redux/store";
 import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
@@ -30,32 +30,29 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [profileImagePublicId, setProfileImagePublicId] = useState<string>(
     data.userProfileData.profile_pic || ""
   );
+  const [profilePictureErrors, setProfilePictureErrors] = useState<string[]>([]);
+  const [currentBio, setCurrentBio] = useState<string>(
+    data.userProfileData.bio
+  );
   const { isEditing, setIsEditing } = useProfile();
   const { flag: storageRefreshFlag, refresh: refreshStorage } =
     useStorageRefresh();
   const { usedBytes, limitBytes, remainingBytes } =
     useStorageData(storageRefreshFlag);
-
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
-  const {
-    fetchData,
-    data: uploadResponse,
-    status,
-    setStatus,
-  } = useFetch<{ data: { public_id: string } }>();
   const { username } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const { updateData, setUpdateData } = useEditBio(
-    data.userProfileData.bio
-  );
+  const { updateData, setUpdateData, resetBio } = useEditBio(currentBio);
   const {
     sections,
-    setSections,
     sectionsToDelete,
     setSectionsToDelete,
     updateSectionIds,
+    resetSections,
+    updateInitialSections,
   } = useSections();
-  
+  const isInitialMount = useRef(true);
+
   // Preview image when selected
   useEffect(() => {
     if (!selectedImage) {
@@ -69,22 +66,12 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     return () => URL.revokeObjectURL(tempUrl);
   }, [selectedImage]);
 
-  // Updates profile picture after successful upload
-  useEffect(() => {
-    if (uploadResponse?.data?.public_id) {
-      setProfileImagePublicId(uploadResponse.data.public_id);
-      setImageRefreshKey(prev => prev + 1);
-      setPreviewUrl(null); // Clear preview after successful upload
-      setSelectedImage(null);
-    }
-  }, [uploadResponse]);
 
   useEffect(() => {
-    if (isEditing) {
-      setErrorMessages([]);
-      setStatus(null);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
     }
-  }, [isEditing, setStatus]);
+  }, []);
 
   const validateFields = useCallback(() => {
     const errors: string[] = [];
@@ -108,12 +95,13 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     }
 
     try {
-      // Upload profile picture
       if (selectedImage) {
+        setProfilePictureErrors([]);
+        
         const formData = new FormData();
         formData.append("profilePicture", selectedImage);
 
-        await fetchData(
+        const uploadResult = await fetch(
           `http://localhost:${
             import.meta.env.VITE_BACKENDPORT
           }/api/profilePicture/${username}`,
@@ -123,9 +111,29 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
             credentials: "include",
           }
         );
+
+        if (!uploadResult.ok) {
+          let errorData;
+          try {
+            errorData = await uploadResult.json();
+          } catch {
+            errorData = { message: `HTTP Error ${uploadResult.status}` };
+          }
+          
+          const errorMessage = errorData.message || "Failed to upload profile picture";
+          setProfilePictureErrors([errorMessage]);
+        } else {
+          const uploadResponse = await uploadResult.json();
+          if (uploadResponse.data?.public_id) {
+            setProfileImagePublicId(uploadResponse.data.public_id);
+            setImageRefreshKey((prev) => prev + 1);
+            setProfilePictureErrors([]);
+          }
+        }
       }
 
-      // Delete/update logic
+      
+      // Delete sections if any
       if (sectionsToDelete.length > 0) {
         await fetch(
           `http://localhost:${
@@ -140,6 +148,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         );
       }
 
+      // Delete files if any
       if (filesToDelete.length > 0) {
         await fetch(
           `http://localhost:${
@@ -154,6 +163,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         );
       }
 
+      // Update bio and sections
       const response = await fetch(
         `http://localhost:${
           import.meta.env.VITE_BACKENDPORT
@@ -169,40 +179,83 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         }
       );
 
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { message: `HTTP Error ${response.status}` };
+        }
+        throw new Error(errorData.message || errorData.error || "Failed to update profile");
+      }
+
       const responseData = await response.json();
       if (responseData.newlyCreatedSections) {
         updateSectionIds(responseData.newlyCreatedSections);
       }
 
+      setCurrentBio(updateData.bio);
+      
+      const sectionsWithUpdatedIds = sections.map((section) => {
+        if (responseData.newlyCreatedSections) {
+          const newId = responseData.newlyCreatedSections.find(
+            (item: { tempId: number }) => item.tempId === section.id
+          );
+          if (newId) {
+            return { ...section, id: newId.newId };
+          }
+        }
+        return section;
+      });
+
+      updateInitialSections(sectionsWithUpdatedIds);
+
       setSectionsToDelete([]);
       clearFilesToDelete();
       setSelectedImage(null);
       setPreviewUrl(null);
+      setErrorMessages([]);
       setIsEditing(false);
 
       refreshStorage();
       await dispatch(getDashboardSummary());
+
     } catch (error) {
       console.error("Error saving profile:", error);
-      setErrorMessages(processErrorMessages(error));
+      const messages = processErrorMessages(error);
+      setErrorMessages(messages);
     }
   }, [
     validateFields,
     selectedImage,
-    fetchData,
     sections,
     sectionsToDelete,
     filesToDelete,
     updateData.bio,
     username,
-    setSections,
     setSectionsToDelete,
     clearFilesToDelete,
     setIsEditing,
     refreshStorage,
     dispatch,
     updateSectionIds,
+    updateInitialSections,
   ]);
+
+  const handleCancel = useCallback(() => {
+    setSelectedImage(null);
+    setPreviewUrl(null);
+    setErrorMessages([]);
+    setProfilePictureErrors([]);
+    resetSections();
+    resetBio(currentBio);
+    setIsEditing(false);
+  }, [resetSections, resetBio, currentBio, setIsEditing]);
+
+  const handleSelectImage = useCallback((file: File) => {
+    setSelectedImage(file);
+    setProfilePictureErrors([]);
+  }, []);
 
   return (
     <div className="mx-auto flex justify-center mt-5">
@@ -210,7 +263,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         <Header
           username={data.username}
           onSave={handleSave}
-          onCancel={() => setIsEditing(false)}
+          onCancel={handleCancel}
         />
 
         <div className="p-[8px] bg-[#121212] border-[#272727] border-r border-b">
@@ -220,9 +273,20 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 profilePic={profileImagePublicId}
                 previewUrl={previewUrl}
                 isEditing={isEditing}
-                onSelectImage={setSelectedImage}
+                onSelectImage={handleSelectImage}
                 refreshKey={imageRefreshKey}
               />
+
+              {/* Display profile picture errors below the image */}
+              {profilePictureErrors.length > 0 && (
+                <div className="mt-2">
+                  <ValidationMessages
+                    input={profilePictureErrors}
+                    status={null}
+                    message={null}
+                  />
+                </div>
+              )}
 
               <UserInfo userStatus="offline" role={data.role} />
 
@@ -233,7 +297,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
             <ProfileRightContent
               updateData={updateData}
               errorMessages={errorMessages}
-              status={status!}
+              status={null}
               onBioChange={(bio) => setUpdateData({ bio })}
             />
           </div>
