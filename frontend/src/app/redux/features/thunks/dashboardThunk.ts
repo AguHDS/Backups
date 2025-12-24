@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState } from "../../store";
+import type { RootState } from "@/app/redux/store";
 
 export const getDashboardSummary = createAsyncThunk<
   { used: number; },

@@ -1,8 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState } from "../../store";
-import { UserDataWithToken } from "../../../../shared/types";
 import { resetJustRefreshed } from "../slices/authSlice";
-import type { AppDispatch } from "../../store";
+import type { RootState, AppDispatch } from "@/app/redux/store";
+import type { UserDataWithToken } from "@/shared/types";
 
 export const getNewRefreshToken = createAsyncThunk<
   UserDataWithToken,
@@ -81,11 +80,19 @@ export const logout = createAsyncThunk<
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(errorText);
+      throw new Error(errorText); //fijrse errores enla devtool
     }
+
+    localStorage.removeItem("hasSession");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("isAuthenticated");
 
     return { message: "Session ended" };
   } catch (error) {
+    localStorage.removeItem("hasSession");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("isAuthenticated");
+
     if (error instanceof Error) {
       console.error("Failed trying to end session: ", error.message);
       return rejectWithValue(error.message);

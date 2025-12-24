@@ -6,14 +6,14 @@ import {
   useSections,
   useStorageRefresh,
 } from "../context";
-import { useParams } from "react-router-dom";
-import { UploadedFile } from "../types/section";
+import { useParams } from "@tanstack/react-router";
+import type { UploadedFile } from "../types/section";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
 import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import { ValidationMessages } from "@/shared";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/redux/store";
+import type { AppDispatch } from "@/app/redux/store";
 import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
 import { useFetch } from "@/shared/hooks/useFetch";
 
@@ -39,7 +39,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const { refresh: refreshStorage } = useStorageRefresh();
   const { addFilesToDelete } = useFileDeletion();
   const dispatch = useDispatch<AppDispatch>();
-  const { username } = useParams();
+  const { username } = useParams({ from: "/profile/$username" });
   const {
     data: uploadData,
     fetchData,

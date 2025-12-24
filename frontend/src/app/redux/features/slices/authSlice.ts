@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getNewRefreshToken, logout } from "../thunks/authThunk";
-import { UserSessionData } from "../../../../shared/types";
+import type { UserSessionData } from "@/shared/types";
 
 export interface AuthState {
   accessToken: string | null;

@@ -1,20 +1,27 @@
-import App from "../app/App";
-import { AppRouter } from "./router/AppRouter";
-import { BrowserRouter } from "react-router-dom";
-import { ModalProvider } from "../shared/ui/Modal/context/ModalProvider";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
+
+// Importar la ruta raíz generada
+import { routeTree } from "@/routeTree.gen";
+
+// Crear el router
+const router = createRouter({
+  routeTree,
+  defaultPreload: "intent",
+});
+
+// Registrar el router para type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 const AppProvider = () => {
   return (
     <Provider store={store}>
-      <ModalProvider>
-        <BrowserRouter>
-          <App>
-            <AppRouter />
-          </App>
-        </BrowserRouter>
-      </ModalProvider>
+      <RouterProvider router={router} />
     </Provider>
   );
 };

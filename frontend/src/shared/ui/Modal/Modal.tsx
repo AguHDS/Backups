@@ -1,4 +1,10 @@
-import { useRef, useEffect, ReactNode, MouseEvent, useCallback } from "react";
+import {
+  useRef,
+  useEffect,
+  useCallback,
+  type ReactNode,
+  type MouseEvent,
+} from "react";
 import { createPortal } from "react-dom";
 import { useModalContext } from "./context/useModalContext";
 

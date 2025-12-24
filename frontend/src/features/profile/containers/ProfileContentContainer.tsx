@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "@tanstack/react-router";
 import { useEditBio } from "../hooks/useEditBio";
 import {
   useProfile,
@@ -15,11 +15,11 @@ import {
   StorageChart,
   ProfileRightContent,
 } from "../components";
-import { FetchedUserProfile } from "../types/profileData";
+import type { FetchedUserProfile } from "../types/profileData";
 import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import { ValidationMessages } from "@/shared";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/redux/store";
+import type { AppDispatch } from "@/app/redux/store";
 import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
 
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
@@ -30,7 +30,9 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [profileImagePublicId, setProfileImagePublicId] = useState<string>(
     data.userProfileData.profile_pic || ""
   );
-  const [profilePictureErrors, setProfilePictureErrors] = useState<string[]>([]);
+  const [profilePictureErrors, setProfilePictureErrors] = useState<string[]>(
+    []
+  );
   const [currentBio, setCurrentBio] = useState<string>(
     data.userProfileData.bio
   );
@@ -40,7 +42,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const { usedBytes, limitBytes, remainingBytes } =
     useStorageData(storageRefreshFlag);
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
-  const { username } = useParams();
+  const params = useParams({ strict: false });
+  const username = params.username as string;
   const dispatch = useDispatch<AppDispatch>();
   const { updateData, setUpdateData, resetBio } = useEditBio(currentBio);
   const {
@@ -65,7 +68,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
 
     return () => URL.revokeObjectURL(tempUrl);
   }, [selectedImage]);
-
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -97,7 +99,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     try {
       if (selectedImage) {
         setProfilePictureErrors([]);
-        
+
         const formData = new FormData();
         formData.append("profilePicture", selectedImage);
 
@@ -119,8 +121,9 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
           } catch {
             errorData = { message: `HTTP Error ${uploadResult.status}` };
           }
-          
-          const errorMessage = errorData.message || "Failed to upload profile picture";
+
+          const errorMessage =
+            errorData.message || "Failed to upload profile picture";
           setProfilePictureErrors([errorMessage]);
         } else {
           const uploadResponse = await uploadResult.json();
@@ -132,7 +135,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         }
       }
 
-      
       // Delete sections if any
       if (sectionsToDelete.length > 0) {
         await fetch(
@@ -186,7 +188,9 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         } catch {
           errorData = { message: `HTTP Error ${response.status}` };
         }
-        throw new Error(errorData.message || errorData.error || "Failed to update profile");
+        throw new Error(
+          errorData.message || errorData.error || "Failed to update profile"
+        );
       }
 
       const responseData = await response.json();
@@ -195,7 +199,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       }
 
       setCurrentBio(updateData.bio);
-      
+
       const sectionsWithUpdatedIds = sections.map((section) => {
         if (responseData.newlyCreatedSections) {
           const newId = responseData.newlyCreatedSections.find(
@@ -219,7 +223,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
 
       refreshStorage();
       await dispatch(getDashboardSummary());
-
     } catch (error) {
       console.error("Error saving profile:", error);
       const messages = processErrorMessages(error);

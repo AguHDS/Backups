@@ -1,4 +1,4 @@
-import { SectionWithFile, BaseSection } from "./section";
+import type { SectionWithFile, BaseSection } from "./section";
 
 export interface ProfileStats {
   bio: string;

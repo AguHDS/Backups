@@ -1,5 +1,5 @@
-import { ChangeEvent } from "react";
-import { Link } from "react-router-dom";
+import type { ChangeEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useModalContext, ValidationMessages, Button, Input, TermsAndConditions, Modal } from "@/shared";
 

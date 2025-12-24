@@ -1,9 +1,9 @@
 import { 
   useState, 
   createContext, 
-  ReactNode, 
-  Dispatch, 
-  SetStateAction 
+  type ReactNode, 
+  type Dispatch, 
+  type SetStateAction 
 } from "react";
 
 export interface ModalContextType {

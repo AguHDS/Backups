@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { NavBar } from "@/shared/components/navbar/NavBar";
 import { Footer } from "@/shared/components/footer/Footer";
 interface Props {

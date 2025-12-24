@@ -1,10 +1,10 @@
-import { useState, useEffect, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, type FormEvent } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { useFetch } from "@/shared";
 import { useDispatch } from "react-redux";
 import { login } from "@/app/redux/features/slices/authSlice";
-import { UserDataWithToken } from "@/shared/types";
-import { getFormData  } from "../helpers";
+import type { UserDataWithToken } from "@/shared/types";
+import { getFormData } from "../helpers";
 
 type AuthResponse = UserDataWithToken | { message: string };
 
@@ -59,16 +59,16 @@ export const useAuth = () => {
 
       setStatusMessage(error);
 
-      // when registration is successful
+      // When registration is successful
       if ("message" in data && data.message === "Registration completed") {
-        navigate("/");
+        navigate({ to: "/sign-in" });
         return;
       }
 
-      // when login is successful
+      // When login is successful
       if ("accessToken" in data && "userData" in data) {
         await dispatch(login(data));
-        window.location.href = "/dashboard";
+        navigate({ to: "/dashboard", replace: true });
       }
     };
 

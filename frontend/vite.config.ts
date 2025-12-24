@@ -1,10 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import { configDefaults } from "vitest/config";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [TanStackRouterVite(), react()],
   server: {
     proxy: {
       "/api": "http://localhost:3001",
@@ -31,6 +32,7 @@ export default defineConfig({
         "src/app/AppProvider.tsx",
         "src/**/index.ts",
         "src/**/types/**",
+        "src/routeTree.gen.ts",
       ],
     },
   },

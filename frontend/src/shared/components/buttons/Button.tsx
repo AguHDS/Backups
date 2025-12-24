@@ -1,4 +1,4 @@
-import { CSSProperties, KeyboardEvent } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
 
 interface ButtonProps {
   onClick?: () => void;

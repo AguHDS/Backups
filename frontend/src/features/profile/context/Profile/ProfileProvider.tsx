@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode, useMemo } from "react";
+import { createContext, useState, type ReactNode, useMemo } from "react";
 
 export interface ProfileContextType {
   isEditing: boolean;

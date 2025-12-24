@@ -1,12 +1,15 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { useFetch, useModalContext } from "@/shared";
-import { UserProfileWithFiles } from "../types/profileData";
+import type { UserProfileWithFiles } from "../types/profileData";
 
 // Returns general profile data, sections and its related data, and isOwnProfile flag
 export const useProfileData = () => {
-  const { username } = useParams();
-  const { data, status, isLoading, error, fetchData } = useFetch<UserProfileWithFiles>();
+  const params = useParams({ strict: false });
+  const username = params.username as string;
+  
+  const { data, status, isLoading, error, fetchData } =
+    useFetch<UserProfileWithFiles>();
   const { setIsModalOpen } = useModalContext();
   const navigate = useNavigate();
 
@@ -28,11 +31,17 @@ export const useProfileData = () => {
         console.error("Error fetching profile data:", error);
       }
     };
-    fetchProfileData();
+    
+    // Solo ejecutar si tenemos un username válido
+    if (username) {
+      fetchProfileData();
+    }
   }, [username, fetchData]);
 
   useEffect(() => {
-    if (status === 404) navigate("/NotFound");
+    if (status === 404) {
+      navigate({ to: "/NotFound" });
+    }
   }, [status, navigate]);
 
   return {

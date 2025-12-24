@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import {
   StorageRefreshContext,
-  StorageRefreshContextType,
+ type StorageRefreshContextType,
 } from "./StorageRefreshProvider";
 
 export const useStorageRefresh = (): StorageRefreshContextType => {

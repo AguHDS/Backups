@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "@tanstack/react-router";
 
 interface ProfileStorage {
   used: number;
@@ -14,7 +14,7 @@ export const useStorageData = (refreshTrigger?: boolean) => {
     limit: 0,
     remaining: 0,
   });
-  const { username } = useParams();
+  const { username } = useParams({ from: "/profile/$username" });
 
   useEffect(() => {
     const fetchStorage = async () => {

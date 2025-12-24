@@ -1,5 +1,5 @@
-import { ChangeEvent, KeyboardEvent } from "react";
-import { Link } from "react-router-dom";
+import type { ChangeEvent, KeyboardEvent } from "react";
+import { Link } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
 import { Button, Input, ValidationMessages } from "@/shared";
 
@@ -143,4 +143,4 @@ export const SignIn = () => {
       </div>
     </>
   );
-}
+};
