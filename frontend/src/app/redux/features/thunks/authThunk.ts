@@ -80,7 +80,7 @@ export const logout = createAsyncThunk<
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(errorText); //fijrse errores enla devtool
+      throw new Error(errorText);
     }
 
     localStorage.removeItem("hasSession");
