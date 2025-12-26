@@ -1,5 +1,4 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { resetJustRefreshed } from "../slices/authSlice";
 import type { RootState, AppDispatch } from "@/app/redux/store";
 import type { UserDataWithToken } from "@/shared/types";
 
@@ -11,7 +10,7 @@ export const getNewRefreshToken = createAsyncThunk<
     state: RootState;
     dispatch: AppDispatch;
   }
->("auth/refreshToken", async (_, { rejectWithValue, dispatch }) => {
+>("auth/refreshToken", async (_, { rejectWithValue }) => {
   try {
     const response = await fetch(
       `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/refreshToken`,
@@ -36,10 +35,6 @@ export const getNewRefreshToken = createAsyncThunk<
     }
 
     const data: UserDataWithToken = await response.json();
-
-    setTimeout(() => {
-      dispatch(resetJustRefreshed());
-    }, 20_000);
 
     return data;
   } catch (error) {

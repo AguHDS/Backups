@@ -7,7 +7,6 @@ export interface AuthState {
   userData: Partial<UserSessionData>;
   status: "idle" | "loading" | "succeeded" | "failed";
   isAuthenticated: boolean;
-  hasJustRefreshed: boolean;
   error?: string | number | null;
 }
 
@@ -16,7 +15,6 @@ const initialState: AuthState = {
   userData: {},
   status: "idle",
   isAuthenticated: false,
-  hasJustRefreshed: false,
   error: null,
 };
 
@@ -32,10 +30,6 @@ const authSlice = createSlice({
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("hasSession", "true");
     },
-    // Flag to control cooldown for refresh token rotation
-    resetJustRefreshed: (state) => {
-      state.hasJustRefreshed = false;
-    },
   },
 
   // Extra reducers for thunks
@@ -48,14 +42,12 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.accessToken = action.payload.accessToken;
         state.userData = action.payload.userData;
-        state.hasJustRefreshed = true;
         state.status = "succeeded";
         state.error = null;
       })
       .addCase(getNewRefreshToken.rejected, (state, action) => {
         state.accessToken = null;
         state.isAuthenticated = false;
-        state.hasJustRefreshed = false;
         state.status = "failed";
         state.error = action.payload || action.error.message;
       })
@@ -64,7 +56,6 @@ const authSlice = createSlice({
         state.userData = {};
         state.status = "idle";
         state.isAuthenticated = false;
-        state.hasJustRefreshed = false;
         state.error = null;
         localStorage.removeItem("accessToken");
         localStorage.removeItem("isAuthenticated");
@@ -75,7 +66,6 @@ const authSlice = createSlice({
         state.userData = {};
         state.status = "idle";
         state.isAuthenticated = false;
-        state.hasJustRefreshed = false;
         state.error = action.payload || action.error.message;
         localStorage.removeItem("accessToken");
         localStorage.removeItem("isAuthenticated");
@@ -84,6 +74,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, resetJustRefreshed } = authSlice.actions;
+export const { login } = authSlice.actions;
 
 export default authSlice.reducer;

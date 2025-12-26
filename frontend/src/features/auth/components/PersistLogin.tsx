@@ -9,6 +9,9 @@ interface PersistLoginProps {
   children: React.ReactNode;
 }
 
+/**
+ * Renew tokens and persist login across sessions
+ */
 export const PersistLogin = ({ children }: PersistLoginProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -17,7 +20,7 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
     (state: RootState) => state.auth
   );
 
-  // Spinner logic
+  // Spinner
   useEffect(() => {
     setIsModalOpen(isLoading);
 
@@ -26,30 +29,22 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
     };
   }, [isLoading, setIsModalOpen]);
 
-  // Access token renewal logic
+  // Access token renewal
   useEffect(() => {
     const verifyRefreshToken = async () => {
       const hasSession = localStorage.getItem("hasSession");
 
-      if (hasSession !== "true") {
-        setIsLoading(false);
-        return;
-      }
-
-      if (isAuthenticated && accessToken) {
+      // If there's no session or already authenticated, skip token refresh
+      if (hasSession !== "true" || (isAuthenticated && accessToken)) {
         setIsLoading(false);
         return;
       }
 
       try {
-        console.log("Attempting token refresh for persisted session...");
         await dispatch(getNewRefreshToken()).unwrap();
-
         const updatedState = store.getState().auth;
 
-        if (updatedState.isAuthenticated && updatedState.userData?.name) {
-          console.log("Token refresh successful");
-        } else {
+        if (!updatedState.isAuthenticated || !updatedState.userData?.name) {
           console.warn("Token refresh did not restore authentication");
           localStorage.removeItem("hasSession");
         }

@@ -1,7 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { AccountSettings } from "@/features/settings";
 import { store } from "@/app/redux/store";
-import { PersistLogin } from "@/features/auth";
 
 export const Route = createFileRoute("/account-settings/")({
   beforeLoad: () => {
@@ -20,8 +19,6 @@ export const Route = createFileRoute("/account-settings/")({
 
 function AccountSettingsRoute() {
   return (
-    <PersistLogin>
       <AccountSettings />
-    </PersistLogin>
   );
 }
