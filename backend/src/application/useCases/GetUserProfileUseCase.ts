@@ -9,7 +9,7 @@ export class GetUserProfileUseCase {
    * Retrieves a complete user profile by username, including sections
    * @returns All sections if the requester is the owner, otherwise only public ones
    */
-  async executeByUsername(username: string, requesterId: number | string): Promise<{ profile: UserProfile; isOwner: boolean }> {
+  async executeByUsername(username: string, requesterId?: number | string): Promise<{ profile: UserProfile; isOwner: boolean }> {
     const profile = await this.profileRepo.getProfileByUsername(username);
     if (!profile) {
       throw new Error("PROFILE_NOT_FOUND");

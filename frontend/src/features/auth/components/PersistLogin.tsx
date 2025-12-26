@@ -27,37 +27,45 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
     };
   }, [isLoading, setIsModalOpen]);
 
-  // Token renewal if possible and update redux state
+  // Access token renewal and update redux state
   useEffect(() => {
     const verifyRefreshToken = async () => {
       const hasSession = localStorage.getItem("hasSession");
 
+      if (hasSession !== "true") {
+        setIsLoading(false);
+        return;
+      }
+
+      if (isAuthenticated && accessToken) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        if (
-          isAuthenticated === false &&
-          !accessToken &&
-          hasSession === "true"
-        ) {
-          await dispatch(getNewRefreshToken()).unwrap();
+        console.log("Attempting token refresh for persisted session...");
+        await dispatch(getNewRefreshToken()).unwrap();
 
-          // Wait until redux state is updated
-          const updatedUserData = store.getState().auth.userData;
+        const updatedState = store.getState().auth;
 
-          if (updatedUserData?.name) {
-            await dispatch(getDashboardSummary()).unwrap();
-          } else {
-            console.warn("Username not available after refresh token.");
-          }
+        // Get dashboard summary if refresh was successful.
+        if (updatedState.isAuthenticated && updatedState.userData?.name) {
+          await dispatch(getDashboardSummary()).unwrap();
+          console.log("Token refresh successful");
+        } else {
+          console.warn("Token refresh did not restore authentication");
+          localStorage.removeItem("hasSession");
         }
       } catch (error) {
-        console.error(`Error: ${error} (Unauthorized)`);
+        console.error(`Token refresh failed: ${error}`);
+        localStorage.removeItem("hasSession");
       } finally {
         setIsLoading(false);
       }
     };
 
     verifyRefreshToken();
-  }, [dispatch, accessToken, isAuthenticated]);
+  }, [dispatch]);
 
   return (
     <>

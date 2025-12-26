@@ -13,6 +13,9 @@ interface ProfileProviderProps {
   isOwnProfile: boolean;
 }
 
+/**
+ * Manages permission to edit profile based on ownership.
+ */
 export const ProfileProvider = ({
   children,
   isOwnProfile,
