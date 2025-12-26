@@ -1,11 +1,46 @@
+import { useEffect } from "react";
 import { FiFolder, FiActivity } from "react-icons/fi";
 import { StatCard, AboutCard } from "../components";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/app/redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
+import type { AppDispatch, RootState } from "@/app/redux/store";
 import { formatBytes } from "@/shared/utils/formatBytes";
+import { LoadingSpinner } from "@/shared";
 
 export const Dashboard = () => {
-  const { used } = useSelector((state: RootState) => state.dashboard);
+  const dispatch = useDispatch<AppDispatch>();
+  const { used, status, error } = useSelector(
+    (state: RootState) => state.dashboard
+  );
+  const { userData } = useSelector((state: RootState) => state.auth);
+
+  // Load dashboard summary on mount if user is authenticated
+  useEffect(() => {
+    if (userData?.name && status === "idle") {
+      dispatch(getDashboardSummary());
+    }
+  }, [dispatch, userData?.name, status]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  if (status === "failed") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-500 text-xl mb-4">
+            Error loading dashboard data
+          </p>
+          <p className="text-gray-400">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center my-10 px-4">
@@ -13,7 +48,7 @@ export const Dashboard = () => {
         {/* About section */}
         <div className="bg-[#232d42] p-8 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-200 mb-10 flex justify-center">
-            Welcome!
+            Welcome{userData?.name ? `, ${userData.name}` : ""}!
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <AboutCard
@@ -34,7 +69,7 @@ export const Dashboard = () => {
             />
           </div>
         </div>
-        {/* Statics section */}
+        {/* Statistics section */}
         <div className="flex flex-wrap gap-6 justify-between">
           <StatCard
             title="My storage"
@@ -44,14 +79,19 @@ export const Dashboard = () => {
             color="text-2xl text-green-600"
           >
             <div className="mt-4 bg-gray-200 h-2 rounded-full">
-              <div className="bg-green-600 h-2 rounded-full w-3/4"></div>
+              <div
+                className="bg-green-600 h-2 rounded-full"
+                style={{
+                  width: `${Math.min((used / (446 * 1024 * 1024)) * 100, 100)}%`,
+                }}
+              ></div>
             </div>
           </StatCard>
           <StatCard
-            title="Account satats"
+            title="Account stats"
             icon={<FiActivity className="text-3xl text-purple-600" />}
             subtitle="My store"
-            value="448 files saved"
+            value={`${0} files saved`}
             color="text-2xl text-purple-500"
           ></StatCard>
         </div>

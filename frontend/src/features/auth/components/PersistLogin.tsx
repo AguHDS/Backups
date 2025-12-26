@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { LoadingSpinner, Modal, useModalContext } from "@/shared";
 import { useSelector, useDispatch } from "react-redux";
 import { getNewRefreshToken } from "@/app/redux/features/thunks/authThunk";
-import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
 import type { RootState, AppDispatch } from "@/app/redux/store";
 import { store } from "@/app/redux/store";
 
@@ -27,7 +26,7 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
     };
   }, [isLoading, setIsModalOpen]);
 
-  // Access token renewal and update redux state
+  // Access token renewal logic
   useEffect(() => {
     const verifyRefreshToken = async () => {
       const hasSession = localStorage.getItem("hasSession");
@@ -48,9 +47,7 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
 
         const updatedState = store.getState().auth;
 
-        // Get dashboard summary if refresh was successful.
         if (updatedState.isAuthenticated && updatedState.userData?.name) {
-          await dispatch(getDashboardSummary()).unwrap();
           console.log("Token refresh successful");
         } else {
           console.warn("Token refresh did not restore authentication");
