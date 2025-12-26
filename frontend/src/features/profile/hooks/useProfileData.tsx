@@ -32,7 +32,6 @@ export const useProfileData = () => {
       }
     };
     
-    // Solo ejecutar si tenemos un username válido
     if (username) {
       fetchProfileData();
     }

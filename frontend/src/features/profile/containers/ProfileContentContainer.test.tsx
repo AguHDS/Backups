@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 import { Provider } from "react-redux";
 import { store } from "../../../app/redux/store";
 import { ProfileContentContainer } from "./ProfileContentContainer";
-import { ProfileProvider } from "../context/Profile/ProfileProvider";
+import { ProfileProvider } from "../context/editProfile/EditProfileProvider";
 import { SectionsProvider } from "../context/Section/SectionsProvider";
 import { FileDeletionProvider } from "../context/FileDeletion/FileDeletionProvider";
 import { StorageRefreshProvider } from "../context/StorageRefresh/StorageRefreshProvider";
@@ -27,7 +27,7 @@ vi.mock("react-router-dom", async () => {
 
 vi.mock("../context/Profile/ProfileProvider", async (importOriginal) => {
   const actual = await importOriginal<
-    typeof import("../context/Profile/ProfileProvider")
+    typeof import("../context/editProfile/EditProfileProvider")
   >();
   return {
     ...actual,

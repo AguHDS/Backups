@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useEditBio } from "../hooks/useEditBio";
 import {
-  useProfile,
+  useEditProfile,
   useSections,
   useFileDeletion,
   useStorageRefresh,
@@ -36,7 +36,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [currentBio, setCurrentBio] = useState<string>(
     data.userProfileData.bio
   );
-  const { isEditing, setIsEditing } = useProfile();
+  const { isEditing, setIsEditing } = useEditProfile();
   const { flag: storageRefreshFlag, refresh: refreshStorage } =
     useStorageRefresh();
   const { usedBytes, limitBytes, remainingBytes } =

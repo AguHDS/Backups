@@ -1,25 +1,27 @@
 import { createContext, useState, type ReactNode, useMemo } from "react";
 
-export interface ProfileContextType {
+export interface EditProfileContextType {
   isEditing: boolean;
   setIsEditing: (value: boolean) => void;
   isOwnProfile: boolean;
 }
 
-export const ProfileContext = createContext<ProfileContextType | null>(null);
+export const EditProfileContext = createContext<EditProfileContextType | null>(
+  null
+);
 
-interface ProfileProviderProps {
+interface EditProfileProviderProps {
   children: ReactNode;
   isOwnProfile: boolean;
 }
 
 /**
- * Manages permission to edit profile based on ownership.
+ * Manages permission to edit profile based on ownership
  */
-export const ProfileProvider = ({
+export const EditProfileProvider = ({
   children,
   isOwnProfile,
-}: ProfileProviderProps) => {
+}: EditProfileProviderProps) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const contextValue = useMemo(
@@ -28,8 +30,8 @@ export const ProfileProvider = ({
   );
 
   return (
-    <ProfileContext.Provider value={contextValue}>
+    <EditProfileContext.Provider value={contextValue}>
       {children}
-    </ProfileContext.Provider>
+    </EditProfileContext.Provider>
   );
 };

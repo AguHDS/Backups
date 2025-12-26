@@ -1,5 +1,5 @@
 import { useProfileData } from "../hooks/useProfileData";
-import { ProfileProvider } from "../context/Profile/ProfileProvider";
+import { EditProfileProvider } from "../context/editProfile/EditProfileProvider";
 import { Modal, LoadingSpinner } from "@/shared";
 import { SectionsProvider } from "../context/Section/SectionsProvider";
 import { FileDeletionProvider } from "../context/FileDeletion/FileDeletionProvider";
@@ -9,7 +9,6 @@ import { ProfileContentContainer } from "../containers/ProfileContentContainer";
 export const Profile = () => {
   const { data, error, isLoading, isOwnProfile } = useProfileData();
 
-  // Si está cargando, mostrar spinner
   if (isLoading) {
     return (
       <Modal>
@@ -20,7 +19,6 @@ export const Profile = () => {
     );
   }
 
-  // Si hay error o no hay data
   if (error || !data) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -40,7 +38,7 @@ export const Profile = () => {
   const safeSections = data.userSectionData ?? [];
 
   return (
-    <ProfileProvider isOwnProfile={isOwnProfile}>
+    <EditProfileProvider isOwnProfile={isOwnProfile}>
       <SectionsProvider
         initialSections={
           data.isOwner
@@ -54,6 +52,6 @@ export const Profile = () => {
           </StorageRefreshProvider>
         </FileDeletionProvider>
       </SectionsProvider>
-    </ProfileProvider>
+    </EditProfileProvider>
   );
 };

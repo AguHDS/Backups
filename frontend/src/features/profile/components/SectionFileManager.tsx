@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/shared";
 import {
-  useProfile,
+  useEditProfile,
   useSection,
   useSections,
   useStorageRefresh,
@@ -34,7 +34,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isEditing, isOwnProfile } = useProfile();
+  const { isEditing, isOwnProfile } = useEditProfile();
   const { renderFilesOnResponse } = useSections();
   const { refresh: refreshStorage } = useStorageRefresh();
   const { addFilesToDelete } = useFileDeletion();
