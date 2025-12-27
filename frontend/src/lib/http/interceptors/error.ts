@@ -6,16 +6,18 @@ interface ErrorResponse {
   statusCode?: number;
 }
 
-// Think if processErrorMessage & ValidationMessages should be replaced for this:
 const getErrorMessage = (error: AxiosError<ErrorResponse>): string => {
+  // Specific backend messages (always show these)
   if (error.response?.data?.message) {
     return error.response.data.message;
   }
 
+  // Other backend messages
   if (error.response?.data?.error) {
     return error.response.data.error;
   }
 
+  // Generic axios messages by status code (if there is no specific message)
   if (error.response?.status) {
     switch (error.response.status) {
       case 400:
@@ -69,11 +71,6 @@ export const errorInterceptor = (error: AxiosError<ErrorResponse>) => {
     ...error,
     userMessage: message,
   };
-
-  // TODO: Future integration points
-  // - Show toast notification for critical errors
-  // - Trigger logout on 401 errors
-  // - Retry logic for specific error types
 
   return Promise.reject(enhancedError);
 };

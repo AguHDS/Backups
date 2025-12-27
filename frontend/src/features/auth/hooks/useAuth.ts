@@ -1,12 +1,14 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useFetch } from "@/shared";
 import { useDispatch } from "react-redux";
 import { login } from "@/app/redux/features/slices/authSlice";
-import type { UserDataWithToken } from "@/shared/types";
 import { getFormData } from "../helpers";
-
-type AuthResponse = UserDataWithToken | { message: string };
+import { useLogin, useRegister } from "./useAuthMutations";
+import type {
+  LoginRequest,
+  RegisterRequest,
+  LoginPayload,
+} from "../api/authTypes";
 
 interface AuthInput {
   user: string;
@@ -27,59 +29,71 @@ export const useAuth = () => {
   });
 
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const { data, status, error, fetchData } = useFetch<AuthResponse>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const loginMutation = useLogin();
+  const registerMutation = useRegister();
 
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setStatusMessage(null);
 
     const formData = getFormData(e.currentTarget);
     const isRegistering = "email" in formData;
 
-    const endpoint = isRegistering
-      ? `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/registration`
-      : `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/login`;
+    try {
+      if (isRegistering) {
+        const result = await registerMutation.mutateAsync(
+          formData as RegisterRequest
+        );
 
-    fetchData(endpoint, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-  };
+        if (result.message === "Registration completed") {
+          navigate({ to: "/sign-in" });
+        } else {
+          setStatusMessage("Unexpected registration response");
+        }
+      } else {
+        const result = await loginMutation.mutateAsync(
+          formData as LoginRequest
+        );
 
-  useEffect(() => {
-    const handleAuth = async () => {
-      if (data === null || status === null) return;
+        // LoginPayload for redux
+        const loginPayload: LoginPayload = {
+          accessToken: result.accessToken,
+          userData: result.userData,
+          refreshTokenRotated: false,
+        };
 
-      setStatusMessage(error);
-
-      // When registration is successful
-      if ("message" in data && data.message === "Registration completed") {
-        navigate({ to: "/sign-in" });
-        return;
-      }
-
-      // When login is successful
-      if ("accessToken" in data && "userData" in data) {
-        await dispatch(login(data));
+        await dispatch(login(loginPayload));
         navigate({ to: "/dashboard", replace: true });
       }
-    };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Authentication failed";
 
-    handleAuth();
-  }, [data, status, error, navigate, dispatch]);
+      setStatusMessage(errorMessage);
+
+      // Log for debugging
+      if (import.meta.env.VITE_QUERY_ENV === "development") {
+        console.error("DEBUG: Auth error:", error);
+      }
+    }
+  };
 
   return {
     input,
     setInput,
-    status,
     statusMessage,
     handleSubmit,
+    isLoading: loginMutation.isPending || registerMutation.isPending,
+    isError: loginMutation.isError || registerMutation.isError,
+    error: loginMutation.error || registerMutation.error,
+    status:
+      loginMutation.isPending || registerMutation.isPending
+        ? "loading"
+        : loginMutation.isError || registerMutation.isError
+          ? "error"
+          : "idle",
   };
 };
