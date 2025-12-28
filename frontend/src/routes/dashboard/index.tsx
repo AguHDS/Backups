@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { Dashboard } from "@/views/dashboard";
+import { Dashboard } from "@/features/dashboard";
 import { store } from "@/app/redux/store";
 
 export const Route = createFileRoute("/dashboard/")({

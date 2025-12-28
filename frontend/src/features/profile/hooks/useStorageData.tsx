@@ -1,45 +1,26 @@
-import { useState, useEffect } from "react";
 import { useParams } from "@tanstack/react-router";
-
-interface ProfileStorage {
-  used: number;
-  limit: number;
-  remaining: number;
-}
+import { useQuery } from "@tanstack/react-query";
+import { getStorage } from "../api/profileApi";
+import type { GetStorageResponse } from "../api/profileTypes";
 
 // Hook to fetch and manage storage data independently
-export const useStorageData = (refreshTrigger?: boolean) => {
-  const [storage, setStorage] = useState<ProfileStorage>({
-    used: 0,
-    limit: 0,
-    remaining: 0,
-  });
+export const useStorageData = () => {
   const { username } = useParams({ from: "/profile/$username" });
 
-  useEffect(() => {
-    const fetchStorage = async () => {
-      if (!username) return;
-      try {
-        const res = await fetch(
-          `http://localhost:${import.meta.env.VITE_BACKENDPORT}/api/getStorage/${username}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch profile storage");
-        const data = await res.json();
-        setStorage({
-          used: Number(data.used) || 0,
-          limit: Number(data.limit) || 0,
-          remaining: Number(data.remaining) || 0,
-        });
-      } catch (err) {
-        console.error("Error fetching profile storage:", err);
-      }
-    };
-    fetchStorage();
-  }, [username, refreshTrigger]);
+  const { data } = useQuery<GetStorageResponse, Error>({
+    queryKey: ["storage", username],
+    queryFn: () => getStorage(username),
+    enabled: !!username,
+    placeholderData: {
+      used: 0,
+      limit: 0,
+      remaining: 0,
+    },
+  });
 
   return {
-    usedBytes: storage.used,
-    limitBytes: storage.limit,
-    remainingBytes: storage.remaining,
+    usedBytes: Number(data?.used) || 0,
+    limitBytes: Number(data?.limit) || 0,
+    remainingBytes: Number(data?.remaining) || 0,
   };
 };

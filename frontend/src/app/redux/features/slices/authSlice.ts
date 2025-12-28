@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getNewRefreshToken, logout } from "../thunks/authThunk";
 import type { UserSessionData } from "@/shared/types";
 
 export interface AuthState {
@@ -22,58 +21,29 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // This will be probably replaced with a thunk instead of using the custom hook
+    // Used by login and refresh token mutations
     login: (state, action) => {
       state.accessToken = action.payload.accessToken;
       state.userData = action.payload.userData;
       state.isAuthenticated = true;
+      state.status = "succeeded";
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("hasSession", "true");
     },
-  },
-
-  // Extra reducers for thunks
-  extraReducers: (builder) => {
-    builder
-      .addCase(getNewRefreshToken.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(getNewRefreshToken.fulfilled, (state, action) => {
-        state.isAuthenticated = true;
-        state.accessToken = action.payload.accessToken;
-        state.userData = action.payload.userData;
-        state.status = "succeeded";
-        state.error = null;
-      })
-      .addCase(getNewRefreshToken.rejected, (state, action) => {
-        state.accessToken = null;
-        state.isAuthenticated = false;
-        state.status = "failed";
-        state.error = action.payload || action.error.message;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.accessToken = null;
-        state.userData = {};
-        state.status = "idle";
-        state.isAuthenticated = false;
-        state.error = null;
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("isAuthenticated");
-        localStorage.removeItem("hasSession");
-      })
-      .addCase(logout.rejected, (state, action) => {
-        state.accessToken = null;
-        state.userData = {};
-        state.status = "idle";
-        state.isAuthenticated = false;
-        state.error = action.payload || action.error.message;
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("isAuthenticated");
-        localStorage.removeItem("hasSession");
-      });
+    // Used by logout mutation
+    clearAuth: (state) => {
+      state.accessToken = null;
+      state.userData = {};
+      state.status = "idle";
+      state.isAuthenticated = false;
+      state.error = null;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("hasSession");
+    },
   },
 });
 
-export const { login } = authSlice.actions;
+export const { login, clearAuth } = authSlice.actions;
 
 export default authSlice.reducer;

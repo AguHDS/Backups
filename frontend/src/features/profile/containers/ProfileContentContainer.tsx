@@ -5,9 +5,14 @@ import {
   useEditProfile,
   useSections,
   useFileDeletion,
-  useStorageRefresh,
 } from "../context";
 import { useStorageData } from "../hooks/useStorageData";
+import {
+  useUpdateBioAndSections,
+  useDeleteSections,
+  useDeleteFiles,
+  useUploadProfilePicture,
+} from "../hooks/useProfileMutations";
 import {
   Header,
   ActionsAndProfileImg,
@@ -18,9 +23,7 @@ import {
 import type { FetchedUserProfile } from "../types/profileData";
 import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import { ValidationMessages } from "@/shared";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/app/redux/store";
-import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
+import { useInvalidateDashboard } from "@/features/dashboard/hooks/useDashboard";
 
 export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
@@ -37,14 +40,11 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     data.userProfileData.bio
   );
   const { isEditing, setIsEditing } = useEditProfile();
-  const { flag: storageRefreshFlag, refresh: refreshStorage } =
-    useStorageRefresh();
-  const { usedBytes, limitBytes, remainingBytes } =
-    useStorageData(storageRefreshFlag);
+  const { usedBytes, limitBytes, remainingBytes } = useStorageData();
   const { filesToDelete, clearFilesToDelete } = useFileDeletion();
   const params = useParams({ strict: false });
   const username = params.username as string;
-  const dispatch = useDispatch<AppDispatch>();
+  const invalidateDashboard = useInvalidateDashboard();
   const { updateData, setUpdateData, resetBio } = useEditBio(currentBio);
   const {
     sections,
@@ -55,6 +55,12 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     updateInitialSections,
   } = useSections();
   const isInitialMount = useRef(true);
+
+  // Mutations
+  const updateBioAndSectionsMutation = useUpdateBioAndSections();
+  const deleteSectionsMutation = useDeleteSections();
+  const deleteFilesMutation = useDeleteFiles();
+  const uploadProfilePictureMutation = useUploadProfilePicture();
 
   // Preview image when selected
   useEffect(() => {
@@ -97,103 +103,68 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     }
 
     try {
+      // Upload profile picture if selected
       if (selectedImage) {
         setProfilePictureErrors([]);
 
         const formData = new FormData();
         formData.append("profilePicture", selectedImage);
 
-        const uploadResult = await fetch(
-          `http://localhost:${
-            import.meta.env.VITE_BACKENDPORT
-          }/api/profilePicture/${username}`,
-          {
-            method: "POST",
-            body: formData,
-            credentials: "include",
-          }
-        );
+        try {
+          const uploadResponse = await uploadProfilePictureMutation.mutateAsync(
+            {
+              username,
+              formData,
+            }
+          );
 
-        if (!uploadResult.ok) {
-          let errorData;
-          try {
-            errorData = await uploadResult.json();
-          } catch {
-            errorData = { message: `HTTP Error ${uploadResult.status}` };
-          }
-
-          const errorMessage =
-            errorData.message || "Failed to upload profile picture";
-          setProfilePictureErrors([errorMessage]);
-        } else {
-          const uploadResponse = await uploadResult.json();
           if (uploadResponse.data?.public_id) {
             setProfileImagePublicId(uploadResponse.data.public_id);
             setImageRefreshKey((prev) => prev + 1);
             setProfilePictureErrors([]);
           }
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "Failed to upload profile picture";
+          setProfilePictureErrors([errorMessage]);
         }
       }
 
       // Delete sections if any
       if (sectionsToDelete.length > 0) {
-        await fetch(
-          `http://localhost:${
-            import.meta.env.VITE_BACKENDPORT
-          }/api/deleteSections/${username}`,
-          {
-            method: "DELETE",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sectionIds: sectionsToDelete }),
-          }
-        );
+        await deleteSectionsMutation.mutateAsync({
+          username,
+          data: { sectionIds: sectionsToDelete },
+        });
       }
 
       // Delete files if any
       if (filesToDelete.length > 0) {
-        await fetch(
-          `http://localhost:${
-            import.meta.env.VITE_BACKENDPORT
-          }/api/deleteFiles/${username}`,
-          {
-            method: "DELETE",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(filesToDelete),
-          }
+        // Delete files for each section
+        await Promise.all(
+          filesToDelete.map((deletion) =>
+            deleteFilesMutation.mutateAsync({
+              username,
+              data: {
+                filePublicIds: deletion.publicIds,
+                sectionId: deletion.sectionId,
+              },
+            })
+          )
         );
       }
 
       // Update bio and sections
-      const response = await fetch(
-        `http://localhost:${
-          import.meta.env.VITE_BACKENDPORT
-        }/api/updateBioAndSections/${username}`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            bio: updateData.bio,
-            sections,
-          }),
-        }
-      );
+      const responseData = await updateBioAndSectionsMutation.mutateAsync({
+        username,
+        data: {
+          bio: updateData.bio,
+          sections,
+        },
+      });
 
-      if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch {
-          errorData = { message: `HTTP Error ${response.status}` };
-        }
-        throw new Error(
-          errorData.message || errorData.error || "Failed to update profile"
-        );
-      }
-
-      const responseData = await response.json();
       if (responseData.newlyCreatedSections) {
         updateSectionIds(responseData.newlyCreatedSections);
       }
@@ -221,8 +192,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
       setErrorMessages([]);
       setIsEditing(false);
 
-      refreshStorage();
-      await dispatch(getDashboardSummary());
+      invalidateDashboard();
     } catch (error) {
       console.error("Error saving profile:", error);
       const messages = processErrorMessages(error);
@@ -239,10 +209,13 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     setSectionsToDelete,
     clearFilesToDelete,
     setIsEditing,
-    refreshStorage,
-    dispatch,
     updateSectionIds,
     updateInitialSections,
+    uploadProfilePictureMutation,
+    deleteSectionsMutation,
+    deleteFilesMutation,
+    updateBioAndSectionsMutation,
+    invalidateDashboard,
   ]);
 
   const handleCancel = useCallback(() => {

@@ -1,27 +1,16 @@
-import { useEffect } from "react";
 import { FiFolder, FiActivity } from "react-icons/fi";
 import { StatCard, AboutCard } from "../components";
-import { useSelector, useDispatch } from "react-redux";
-import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
-import type { AppDispatch, RootState } from "@/app/redux/store";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/app/redux/store";
 import { formatBytes } from "@/shared/utils/formatBytes";
 import { LoadingSpinner } from "@/shared";
+import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboard";
 
 export const Dashboard = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { used, status, error } = useSelector(
-    (state: RootState) => state.dashboard
-  );
   const { userData } = useSelector((state: RootState) => state.auth);
+  const { data, isLoading, isError, error } = useDashboardSummary();
 
-  // Load dashboard summary on mount if user is authenticated
-  useEffect(() => {
-    if (userData?.name && status === "idle") {
-      dispatch(getDashboardSummary());
-    }
-  }, [dispatch, userData?.name, status]);
-
-  if (status === "loading") {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <LoadingSpinner size="lg" />
@@ -29,18 +18,20 @@ export const Dashboard = () => {
     );
   }
 
-  if (status === "failed") {
+  if (isError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-red-500 text-xl mb-4">
             Error loading dashboard data
           </p>
-          <p className="text-gray-400">{error}</p>
+          <p className="text-gray-400">{error?.message}</p>
         </div>
       </div>
     );
   }
+
+  const used = data?.used || 0;
 
   return (
     <div className="flex items-center justify-center my-10 px-4">

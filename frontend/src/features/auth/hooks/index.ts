@@ -1,3 +1,3 @@
 export { useAuth } from './useAuth';
-export { useLogin, useRegister } from './useAuthMutations';
-export type { LoginResponse, RegisterResponse } from './useAuthMutations';
+export { useLogin, useRegister, useRefreshToken, useLogout } from './useAuthMutations';
+export type { LoginResponse, RegisterResponse, RefreshTokenResponse, LogoutResponse } from './useAuthMutations';

@@ -1,23 +1,19 @@
 import type { InternalAxiosRequestConfig } from "axios";
 
-// TODO: adapt this file to our project needs,
-//  we don't use Bearer, we have refreshToken in cookies and we use with credentials: include
-
-// Retrieves current token from storage
-const getAuthToken = (): string | null => {
-  // TODO: Implement actual token retrieval
-  // Example: return localStorage.getItem('refreshToken'); or const hasSession = localStorage.getItem("hasSession");
-  return null;
-};
-
+/**
+ * Auth interceptor for axios requests
+ * 
+ * Note: This project uses refresh token in HTTP-only cookies for authentication.
+ * The backend validates the refresh token from cookies, NOT from Authorization headers.
+ * Therefore, we don't need to add any Authorization header here.
+ * 
+ * Authentication is handled automatically by:
+ * - withCredentials: true (includes cookies in requests)
+ * - Backend middleware that reads req.cookies.refreshToken
+ */
 export const authInterceptor = (
   config: InternalAxiosRequestConfig
 ): InternalAxiosRequestConfig => {
-  const token = getAuthToken();
-
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
+  // No modifications needed - cookies are sent automatically with withCredentials: true
   return config;
 };

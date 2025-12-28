@@ -4,6 +4,9 @@ import type {
   RegisterRequest,
   LoginResponse,
   RegisterResponse,
+  RefreshTokenResponse,
+  LogoutRequest,
+  LogoutResponse,
 } from "./authTypes";
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
@@ -24,6 +27,26 @@ export const register = async (
       withCredentials: true,
     }
   );
+
+  return response.data;
+};
+
+export const refreshToken = async (): Promise<RefreshTokenResponse> => {
+  const response = await axiosClient.post<RefreshTokenResponse>(
+    "/api/refreshToken",
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+
+export const logout = async (data: LogoutRequest): Promise<LogoutResponse> => {
+  const response = await axiosClient.post<LogoutResponse>("/api/logout", data, {
+    withCredentials: true,
+  });
 
   return response.data;
 };

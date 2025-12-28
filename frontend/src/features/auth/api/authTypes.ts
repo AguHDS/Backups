@@ -29,6 +29,19 @@ export interface RegisterResponse {
   message: string;
 }
 
+export interface RefreshTokenResponse {
+  accessToken: string;
+  userData: UserSessionData;
+}
+
+export interface LogoutRequest {
+  id: number;
+}
+
+export interface LogoutResponse {
+  message: string;
+}
+
 // Redux dispatch payloads
 
 export interface LoginPayload {

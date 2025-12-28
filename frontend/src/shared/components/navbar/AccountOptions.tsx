@@ -2,31 +2,21 @@ import type { MouseEvent } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "@tanstack/react-router";
-import { useDispatch } from "react-redux";
-import { logout } from "@/app/redux/features/thunks/authThunk";
-import type { AppDispatch } from "@/app/redux/store";
+import { useLogout } from "@/features/auth";
 
 interface Props {
   username: string;
 }
 
 export default function AccountOptions({ username }: Props) {
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { mutateAsync: logout } = useLogout();
 
   const handleLogout = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const resultLogout = await dispatch(logout());
-      if (logout.fulfilled.match(resultLogout)) {
-        navigate({ to: "/", replace: true });
-      } else {
-        console.error(
-          "Failed to logout:",
-          resultLogout.error.message || "Unknown error"
-        );
-        return;
-      }
+      await logout();
+      navigate({ to: "/", replace: true });
     } catch (error) {
       console.error("Error during logout:", error);
     }

@@ -3,7 +3,6 @@ import { EditProfileProvider } from "../context/editProfile/EditProfileProvider"
 import { Modal, LoadingSpinner } from "@/shared";
 import { SectionsProvider } from "../context/Section/SectionsProvider";
 import { FileDeletionProvider } from "../context/FileDeletion/FileDeletionProvider";
-import { StorageRefreshProvider } from "../context/StorageRefresh/StorageRefreshProvider";
 import { ProfileContentContainer } from "../containers/ProfileContentContainer";
 
 export const Profile = () => {
@@ -24,7 +23,7 @@ export const Profile = () => {
       <div className="flex justify-center items-center h-screen">
         <div className="text-center">
           <p className="text-red-500 text-xl mb-4">
-            {error || "Error loading profile"}
+            {error?.message || "Error loading profile"}
           </p>
           <p className="text-gray-400">
             Could not load profile data. The user may not exist or you may not
@@ -47,9 +46,7 @@ export const Profile = () => {
         }
       >
         <FileDeletionProvider>
-          <StorageRefreshProvider>
-            <ProfileContentContainer data={data} />
-          </StorageRefreshProvider>
+          <ProfileContentContainer data={data} />
         </FileDeletionProvider>
       </SectionsProvider>
     </EditProfileProvider>

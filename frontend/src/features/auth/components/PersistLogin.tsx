@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { LoadingSpinner, Modal, useModalContext } from "@/shared";
 import { useSelector, useDispatch } from "react-redux";
-import { getNewRefreshToken } from "@/app/redux/features/thunks/authThunk";
 import type { RootState, AppDispatch } from "@/app/redux/store";
 import { store } from "@/app/redux/store";
+import { login as loginAction } from "@/app/redux/features/slices/authSlice";
+import { useRefreshToken } from "../hooks/useAuthMutations";
 
 interface PersistLoginProps {
   children: React.ReactNode;
@@ -20,6 +21,8 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
     (state: RootState) => state.auth
   );
 
+  const refreshTokenMutation = useRefreshToken();
+
   // Spinner
   useEffect(() => {
     setIsModalOpen(isLoading);
@@ -29,19 +32,33 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
     };
   }, [isLoading, setIsModalOpen]);
 
-  // Access token renewal
+  // Access token renewal - only run once on mount
   useEffect(() => {
+    let isMounted = true;
+
     const verifyRefreshToken = async () => {
       const hasSession = localStorage.getItem("hasSession");
 
       // If there's no session or already authenticated, skip token refresh
       if (hasSession !== "true" || (isAuthenticated && accessToken)) {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
         return;
       }
 
       try {
-        await dispatch(getNewRefreshToken()).unwrap();
+        const result = await refreshTokenMutation.mutateAsync();
+        
+        if (!isMounted) return;
+
+        // Dispatch to Redux to update auth state
+        dispatch(
+          loginAction({
+            accessToken: result.accessToken,
+            userData: result.userData,
+            refreshTokenRotated: true,
+          })
+        );
+
         const updatedState = store.getState().auth;
 
         if (!updatedState.isAuthenticated || !updatedState.userData?.name) {
@@ -52,12 +69,17 @@ export const PersistLogin = ({ children }: PersistLoginProps) => {
         console.error(`Token refresh failed: ${error}`);
         localStorage.removeItem("hasSession");
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
 
     verifyRefreshToken();
-  }, [dispatch]);
+
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
