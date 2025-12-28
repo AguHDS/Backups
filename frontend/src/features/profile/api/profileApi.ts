@@ -12,13 +12,11 @@ import type {
   UploadProfilePictureResponse,
 } from "./profileTypes";
 
-const API_BASE = "/api";
-
 export const getProfile = async (
   username: string
 ): Promise<GetProfileResponse> => {
   const response = await axiosClient.get<GetProfileResponse>(
-    `${API_BASE}/getProfile/${username}`,
+    `/api/getProfile/${username}`,
     {
       withCredentials: true,
     }
@@ -31,7 +29,7 @@ export const getStorage = async (
   username: string
 ): Promise<GetStorageResponse> => {
   const response = await axiosClient.get<GetStorageResponse>(
-    `${API_BASE}/getStorage/${username}`
+    `/api/getStorage/${username}`
   );
 
   return response.data;
@@ -42,7 +40,7 @@ export const updateBioAndSections = async (
   data: UpdateBioAndSectionsRequest
 ): Promise<UpdateBioAndSectionsResponse> => {
   const response = await axiosClient.post<UpdateBioAndSectionsResponse>(
-    `${API_BASE}/updateBioAndSections/${username}`,
+    `/api/updateBioAndSections/${username}`,
     data,
     {
       withCredentials: true,
@@ -57,7 +55,7 @@ export const deleteSections = async (
   data: DeleteSectionsRequest
 ): Promise<DeleteSectionsResponse> => {
   const response = await axiosClient.delete<DeleteSectionsResponse>(
-    `${API_BASE}/deleteSections/${username}`,
+    `/api/deleteSections/${username}`,
     {
       data,
       withCredentials: true,
@@ -72,7 +70,7 @@ export const deleteFiles = async (
   data: DeleteFilesRequest
 ): Promise<DeleteFilesResponse> => {
   const response = await axiosClient.delete<DeleteFilesResponse>(
-    `${API_BASE}/deleteFiles/${username}`,
+    `/api/deleteFiles/${username}`,
     {
       data,
       withCredentials: true,
@@ -89,7 +87,7 @@ export const uploadFiles = async (
   formData: FormData
 ): Promise<UploadFilesResponse> => {
   const response = await axiosClient.post<UploadFilesResponse>(
-    `${API_BASE}/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
+    `/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
     formData,
     {
       withCredentials: true,
@@ -107,7 +105,7 @@ export const uploadProfilePicture = async (
   formData: FormData
 ): Promise<UploadProfilePictureResponse> => {
   const response = await axiosClient.post<UploadProfilePictureResponse>(
-    `${API_BASE}/profilePicture/${username}`,
+    `/api/profilePicture/${username}`,
     formData,
     {
       withCredentials: true,

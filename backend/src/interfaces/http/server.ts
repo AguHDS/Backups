@@ -18,7 +18,6 @@ import {
   uploadFiles,
   profilePicture,
   deleteSections,
-  storage,
   getStorage,
   dashboard,
   deleteFiles
@@ -56,7 +55,6 @@ app.use("/api/updateBioAndSections", updateBioAndSections);
 app.use("/api/uploadFiles", uploadFiles);
 app.use("/api/profilePicture", profilePicture);
 app.use("/api/deleteSections", deleteSections);
-app.use("/api/storage", storage);
 app.use("/api/getStorage", getStorage);
 app.use("/api/dashboard-summary", dashboard);
 app.use("/api/deleteFiles", deleteFiles);

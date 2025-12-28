@@ -58,14 +58,13 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       });
       setUploadErrors(messages);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     uploadFilesMutation.isSuccess,
     uploadFilesMutation.isError,
     uploadFilesMutation.data,
     uploadFilesMutation.error,
     sectionId,
-    renderFilesOnResponse,
-    invalidateDashboard,
   ]);
 
   // Handle selecting files from input
