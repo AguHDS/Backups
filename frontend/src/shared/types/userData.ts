@@ -1,6 +1,6 @@
 export interface UserSessionData {
   name: string;
-  email: string;
+  email?: string;
   role: "user" | "admin";
   id: number;
 }

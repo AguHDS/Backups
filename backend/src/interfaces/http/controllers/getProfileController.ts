@@ -21,20 +21,19 @@ export const getProfileController = async (req: Request, res: Response) => {
     }
     const { name, role, id, email } = req.baseUserData;
 
-    let requesterId: number | null = null;
+    let requesterId: number | undefined = undefined;
 
     try {
       // Get active user's id for profile ownership validation
       const decoded = decodeRefreshToken(req);
       requesterId = Number(decoded.id);
     } catch (err) {
-      requesterId = null;
+      requesterId = undefined;
       console.error(err);
     }
 
     if (!requesterId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
+      requesterId = undefined;
     }
 
     const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(

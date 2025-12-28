@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ModalContext, ModalContextType } from "./ModalProvider";
+import { ModalContext, type ModalContextType } from "./ModalProvider";
 
 export const useModalContext = (): ModalContextType => {
   const context = useContext(ModalContext);

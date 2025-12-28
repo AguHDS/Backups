@@ -1,5 +1,5 @@
 import { Button } from "@/shared/components";
-import { useProfile } from "../context/Profile/profileContext";
+import { useEditProfile } from "../context/editProfile/editProfileContext";
 
 interface Props {
   username: string;
@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const Header = ({ username, onSave, onCancel }: Props) => {
-  const { isEditing, setIsEditing, isOwnProfile } = useProfile();
+  const { isEditing, setIsEditing, isOwnProfile } = useEditProfile();
 
   const handleCancel = () => {
     if (onCancel) {

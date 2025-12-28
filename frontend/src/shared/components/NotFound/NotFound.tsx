@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { Button } from "../../";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/shared/components";
 
 export function NotFound() {
   return (

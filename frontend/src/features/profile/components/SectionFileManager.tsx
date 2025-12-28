@@ -1,28 +1,20 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/shared";
 import {
-  useProfile,
+  useEditProfile,
   useSection,
   useSections,
-  useStorageRefresh,
 } from "../context";
-import { useParams } from "react-router-dom";
-import { UploadedFile } from "../types/section";
+import { useParams } from "@tanstack/react-router";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
 import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import { ValidationMessages } from "@/shared";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/app/redux/store";
-import { getDashboardSummary } from "@/app/redux/features/thunks/dashboardThunk";
-import { useFetch } from "@/shared/hooks/useFetch";
+import { useUploadFiles } from "../hooks/useProfileMutations";
+import { useInvalidateDashboard } from "@/features/dashboard/hooks/useDashboard";
 
 interface Props {
   sectionIndex: number;
-}
-
-interface FileUploadResponse {
-  files: UploadedFile[];
 }
 
 export const SectionFileManager = ({ sectionIndex }: Props) => {
@@ -34,20 +26,14 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
   const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isEditing, isOwnProfile } = useProfile();
+  const { isEditing, isOwnProfile } = useEditProfile();
   const { renderFilesOnResponse } = useSections();
-  const { refresh: refreshStorage } = useStorageRefresh();
   const { addFilesToDelete } = useFileDeletion();
-  const dispatch = useDispatch<AppDispatch>();
-  const { username } = useParams();
-  const {
-    data: uploadData,
-    fetchData,
-    status,
-    error,
-    isLoading,
-    reset: resetFetch,
-  } = useFetch<FileUploadResponse>();
+  const invalidateDashboard = useInvalidateDashboard();
+  const { username } = useParams({ from: "/profile/$username" });
+
+  // Mutation for uploading files
+  const uploadFilesMutation = useUploadFiles();
 
   // Use specific section hook to avoid re-renders when other sections change
   const section = useSection(sectionIndex);
@@ -58,35 +44,28 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
   const handleButtonClick = () => fileInputRef.current?.click();
 
   useEffect(() => {
-    if (status !== null && !isLoading) {
-      if (status >= 200 && status < 300 && uploadData) {
-        renderFilesOnResponse(sectionId, uploadData.files);
-        setFiles([]);
-        setReadyToUpload(false);
-        setUploadErrors([]);
-        refreshStorage();
-        dispatch(getDashboardSummary());
-      } else if (status >= 400) {
-        const errorData = uploadData || error;
-        const messages = processErrorMessages(errorData);
-        console.error("Upload error details:", {
-          status,
-          messages,
-          data: uploadData,
-          error,
-        });
-        setUploadErrors(messages);
-      }
+    if (uploadFilesMutation.isSuccess && uploadFilesMutation.data) {
+      renderFilesOnResponse(sectionId, uploadFilesMutation.data.files);
+      setFiles([]);
+      setReadyToUpload(false);
+      setUploadErrors([]);
+      invalidateDashboard();
+    } else if (uploadFilesMutation.isError) {
+      const messages = processErrorMessages(uploadFilesMutation.error);
+      console.error("Upload error details:", {
+        messages,
+        error: uploadFilesMutation.error,
+      });
+      setUploadErrors(messages);
     }
   }, [
-    status,
-    isLoading,
-    uploadData,
-    error,
+    uploadFilesMutation.isSuccess,
+    uploadFilesMutation.isError,
+    uploadFilesMutation.data,
+    uploadFilesMutation.error,
     sectionId,
     renderFilesOnResponse,
-    refreshStorage,
-    dispatch,
+    invalidateDashboard,
   ]);
 
   // Handle selecting files from input
@@ -95,20 +74,20 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       const selected = e.target.files;
       if (!selected || selected.length === 0) return;
 
-      resetFetch();
+      uploadFilesMutation.reset();
       setUploadErrors([]);
 
       setFiles((prev) => [...prev, ...Array.from(selected)]);
       setReadyToUpload(true);
     },
-    [resetFetch]
+    [uploadFilesMutation]
   );
 
   const cancelUpload = () => {
     setFiles([]);
     setReadyToUpload(false);
     setUploadErrors([]);
-    resetFetch();
+    uploadFilesMutation.reset();
   };
 
   // Toggle selection checkbox for files (add/remove from set)
@@ -131,17 +110,13 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
 
-    await fetchData(
-      `http://localhost:${
-        import.meta.env.VITE_BACKENDPORT
-      }/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
-      {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      }
-    );
-  }, [files, fetchData, username, sectionId, sectionTitle]);
+    uploadFilesMutation.mutate({
+      username,
+      sectionId,
+      sectionTitle,
+      formData,
+    });
+  }, [files, uploadFilesMutation, username, sectionId, sectionTitle]);
 
   const handleDeleteSelectedFiles = useCallback(() => {
     if (selectedFileIds.size === 0) return;
@@ -168,7 +143,8 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     [uploadedFiles, hiddenFileIds]
   );
 
-  const hasErrorsToShow = uploadErrors.length > 0 || (error && status !== null);
+  const hasErrorsToShow =
+    uploadErrors.length > 0 || uploadFilesMutation.isError;
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -221,8 +197,15 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
               {hasErrorsToShow && (
                 <div className="w-full max-w-[80%] mt-4">
                   <ValidationMessages
-                    input={uploadErrors.length > 0 ? uploadErrors : [error!]}
-                    status={status}
+                    input={
+                      uploadErrors.length > 0
+                        ? uploadErrors
+                        : [
+                            uploadFilesMutation.error?.message ||
+                              "Upload failed",
+                          ]
+                    }
+                    status={null}
                     message={null}
                   />
                 </div>

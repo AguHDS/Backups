@@ -1,11 +1,11 @@
-import config from "../../../infraestructure/config/environmentVars.js";
+import config from "@/infraestructure/config/environmentVars.js";
 import { Request, Response } from "express";
-import { LoginUserUseCase } from "../../../application/useCases/LoginUserUseCase.js";
+import { LoginUserUseCase } from "@/application/useCases/LoginUserUseCase.js";
 import {
   MysqlRefreshTokenRepository,
   MysqlUserRepository,
-} from "../../../infraestructure/adapters/repositories/index.js";
-import { compare } from "../../../infraestructure/auth/handlePassword.js";
+} from "@/infraestructure/adapters/repositories/index.js";
+import { compare } from "@/infraestructure/auth/handlePassword.js";
 
 //dependency injection
 const loginUserUseCase = new LoginUserUseCase(

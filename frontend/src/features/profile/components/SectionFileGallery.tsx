@@ -1,5 +1,5 @@
 import { useRef, useCallback, useMemo } from "react";
-import { UploadedFile } from "../types/section";
+import type { UploadedFile } from "../types/section";
 import { CloudinaryImage } from "@/services/Cloudinary";
 import { ImageOverview } from "./ImageOverview";
 

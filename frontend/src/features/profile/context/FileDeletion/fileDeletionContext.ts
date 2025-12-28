@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import {
   FileDeletionContext,
-  FilesToDeleteContextType,
+  type FilesToDeleteContextType,
 } from "./FileDeletionProvider";
 
 export const useFileDeletion = (): FilesToDeleteContextType => {

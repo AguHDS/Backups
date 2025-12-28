@@ -1,9 +1,17 @@
 type ValidationError = { msg: string };
+
+type StorageDetails = {
+  used: number;
+  limit: number;
+  attempted: number;
+  remaining: number;
+};
+
 type ApiError = {
   message?: string;
   error?: string;
   code?: string;
-  details?: any;
+  details?: StorageDetails;
   errors?: string[] | ValidationError[];
 };
 type FetchError = Error | ValidationError[] | ApiError | unknown;

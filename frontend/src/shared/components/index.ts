@@ -5,3 +5,4 @@ export { NotFound } from "./NotFound/NotFound";
 export { LoadingSpinner } from "./Spinner/LoadingSpinner";
 export { TermsAndConditions } from "./TermsAndConditions/TermsAndConditions";
 export { NavBar } from "./navbar/NavBar"
+export { Unauthorized } from "./Unauthorized";

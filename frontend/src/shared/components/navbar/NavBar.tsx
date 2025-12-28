@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 import AccountOptions from "./AccountOptions";
 import { Button } from "../../";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../app/redux/store";
+import type { RootState } from "@/app/redux/store";
 
 export const NavBar = () => {
   const { isAuthenticated, userData } = useSelector((state: RootState) => state.auth);

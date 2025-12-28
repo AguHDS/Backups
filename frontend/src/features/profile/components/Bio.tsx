@@ -1,4 +1,4 @@
-import { useProfile } from "../context/Profile/profileContext";
+import { useEditProfile } from "../context/editProfile/editProfileContext";
 
 interface Props {
   bio: string;
@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const Bio = ({ bio, onBioChange }: Props) => {
-  const { isEditing } = useProfile();
+  const { isEditing } = useEditProfile();
 
   return (
     <>

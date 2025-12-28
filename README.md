@@ -17,15 +17,18 @@ many features aren't avialable yet since i'm working on them
 Profile section
 ![Showcase](Profile_Showcase.png)
 
-## main tools used:
+## Stack used
 
 * Typescript
-* Node/express
 * React
 * Redux-toolkit
-* Mysql
 * Tailwind
-* Vitest for tests
+* Axios
+* Tanstack router / Tanstack Query
+* Zod
+* Node: Express
+* Mysql
+* Vitest
 
 ### First setup
 * once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies

@@ -1,12 +1,12 @@
 import {
   createContext,
   useState,
-  ReactNode,
+  type ReactNode,
   useCallback,
   useMemo,
   useRef,
 } from "react";
-import { SectionWithFile, UploadedFile } from "../../types/section";
+import type { SectionWithFile, UploadedFile } from "@/features/profile/types/section";
 
 interface SectionsContextType {
   sections: SectionWithFile[];

@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Button, ValidationMessages } from "@/shared/index";
 import { Bio } from "./Bio.js";
 import { SectionFileManager } from "./SectionFileManager";
-import { useProfile } from "../context/Profile/profileContext.js";
+import { useEditProfile } from "../context/editProfile/editProfileContext.js";
 import { useSections } from "../context/Section/sectionsContext.js";
 
 interface Props {
@@ -19,7 +19,7 @@ export const ProfileRightContent = ({
   status,
   onBioChange,
 }: Props) => {
-  const { isEditing } = useProfile();
+  const { isEditing } = useEditProfile();
   const { sections, updateSection, deleteSection, addSection } = useSections();
 
   const shouldShowSuccess =
