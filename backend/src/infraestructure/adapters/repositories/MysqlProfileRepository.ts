@@ -226,4 +226,77 @@ export class MysqlProfileRepository implements ProfileRepository {
       throw new Error("Database error while updating profile picture");
     }
   }
+
+  async updateBio(bio: string, userId: string | number): Promise<void> {
+    try {
+      const [result] = await promisePool.execute<ResultSetHeader>(
+        `UPDATE users_profile SET bio = ? WHERE fk_users_id = ?`,
+        [bio, userId]
+      );
+
+      if (result.affectedRows === 0) {
+        throw new Error("No profile found for the given user ID");
+      }
+    } catch (error) {
+      console.error("Error updating bio:", error);
+      throw new Error("Database error while updating bio");
+    }
+  }
+
+  async updateSections(
+    sections: UserProfileSection[],
+    userId: string | number
+  ): Promise<{ newlyCreatedSections: { tempId: number; newId: number }[] }> {
+    const connection: PoolConnection = await promisePool.getConnection();
+    const newlyCreatedSections: { tempId: number; newId: number }[] = [];
+
+    try {
+      await connection.beginTransaction();
+
+      for (const section of sections) {
+        if (section.id && section.id > 0) {
+          // Update existing section
+          const [updateResult] = await connection.execute<ResultSetHeader>(
+            `UPDATE users_profile_sections
+             SET title = ?, description = ?, is_public = ?
+             WHERE id = ? AND fk_users_id = ?`,
+            [
+              section.title,
+              section.description,
+              section.isPublic,
+              section.id,
+              userId,
+            ]
+          );
+
+          if (updateResult.affectedRows === 0) {
+            throw new Error(
+              `Section with id ${section.id} not found for user ${userId}`
+            );
+          }
+        } else {
+          // Insert new section
+          const [insertResult] = await connection.execute<ResultSetHeader>(
+            `INSERT INTO users_profile_sections (fk_users_id, title, description, is_public)
+             VALUES (?, ?, ?, ?)`,
+            [userId, section.title, section.description, section.isPublic]
+          );
+
+          newlyCreatedSections.push({
+            tempId: section.id,
+            newId: insertResult.insertId,
+          });
+        }
+      }
+
+      await connection.commit();
+      return { newlyCreatedSections };
+    } catch (error) {
+      await connection.rollback();
+      console.error("Error updating sections:", error);
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
 }

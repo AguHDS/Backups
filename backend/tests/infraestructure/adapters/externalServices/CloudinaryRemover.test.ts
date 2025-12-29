@@ -9,6 +9,7 @@ vi.mock("cloudinary", () => ({
     },
     api: {
       delete_folder: vi.fn(),
+      sub_folders: vi.fn(),
     },
   },
 }));
@@ -59,33 +60,55 @@ describe("CloudinaryRemover", () => {
     });
   });
 
-  describe("deleteFolder", () => {
-    it("should call delete_folder with correct path", async () => {
+  describe("deleteFoldersBySectionId", () => {
+    it("should delete all folders matching section ID", async () => {
+      const username = "john";
+      const userId = 42;
+      const sectionId = 1;
+
+      const mockFolders = {
+        folders: [
+          { name: "section: Old Title (id: 1)" },
+          { name: "section: New Title (id: 1)" },
+          { name: "section: Other (id: 2)" },
+        ],
+      };
+
+      (
+        cloudinary.api.sub_folders as ReturnType<typeof vi.fn>
+      ).mockResolvedValue(mockFolders);
       (
         cloudinary.api.delete_folder as ReturnType<typeof vi.fn>
       ).mockResolvedValue({});
 
-      await remover.deleteFolder("my-folder");
+      await remover.deleteFoldersBySectionId(username, userId, sectionId);
 
-      expect(cloudinary.api.delete_folder).toHaveBeenCalledWith("my-folder");
+      expect(cloudinary.api.sub_folders).toHaveBeenCalledWith(
+        "user_files/john (id: 42)"
+      );
+      expect(cloudinary.api.delete_folder).toHaveBeenCalledTimes(2);
+      expect(cloudinary.api.delete_folder).toHaveBeenCalledWith(
+        "user_files/john (id: 42)/section: Old Title (id: 1)"
+      );
+      expect(cloudinary.api.delete_folder).toHaveBeenCalledWith(
+        "user_files/john (id: 42)/section: New Title (id: 1)"
+      );
     });
 
-    it("should log warning if delete_folder fails", async () => {
-      const consoleWarnSpy = vi
-        .spyOn(console, "warn")
+    it("should handle errors gracefully", async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, "error")
         .mockImplementation(() => {});
+
       (
-        cloudinary.api.delete_folder as ReturnType<typeof vi.fn>
-      ).mockRejectedValue(new Error("Failed to delete folder"));
+        cloudinary.api.sub_folders as ReturnType<typeof vi.fn>
+      ).mockRejectedValue(new Error("API error"));
 
-      await remover.deleteFolder("broken-folder");
+      await expect(
+        remover.deleteFoldersBySectionId("john", 42, 1)
+      ).rejects.toThrow();
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        "Could not delete folder broken-folder:",
-        "Failed to delete folder"
-      );
-
-      consoleWarnSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
     });
   });
 });

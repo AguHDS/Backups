@@ -3,11 +3,11 @@ import registration from "./registration.js";
 import logout from "./logout.js";
 import refreshToken from "./refreshToken.js";
 import getProfile from "./getProfile.js";
-import updateBioAndSections from "./updateBioAndSections.js";
+import updateBio from "./updateBio.js";
+import updateSections from "./updateSections.js";
 import uploadFiles from "./uploadFiles.js";
 import profilePicture from "./profilePicture.js";
 import deleteSections from "./deleteSections.js";
-import storage from "./storage.js";
 import getStorage from "./getStorage.js";
 import dashboard from "./dashboard.js";
 import deleteFiles from "./deleteFiles.js";
@@ -18,11 +18,11 @@ export {
   logout,
   refreshToken,
   getProfile,
-  updateBioAndSections,
+  updateBio,
+  updateSections,
   uploadFiles,
   profilePicture,
   deleteSections,
-  storage,
   getStorage,
   dashboard,
   deleteFiles

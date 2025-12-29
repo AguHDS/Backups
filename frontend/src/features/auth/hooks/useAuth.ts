@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { login } from "@/app/redux/features/slices/authSlice";
 import { getFormData } from "../helpers";
 import { useLogin, useRegister } from "./useAuthMutations";
+import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import type {
   LoginRequest,
   RegisterRequest,
@@ -69,10 +70,8 @@ export const useAuth = () => {
         navigate({ to: "/dashboard", replace: true });
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Authentication failed";
-
-      setStatusMessage(errorMessage);
+      const messages = processErrorMessages(error);
+      setStatusMessage(messages[0] || "Authentication failed");
 
       // Log for debugging
       if (import.meta.env.VITE_QUERY_ENV === "development") {

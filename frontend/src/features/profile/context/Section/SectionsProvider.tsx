@@ -21,6 +21,7 @@ interface SectionsContextType {
   addSection: () => void;
   deleteSection: (sectionId: number) => void;
   renderFilesOnResponse: (sectionId: number, newFiles: UploadedFile[]) => void;
+  removeFilesFromSection: (sectionId: number, filePublicIds: string[]) => void;
   updateSectionIds: (idMap: { tempId: number; newId: number }[]) => void;
   resetSections: () => void;
   updateInitialSections: (newSections: SectionWithFile[]) => void;
@@ -87,6 +88,24 @@ export const SectionsProvider = ({
     []
   );
 
+  const removeFilesFromSection = useCallback(
+    (sectionId: number, filePublicIds: string[]) => {
+      setSections((prev) =>
+        prev.map((section) =>
+          section.id === sectionId
+            ? {
+                ...section,
+                files: (section.files || []).filter(
+                  (file) => !filePublicIds.includes(file.publicId)
+                ),
+              }
+            : section
+        )
+      );
+    },
+    []
+  );
+
   const updateSectionIds = useCallback(
     (idMap: { tempId: number; newId: number }[]) => {
       setSections((prevSections) => {
@@ -126,6 +145,7 @@ export const SectionsProvider = ({
       addSection,
       deleteSection,
       renderFilesOnResponse,
+      removeFilesFromSection,
       updateSectionIds,
       resetSections,
       updateInitialSections,
@@ -137,6 +157,7 @@ export const SectionsProvider = ({
       addSection,
       deleteSection,
       renderFilesOnResponse,
+      removeFilesFromSection,
       updateSectionIds,
       resetSections,
       updateInitialSections,

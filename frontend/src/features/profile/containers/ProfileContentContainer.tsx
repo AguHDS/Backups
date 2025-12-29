@@ -8,7 +8,8 @@ import {
 } from "../context";
 import { useStorageData } from "../hooks/useStorageData";
 import {
-  useUpdateBioAndSections,
+  useUpdateBio,
+  useUpdateSections,
   useDeleteSections,
   useDeleteFiles,
   useUploadProfilePicture,
@@ -57,7 +58,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const isInitialMount = useRef(true);
 
   // Mutations
-  const updateBioAndSectionsMutation = useUpdateBioAndSections();
+  const updateBioMutation = useUpdateBio();
+  const updateSectionsMutation = useUpdateSections();
   const deleteSectionsMutation = useDeleteSections();
   const deleteFilesMutation = useDeleteFiles();
   const uploadProfilePictureMutation = useUploadProfilePicture();
@@ -88,8 +90,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     sections.forEach((section, index) => {
       if (!section.title.trim())
         errors.push(`Section ${index + 1} title is empty`);
-      if (!section.description.trim())
-        errors.push(`Section ${index + 1} description is empty`);
     });
 
     return errors;
@@ -142,27 +142,22 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
 
       // Delete files if any
       if (filesToDelete.length > 0) {
-        // Delete files for each section
-        await Promise.all(
-          filesToDelete.map((deletion) =>
-            deleteFilesMutation.mutateAsync({
-              username,
-              data: {
-                filePublicIds: deletion.publicIds,
-                sectionId: deletion.sectionId,
-              },
-            })
-          )
-        );
+        await deleteFilesMutation.mutateAsync({
+          username,
+          data: filesToDelete,
+        });
       }
 
-      // Update bio and sections
-      const responseData = await updateBioAndSectionsMutation.mutateAsync({
+      // Update bio
+      await updateBioMutation.mutateAsync({
         username,
-        data: {
-          bio: updateData.bio,
-          sections,
-        },
+        data: { bio: updateData.bio },
+      });
+
+      // Update sections
+      const responseData = await updateSectionsMutation.mutateAsync({
+        username,
+        data: { sections },
       });
 
       if (responseData.newlyCreatedSections) {
@@ -214,7 +209,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     uploadProfilePictureMutation,
     deleteSectionsMutation,
     deleteFilesMutation,
-    updateBioAndSectionsMutation,
+    updateBioMutation,
+    updateSectionsMutation,
     invalidateDashboard,
   ]);
 

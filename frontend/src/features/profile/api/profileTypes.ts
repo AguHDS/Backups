@@ -2,8 +2,11 @@ import type { UserProfileWithFiles } from "../types/profileData";
 import type { BaseSection, UploadedFile } from "../types/section";
 
 // Request types
-export interface UpdateBioAndSectionsRequest {
+export interface UpdateBioRequest {
   bio: string;
+}
+
+export interface UpdateSectionsRequest {
   sections: BaseSection[];
 }
 
@@ -12,8 +15,8 @@ export interface DeleteSectionsRequest {
 }
 
 export interface DeleteFilesRequest {
-  filePublicIds: string[];
   sectionId: number;
+  publicIds: string[];
 }
 
 // Response types
@@ -25,7 +28,11 @@ export interface GetStorageResponse {
   remaining: number;
 }
 
-export interface UpdateBioAndSectionsResponse {
+export interface UpdateBioResponse {
+  message: string;
+}
+
+export interface UpdateSectionsResponse {
   message: string;
   newlyCreatedSections?: Array<{
     tempId: number;

@@ -1,14 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  updateBioAndSections,
+  updateBio,
+  updateSections,
   deleteSections,
   deleteFiles,
   uploadFiles,
   uploadProfilePicture,
 } from "../api/profileApi";
 import type {
-  UpdateBioAndSectionsRequest,
-  UpdateBioAndSectionsResponse,
+  UpdateBioRequest,
+  UpdateBioResponse,
+  UpdateSectionsRequest,
+  UpdateSectionsResponse,
   DeleteSectionsRequest,
   DeleteSectionsResponse,
   DeleteFilesRequest,
@@ -17,9 +20,14 @@ import type {
   UploadProfilePictureResponse,
 } from "../api/profileTypes";
 
-interface UpdateBioAndSectionsMutationVariables {
+interface UpdateBioMutationVariables {
   username: string;
-  data: UpdateBioAndSectionsRequest;
+  data: UpdateBioRequest;
+}
+
+interface UpdateSectionsMutationVariables {
+  username: string;
+  data: UpdateSectionsRequest;
 }
 
 interface DeleteSectionsMutationVariables {
@@ -29,7 +37,7 @@ interface DeleteSectionsMutationVariables {
 
 interface DeleteFilesMutationVariables {
   username: string;
-  data: DeleteFilesRequest;
+  data: DeleteFilesRequest[];
 }
 
 interface UploadFilesMutationVariables {
@@ -44,15 +52,28 @@ interface UploadProfilePictureMutationVariables {
   formData: FormData;
 }
 
-export const useUpdateBioAndSections = () => {
+export const useUpdateBio = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<UpdateBioResponse, Error, UpdateBioMutationVariables>({
+    mutationFn: ({ username, data }) => updateBio(username, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile", variables.username],
+      });
+    },
+  });
+};
+
+export const useUpdateSections = () => {
   const queryClient = useQueryClient();
 
   return useMutation<
-    UpdateBioAndSectionsResponse,
+    UpdateSectionsResponse,
     Error,
-    UpdateBioAndSectionsMutationVariables
+    UpdateSectionsMutationVariables
   >({
-    mutationFn: ({ username, data }) => updateBioAndSections(username, data),
+    mutationFn: ({ username, data }) => updateSections(username, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["profile", variables.username],

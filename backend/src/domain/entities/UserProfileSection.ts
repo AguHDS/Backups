@@ -4,7 +4,7 @@ export class UserProfileSection {
   constructor(
     public id: number,
     public title: string,
-    public description: string,
+    public description?: string,
     public files?: UserFile[],
     public isPublic: boolean = true
   ) {}

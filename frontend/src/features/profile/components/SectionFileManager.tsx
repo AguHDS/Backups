@@ -24,10 +24,9 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     new Set()
   );
   const [uploadErrors, setUploadErrors] = useState<string[]>([]);
-  const [hiddenFileIds, setHiddenFileIds] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isEditing, isOwnProfile } = useEditProfile();
-  const { renderFilesOnResponse } = useSections();
+  const { renderFilesOnResponse, removeFilesFromSection } = useSections();
   const { addFilesToDelete } = useFileDeletion();
   const invalidateDashboard = useInvalidateDashboard();
   const { username } = useParams({ from: "/profile/$username" });
@@ -58,14 +57,13 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       });
       setUploadErrors(messages);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     uploadFilesMutation.isSuccess,
     uploadFilesMutation.isError,
     uploadFilesMutation.data,
     uploadFilesMutation.error,
     sectionId,
-    renderFilesOnResponse,
-    invalidateDashboard,
   ]);
 
   // Handle selecting files from input
@@ -131,17 +129,12 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       return;
     }
 
-    // Hide deleted files from UI
-    setHiddenFileIds((prev) => new Set([...prev, ...idsToDelete]));
-    // Add to context deletion list
+    // Remove files from section immediately in UI
+    removeFilesFromSection(sectionId, idsToDelete);
+    // Add to context deletion list for save
     addFilesToDelete(sectionId, idsToDelete);
     setSelectedFileIds(new Set());
-  }, [selectedFileIds, uploadedFiles, addFilesToDelete, sectionId]);
-
-  const visibleFiles = useMemo(
-    () => uploadedFiles.filter((file) => !hiddenFileIds.has(file.publicId)),
-    [uploadedFiles, hiddenFileIds]
-  );
+  }, [selectedFileIds, uploadedFiles, addFilesToDelete, removeFilesFromSection, sectionId]);
 
   const hasErrorsToShow =
     uploadErrors.length > 0 || uploadFilesMutation.isError;
@@ -150,7 +143,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     <div className="flex flex-col items-center w-full">
       {/* Display files inside sections */}
       <SectionFileGallery
-        uploadedFiles={visibleFiles}
+        uploadedFiles={uploadedFiles}
         isEditing={isEditing}
         selectedFileIds={selectedFileIds}
         toggleFileSelection={toggleFileSelection}
