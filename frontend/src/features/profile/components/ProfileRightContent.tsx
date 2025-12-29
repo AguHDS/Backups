@@ -39,8 +39,12 @@ export const ProfileRightContent = ({
 
           <Bio bio={updateData.bio} onBioChange={onBioChange} />
 
-          <div className="h-1"></div>
-          <div className="border-[#121212] border-solid w-full"></div>
+          {/* Separator between Bio and Sections */}
+          <div className="my-8 flex items-center gap-3">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#3a3a3a] to-transparent"></div>
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Sections</span>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#3a3a3a] to-transparent"></div>
+          </div>
 
           {sections.length === 0 ? (
             <p className="text-center text-gray-400 my-4">
@@ -70,10 +74,11 @@ export const ProfileRightContent = ({
                           </select>
                         </div>
 
-                        <div className="flex justify-center">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="h-[2px] w-10 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
                           <input
                             type="text"
-                            className="w-[25%] text-center bg-[#272727] text-white text-[18px] p-2 border border-[#444]"
+                            className="bg-[#272727] text-white text-[18px] p-2 border border-[#444] w-auto min-w-[200px]"
                             placeholder="Title for Section"
                             value={section.title}
                             onChange={(e) =>
@@ -84,18 +89,23 @@ export const ProfileRightContent = ({
                       </div>
                     </>
                   ) : (
-                    <h3 className="text-center text-[#ccc] my-1 text-[28px] border-t-[10px] pt-3 w-full">
-                      {section.title}
-                    </h3>
+                    <div className="mb-4">
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="h-[2px] w-10 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                        <h3 className="text-[#ccc] text-[28px]">
+                          {section.title}
+                        </h3>
+                      </div>
+                    </div>
                   )}
 
                   {isEditing ? (
                     <>
                       <textarea
-                        className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-2 border border-[#444] resize-none"
+                        className="w-[95%] mx-auto block bg-[#272727] text-[#ccc] text-[14px] p-2 mb-2 border border-[#444] resize-none text-center"
                         rows={3}
-                        placeholder="Add new description"
-                        value={section.description}
+                        placeholder="Add description (optional)"
+                        value={section.description || ""}
                         onChange={(e) =>
                           updateSection(index, "description", e.target.value)
                         }
@@ -109,7 +119,7 @@ export const ProfileRightContent = ({
                     </>
                   ) : (
                     <>
-                      <p className="flex items-center text-gray-300">
+                      <p className="text-center text-gray-300">
                         {section.description}
                       </p>
                       <div className="mb-4">

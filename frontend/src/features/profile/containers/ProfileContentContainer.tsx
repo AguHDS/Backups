@@ -90,8 +90,6 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     sections.forEach((section, index) => {
       if (!section.title.trim())
         errors.push(`Section ${index + 1} title is empty`);
-      if (!section.description.trim())
-        errors.push(`Section ${index + 1} description is empty`);
     });
 
     return errors;

@@ -12,7 +12,7 @@ interface AuthInput {
 
 export const SignUp = () => {
   const { setIsModalOpen } = useModalContext();
-  const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
+  const { input, setInput, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setInput((prev: AuthInput) => ({ ...prev, user: e.target.value }));
@@ -105,7 +105,7 @@ export const SignUp = () => {
                   </div>
                   <ValidationMessages
                     input={input.inputsWarnings}
-                    status={status}
+                    status={null}
                     message={statusMessage}
                   />
                   <div className="flex justify-center">

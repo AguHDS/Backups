@@ -9,9 +9,8 @@ const validatorUpdateSections: ValidationChain[] = [
     .withMessage("Title cannot be empty"),
 
   check("sections.*.description")
-    .trim()
-    .notEmpty()
-    .withMessage("Description cannot be empty"),
+    .optional({ values: "falsy" })
+    .trim(),
 
   check("sections.*.isPublic")
     .isBoolean()
