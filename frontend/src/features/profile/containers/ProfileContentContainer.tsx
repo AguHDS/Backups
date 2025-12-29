@@ -8,7 +8,8 @@ import {
 } from "../context";
 import { useStorageData } from "../hooks/useStorageData";
 import {
-  useUpdateBioAndSections,
+  useUpdateBio,
+  useUpdateSections,
   useDeleteSections,
   useDeleteFiles,
   useUploadProfilePicture,
@@ -57,7 +58,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
   const isInitialMount = useRef(true);
 
   // Mutations
-  const updateBioAndSectionsMutation = useUpdateBioAndSections();
+  const updateBioMutation = useUpdateBio();
+  const updateSectionsMutation = useUpdateSections();
   const deleteSectionsMutation = useDeleteSections();
   const deleteFilesMutation = useDeleteFiles();
   const uploadProfilePictureMutation = useUploadProfilePicture();
@@ -148,13 +150,16 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
         });
       }
 
-      // Update bio and sections
-      const responseData = await updateBioAndSectionsMutation.mutateAsync({
+      // Update bio
+      await updateBioMutation.mutateAsync({
         username,
-        data: {
-          bio: updateData.bio,
-          sections,
-        },
+        data: { bio: updateData.bio },
+      });
+
+      // Update sections
+      const responseData = await updateSectionsMutation.mutateAsync({
+        username,
+        data: { sections },
       });
 
       if (responseData.newlyCreatedSections) {
@@ -206,7 +211,8 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
     uploadProfilePictureMutation,
     deleteSectionsMutation,
     deleteFilesMutation,
-    updateBioAndSectionsMutation,
+    updateBioMutation,
+    updateSectionsMutation,
     invalidateDashboard,
   ]);
 

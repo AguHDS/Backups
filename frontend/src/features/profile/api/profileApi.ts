@@ -2,8 +2,10 @@ import { axiosClient } from "@/lib/http";
 import type {
   GetProfileResponse,
   GetStorageResponse,
-  UpdateBioAndSectionsRequest,
-  UpdateBioAndSectionsResponse,
+  UpdateBioRequest,
+  UpdateBioResponse,
+  UpdateSectionsRequest,
+  UpdateSectionsResponse,
   DeleteSectionsRequest,
   DeleteSectionsResponse,
   DeleteFilesRequest,
@@ -35,12 +37,27 @@ export const getStorage = async (
   return response.data;
 };
 
-export const updateBioAndSections = async (
+export const updateBio = async (
   username: string,
-  data: UpdateBioAndSectionsRequest
-): Promise<UpdateBioAndSectionsResponse> => {
-  const response = await axiosClient.post<UpdateBioAndSectionsResponse>(
-    `/api/updateBioAndSections/${username}`,
+  data: UpdateBioRequest
+): Promise<UpdateBioResponse> => {
+  const response = await axiosClient.post<UpdateBioResponse>(
+    `/api/updateBio/${username}`,
+    data,
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+
+export const updateSections = async (
+  username: string,
+  data: UpdateSectionsRequest
+): Promise<UpdateSectionsResponse> => {
+  const response = await axiosClient.post<UpdateSectionsResponse>(
+    `/api/updateSections/${username}`,
     data,
     {
       withCredentials: true,

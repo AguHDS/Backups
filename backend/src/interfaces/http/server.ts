@@ -14,7 +14,8 @@ import {
   logout,
   refreshToken,
   getProfile,
-  updateBioAndSections,
+  updateBio,
+  updateSections,
   uploadFiles,
   profilePicture,
   deleteSections,
@@ -51,7 +52,8 @@ app.use("/api/registration", registration);
 app.use("/api/logout", logout);
 app.use("/api/refreshToken", refreshToken);
 app.use("/api/getProfile", getProfile);
-app.use("/api/updateBioAndSections", updateBioAndSections);
+app.use("/api/updateBio", updateBio);
+app.use("/api/updateSections", updateSections);
 app.use("/api/uploadFiles", uploadFiles);
 app.use("/api/profilePicture", profilePicture);
 app.use("/api/deleteSections", deleteSections);

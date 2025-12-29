@@ -12,12 +12,12 @@ describe("DeleteFilesFromSectionsUseCase", () => {
     saveMany: vi.fn(),
     findBySectionId: vi.fn(),
     deleteFilesByPublicIds: vi.fn(),
+    getFilesWithSizeBySectionId: vi.fn(),
   };
 
   const mockCloudinaryRemover: CloudinaryRemover = {
     deleteFilesByPublicIds: vi.fn(),
-    deleteFolder: vi.fn(),
-  };
+  } as any;
 
   const mockStorageRepo: StorageUsageRepository = {
     getUsedStorage: vi.fn(),
@@ -27,6 +27,8 @@ describe("DeleteFilesFromSectionsUseCase", () => {
     getMaxStorage: vi.fn(),
     getRemainingStorage: vi.fn(),
     tryReserveStorage: vi.fn(),
+    getProfilePictureSize: vi.fn(),
+    updateProfilePictureSize: vi.fn(),
   };
 
   const useCase = new DeleteFilesFromSectionsUseCase(
@@ -55,9 +57,9 @@ describe("DeleteFilesFromSectionsUseCase", () => {
 
     // Simulate deleted files with different users
     const deletedFiles: UserFile[] = [
-      new UserFile("img1", "url1", 123, 1000, 1), // belongs to user
-      new UserFile("img2", "url2", 123, 2000, 2), // belongs to other user
-      new UserFile("img3", "url3", 456, 500, 1), // belongs to user
+      new UserFile("img1", 123, 1000, 1), // belongs to user
+      new UserFile("img2", 123, 2000, 2), // belongs to other user
+      new UserFile("img3", 456, 500, 1), // belongs to user
     ];
 
     (mockFileRepo.deleteFilesByPublicIds as any).mockResolvedValueOnce(
@@ -113,7 +115,7 @@ describe("DeleteFilesFromSectionsUseCase", () => {
 
     // Deleted file belongs to other user
     const deletedFiles: UserFile[] = [
-      new UserFile("img1", "url1", 4, 1000, 1),
+      new UserFile("img1", 4, 1000, 1),
     ];
 
     (mockFileRepo.deleteFilesByPublicIds as any).mockResolvedValueOnce(
@@ -136,7 +138,7 @@ describe("DeleteFilesFromSectionsUseCase", () => {
       { sectionId: 3, publicIds: ["img1"] },
     ];
 
-    const deletedFiles: UserFile[] = [new UserFile("img1", "url", 3, 300, 1)];
+    const deletedFiles: UserFile[] = [new UserFile("img1", 3, 300, 1)];
 
     (mockFileRepo.deleteFilesByPublicIds as any).mockResolvedValueOnce(
       deletedFiles

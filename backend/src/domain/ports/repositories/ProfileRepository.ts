@@ -50,6 +50,26 @@ export interface ProfileRepository {
   ): Promise<{ newlyCreatedSections: { tempId: number; newId: number }[] }>;
 
   /**
+   * Updates only the bio of a user profile
+   *
+   * @param bio - The new biography text
+   * @param userId - The ID of the user to update
+   */
+  updateBio(bio: string, userId: string | number): Promise<void>;
+
+  /**
+   * Updates only the sections of a user profile
+   *
+   * @param sections - List of updated profile sections
+   * @param userId - The ID of the user to update
+   * @returns An object with the temporal and real id from signed in the db
+   */
+  updateSections(
+    sections: UserProfileSection[],
+    userId: string | number
+  ): Promise<{ newlyCreatedSections: { tempId: number; newId: number }[] }>;
+
+  /**
    * Deletes multiple user profile sections based on their IDs
    *
    * @param sectionIds - An array of section IDs to be deleted
