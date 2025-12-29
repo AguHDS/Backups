@@ -29,7 +29,7 @@ interface DeleteSectionsMutationVariables {
 
 interface DeleteFilesMutationVariables {
   username: string;
-  data: DeleteFilesRequest;
+  data: DeleteFilesRequest[];
 }
 
 interface UploadFilesMutationVariables {

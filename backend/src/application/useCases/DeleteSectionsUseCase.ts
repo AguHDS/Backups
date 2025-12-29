@@ -33,13 +33,13 @@ export class DeleteSectionsUseCase {
     // Delete files from Cloudinary
     await this.fileCloudinaryRemover.deleteFilesByPublicIds(publicIds);
 
-    // Delete folders from Cloudinary
-    const sectionInfos = await this.profileRepo.getSectionTitlesByIds(
-      sectionIds
-    );
-    for (const { id, title } of sectionInfos) {
-      const folderPath = `user_files/${username} (id: ${userId})/section: ${title} (id: ${id})`;
-      await this.fileCloudinaryRemover.deleteFolder(folderPath);
+    // Delete all folders from Cloudinary (including old title versions)
+    for (const sectionId of sectionIds) {
+      await this.fileCloudinaryRemover.deleteFoldersBySectionId(
+        username,
+        userId,
+        sectionId
+      );
     }
 
     // Delete sections from db

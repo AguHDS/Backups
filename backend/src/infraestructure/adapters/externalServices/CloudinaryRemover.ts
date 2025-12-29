@@ -51,20 +51,45 @@ export class CloudinaryRemover {
   }
 
   /**
-   * Deletes a folder and all its contents from Cloudinary
-   *
-   * @param folderPath - The path of the folder to delete
+   * Deletes all folders matching a section ID pattern
+   * Used to delete all versions of a section folder when the title was changed
    */
-  async deleteFolder(folderPath: string): Promise<void> {
-    if (!folderPath || typeof folderPath !== "string") {
-      throw new TypeError("folderPath must be a non-empty string");
+  async deleteFoldersBySectionId(
+    username: string,
+    userId: string | number,
+    sectionId: string | number
+  ): Promise<void> {
+    if (!username || !userId || !sectionId) {
+      throw new TypeError("username, userId, and sectionId are required");
     }
 
     try {
-      await cloudinary.api.delete_folder(folderPath);
+      const userFolderPath = `user_files/${username} (id: ${userId})`;
+
+      // List all subfolders in the user's folder
+      const result = await cloudinary.api.sub_folders(userFolderPath);
+
+      // Filter folders that match the section ID pattern
+      const sectionFolders = result.folders.filter((folder: { name: string }) =>
+        folder.name.includes(`(id: ${sectionId})`)
+      );
+
+      // Delete each matching folder
+      for (const folder of sectionFolders) {
+        const fullPath = `${userFolderPath}/${folder.name}`;
+        try {
+          await cloudinary.api.delete_folder(fullPath);
+        } catch (error) {
+          // Log but continue with other folders
+          this.logCloudinaryError(
+            `Could not delete folder: ${fullPath}`,
+            error
+          );
+        }
+      }
     } catch (error) {
       this.logCloudinaryError(
-        `Could not delete Cloudinary folder: ${folderPath}`,
+        `Could not delete folders for section ${sectionId}`,
         error
       );
       throw error;

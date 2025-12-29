@@ -67,7 +67,7 @@ export const deleteSections = async (
 
 export const deleteFiles = async (
   username: string,
-  data: DeleteFilesRequest
+  data: DeleteFilesRequest[]
 ): Promise<DeleteFilesResponse> => {
   const response = await axiosClient.delete<DeleteFilesResponse>(
     `/api/deleteFiles/${username}`,

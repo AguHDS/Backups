@@ -12,8 +12,8 @@ export interface DeleteSectionsRequest {
 }
 
 export interface DeleteFilesRequest {
-  filePublicIds: string[];
   sectionId: number;
+  publicIds: string[];
 }
 
 // Response types

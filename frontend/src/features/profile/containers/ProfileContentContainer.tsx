@@ -142,18 +142,10 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
 
       // Delete files if any
       if (filesToDelete.length > 0) {
-        // Delete files for each section
-        await Promise.all(
-          filesToDelete.map((deletion) =>
-            deleteFilesMutation.mutateAsync({
-              username,
-              data: {
-                filePublicIds: deletion.publicIds,
-                sectionId: deletion.sectionId,
-              },
-            })
-          )
-        );
+        await deleteFilesMutation.mutateAsync({
+          username,
+          data: filesToDelete,
+        });
       }
 
       // Update bio and sections
