@@ -15,6 +15,7 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as NotFoundRouteImport } from './routes/NotFound'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as AdminDashboardIndexRouteImport } from './routes/admin-dashboard/index'
 import { Route as AccountSettingsIndexRouteImport } from './routes/account-settings/index'
 import { Route as ProfileUsernameRouteImport } from './routes/profile/$username'
 
@@ -48,6 +49,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
+  id: '/admin-dashboard/',
+  path: '/admin-dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountSettingsIndexRoute = AccountSettingsIndexRouteImport.update({
   id: '/account-settings/',
   path: '/account-settings/',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/unauthorized': typeof UnauthorizedRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/account-settings': typeof AccountSettingsIndexRoute
+  '/admin-dashboard': typeof AdminDashboardIndexRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/account-settings': typeof AccountSettingsIndexRoute
+  '/admin-dashboard': typeof AdminDashboardIndexRoute
   '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/unauthorized': typeof UnauthorizedRoute
   '/profile/$username': typeof ProfileUsernameRoute
   '/account-settings/': typeof AccountSettingsIndexRoute
+  '/admin-dashboard/': typeof AdminDashboardIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/profile/$username'
     | '/account-settings'
+    | '/admin-dashboard'
     | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/profile/$username'
     | '/account-settings'
+    | '/admin-dashboard'
     | '/dashboard'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/profile/$username'
     | '/account-settings/'
+    | '/admin-dashboard/'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   UnauthorizedRoute: typeof UnauthorizedRoute
   ProfileUsernameRoute: typeof ProfileUsernameRoute
   AccountSettingsIndexRoute: typeof AccountSettingsIndexRoute
+  AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin-dashboard/': {
+      id: '/admin-dashboard/'
+      path: '/admin-dashboard'
+      fullPath: '/admin-dashboard'
+      preLoaderRoute: typeof AdminDashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account-settings/': {
       id: '/account-settings/'
       path: '/account-settings'
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnauthorizedRoute: UnauthorizedRoute,
   ProfileUsernameRoute: ProfileUsernameRoute,
   AccountSettingsIndexRoute: AccountSettingsIndexRoute,
+  AdminDashboardIndexRoute: AdminDashboardIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport

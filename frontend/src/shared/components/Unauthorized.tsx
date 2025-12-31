@@ -16,8 +16,7 @@ export const Unauthorized = () => {
         </h1>
 
         <p className="text-gray-600 dark:text-gray-300 text-lg">
-          You don&apos;t have permission to access this page. This area requires
-          special privileges.
+          You don&apos;t have permission to access this page.
         </p>
 
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
