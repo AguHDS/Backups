@@ -8,11 +8,8 @@ import { createProxyMiddleware, Options } from "http-proxy-middleware";
 import allowedOrigins from "../../config/allowedOrigins.js";
 
 // routes
+import auth from "./routes/auth.js";
 import {
-  login,
-  registration,
-  logout,
-  refreshToken,
   getProfile,
   updateBio,
   updateSections,
@@ -47,10 +44,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // API routes
-app.use("/api/login", login);
-app.use("/api/registration", registration);
-app.use("/api/logout", logout);
-app.use("/api/refreshToken", refreshToken);
+// BetterAuth routes (handles /api/auth/*)
+app.use("/api/auth", auth);
+
+// Other API routes
 app.use("/api/getProfile", getProfile);
 app.use("/api/updateBio", updateBio);
 app.use("/api/updateSections", updateSections);

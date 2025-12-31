@@ -4,7 +4,7 @@ import {
   UserRepository,
   NameAndEmailCheckResult,
 } from "../../../domain/ports/repositories/UserRepository.js";
-import { RowDataPacket, ResultSetHeader, Connection } from "mysql2/promise";
+import { RowDataPacket, Connection } from "mysql2/promise";
 
 interface UserRow extends RowDataPacket {
   namedb: string;
@@ -87,46 +87,6 @@ export class MysqlUserRepository implements UserRepository {
     } catch (error) {
       console.error("Error checking user or email existence", error);
       throw new Error("Error checking user existence in database");
-    }
-  }
-  async insertNewUser(
-    name: string,
-    email: string,
-    pass: string,
-    role: "user" | "admin"
-  ): Promise<number> {
-    const connection = await promisePool.getConnection();
-    try {
-      await connection.beginTransaction();
-
-      // Insert new user in users table
-      const [userResult] = await connection.execute<ResultSetHeader>(
-        "INSERT INTO users (namedb, emaildb, passdb, role) VALUES (?, ?, ?, ?)",
-        [name, email, pass, role]
-      );
-
-      const userId = userResult.insertId;
-
-      // Add foreign key to users_profile table
-      await connection.execute(
-        "INSERT INTO users_profile (fk_users_id) VALUES (?)",
-        [userId]
-      );
-
-      // Add foreign key to users_profile_sections table
-      await connection.execute(
-        "INSERT INTO users_profile_sections (fk_users_id) VALUES (?)",
-        [userId]
-      );
-
-      await connection.commit();
-      return userId;
-    } catch (error) {
-      await connection.rollback();
-      console.error("Error adding new user and profile", error);
-      throw new Error("Error adding new user and profile");
-    } finally {
-      connection.release();
     }
   }
 }

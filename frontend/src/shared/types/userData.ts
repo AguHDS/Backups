@@ -1,12 +1,6 @@
-export interface UserSessionData {
+export interface UserData {
+  id: string;
   name: string;
-  email?: string;
+  email: string;
   role: "user" | "admin";
-  id: number;
-}
-
-export interface UserDataWithToken {
-  accessToken: string;
-  userData: UserSessionData;
-  refreshTokenRotated: boolean;
 }

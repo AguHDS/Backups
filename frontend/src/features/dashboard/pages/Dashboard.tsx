@@ -7,7 +7,7 @@ import { LoadingSpinner } from "@/shared";
 import { useDashboardSummary } from "@/features/dashboard/hooks/useDashboard";
 
 export const Dashboard = () => {
-  const { userData } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
   const { data, isLoading, isError, error } = useDashboardSummary();
 
   if (isLoading) {
@@ -39,7 +39,7 @@ export const Dashboard = () => {
         {/* About section */}
         <div className="bg-[#232d42] p-8 shadow-lg">
           <h2 className="text-3xl font-bold text-gray-200 mb-10 flex justify-center">
-            Welcome{userData?.name ? `, ${userData.name}` : ""}!
+            Welcome{user?.name ? `, ${user.name}` : ""}!
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             <AboutCard

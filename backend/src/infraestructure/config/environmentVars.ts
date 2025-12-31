@@ -1,8 +1,6 @@
 interface Config {
   portFrontend: string;
   portBackend: string;
-  jwtSecret: string;
-  jwtRefreshSecret: string;
   nodeEnv: string;
   dbHost: string;
   dbSchema: string;
@@ -16,8 +14,6 @@ interface Config {
 const requiredVariables = [
   "PORT_FRONTEND",
   "PORT_BACKEND",
-  "JWT_SECRET",
-  "JWT_REFRESH_SECRET",
   "NODE_ENV",
   "DB_HOST",
   "DB_SCHEMA",
@@ -26,6 +22,7 @@ const requiredVariables = [
   "CLOUDINARY_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
+  "DATABASE_URL",
 ] as const;
 
 const missingVariables = requiredVariables.filter((variable) => !process.env[variable]);
@@ -44,8 +41,6 @@ const getEnvVariable = (key: string): string => {
 const config: Config = {
   portFrontend: getEnvVariable("PORT_FRONTEND"),
   portBackend: getEnvVariable("PORT_BACKEND"),
-  jwtSecret: getEnvVariable("JWT_SECRET"),
-  jwtRefreshSecret: getEnvVariable("JWT_REFRESH_SECRET"),
   nodeEnv: getEnvVariable("NODE_ENV"),
   dbHost: getEnvVariable("DB_HOST"),
   dbSchema: getEnvVariable("DB_SCHEMA"),

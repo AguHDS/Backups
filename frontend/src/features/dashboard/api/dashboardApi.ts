@@ -6,10 +6,7 @@ export interface DashboardSummaryResponse {
 
 export const getDashboardSummary = async (): Promise<DashboardSummaryResponse> => {
   const response = await axiosClient.get<DashboardSummaryResponse>(
-    "/api/dashboard-summary",
-    {
-      withCredentials: true,
-    }
+    "/api/dashboard-summary"
   );
 
   return response.data;

@@ -11,7 +11,7 @@ interface AuthInput {
 }
 
 export const SignIn = () => {
-  const { input, setInput, status, statusMessage, handleSubmit } = useAuth();
+  const { input, setInput, statusMessage, handleSubmit } = useAuth();
 
   const handleUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setInput((prev: AuthInput) => ({ ...prev, user: e.target.value }));

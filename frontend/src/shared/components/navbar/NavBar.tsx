@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/app/redux/store";
 
 export const NavBar = () => {
-  const { isAuthenticated, userData } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   
   return (
     <>
@@ -26,8 +26,8 @@ export const NavBar = () => {
             </Link>
           </div>
           <div className="flex w-full h-[3.5rem] mr-3.5 items-center justify-end">
-            {isAuthenticated && userData.name ? (
-              <AccountOptions username={userData.name} />
+            {isAuthenticated && user?.name ? (
+              <AccountOptions username={user.name} />
             ) : (
               <>
                 <Link to="/sign-in">

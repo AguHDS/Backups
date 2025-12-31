@@ -16,6 +16,7 @@ const createAxiosClient = (): AxiosInstance => {
   const client = axios.create({
     baseURL: API_BASE_URL,
     timeout: REQUEST_TIMEOUT,
+    withCredentials: true, // Include cookies in all requests
     headers: {
       "Content-Type": "application/json",
     },

@@ -6,6 +6,7 @@ import type { RowDataPacket } from "mysql2";
 // Definir tipo para las filas de la base de datos
 interface UserFileRow {
   public_id: string;
+  url: string;
   section_id: number;
   size_in_bytes: number;
   user_id: number;
@@ -15,6 +16,7 @@ interface UserFileRow {
 function mapRowToUserFile(row: UserFileRow): UserFile {
   return new UserFile(
     row.public_id,
+    row.url,
     row.section_id,
     row.size_in_bytes,
     row.user_id
@@ -24,10 +26,11 @@ function mapRowToUserFile(row: UserFileRow): UserFile {
 export class MysqlFileRepository implements FileRepository {
   async save(file: UserFile): Promise<void> {
     const query = `
-    INSERT INTO users_files (public_id, section_id, size_in_bytes, user_id)
+    INSERT INTO users_files (public_id, url, section_id, size_in_bytes, user_id)
     VALUES (?, ?, ?, ?, ?)`;
     const values = [
       file.publicId,
+      file.url,
       file.sectionId,
       file.sizeInBytes,
       file.userId,
@@ -45,11 +48,12 @@ export class MysqlFileRepository implements FileRepository {
     if (files.length === 0) return;
 
     const query = `
-    INSERT INTO users_files (public_id, section_id, size_in_bytes, user_id)
+    INSERT INTO users_files (public_id, url, section_id, size_in_bytes, user_id)
     VALUES ?`;
 
     const values = files.map((file) => [
       file.publicId,
+      file.url,
       file.sectionId,
       file.sizeInBytes,
       file.userId,
@@ -65,7 +69,7 @@ export class MysqlFileRepository implements FileRepository {
 
   async findBySectionId(sectionId: number): Promise<UserFile[]> {
     const query = `
-    SELECT public_id, section_id, size_in_bytes, user_id
+    SELECT public_id, url, section_id, size_in_bytes, user_id
     FROM users_files
     WHERE section_id = ?`;
 
@@ -89,7 +93,7 @@ export class MysqlFileRepository implements FileRepository {
     const placeholders = publicIds.map(() => "?").join(", ");
 
     const selectQuery = `
-    SELECT public_id, section_id, size_in_bytes, user_id
+    SELECT public_id, url, section_id, size_in_bytes, user_id
     FROM users_files
     WHERE public_id IN (${placeholders})`;
 

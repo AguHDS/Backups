@@ -29,8 +29,4 @@ export interface UserRepository {
    */
   
   isNameOrEmailTaken(username: string, email: string): Promise<NameAndEmailCheckResult>;
-
-  /** Inserts a new user into the database */
-  
-  insertNewUser(name: string, email: string, pass: string, role: "user" | "admin"): Promise<number>;
 }
