@@ -107,14 +107,14 @@ CREATE TABLE `users_profile` (
 users_profile_sections
 CREATE TABLE `users_profile_sections` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `fk_users_id` int unsigned NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Section title',
-  `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT 'No description',
+  `fk_users_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Title',
+  `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_public` tinyint NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `users_profile_sections_fk_users_id_fkey` (`fk_users_id`),
   CONSTRAINT `users_profile_sections_fk_users_id_fkey` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 
 verification
 CREATE TABLE `verification` (

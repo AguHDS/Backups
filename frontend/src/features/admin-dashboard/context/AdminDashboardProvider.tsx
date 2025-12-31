@@ -1,4 +1,4 @@
-import { createContext, useState, useMemo, type ReactNode } from "react";
+import { createContext, useState, useMemo, useCallback, type ReactNode } from "react";
 import type { User, UserSection } from "../api/adminTypes";
 
 export interface AdminDashboardContextType {
@@ -26,17 +26,17 @@ export const AdminDashboardProvider = ({
   const [userSections, setUserSections] = useState<UserSection[]>([]);
   const [selectedSectionIds, setSelectedSectionIds] = useState<number[]>([]);
 
-  const toggleSectionSelection = (sectionId: number) => {
+  const toggleSectionSelection = useCallback((sectionId: number) => {
     setSelectedSectionIds((prev) =>
       prev.includes(sectionId)
         ? prev.filter((id) => id !== sectionId)
         : [...prev, sectionId]
     );
-  };
+  }, []);
 
-  const clearSectionSelection = () => {
+  const clearSectionSelection = useCallback(() => {
     setSelectedSectionIds([]);
-  };
+  }, []);
 
   const contextValue = useMemo(
     () => ({

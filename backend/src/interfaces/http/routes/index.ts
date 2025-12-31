@@ -11,6 +11,8 @@ import register from "./register.js";
 import login from "./login.js";
 import adminDeleteUser from "./adminDeleteUser.js";
 import adminGetAllUsers from "./adminGetAllUsers.js";
+import adminGetUserSections from "./adminGetUserSections.js";
+import adminDeleteUserSections from "./adminDeleteUserSections.js";
 
 export {
   getProfile,
@@ -25,5 +27,7 @@ export {
   register,
   login,
   adminDeleteUser,
-  adminGetAllUsers
+  adminGetAllUsers,
+  adminGetUserSections,
+  adminDeleteUserSections
 };

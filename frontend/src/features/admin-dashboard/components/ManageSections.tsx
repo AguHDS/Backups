@@ -27,7 +27,8 @@ export const ManageSections: React.FC = () => {
       setUserSections([]);
     }
     clearSectionSelection();
-  }, [sectionsData, setUserSections, clearSectionSelection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionsData]);
 
   const isDisabled = !selectedUser;
 

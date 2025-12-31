@@ -2,7 +2,7 @@ import { AdminDashboardProvider } from "../context";
 import { useGetAllUsers } from "../hooks/useAdminMutations";
 import { UserSelector } from "../components/UserSelector";
 // import { ManageCredentials } from "../components/ManageCredentials";
-// import { ManageSections } from "../components/ManageSections";
+import { ManageSections } from "../components/ManageSections";
 import { ManageUser } from "../components/ManageUser";
 
 export const AdminDashboard: React.FC = () => {
@@ -48,13 +48,13 @@ export const AdminDashboard: React.FC = () => {
               <ManageCredentials />
             </div> */}
 
-            {/* Manage Sections - TODO: Implement backend endpoint */}
-            {/* <div>
+            {/* Manage Sections */}
+            <div>
               <ManageSections />
-            </div> */}
+            </div>
 
             {/* Manage User (Delete) */}
-            <div className="lg:col-span-2">
+            <div>
               <ManageUser />
             </div>
           </div>
