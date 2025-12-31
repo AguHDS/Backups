@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { admin } from "better-auth/plugins";
 import { PrismaClient } from "@prisma/client";
 import config from "@/infraestructure/config/environmentVars.js";
 
@@ -46,6 +47,13 @@ export const auth = betterAuth({
       },
     },
   },
+
+  plugins: [
+    admin({
+      adminRoles: ["admin"],
+      defaultRole: "user",
+    }),
+  ],
 });
 
 export type Auth = typeof auth;

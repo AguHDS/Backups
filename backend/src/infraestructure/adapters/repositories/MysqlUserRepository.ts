@@ -125,4 +125,75 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error retrieving all users from database");
     }
   }
+
+  async updateUserCredentials(
+    userId: string | number,
+    username?: string,
+    email?: string
+  ): Promise<void> {
+    if (!username && !email) {
+      return; // Nothing to update
+    }
+
+    try {
+      const updates: string[] = [];
+      const values: (string | number)[] = [];
+
+      if (username) {
+        updates.push("namedb = ?");
+        values.push(username);
+      }
+
+      if (email) {
+        updates.push("emaildb = ?");
+        values.push(email);
+      }
+
+      values.push(userId);
+
+      const query = `UPDATE users SET ${updates.join(", ")}, updated_at = CURRENT_TIMESTAMP(3) WHERE id = ?`;
+
+      const [result] = await promisePool.execute(query, values);
+
+      const affectedRows = (result as { affectedRows: number }).affectedRows;
+
+      if (affectedRows === 0) {
+        throw new Error("USER_NOT_FOUND");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message === "USER_NOT_FOUND") {
+        throw error;
+      }
+      console.error("Error updating user credentials:", error);
+      throw new Error("Error updating user credentials");
+    }
+  }
+
+  async updateUserPassword(
+    userId: string | number,
+    hashedPassword: string
+  ): Promise<void> {
+    try {
+      // Update password in account table where provider_id is 'credential'
+      const query = `
+        UPDATE account 
+        SET password = ?, updated_at = CURRENT_TIMESTAMP(3) 
+        WHERE user_id = ? AND provider_id = 'credential'
+      `;
+
+      const [result] = await promisePool.execute(query, [hashedPassword, userId]);
+
+      const affectedRows = (result as { affectedRows: number }).affectedRows;
+
+      if (affectedRows === 0) {
+        throw new Error("ACCOUNT_NOT_FOUND");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message === "ACCOUNT_NOT_FOUND") {
+        throw error;
+      }
+      console.error("Error updating user password:", error);
+      throw new Error("Error updating user password");
+    }
+  }
 }

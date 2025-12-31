@@ -41,4 +41,23 @@ export interface UserRepository {
    * Used by admin to list and manage users
    */
   getAllUsers(): Promise<User[]>;
+
+  /**
+   * Updates username and/or email for a user
+   * @param userId - The ID of the user to update
+   * @param username - New username (optional)
+   * @param email - New email (optional)
+   */
+  updateUserCredentials(
+    userId: string | number,
+    username?: string,
+    email?: string
+  ): Promise<void>;
+
+  /**
+   * Updates password for a user in the account table
+   * @param userId - The ID of the user
+   * @param hashedPassword - The new hashed password
+   */
+  updateUserPassword(userId: string | number, hashedPassword: string): Promise<void>;
 }

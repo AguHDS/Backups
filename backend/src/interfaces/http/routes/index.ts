@@ -13,6 +13,7 @@ import adminDeleteUser from "./adminDeleteUser.js";
 import adminGetAllUsers from "./adminGetAllUsers.js";
 import adminGetUserSections from "./adminGetUserSections.js";
 import adminDeleteUserSections from "./adminDeleteUserSections.js";
+import adminUpdateUserCredentials from "./adminUpdateUserCredentials.js";
 
 export {
   getProfile,
@@ -29,5 +30,6 @@ export {
   adminDeleteUser,
   adminGetAllUsers,
   adminGetUserSections,
-  adminDeleteUserSections
+  adminDeleteUserSections,
+  adminUpdateUserCredentials
 };

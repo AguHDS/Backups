@@ -22,7 +22,8 @@ import {
   adminDeleteUser,
   adminGetAllUsers,
   adminGetUserSections,
-  adminDeleteUserSections
+  adminDeleteUserSections,
+  adminUpdateUserCredentials
 } from "./routes/index.js";
 
 const app: Express = express();
@@ -67,6 +68,7 @@ app.use("/api/admin/deleteUser", adminDeleteUser);
 app.use("/api/admin/users", adminGetAllUsers);
 app.use("/api/admin/users", adminGetUserSections);
 app.use("/api/admin/deleteUserSections", adminDeleteUserSections);
+app.use("/api/admin/updateUserCredentials", adminUpdateUserCredentials);
 
 const VITE_PORT =
   process.env.NODE_ENV === "preview" ? 4173 : 5173;

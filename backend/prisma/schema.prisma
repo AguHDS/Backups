@@ -1,3 +1,4 @@
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -8,25 +9,28 @@ generator client {
 }
 
 model User {
-  id             String    @id
-  name           String    @map("namedb") @db.VarChar(50)
-  email          String    @unique @map("emaildb") @db.VarChar(80)
-  emailVerified  Boolean   @default(false) @map("email_verified")
-  image          String?
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
-  role           String    @default("user") @db.VarChar(15)
+  id            String   @id
+  name          String   @map("namedb") @db.VarChar(50)
+  email         String   @unique @map("emaildb") @db.VarChar(80)
+  emailVerified Boolean  @default(false) @map("email_verified")
+  image         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  role          String   @default("user") @db.VarChar(15)
 
-  sessions       Session[]
-  accounts       Account[]
-  verification   Verification[]
-  
+  sessions     Session[]
+  accounts     Account[]
+  verification Verification[]
   // Existing relationships
-  profile        UserProfile?
-  storageUsage   UserStorageUsage?
-  storageLimit   UserStorageLimit?
-  sections       UserProfileSection[]
-  files          UserFile[]
+  profile      UserProfile?
+  storageUsage UserStorageUsage?
+  storageLimit UserStorageLimit?
+  sections     UserProfileSection[]
+  files        UserFile[]
+
+  banned     Boolean?  @default(false)
+  banReason  String?   @db.Text
+  banExpires DateTime?
 
   @@map("users")
 }
@@ -42,64 +46,70 @@ model Session {
   updatedAt DateTime @updatedAt @map("updated_at")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  impersonatedBy String? @db.Text
+
   @@map("session")
+  @@index([userId(length: 191)])
 }
 
 model Account {
-  id              String   @id
-  accountId       String   @map("account_id")
-  providerId      String   @map("provider_id")
-  userId          String   @map("user_id")
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken     String?  @map("access_token") @db.Text
-  refreshToken    String?  @map("refresh_token") @db.Text
-  idToken         String?  @map("id_token") @db.Text
-  expiresAt       DateTime? @map("expires_at")
-  password        String?
-  accessTokenExpiresAt DateTime? @map("access_token_expires_at")
+  id                    String    @id
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @map("access_token") @db.Text
+  refreshToken          String?   @map("refresh_token") @db.Text
+  idToken               String?   @map("id_token") @db.Text
+  expiresAt             DateTime? @map("expires_at")
+  password              String?
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
   refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
-  scope           String?
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  scope                 String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
 
   @@map("account")
+  @@index([userId(length: 191)])
 }
 
 model Verification {
-  id         String   @id
+  id         String    @id
   identifier String
   value      String
-  expiresAt  DateTime @map("expires_at")
+  expiresAt  DateTime  @map("expires_at")
   createdAt  DateTime? @map("created_at")
   updatedAt  DateTime? @map("updated_at")
-  userId     String   @map("user_id")
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String    @map("user_id")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("verification")
+  @@index([identifier(length: 191)])
 }
 
 // Existing tables
-model UserProfile {
-  userId     String    @id @map("fk_users_id")
-  bio        String?   @default("No bio available") @db.VarChar(255)
-  profilePic String?   @map("profile_pic") @db.VarChar(255)
-  createdAt  DateTime  @default(now()) @map("created_at")
-  level      Int       @default(0) @db.UnsignedInt
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+model UserProfile {
+  userId     String   @id @map("fk_users_id")
+  bio        String?  @default("No bio available") @db.VarChar(255)
+  profilePic String?  @map("profile_pic") @db.VarChar(255)
+  createdAt  DateTime @default(now()) @map("created_at")
+  level      Int      @default(0) @db.UnsignedInt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("users_profile")
 }
 
 model UserProfileSection {
-  id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  userId      String    @map("fk_users_id")
-  title       String?   @default("Section title") @db.VarChar(255)
-  description String?   @db.VarChar(500)
-  isPublic    Int       @default(1) @map("is_public") @db.TinyInt
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  userId      String  @map("fk_users_id")
+  title       String? @default("Section title") @db.VarChar(255)
+  description String? @db.VarChar(500)
+  isPublic    Int     @default(1) @map("is_public") @db.TinyInt
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  files       UserFile[]
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files UserFile[]
 
   @@map("users_profile_sections")
 }
@@ -113,8 +123,8 @@ model UserFile {
   userId      String?   @map("user_id")
   sizeInBytes BigInt    @default(0) @map("size_in_bytes")
 
-  section     UserProfileSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  section UserProfileSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  user    User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("users_files")
 }
@@ -125,7 +135,7 @@ model UserStorageUsage {
   updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at")
   profilePicSize BigInt    @default(0) @map("profile_pic_size") @db.UnsignedBigInt
 
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_storage_usage")
 }
@@ -135,7 +145,7 @@ model UserStorageLimit {
   maxBytes  BigInt    @default(104857600) @map("max_bytes") @db.UnsignedBigInt
   updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_storage_limits")
 }

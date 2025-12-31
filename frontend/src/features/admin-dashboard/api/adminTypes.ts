@@ -29,8 +29,8 @@ export interface DeleteUserRequest {
 
 // Response types
 export interface UpdateUserCredentialsResponse {
+  success: boolean;
   message: string;
-  user: User;
 }
 
 export interface DeleteUserSectionsResponse {
