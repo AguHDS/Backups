@@ -28,7 +28,7 @@ export const requireAuth = async (
 
     // Add user to request object for downstream handlers
     req.user = {
-      id: Number(session.user.id),
+      id: String(session.user.id),
       name: session.user.name,
       email: session.user.email,
       role: (session.user as any).role || "user",

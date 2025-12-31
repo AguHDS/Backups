@@ -13,41 +13,28 @@ export interface RegisterRequest {
 
 // Response
 
-export interface UserSessionData {
+export interface UserData {
+  id: string;
   name: string;
-  email?: string;
+  email: string;
   role: "user" | "admin";
-  id: number;
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  userData: UserSessionData;
+  user: UserData;
 }
 
 export interface RegisterResponse {
   message: string;
-}
-
-export interface RefreshTokenResponse {
-  accessToken: string;
-  userData: UserSessionData;
-}
-
-export interface LogoutRequest {
-  id: number;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }
 
 export interface LogoutResponse {
   message: string;
-}
-
-// Redux dispatch payloads
-
-export interface LoginPayload {
-  accessToken: string;
-  userData: UserSessionData;
-  refreshTokenRotated?: boolean;
 }
 
 // Errors
@@ -71,22 +58,3 @@ export type RegisterErrorResponse =
   | ServerErrorResponse;
 
 export type LoginErrorResponse = ValidationErrorResponse | ServerErrorResponse;
-
-// Type Guards
-export const isLoginResponse = (data: unknown): data is LoginResponse => {
-  return (
-    typeof data === "object" &&
-    data !== null &&
-    "accessToken" in data &&
-    "userData" in data
-  );
-};
-
-export const isRegisterResponse = (data: unknown): data is RegisterResponse => {
-  return (
-    typeof data === "object" &&
-    data !== null &&
-    "message" in data &&
-    (data as RegisterResponse).message === "Registration completed"
-  );
-};

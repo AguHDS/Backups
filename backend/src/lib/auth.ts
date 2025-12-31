@@ -21,16 +21,15 @@ export const auth = betterAuth({
   ].filter(Boolean) as string[],
 
   session: {
-    expiresIn: 60 * 2, // Total session lifetime (2 minutes)
-    updateAge: 60, // Refresh session if user is active after 1 min
+    expiresIn: 60 * 60 * 24 * 30, // 30 días (sesiones más largas para mejor UX)
+    updateAge: 60 * 60 * 24, // Actualizar sesión cada 24h de actividad
     cookieCache: {
-      enabled: true, // Cache session in cookies for faster auth
-      maxAge: 60 * 2, // Cookie cache lifetime (2 minutes)
+      enabled: true,
+      maxAge: 60 * 60 * 24, // 24 horas de caché en cookies
     },
   },
 
   advanced: {
-    generateId: false, // Let MySQL auto-increment handle IDs
     useSecureCookies: config.nodeEnv === "production",
     crossSubDomainCookies: {
       enabled: false,

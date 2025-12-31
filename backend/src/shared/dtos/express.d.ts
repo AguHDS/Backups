@@ -17,7 +17,7 @@ declare module "express" {
     baseUserData?: BaseUserData;
     // BetterAuth user from session
     user?: {
-      id: number;
+      id: string;
       name: string;
       email: string;
       role: string;

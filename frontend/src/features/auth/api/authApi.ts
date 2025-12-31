@@ -4,15 +4,11 @@ import type {
   RegisterRequest,
   LoginResponse,
   RegisterResponse,
-  RefreshTokenResponse,
-  LogoutRequest,
   LogoutResponse,
 } from "./authTypes";
 
 export const login = async (data: LoginRequest): Promise<LoginResponse> => {
-  const response = await axiosClient.post<LoginResponse>("/api/login", data, {
-    withCredentials: true,
-  });
+  const response = await axiosClient.post<LoginResponse>("/api/auth/login", data);
 
   return response.data;
 };
@@ -21,32 +17,18 @@ export const register = async (
   data: RegisterRequest
 ): Promise<RegisterResponse> => {
   const response = await axiosClient.post<RegisterResponse>(
-    "/api/registration",
-    data,
-    {
-      withCredentials: true,
-    }
+    "/api/auth/register",
+    data
   );
 
   return response.data;
 };
 
-export const refreshToken = async (): Promise<RefreshTokenResponse> => {
-  const response = await axiosClient.post<RefreshTokenResponse>(
-    "/api/refreshToken",
-    {},
-    {
-      withCredentials: true,
-    }
+export const logout = async (): Promise<LogoutResponse> => {
+  const response = await axiosClient.post<LogoutResponse>(
+    "/api/auth/sign-out",
+    {}
   );
-
-  return response.data;
-};
-
-export const logout = async (data: LogoutRequest): Promise<LogoutResponse> => {
-  const response = await axiosClient.post<LogoutResponse>("/api/logout", data, {
-    withCredentials: true,
-  });
 
   return response.data;
 };

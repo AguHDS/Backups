@@ -8,14 +8,13 @@ generator client {
 }
 
 model User {
-  id             Int       @id @default(autoincrement()) @db.UnsignedInt
+  id             String    @id
   name           String    @map("namedb") @db.VarChar(50)
   email          String    @unique @map("emaildb") @db.VarChar(80)
   emailVerified  Boolean   @default(false) @map("email_verified")
   image          String?
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
-  hashedPassword String    @map("passdb") @db.VarChar(80)
   role           String    @default("user") @db.VarChar(15)
 
   sessions       Session[]
@@ -35,9 +34,12 @@ model User {
 model Session {
   id        String   @id
   expiresAt DateTime @map("expires_at")
+  token     String   @unique
   ipAddress String?  @map("ip_address")
   userAgent String?  @map("user_agent")
-  userId    Int      @map("user_id") @db.UnsignedInt
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("session")
@@ -47,7 +49,7 @@ model Account {
   id              String   @id
   accountId       String   @map("account_id")
   providerId      String   @map("provider_id")
-  userId          Int      @map("user_id") @db.UnsignedInt
+  userId          String   @map("user_id")
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken     String?  @map("access_token") @db.Text
   refreshToken    String?  @map("refresh_token") @db.Text
@@ -70,7 +72,7 @@ model Verification {
   expiresAt  DateTime @map("expires_at")
   createdAt  DateTime? @map("created_at")
   updatedAt  DateTime? @map("updated_at")
-  userId     Int      @map("user_id") @db.UnsignedInt
+  userId     String   @map("user_id")
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("verification")
@@ -78,7 +80,7 @@ model Verification {
 
 // Existing tables
 model UserProfile {
-  userId     Int       @id @map("fk_users_id") @db.UnsignedInt
+  userId     String    @id @map("fk_users_id")
   bio        String?   @default("No bio available") @db.VarChar(255)
   profilePic String?   @map("profile_pic") @db.VarChar(255)
   createdAt  DateTime  @default(now()) @map("created_at")
@@ -91,9 +93,9 @@ model UserProfile {
 
 model UserProfileSection {
   id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  userId      Int       @map("fk_users_id") @db.UnsignedInt
+  userId      String    @map("fk_users_id")
   title       String?   @default("Section title") @db.VarChar(255)
-  description String?   @default("No description") @db.VarChar(500)
+  description String?   @db.VarChar(500)
   isPublic    Int       @default(1) @map("is_public") @db.TinyInt
 
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -108,7 +110,7 @@ model UserFile {
   publicId    String    @unique @map("public_id") @db.VarChar(255)
   url         String    @db.Text
   createdAt   DateTime? @default(now()) @map("created_at")
-  userId      Int?      @map("user_id") @db.UnsignedInt
+  userId      String?   @map("user_id")
   sizeInBytes BigInt    @default(0) @map("size_in_bytes")
 
   section     UserProfileSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
@@ -118,7 +120,7 @@ model UserFile {
 }
 
 model UserStorageUsage {
-  userId         Int       @id @map("user_id") @db.UnsignedInt
+  userId         String    @id @map("user_id")
   totalBytes     BigInt    @default(0) @map("total_bytes")
   updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at")
   profilePicSize BigInt    @default(0) @map("profile_pic_size") @db.UnsignedBigInt
@@ -129,7 +131,7 @@ model UserStorageUsage {
 }
 
 model UserStorageLimit {
-  userId    Int       @id @map("user_id") @db.UnsignedInt
+  userId    String    @id @map("user_id")
   maxBytes  BigInt    @default(104857600) @map("max_bytes") @db.UnsignedBigInt
   updatedAt DateTime? @default(now()) @updatedAt @map("updated_at")
 

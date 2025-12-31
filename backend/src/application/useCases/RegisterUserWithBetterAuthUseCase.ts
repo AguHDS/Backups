@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth.js";
 import { MysqlUserRepository } from "@/infraestructure/adapters/repositories/MysqlUserRepository.js";
 import { MysqlStorageUsageRepository } from "@/infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
+import { MysqlProfileRepository } from "@/infraestructure/adapters/repositories/MysqlProfileRepository.js";
 
 interface RegisterResult {
   user: {
@@ -8,12 +9,14 @@ interface RegisterResult {
     name: string;
     email: string;
   };
+  headers?: Headers;
 }
 
 export class RegisterUserWithBetterAuthUseCase {
   constructor(
     private readonly userRepository: MysqlUserRepository,
-    private readonly storageRepository: MysqlStorageUsageRepository
+    private readonly storageRepository: MysqlStorageUsageRepository,
+    private readonly profileRepository: MysqlProfileRepository
   ) {}
 
   async execute(name: string, email: string, password: string): Promise<RegisterResult> {
@@ -32,34 +35,47 @@ export class RegisterUserWithBetterAuthUseCase {
       }
     }
 
-    // Use BetterAuth to create the user
-    const result = await auth.api.signUpEmail({
-      body: {
-        name,
-        email,
-        password,
-      },
-    });
-
-    if (!result || !result.user) {
-      throw new Error("REGISTRATION_FAILED");
-    }
-
-    // Initialize user storage usage (0 bytes)
+    // Use BetterAuth to create the user WITHOUT auto-login
     try {
-      await this.storageRepository.addToUsedStorage(result.user.id, 0);
-      console.log(`User: ${name} registered successfully with storage initialized`);
-    } catch (storageError) {
-      console.error("Error initializing user storage:", storageError);
-      // Continue anyway, storage can be created later
-    }
+      const response = await auth.api.signUpEmail({
+        body: {
+          name,
+          email,
+          password,
+        },
+        // No headers = no session cookies
+        asResponse: true,
+      });
 
-    return {
-      user: {
-        id: result.user.id,
-        name: result.user.name,
-        email: result.user.email,
-      },
-    };
+      // Parse the response body
+      const result = await response.json();
+
+      if (!result || !result.user) {
+        throw new Error("REGISTRATION_FAILED");
+      }
+
+      const userId = result.user.id;
+
+      // Initialize user storage usage
+      await this.storageRepository.addToUsedStorage(userId, 0);
+      await this.storageRepository.setMaxStorage(userId, 104857600);
+
+      // Create user profile with default values
+      await this.profileRepository.createProfile(userId);
+      console.log(`User: ${name} profile created`);
+      console.log(`User: ${name} registered successfully`);
+
+      return {
+        user: {
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email,
+        },
+        // No headers = no session cookies set
+      };
+    } catch (error) {
+      // Re-throw BetterAuth errors to preserve their structure
+      throw error;
+    }
   }
 }

@@ -41,29 +41,20 @@ export class UploadFilesUseCase {
       );
     }
 
-    const numericUserId =
-      typeof userId === "string" ? parseInt(userId, 10) : userId;
-    if (
-      typeof numericUserId !== "number" ||
-      isNaN(numericUserId) ||
-      numericUserId <= 0
-    ) {
-      throw new Error(
-        `Invalid userId: "${userId}". Must be a positive number.`
-      );
+    // Validate userId is provided (can be string or number for BetterAuth compatibility)
+    if (!userId || (typeof userId === "string" && userId.trim() === "")) {
+      throw new Error("Invalid userId: userId is required");
     }
 
     const incomingBytes = files.reduce((sum, f) => sum + (f.size ?? 0), 0);
     if (incomingBytes <= 0) throw new Error("Invalid files payload");
 
     // Check initial quota
-    const remaining = await this.storageUsageRepo.getRemainingStorage(
-      numericUserId
-    );
+    const remaining = await this.storageUsageRepo.getRemainingStorage(userId);
 
     if (incomingBytes > remaining) {
-      const used = await this.storageUsageRepo.getUsedStorage(numericUserId);
-      const limit = await this.storageUsageRepo.getMaxStorage(numericUserId);
+      const used = await this.storageUsageRepo.getUsedStorage(userId);
+      const limit = await this.storageUsageRepo.getMaxStorage(userId);
 
       const err: Error & { details?: QuotaErrorPayload } = new Error(
         "Storage quota exceeded"
@@ -80,15 +71,15 @@ export class UploadFilesUseCase {
 
     // Reserve initial storage
     const reserved = await this.storageUsageRepo.tryReserveStorage(
-      numericUserId,
+      userId,
       incomingBytes
     );
 
     if (!reserved) {
       const [usedNow, limitNow, remainingNow] = await Promise.all([
-        this.storageUsageRepo.getUsedStorage(numericUserId),
-        this.storageUsageRepo.getMaxStorage(numericUserId),
-        this.storageUsageRepo.getRemainingStorage(numericUserId),
+        this.storageUsageRepo.getUsedStorage(userId),
+        this.storageUsageRepo.getMaxStorage(userId),
+        this.storageUsageRepo.getRemainingStorage(userId),
       ]);
 
       const err: Error & { details?: QuotaErrorPayload } = new Error(
@@ -126,21 +117,21 @@ export class UploadFilesUseCase {
         const extra = confirmedBytes - incomingBytes;
 
         const extraOk = await this.storageUsageRepo.tryReserveStorage(
-          numericUserId,
+          userId,
           extra
         );
 
         if (!extraOk) {
           await this.rollbackUpload(uploadedPublicIds);
           await this.storageUsageRepo.decreaseFromUsedStorage(
-            numericUserId,
+            userId,
             incomingBytes
           );
 
           const [usedNow, limitNow, remainingNow] = await Promise.all([
-            this.storageUsageRepo.getUsedStorage(numericUserId),
-            this.storageUsageRepo.getMaxStorage(numericUserId),
-            this.storageUsageRepo.getRemainingStorage(numericUserId),
+            this.storageUsageRepo.getUsedStorage(userId),
+            this.storageUsageRepo.getMaxStorage(userId),
+            this.storageUsageRepo.getRemainingStorage(userId),
           ]);
 
           const err = new AlreadyRolledBackError(
@@ -159,7 +150,7 @@ export class UploadFilesUseCase {
         const surplus = incomingBytes - confirmedBytes;
         if (surplus > 0) {
           await this.storageUsageRepo.decreaseFromUsedStorage(
-            numericUserId,
+            userId,
             surplus
           );
         }
@@ -170,9 +161,10 @@ export class UploadFilesUseCase {
         (file) =>
           new UserFile(
             file.public_id,
+            file.url,
             numericSectionId,
             file.sizeInBytes,
-            numericUserId
+            userId
           )
       );
 
@@ -190,7 +182,7 @@ export class UploadFilesUseCase {
           confirmedBytes > 0 ? confirmedBytes : incomingBytes;
 
         await this.storageUsageRepo.decreaseFromUsedStorage(
-          numericUserId,
+          userId,
           bytesToRevert
         );
       }

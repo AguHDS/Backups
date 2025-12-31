@@ -38,8 +38,8 @@ export const verifyUserOwnsProfile = (attachUserDataToReq = false) => {
       }
 
       if (attachUserDataToReq) {
-        req.baseUserData = { name, role, id: Number(id) };
-        req.user = { name, role, id: Number(id), email: session.user.email };
+        req.baseUserData = { name, role, id: String(id) };
+        req.user = { name, role, id: String(id), email: session.user.email };
       }
 
       next();

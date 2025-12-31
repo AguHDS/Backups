@@ -15,6 +15,13 @@ export interface ProfileRepository {
   getProfileById(userId: number): Promise<UserProfile | null>;
 
   /**
+   * Creates a new user profile with default values
+   *
+   * @param userId - The ID of the user
+   */
+  createProfile(userId: string): Promise<void>;
+
+  /**
    * Retrieves profile sections associated with a user
    *
    * @param userId - The ID of the user

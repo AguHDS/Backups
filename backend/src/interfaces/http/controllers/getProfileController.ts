@@ -21,7 +21,7 @@ export const getProfileController = async (req: Request, res: Response) => {
     }
     const { name, role, id, email } = req.baseUserData;
 
-    let requesterId: number | undefined = undefined;
+    let requesterId: string | undefined = undefined;
 
     try {
       // Get active user's id for profile ownership validation (optional - for isOwner flag)
@@ -34,7 +34,7 @@ export const getProfileController = async (req: Request, res: Response) => {
 
       const session = await auth.api.getSession({ headers });
       if (session && session.user) {
-        requesterId = Number(session.user.id);
+        requesterId = String(session.user.id);
       }
     } catch (err) {
       requesterId = undefined;

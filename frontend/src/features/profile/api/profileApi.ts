@@ -18,10 +18,7 @@ export const getProfile = async (
   username: string
 ): Promise<GetProfileResponse> => {
   const response = await axiosClient.get<GetProfileResponse>(
-    `/api/getProfile/${username}`,
-    {
-      withCredentials: true,
-    }
+    `/api/getProfile/${username}`
   );
 
   return response.data;
@@ -43,10 +40,7 @@ export const updateBio = async (
 ): Promise<UpdateBioResponse> => {
   const response = await axiosClient.post<UpdateBioResponse>(
     `/api/updateBio/${username}`,
-    data,
-    {
-      withCredentials: true,
-    }
+    data
   );
 
   return response.data;
@@ -58,10 +52,7 @@ export const updateSections = async (
 ): Promise<UpdateSectionsResponse> => {
   const response = await axiosClient.post<UpdateSectionsResponse>(
     `/api/updateSections/${username}`,
-    data,
-    {
-      withCredentials: true,
-    }
+    data
   );
 
   return response.data;
@@ -75,7 +66,6 @@ export const deleteSections = async (
     `/api/deleteSections/${username}`,
     {
       data,
-      withCredentials: true,
     }
   );
 
@@ -90,7 +80,6 @@ export const deleteFiles = async (
     `/api/deleteFiles/${username}`,
     {
       data,
-      withCredentials: true,
     }
   );
 
@@ -107,7 +96,6 @@ export const uploadFiles = async (
     `/api/uploadFiles/${username}?sectionId=${sectionId}&sectionTitle=${sectionTitle}`,
     formData,
     {
-      withCredentials: true,
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -125,7 +113,6 @@ export const uploadProfilePicture = async (
     `/api/profilePicture/${username}`,
     formData,
     {
-      withCredentials: true,
       headers: {
         "Content-Type": "multipart/form-data",
       },

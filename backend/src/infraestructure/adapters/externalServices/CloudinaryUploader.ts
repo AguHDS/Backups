@@ -44,6 +44,7 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
 
             resolve({
               public_id: result.public_id,
+              url: result.secure_url,
               sizeInBytes: result.bytes,
             });
           }
@@ -117,6 +118,7 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
 
           resolve({
             public_id: fullPublicId,
+            url: result.secure_url,
             sizeInBytes: compressedSize, // real size after Cloudinary compression
           });
         }

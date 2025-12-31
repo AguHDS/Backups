@@ -18,6 +18,7 @@ type ApiError = {
 type AxiosErrorResponse = {
   response?: {
     data?: ApiError;
+    status?: number;
   };
   message?: string;
 };
@@ -58,6 +59,7 @@ export const processErrorMessages = (error: FetchError): string[] => {
 
       // Check for "message" field
       if (apiError.message) {
+        // Handle storage-specific messages
         if (
           apiError.message.includes("only can have one section") ||
           apiError.message.includes("User role only can have one section")
@@ -69,6 +71,7 @@ export const processErrorMessages = (error: FetchError): string[] => {
           return [apiError.message];
         }
 
+        // Return message directly (BetterAuth and backend already send proper messages)
         return [String(apiError.message)];
       }
 

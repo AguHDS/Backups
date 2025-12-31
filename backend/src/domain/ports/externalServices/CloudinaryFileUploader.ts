@@ -1,5 +1,6 @@
 export interface CloudinaryUploadResponse {
   public_id: string;
+  url: string;
   sizeInBytes: number;
 }
 

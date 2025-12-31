@@ -1,6 +1,6 @@
-import { UserProfile } from "../../domain/entities/UserProfile.js";
-import { FileRepository } from "../../domain/ports/repositories/FileRepository.js";
-import { ProfileRepository } from "../../domain/ports/repositories/ProfileRepository.js";
+import { UserProfile } from "@/domain/entities/UserProfile.js";
+import { FileRepository } from "@/domain/ports/repositories/FileRepository.js";
+import { ProfileRepository } from "@/domain/ports/repositories/ProfileRepository.js";
 
 export class GetUserProfileUseCase {
   constructor(private readonly profileRepo: ProfileRepository, private readonly fileRepo: FileRepository) {}
@@ -15,7 +15,8 @@ export class GetUserProfileUseCase {
       throw new Error("PROFILE_NOT_FOUND");
     }
 
-    const isOwner = Number(requesterId) === Number(profile.userId);
+    // Compare as strings since BetterAuth uses string IDs
+    const isOwner = requesterId ? String(requesterId) === String(profile.userId) : false;
 
     const sections = await this.profileRepo.getSectionsByUserId(profile.userId, !isOwner);
 

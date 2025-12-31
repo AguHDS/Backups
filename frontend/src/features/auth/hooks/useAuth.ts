@@ -1,15 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useDispatch } from "react-redux";
-import { login } from "@/app/redux/features/slices/authSlice";
+import { setAuth } from "@/app/redux/features/slices/authSlice";
 import { getFormData } from "../helpers";
 import { useLogin, useRegister } from "./useAuthMutations";
 import { processErrorMessages } from "@/shared/utils/processErrorMessages";
-import type {
-  LoginRequest,
-  RegisterRequest,
-  LoginPayload,
-} from "../api/authTypes";
+import type { LoginRequest, RegisterRequest } from "../api/authTypes";
 
 interface AuthInput {
   user: string;
@@ -59,14 +55,8 @@ export const useAuth = () => {
           formData as LoginRequest
         );
 
-        // LoginPayload for redux
-        const loginPayload: LoginPayload = {
-          accessToken: result.accessToken,
-          userData: result.userData,
-          refreshTokenRotated: false,
-        };
-
-        await dispatch(login(loginPayload));
+        // Store user data in Redux
+        dispatch(setAuth(result.user));
         navigate({ to: "/dashboard", replace: true });
       }
     } catch (error) {
