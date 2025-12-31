@@ -29,4 +29,10 @@ export interface UserRepository {
    */
   
   isNameOrEmailTaken(username: string, email: string): Promise<NameAndEmailCheckResult>;
+
+  /**
+   * Deletes a user from the database by ID
+   * This will cascade delete all related data (sessions, files, sections, etc.)
+   */
+  deleteUserById(userId: number | string): Promise<void>;
 }

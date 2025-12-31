@@ -89,4 +89,25 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error checking user existence in database");
     }
   }
+
+  async deleteUserById(userId: number | string): Promise<void> {
+    try {
+      const [result] = await promisePool.execute(
+        "DELETE FROM users WHERE id = ?",
+        [userId]
+      );
+
+      const affectedRows = (result as any).affectedRows;
+
+      if (affectedRows === 0) {
+        throw new Error("USER_NOT_FOUND");
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message === "USER_NOT_FOUND") {
+        throw error;
+      }
+      console.error("Error deleting user from database:", error);
+      throw new Error("Error deleting user from database");
+    }
+  }
 }

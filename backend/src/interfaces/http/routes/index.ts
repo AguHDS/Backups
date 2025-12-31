@@ -9,6 +9,7 @@ import dashboard from "./dashboard.js";
 import deleteFiles from "./deleteFiles.js";
 import register from "./register.js";
 import login from "./login.js";
+import adminDeleteUser from "./adminDeleteUser.js";
 
 export {
   getProfile,
@@ -21,5 +22,6 @@ export {
   dashboard,
   deleteFiles,
   register,
-  login
+  login,
+  adminDeleteUser
 };
