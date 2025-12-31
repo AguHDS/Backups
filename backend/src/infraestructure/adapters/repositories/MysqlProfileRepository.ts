@@ -32,7 +32,7 @@ export class MysqlProfileRepository implements ProfileRepository {
       throw new Error("Database error while fetching profile by username");
     }
   }
-  async getProfileById(userId: number): Promise<UserProfile | null> {
+  async getProfileById(userId: number | string): Promise<UserProfile | null> {
     try {
       const [rows] = await promisePool.execute<RowDataPacket[]>(
         "SELECT bio, profile_pic, level FROM users_profile WHERE fk_users_id = ?",
@@ -236,7 +236,7 @@ export class MysqlProfileRepository implements ProfileRepository {
   }
 
   async updateProfilePicture(
-    userId: number,
+    userId: number | string,
     profilePicPublicId: string
   ): Promise<void> {
     try {
