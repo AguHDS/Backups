@@ -9,11 +9,11 @@ const dashboardSummaryUseCase = new DashboardSummaryUseCase(
 /** Will be updated to probably dashboard dailies related */
 export const getDashboardController = async (req: Request, res: Response) => {
   try {
-    if(!req.refreshTokenId)  {
+    if(!req.user)  {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { id } = req.refreshTokenId;
+    const { id } = req.user;
 
     const result = await dashboardSummaryUseCase.execute(id);
     res.status(200).json(result);

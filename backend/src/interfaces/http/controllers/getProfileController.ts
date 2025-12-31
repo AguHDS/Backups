@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
-import { GetUserProfileUseCase } from "../../../application/useCases/GetUserProfileUseCase.js";
-import { GetProfileResponse } from "../.././../shared/dtos/index.js";
-import { MysqlFileRepository } from "../../../infraestructure/adapters/repositories/MysqlFileRepository.js";
-import { decodeRefreshToken } from "../../../shared/utils/decodeRefreshToken.js";
+import { MysqlProfileRepository } from "@/infraestructure/adapters/repositories/MysqlProfileRepository.js";
+import { GetUserProfileUseCase } from "@/application/useCases/GetUserProfileUseCase.js";
+import { GetProfileResponse } from "@/shared/dtos/index.js";
+import { MysqlFileRepository } from "@/infraestructure/adapters/repositories/MysqlFileRepository.js";
+import { auth } from "@/lib/auth.js";
 
 const getUserProfileUseCase = new GetUserProfileUseCase(
   new MysqlProfileRepository(),
@@ -24,16 +24,21 @@ export const getProfileController = async (req: Request, res: Response) => {
     let requesterId: number | undefined = undefined;
 
     try {
-      // Get active user's id for profile ownership validation
-      const decoded = decodeRefreshToken(req);
-      requesterId = Number(decoded.id);
+      // Get active user's id for profile ownership validation (optional - for isOwner flag)
+      const headers = new Headers();
+      Object.entries(req.headers).forEach(([key, value]) => {
+        if (value) {
+          headers.set(key, Array.isArray(value) ? value[0] : value);
+        }
+      });
+
+      const session = await auth.api.getSession({ headers });
+      if (session && session.user) {
+        requesterId = Number(session.user.id);
+      }
     } catch (err) {
       requesterId = undefined;
       console.error(err);
-    }
-
-    if (!requesterId) {
-      requesterId = undefined;
     }
 
     const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(
@@ -60,9 +65,9 @@ export const getProfileController = async (req: Request, res: Response) => {
       userSectionData:
         profile.sections?.map((section) => ({
           id: section.id,
-          title: section.title,
+          title: section.title || "Title",
           description: section.description,
-          isPublic: section.isPublic,
+          isPublic: Boolean(section.isPublic),
           files:
             section.files?.map((file) => ({
               publicId: file.publicId,

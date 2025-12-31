@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult, matchedData } from "express-validator";
 
-/** Validations before registering a user */
-export const registrationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+/** Validates and prepares login data */
+export const loginUserMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const messages = errors.array().map((e) => e.msg).join(", ");
@@ -11,16 +15,10 @@ export const registrationMiddleware = (req: Request, res: Response, next: NextFu
     return;
   }
 
-  const data = matchedData(req);
+  const { user, password } = matchedData(req);
 
-  const { user, email, password } = data;
-
-  //save user data in req object
-  req.userSession = {
-    user,
-    email,
-    password,
-  };
+  // Add to req object user data for controller
+  req.userAndPassword = { user, password };
 
   next();
 };

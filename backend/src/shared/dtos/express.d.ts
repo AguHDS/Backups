@@ -15,5 +15,12 @@ declare module "express" {
     userSession?: UserSession;
     refreshTokenId?: RefreshTokenId;
     baseUserData?: BaseUserData;
+    // BetterAuth user from session
+    user?: {
+      id: number;
+      name: string;
+      email: string;
+      role: string;
+    };
   }
 }
