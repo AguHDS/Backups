@@ -8,18 +8,15 @@ export const Route = createFileRoute("/admin-dashboard/")({
     const isAuthenticated = state.auth.isAuthenticated;
     const user = state.auth.user;
 
-    // If authenticated, check admin role immediately
-    if (isAuthenticated && user) {
-      if (user.role !== "admin") {
-        throw redirect({
-          to: "/unauthorized",
-          replace: true,
-        });
-      }
+    // Check if user is authenticated and has admin role
+    if (!isAuthenticated) {
+      throw redirect({
+        to: "/unauthorized",
+        replace: true,
+      });
     }
 
-    // If not authenticated and no session, redirect to unauthorized
-    if (!isAuthenticated) {
+    if (user?.role !== "admin") {
       throw redirect({
         to: "/unauthorized",
         replace: true,

@@ -10,6 +10,7 @@ import deleteFiles from "./deleteFiles.js";
 import register from "./register.js";
 import login from "./login.js";
 import adminDeleteUser from "./adminDeleteUser.js";
+import adminGetAllUsers from "./adminGetAllUsers.js";
 
 export {
   getProfile,
@@ -23,5 +24,6 @@ export {
   deleteFiles,
   register,
   login,
-  adminDeleteUser
+  adminDeleteUser,
+  adminGetAllUsers
 };

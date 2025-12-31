@@ -1,4 +1,4 @@
-import express, { type Request, type Response } from "express";
+import express from "express";
 import { auth } from "@/lib/auth.js";
 import { toNodeHandler } from "better-auth/node";
 import registerRouter from "./register.js";

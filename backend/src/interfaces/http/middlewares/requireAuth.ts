@@ -31,7 +31,7 @@ export const requireAuth = async (
       id: String(session.user.id),
       name: session.user.name,
       email: session.user.email,
-      role: (session.user as any).role || "user",
+      role: (session.user as { role?: "user" | "admin" }).role || "user",
     };
 
     next();

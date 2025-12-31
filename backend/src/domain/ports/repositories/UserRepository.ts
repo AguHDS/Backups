@@ -35,4 +35,10 @@ export interface UserRepository {
    * This will cascade delete all related data (sessions, files, sections, etc.)
    */
   deleteUserById(userId: number | string): Promise<void>;
+
+  /**
+   * Retrieves all users from the database
+   * Used by admin to list and manage users
+   */
+  getAllUsers(): Promise<User[]>;
 }

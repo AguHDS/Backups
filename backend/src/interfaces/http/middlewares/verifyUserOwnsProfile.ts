@@ -26,7 +26,7 @@ export const verifyUserOwnsProfile = (attachUserDataToReq = false) => {
       }
 
       const { name, id } = session.user;
-      const role = (session.user as any).role || "user";
+      const role = (session.user as { role?: "user" | "admin" }).role || "user";
       const { username } = req.params;
 
       // Make params username optional - if provided, verify ownership

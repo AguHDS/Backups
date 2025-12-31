@@ -19,7 +19,8 @@ import {
   getStorage,
   dashboard,
   deleteFiles,
-  adminDeleteUser
+  adminDeleteUser,
+  adminGetAllUsers
 } from "./routes/index.js";
 
 const app: Express = express();
@@ -61,6 +62,7 @@ app.use("/api/deleteFiles", deleteFiles);
 
 // Admin routes
 app.use("/api/admin/deleteUser", adminDeleteUser);
+app.use("/api/admin/users", adminGetAllUsers);
 
 const VITE_PORT =
   process.env.NODE_ENV === "preview" ? 4173 : 5173;

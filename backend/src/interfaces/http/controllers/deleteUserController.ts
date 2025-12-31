@@ -2,8 +2,12 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { DeleteUserUseCase } from "@/application/useCases/DeleteUserUseCase.js";
 import { MysqlUserRepository } from "@/infraestructure/adapters/repositories/MysqlUserRepository.js";
+import { CloudinaryRemover } from "@/infraestructure/adapters/externalServices/CloudinaryRemover.js";
 
-const deleteUserUseCase = new DeleteUserUseCase(new MysqlUserRepository());
+const deleteUserUseCase = new DeleteUserUseCase(
+  new MysqlUserRepository(),
+  new CloudinaryRemover()
+);
 
 export const deleteUserController = async (req: Request, res: Response) => {
   try {

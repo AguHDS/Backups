@@ -15,7 +15,7 @@ CREATE TABLE `account` (
   `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `account_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `provider_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` int unsigned NOT NULL,
+  `user_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `access_token` text COLLATE utf8mb4_unicode_ci,
   `refresh_token` text COLLATE utf8mb4_unicode_ci,
   `id_token` text COLLATE utf8mb4_unicode_ci,
@@ -64,14 +64,13 @@ CREATE TABLE `user_storage_usage` (
 
 users
 CREATE TABLE `users` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `namedb` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `emaildb` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified` tinyint(1) NOT NULL DEFAULT '0',
   `image` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) NOT NULL,
-  `passdb` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `role` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_emaildb_key` (`emaildb`)

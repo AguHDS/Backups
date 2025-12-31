@@ -15,7 +15,7 @@ export class MysqlUserRepository implements UserRepository {
   async findByUsername(username: string): Promise<User | null> {
     try {
       const [rows] = await promisePool.execute<RowDataPacket[]>(
-        "SELECT * FROM users WHERE namedb = ?",
+        "SELECT id, namedb, emaildb, role FROM users WHERE namedb = ?",
         [username]
       );
 
@@ -26,16 +26,16 @@ export class MysqlUserRepository implements UserRepository {
 
       const row = rows[0];
 
-      return new User(row.id, row.namedb, row.emaildb, row.passdb, row.role);
+      return new User(row.id, row.namedb, row.emaildb, row.role);
     } catch (error) {
       console.error("Error retrieving username from database:", error);
       throw new Error("Error retrieving username from database");
     }
   }
-  async findById(id: number, connection: Connection): Promise<User | null> {
+  async findById(id: number | string, connection: Connection): Promise<User | null> {
     try {
       const [rows] = await connection.execute<RowDataPacket[]>(
-        "SELECT * FROM users WHERE id = ?",
+        "SELECT id, namedb, emaildb, role FROM users WHERE id = ?",
         [id]
       );
 
@@ -45,7 +45,7 @@ export class MysqlUserRepository implements UserRepository {
 
       const row = rows[0];
 
-      return new User(row.id, row.namedb, row.emaildb, row.passdb, row.role);
+      return new User(row.id, row.namedb, row.emaildb, row.role);
     } catch (error) {
       console.error("Error retrieving user from database:", error);
       throw new Error("Error retrieving user from database");
@@ -97,7 +97,7 @@ export class MysqlUserRepository implements UserRepository {
         [userId]
       );
 
-      const affectedRows = (result as any).affectedRows;
+      const affectedRows = (result as { affectedRows: number }).affectedRows;
 
       if (affectedRows === 0) {
         throw new Error("USER_NOT_FOUND");
@@ -108,6 +108,21 @@ export class MysqlUserRepository implements UserRepository {
       }
       console.error("Error deleting user from database:", error);
       throw new Error("Error deleting user from database");
+    }
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    try {
+      const [rows] = await promisePool.execute<RowDataPacket[]>(
+        "SELECT id, namedb, emaildb, role FROM users ORDER BY id ASC"
+      );
+
+      return rows.map(
+        (row) => new User(row.id, row.namedb, row.emaildb, row.role)
+      );
+    } catch (error) {
+      console.error("Error retrieving all users from database:", error);
+      throw new Error("Error retrieving all users from database");
     }
   }
 }
