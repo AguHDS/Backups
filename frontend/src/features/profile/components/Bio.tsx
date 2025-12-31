@@ -28,10 +28,10 @@ export const Bio = ({ bio, onBioChange }: Props) => {
       ) : (
         <div className="w-full mt-6">
           <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-green-400 text-lg font-medium">Biography</h2>
+            <h2 className="text-gray-400 text-[17px] ml-2 mb-1 font-sans">Bio</h2>
           </div>
-          <div className="max-w-full bg-[#1e1e1e] border border-[#333] rounded-xl shadow-md p-3">
-            <p className="text-[18px] text-gray-300 ml-2 my-0">{bio}</p>
+          <div className="max-w-full bg-[#1e1e1e] border border-[#333] shadow-md p-3">
+            <p className="text-gray-400 text-[16px] font-sans ml-2 my-0">{bio}</p>
           </div>
         </div>
       )}
