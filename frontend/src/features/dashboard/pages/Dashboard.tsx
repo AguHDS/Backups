@@ -1,5 +1,6 @@
 import { FiFolder, FiActivity } from "react-icons/fi";
-import { StatCard, AboutCard } from "../components";
+import { StatCard } from "../components";
+import {AboutCard} from "@/views/home/components/AboutCard";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/app/redux/store";
 import { formatBytes } from "@/shared/utils/formatBytes";

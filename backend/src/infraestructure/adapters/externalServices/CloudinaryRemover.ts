@@ -97,6 +97,103 @@ export class CloudinaryRemover {
   }
 
   /**
+   * Deletes the entire user folder from Cloudinary
+   * This removes all profile pictures, section images, and subfolders
+   * 
+   * @param username - The username of the user
+   * @param userId - The ID of the user
+   */
+  async deleteUserFolder(
+    username: string,
+    userId: string | number
+  ): Promise<void> {
+    if (!username || !userId) {
+      throw new TypeError("username and userId are required");
+    }
+
+    try {
+      const userFolderPath = `user_files/${username} (id: ${userId})`;
+
+      // First, delete all resources (images) in all subfolders recursively
+      try {
+        await cloudinary.api.delete_resources_by_prefix(userFolderPath, {
+          resource_type: "image",
+        });
+      } catch (error) {
+        this.logCloudinaryError(
+          `Could not delete resources in folder: ${userFolderPath}`,
+          error
+        );
+      }
+
+      // Then, delete all subfolders recursively
+      await this.deleteSubfoldersRecursively(userFolderPath);
+
+      // Finally, delete the main user folder
+      try {
+        await cloudinary.api.delete_folder(userFolderPath);
+      } catch (error) {
+        // If folder doesn't exist or is already deleted, that's fine
+        this.logCloudinaryError(
+          `Could not delete main user folder: ${userFolderPath}`,
+          error
+        );
+      }
+    } catch (error) {
+      this.logCloudinaryError(
+        `Failed to delete user folder for user ${userId}`,
+        error
+      );
+      // Don't throw - we want user deletion to succeed even if Cloudinary cleanup fails
+      console.warn(`Cloudinary cleanup failed for user ${userId}, but continuing with user deletion`);
+    }
+  }
+
+  /**
+   * Recursively deletes all subfolders in a given path
+   */
+  private async deleteSubfoldersRecursively(folderPath: string): Promise<void> {
+    try {
+      const result = await cloudinary.api.sub_folders(folderPath);
+
+      for (const folder of result.folders) {
+        const subfolderPath = `${folderPath}/${folder.name}`;
+        
+        // Delete resources in subfolder
+        try {
+          await cloudinary.api.delete_resources_by_prefix(subfolderPath, {
+            resource_type: "image",
+          });
+        } catch (error) {
+          this.logCloudinaryError(
+            `Could not delete resources in subfolder: ${subfolderPath}`,
+            error
+          );
+        }
+
+        // Recursively delete deeper subfolders
+        await this.deleteSubfoldersRecursively(subfolderPath);
+
+        // Delete the subfolder itself
+        try {
+          await cloudinary.api.delete_folder(subfolderPath);
+        } catch (error) {
+          this.logCloudinaryError(
+            `Could not delete subfolder: ${subfolderPath}`,
+            error
+          );
+        }
+      }
+    } catch (error) {
+      // If folder doesn't exist or has no subfolders, that's fine
+      this.logCloudinaryError(
+        `Could not list subfolders for: ${folderPath}`,
+        error
+      );
+    }
+  }
+
+  /**
    * Centralized Cloudinary error logging
    */
   private logCloudinaryError(context: string, error: unknown): void {

@@ -10,7 +10,6 @@
 ### Token Storage
 - **Access Token**: Stored in Redux state (memory only, not persisted)
 - **Refresh Token**: Stored in secure HTTP-only cookie (managed by backend)
-- **Session Flag**: `hasSession` in localStorage indicates active session
 
 ## Flow
 

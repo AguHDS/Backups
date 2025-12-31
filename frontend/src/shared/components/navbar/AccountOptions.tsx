@@ -2,6 +2,8 @@ import type { MouseEvent } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "@tanstack/react-router";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/app/redux/store";
 import { useLogout } from "@/features/auth";
 
 interface Props {
@@ -11,6 +13,7 @@ interface Props {
 export default function AccountOptions({ username }: Props) {
   const navigate = useNavigate();
   const { mutateAsync: logout } = useLogout();
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const handleLogout = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -28,6 +31,10 @@ export default function AccountOptions({ username }: Props) {
 
   const goToConfig = () => {
     navigate({ to: "/account-settings" });
+  };
+
+  const goToAdminDashboard = () => {
+    navigate({ to: "/admin-dashboard" });
   };
 
   return (
@@ -73,6 +80,23 @@ export default function AccountOptions({ username }: Props) {
             )}
           </MenuItem>
           <div className="text-white bg-white h-[1px] w-full my-3"></div>
+          {user?.role === "admin" && (
+            <>
+              <MenuItem>
+                {({ focus }) => (
+                  <button
+                    onClick={goToAdminDashboard}
+                    className={`${
+                      focus ? "bg-gray-700" : ""
+                    } bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded`}
+                  >
+                    Admin Dashboard
+                  </button>
+                )}
+              </MenuItem>
+              <div className="text-white bg-white h-[1px] w-full my-3"></div>
+            </>
+          )}
           <MenuItem>
             {({ focus }) => (
               <button

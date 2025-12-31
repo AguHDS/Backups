@@ -15,7 +15,7 @@ CREATE TABLE `account` (
   `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `account_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `provider_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` int unsigned NOT NULL,
+  `user_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `access_token` text COLLATE utf8mb4_unicode_ci,
   `refresh_token` text COLLATE utf8mb4_unicode_ci,
   `id_token` text COLLATE utf8mb4_unicode_ci,
@@ -64,14 +64,13 @@ CREATE TABLE `user_storage_usage` (
 
 users
 CREATE TABLE `users` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `namedb` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `emaildb` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified` tinyint(1) NOT NULL DEFAULT '0',
   `image` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) NOT NULL,
-  `passdb` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `role` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'user',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_emaildb_key` (`emaildb`)
@@ -108,14 +107,14 @@ CREATE TABLE `users_profile` (
 users_profile_sections
 CREATE TABLE `users_profile_sections` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `fk_users_id` int unsigned NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Section title',
-  `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT 'No description',
+  `fk_users_id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Title',
+  `description` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_public` tinyint NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `users_profile_sections_fk_users_id_fkey` (`fk_users_id`),
   CONSTRAINT `users_profile_sections_fk_users_id_fkey` FOREIGN KEY (`fk_users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 
 verification
 CREATE TABLE `verification` (

@@ -30,12 +30,9 @@ class SessionCleanupService {
 
       this.cleanupIntervalMs
     );
-  } /**
-
-   * Stop the cleanup service
-
-   */
-
+  }
+  
+  /**Stop the cleanup service */
   stop(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
@@ -44,12 +41,9 @@ class SessionCleanupService {
 
       console.log("[Session Cleanup] Service stopped");
     }
-  } /**
+  }
 
-   * Execute cleanup of expired sessions
-
-   */
-
+  /**Execute cleanup of expired sessions */
   private async cleanup(): Promise<void> {
     try {
       const result = await prisma.session.deleteMany({

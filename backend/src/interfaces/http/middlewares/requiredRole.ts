@@ -7,7 +7,8 @@ export function requireRole(allowedRoles: ("user" | "admin")[]) {
     const role = req.user?.role || req.baseUserData?.role;
     
     if (!role || !allowedRoles.includes(role as "user" | "admin")) {
-      return res.status(403).json({ message: "Access denied" });
+      res.status(403).json({ message: "Access denied" });
+      return;
     }
 
     next();

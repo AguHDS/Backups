@@ -12,7 +12,7 @@ export interface ProfileRepository {
   /**
    * Gets user profile by ID
    */
-  getProfileById(userId: number): Promise<UserProfile | null>;
+  getProfileById(userId: number | string): Promise<UserProfile | null>;
 
   /**
    * Creates a new user profile with default values
@@ -102,7 +102,7 @@ export interface ProfileRepository {
    * @param newPublicId - The new profile picture public ID
    */
   updateProfilePicture(
-    userId: number,
+    userId: number | string,
     newPublicId: string
   ): Promise<void>;
 }

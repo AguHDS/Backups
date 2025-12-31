@@ -49,9 +49,9 @@ export const uploadFilesController = async (req: Request, res: Response) => {
   } catch (error) {
     if (
       error instanceof Error &&
-      (error as any).details?.code === "STORAGE_QUOTA_EXCEEDED"
+      (error as Error & { details?: { code: string } }).details?.code === "STORAGE_QUOTA_EXCEEDED"
     ) {
-      const details = (error as any).details;
+      const details = (error as Error & { details: { code: string; currentUsage: number; maxStorage: number; requested: number } }).details;
 
       res.status(409).json({
         success: false,

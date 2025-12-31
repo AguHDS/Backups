@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { CloudinaryUploader } from "../../../infraestructure/adapters/externalServices/CloudinaryUploader.js";
-import { UpdateProfilePictureUseCase } from "../../../application/useCases/ProfilePictureUseCase.js";
-import { MysqlProfileRepository } from "../../../infraestructure/adapters/repositories/MysqlProfileRepository.js";
-import { MysqlStorageUsageRepository } from "../../../infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
-import { BaseUserData } from "../../../shared/dtos/userDto.js";
+import { CloudinaryUploader } from "@/infraestructure/adapters/externalServices/CloudinaryUploader.js";
+import { UpdateProfilePictureUseCase } from "@/application/useCases/ProfilePictureUseCase.js";
+import { MysqlProfileRepository } from "@/infraestructure/adapters/repositories/MysqlProfileRepository.js";
+import { MysqlStorageUsageRepository } from "@/infraestructure/adapters/repositories/MysqlStorageUsageRepository.js";
+import { BaseUserData } from "@/shared/dtos/userDto.js";
 
 export const profilePictureController = async (req: Request, res: Response) => {
   try {
@@ -37,18 +37,9 @@ export const profilePictureController = async (req: Request, res: Response) => {
       storageUsageRepo
     );
 
-    const numericUserId = typeof id === "string" ? parseInt(id, 10) : id;
-    if (isNaN(numericUserId) || numericUserId <= 0) {
-      res.status(400).json({
-        success: false,
-        message: "Invalid user ID",
-      });
-      return;
-    }
-
     const result = await updateProfilePictureUseCase.execute(
       file,
-      numericUserId
+      id
     );
 
     res.status(200).json({
@@ -63,9 +54,9 @@ export const profilePictureController = async (req: Request, res: Response) => {
 
     if (
       error instanceof Error &&
-      (error as any).details?.code === "STORAGE_QUOTA_EXCEEDED"
+      (error as Error & { details?: { code: string } }).details?.code === "STORAGE_QUOTA_EXCEEDED"
     ) {
-      const details = (error as any).details;
+      const details = (error as Error & { details: { code: string; currentUsage: number; maxStorage: number; requested: number } }).details;
 
       res.status(409).json({
         success: false,

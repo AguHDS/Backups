@@ -19,7 +19,7 @@ export class UpdateProfilePictureUseCase {
 
   async execute(
     file: Express.Multer.File,
-    userId: number
+    userId: number | string
   ): Promise<{ public_id: string }> {
     if (!file) {
       throw new Error("No file provided");
@@ -130,7 +130,7 @@ export class UpdateProfilePictureUseCase {
   }
 
   private async rollbackUpload(
-    userId: number,
+    userId: number | string,
     newPublicId: string,
     newFileSize: number,
     oldPublicId?: string | null,
