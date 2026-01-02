@@ -1,10 +1,6 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/shared";
-import {
-  useEditProfile,
-  useSection,
-  useSections,
-} from "../context";
+import { useEditProfile, useSection, useSections } from "../context";
 import { useParams } from "@tanstack/react-router";
 import { SectionFileGallery } from "./SectionFileGallery";
 import { useFileDeletion } from "../context";
@@ -76,7 +72,8 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       uploadFilesMutation.reset();
       setUploadErrors([]);
 
-      setFiles((prev) => [...prev, ...Array.from(selected)]);
+      const selectedArray = Array.from(selected);
+      setFiles(selectedArray);
       setReadyToUpload(true);
     },
     [uploadFilesMutation]
@@ -87,6 +84,10 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     setReadyToUpload(false);
     setUploadErrors([]);
     uploadFilesMutation.reset();
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   // Toggle selection checkbox for files (add/remove from set)
@@ -135,7 +136,13 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
     // Add to context deletion list for save
     addFilesToDelete(sectionId, idsToDelete);
     setSelectedFileIds(new Set());
-  }, [selectedFileIds, uploadedFiles, addFilesToDelete, removeFilesFromSection, sectionId]);
+  }, [
+    selectedFileIds,
+    uploadedFiles,
+    addFilesToDelete,
+    removeFilesFromSection,
+    sectionId,
+  ]);
 
   const hasErrorsToShow =
     uploadErrors.length > 0 || uploadFilesMutation.isError;
@@ -163,11 +170,13 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
       {!isEditing && isOwnProfile && (
         <div className="flex flex-col items-center mt-4">
           {!readyToUpload ? (
-            <Button
-              label="Select new files"
-              className="flex justify-center items-center w-[200px] mx-auto my-2 text-center p-2 bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333] rounded"
-              onClick={handleButtonClick}
-            />
+            <>
+              <Button
+                label="Select images to upload"
+                className="flex justify-center items-center w-[200px] mx-auto my-2 text-center p-2 bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333] rounded"
+                onClick={handleButtonClick}
+              />
+            </>
           ) : (
             <>
               <div className="mt-4 text-center text-[#ccc]">
@@ -176,7 +185,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
               </div>
               <div className="flex justify-center space-x-4">
                 <Button
-                  label="Upload files"
+                  label="Upload images"
                   className="my-1 mb-5 mt-5 p-2 text-center w-[12vw] bg-[#303030] text-[#ccc] border border-[#444] hover:bg-[#333]"
                   onClick={handleSendFiles}
                 />
@@ -191,14 +200,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
               {hasErrorsToShow && (
                 <div className="w-full max-w-[80%] mt-4">
                   <ValidationMessages
-                    input={
-                      uploadErrors.length > 0
-                        ? uploadErrors
-                        : [
-                            uploadFilesMutation.error?.message ||
-                              "Upload failed",
-                          ]
-                    }
+                    input={uploadErrors}
                     status={null}
                     message={null}
                   />
@@ -212,6 +214,7 @@ export const SectionFileManager = ({ sectionIndex }: Props) => {
             ref={fileInputRef}
             onChange={handleUploadFiles}
             multiple
+            accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.bmp,.tiff,.ico,image/*"
             aria-label="Upload files"
           />
         </div>

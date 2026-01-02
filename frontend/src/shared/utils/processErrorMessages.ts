@@ -38,6 +38,10 @@ export const processErrorMessages = (error: FetchError): string[] => {
 
       // Check for "error" field first (from backend middlewares)
       if (apiError.error) {
+        // Handle invalid file type error from multer middleware
+        if (apiError.error.includes("You only can upload image files")) {
+          return ["You only can upload image files"];
+        }
         return [String(apiError.error)];
       }
 
@@ -57,6 +61,11 @@ export const processErrorMessages = (error: FetchError): string[] => {
         ];
       }
 
+      // Invalid file type error from controller
+      if (apiError.code === "INVALID_FILE_TYPE") {
+        return ["You only can upload image files"];
+      }
+
       // Check for "message" field
       if (apiError.message) {
         // Handle storage-specific messages
@@ -69,6 +78,11 @@ export const processErrorMessages = (error: FetchError): string[] => {
 
         if (apiError.message.includes("Admin users can have up to")) {
           return [apiError.message];
+        }
+
+        // Handle invalid file type message from controller
+        if (apiError.message.includes("You only can upload image files")) {
+          return ["You only can upload image files"];
         }
 
         // Return message directly (BetterAuth and backend already send proper messages)
@@ -125,6 +139,10 @@ export const processErrorMessages = (error: FetchError): string[] => {
     }
 
     if (apiError.error) {
+      // Handle invalid file type error
+      if (apiError.error.includes("You only can upload image files")) {
+        return ["You only can upload image files"];
+      }
       return [String(apiError.error)];
     }
 
@@ -135,6 +153,10 @@ export const processErrorMessages = (error: FetchError): string[] => {
     }
 
     if (apiError.message) {
+      // Handle invalid file type message
+      if (apiError.message.includes("You only can upload image files")) {
+        return ["You only can upload image files"];
+      }
       return [String(apiError.message)];
     }
 
@@ -152,11 +174,20 @@ export const processErrorMessages = (error: FetchError): string[] => {
     ) {
       return ["Users with 'user' role can only have one section"];
     }
+
+    // Handle file type errors
+    if (errorMessage.includes("You only can upload image files")) {
+      return ["You only can upload image files"];
+    }
     
     return [errorMessage];
   }
 
   if (typeof error === "string") {
+    // Handle file type error strings
+    if (error.includes("You only can upload image files")) {
+      return ["You only can upload image files"];
+    }
     return [error];
   }
 

@@ -260,7 +260,7 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 </div>
               )}
 
-              <UserInfo userStatus="offline" role={data.role} />
+              <UserInfo userStatus="offline" role={data.role} level={"-"} />
 
               <h3 className="text-center text-gray-300 my-5">Storage</h3>
               <StorageChart {...{ usedBytes, limitBytes, remainingBytes }} />
