@@ -17,6 +17,7 @@ interface Props {
   sectionIndex: number;
 }
 
+/** Manages file uploads and deletions for a specific section */
 export const SectionFileManager = ({ sectionIndex }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const [readyToUpload, setReadyToUpload] = useState(false);

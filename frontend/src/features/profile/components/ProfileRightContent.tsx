@@ -12,7 +12,6 @@ interface Props {
   onBioChange: (bio: string) => void;
 }
 
-// Right content (bio, titles, sections)
 export const ProfileRightContent = ({
   updateData,
   errorMessages,
@@ -42,7 +41,9 @@ export const ProfileRightContent = ({
           {/* Separator between Bio and Sections */}
           <div className="my-8 flex items-center gap-3">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#3a3a3a] to-transparent"></div>
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Sections</span>
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+              Sections
+            </span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#3a3a3a] to-transparent"></div>
           </div>
 
@@ -95,6 +96,11 @@ export const ProfileRightContent = ({
                         <h3 className="text-[#ccc] text-[28px]">
                           {section.title}
                         </h3>
+                        {!section.isPublic && (
+                          <span className="font-sans text-xs bg-blue-900/30 text-blue-300 px-2 py-1 rounded border border-blue-700/50">
+                            Private
+                          </span>
+                        )}
                       </div>
                     </div>
                   )}

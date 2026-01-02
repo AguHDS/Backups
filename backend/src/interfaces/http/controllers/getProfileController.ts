@@ -21,30 +21,25 @@ export const getProfileController = async (req: Request, res: Response) => {
     }
     const { name, role, id, email } = req.baseUserData;
 
+    // Use requesterData from middleware instead of fetching session again
+    const requesterData = req.requesterData;
+
+    // Extract requester info (id and role)
     let requesterId: string | undefined = undefined;
+    let requesterRole: string | undefined = undefined;
 
-    try {
-      // Get active user's id for profile ownership validation (optional - for isOwner flag)
-      const headers = new Headers();
-      Object.entries(req.headers).forEach(([key, value]) => {
-        if (value) {
-          headers.set(key, Array.isArray(value) ? value[0] : value);
-        }
-      });
-
-      const session = await auth.api.getSession({ headers });
-      if (session && session.user) {
-        requesterId = String(session.user.id);
-      }
-    } catch (err) {
-      requesterId = undefined;
-      console.error(err);
+    if (requesterData) {
+      requesterId = requesterData.id;
+      requesterRole = requesterData.role;
     }
 
-    const { profile, isOwner } = await getUserProfileUseCase.executeByUsername(
+    const result = await getUserProfileUseCase.executeByUsername(
       username,
-      requesterId
+      requesterId,
+      requesterRole
     );
+
+    const { profile, isOwner, isAdmin } = result;
 
     if (!email) {
       res.status(400).json({ message: "Incomplete user data" });
@@ -57,6 +52,7 @@ export const getProfileController = async (req: Request, res: Response) => {
       id,
       email,
       isOwner,
+      isAdmin,
       userProfileData: {
         bio: profile.bio,
         profile_pic: profile.profilePic,
@@ -84,6 +80,7 @@ export const getProfileController = async (req: Request, res: Response) => {
       error instanceof Error ? error.message : "Unknown error";
 
     console.error("Failed to get user profile:", error);
+    console.error("Full error stack:", error);
 
     switch (errorMessage) {
       case "PROFILE_NOT_FOUND":
