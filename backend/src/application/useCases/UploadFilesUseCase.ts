@@ -34,6 +34,18 @@ export class UploadFilesUseCase {
   ): Promise<UserFile[]> {
     if (!files || files.length === 0) throw new Error("No files provided");
 
+    // Re-validate file types (defense in depth)
+    const allowedMimeTypes = [
+      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 
+      'image/webp', 'image/svg+xml', 'image/bmp', 
+      'image/tiff', 'image/x-icon'
+    ];
+
+    const invalidFiles = files.filter(file => !allowedMimeTypes.includes(file.mimetype));
+    if (invalidFiles.length > 0) {
+      throw new Error("Invalid file type. Only image files are allowed");
+    }
+
     const numericSectionId = parseInt(sectionId, 10);
     if (isNaN(numericSectionId) || numericSectionId <= 0) {
       throw new Error(

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { SectionFilesPayload } from "../../../shared/dtos/SectionAndFiles.js";
-import { DeleteFilesFromSectionsUseCase } from "../../../application/useCases/DeleteFilesFromSectionsUseCase.js";
-import { MysqlFileRepository, MysqlStorageUsageRepository } from "../../../infraestructure/adapters/repositories/index.js";
-import { CloudinaryRemover } from "../../../infraestructure/adapters/externalServices/CloudinaryRemover.js";
+import { SectionFilesPayload } from "@/shared/dtos/SectionAndFiles.js";
+import { DeleteFilesFromSectionsUseCase } from "@/application/useCases/DeleteFilesFromSectionsUseCase.js";
+import { MysqlFileRepository, MysqlStorageUsageRepository } from "@/infraestructure/adapters/repositories/index.js";
+import { CloudinaryRemover } from "@/infraestructure/adapters/externalServices/CloudinaryRemover.js";
 
 const useCase = new DeleteFilesFromSectionsUseCase(
   new MysqlFileRepository(),

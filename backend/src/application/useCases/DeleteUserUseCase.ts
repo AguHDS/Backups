@@ -23,7 +23,7 @@ export class DeleteUserUseCase {
       throw new Error("MISSING_USER_ID");
     }
 
-    // Get user info before deletion (we need username for Cloudinary cleanup)
+    // Get user info before deletion (solo para confirmar que existe)
     const connection = await promisePool.getConnection();
     try {
       const user = await this.userRepo.findById(userId, connection);
@@ -39,8 +39,8 @@ export class DeleteUserUseCase {
       // This happens AFTER DB deletion to ensure we don't leave orphaned DB records
       // If Cloudinary cleanup fails, we log it but don't fail the operation
       try {
-        await this.cloudinaryRemover.deleteUserFolder(user.name, userId);
-        console.log(`Successfully deleted Cloudinary folder for user ${user.name} (${userId})`);
+        await this.cloudinaryRemover.deleteUserFolder(userId);
+        console.log(`Successfully deleted Cloudinary folder for user ID: ${userId}`);
       } catch (error) {
         console.error(`Failed to delete Cloudinary folder for user ${userId}:`, error);
         // Don't throw - user deletion should succeed even if Cloudinary cleanup fails

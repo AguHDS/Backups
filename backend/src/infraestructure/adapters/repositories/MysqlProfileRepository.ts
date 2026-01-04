@@ -98,7 +98,7 @@ export class MysqlProfileRepository implements ProfileRepository {
         userId,
       ]);
 
-      return rows.map(
+      const sections = rows.map(
         (row) =>
           new UserProfileSection(
             row.id,
@@ -108,6 +108,8 @@ export class MysqlProfileRepository implements ProfileRepository {
             row.is_public === 1
           )
       );
+
+      return sections;
     } catch (error) {
       console.error("Error retrieving user section data from database:", error);
       throw new Error("Error retrieving user section data from database");

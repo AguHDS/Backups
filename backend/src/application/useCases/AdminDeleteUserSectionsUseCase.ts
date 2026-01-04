@@ -29,7 +29,7 @@ export class AdminDeleteUserSectionsUseCase {
       throw new Error("MISSING_SECTION_IDS");
     }
 
-    // Get user info (need username for Cloudinary paths)
+    // Get user info
     const connection = await promisePool.getConnection();
     try {
       const user = await this.userRepo.findById(userId, connection);
@@ -58,7 +58,6 @@ export class AdminDeleteUserSectionsUseCase {
       // Delete section folders from Cloudinary (all versions)
       for (const sectionId of sectionIds) {
         await this.cloudinaryRemover.deleteFoldersBySectionId(
-          user.name,
           userId,
           sectionId
         );

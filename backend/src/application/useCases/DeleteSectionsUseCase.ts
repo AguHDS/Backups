@@ -1,7 +1,7 @@
-import { ProfileRepository } from "../../domain/ports/repositories/ProfileRepository.js";
-import { FileRepository } from "../../domain/ports/repositories/FileRepository.js";
-import { CloudinaryRemover } from "../../infraestructure/adapters/externalServices/CloudinaryRemover.js";
-import { StorageUsageRepository } from "../../domain/ports/repositories/StorageUsageRepository.js";
+import { ProfileRepository } from "@/domain/ports/repositories/ProfileRepository.js";
+import { FileRepository } from "@/domain/ports/repositories/FileRepository.js";
+import { CloudinaryRemover } from "@/infraestructure/adapters/externalServices/CloudinaryRemover.js";
+import { StorageUsageRepository } from "@/domain/ports/repositories/StorageUsageRepository.js";
 
 /**
  * Deletes sections and their associated files for a user, updating storage usage accordingly
@@ -16,7 +16,6 @@ export class DeleteSectionsUseCase {
   async execute(
     sectionIds: number[],
     userId: string | number,
-    username: string
   ): Promise<void> {
     if (sectionIds.length === 0) throw new Error("NO_SECTIONS_ID");
 
@@ -36,7 +35,6 @@ export class DeleteSectionsUseCase {
     // Delete all folders from Cloudinary (including old title versions)
     for (const sectionId of sectionIds) {
       await this.fileCloudinaryRemover.deleteFoldersBySectionId(
-        username,
         userId,
         sectionId
       );

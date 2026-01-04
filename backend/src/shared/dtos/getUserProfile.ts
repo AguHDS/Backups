@@ -25,6 +25,7 @@ export interface GetProfileResponse {
   id: number | string;
   email: string;
   isOwner: boolean;
+  isAdmin: boolean;
   userProfileData: ProfileContent;
   userSectionData: ProfileSection[];
 }

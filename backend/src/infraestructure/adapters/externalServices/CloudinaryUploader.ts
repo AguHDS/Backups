@@ -1,13 +1,12 @@
 import {
   CloudinaryFileUploader,
   CloudinaryUploadResponse,
-} from "../../../domain/ports/externalServices/CloudinaryFileUploader.js";
-import { cloudinary } from "../../../services/cloudinary.js";
+} from "@/domain/ports/externalServices/CloudinaryFileUploader.js";
+import { cloudinary } from "@/services/cloudinary.js";
 import streamifier from "streamifier";
 
 export class CloudinaryUploader implements CloudinaryFileUploader {
   constructor(
-    private readonly username: string,
     private readonly userId: string | number
   ) {}
 
@@ -15,9 +14,8 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
   async uploadFilesToSection(
     files: Express.Multer.File[],
     sectionId: string,
-    sectionTitle: string
   ): Promise<CloudinaryUploadResponse[]> {
-    const folder = `user_files/${this.username} (id: ${this.userId})/section: ${sectionTitle} (id: ${sectionId})`;
+    const folder = `user_files/user_${this.userId}/section_${sectionId}`;
 
     const uploadPromises = files.map((file) => {
       return new Promise<CloudinaryUploadResponse>((resolve, reject) => {
@@ -61,7 +59,7 @@ export class CloudinaryUploader implements CloudinaryFileUploader {
   async uploadProfilePicture(
     file: Express.Multer.File
   ): Promise<CloudinaryUploadResponse> {
-    const folder = `user_files/${this.username} (id: ${this.userId})/profile_picture`;
+    const folder = `user_files/user_${this.userId}/profile_pictures`;
 
     // Generate unique public_id
     const timestamp = Date.now();
