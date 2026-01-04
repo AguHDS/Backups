@@ -14,7 +14,7 @@ export const uploadFilesController = async (req: Request, res: Response) => {
       return;
     }
 
-    const { name, id } = baseUserData;
+    const { id } = baseUserData;
     const sectionId = req.query.sectionId as string;
     const sectionTitle = req.query.sectionTitle as string;
     const files = req.files as Express.Multer.File[];
@@ -59,7 +59,7 @@ export const uploadFilesController = async (req: Request, res: Response) => {
       return;
     }
 
-    const uploader = new CloudinaryUploader(name, id);
+    const uploader = new CloudinaryUploader(id);
     const fileRepo = new MysqlFileRepository();
     const storageUsageRepo = new MysqlStorageUsageRepository();
 

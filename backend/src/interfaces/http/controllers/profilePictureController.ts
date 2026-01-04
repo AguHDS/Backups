@@ -16,7 +16,7 @@ export const profilePictureController = async (req: Request, res: Response) => {
       return;
     }
 
-    const { name, id } = baseUserData;
+    const { id } = baseUserData;
     const file = req.file as Express.Multer.File;
 
     if (!file) {
@@ -27,7 +27,7 @@ export const profilePictureController = async (req: Request, res: Response) => {
       return;
     }
 
-    const uploader = new CloudinaryUploader(name, id);
+    const uploader = new CloudinaryUploader(id);
     const profileRepository = new MysqlProfileRepository();
     const storageUsageRepo = new MysqlStorageUsageRepository();
 

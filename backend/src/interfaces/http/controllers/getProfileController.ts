@@ -3,7 +3,6 @@ import { MysqlProfileRepository } from "@/infraestructure/adapters/repositories/
 import { GetUserProfileUseCase } from "@/application/useCases/GetUserProfileUseCase.js";
 import { GetProfileResponse } from "@/shared/dtos/index.js";
 import { MysqlFileRepository } from "@/infraestructure/adapters/repositories/MysqlFileRepository.js";
-import { auth } from "@/lib/auth.js";
 
 const getUserProfileUseCase = new GetUserProfileUseCase(
   new MysqlProfileRepository(),

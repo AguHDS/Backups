@@ -1,7 +1,7 @@
-import { FileRepository } from "../../domain/ports/repositories/FileRepository.js";
-import { CloudinaryRemover } from "../../infraestructure/adapters/externalServices/CloudinaryRemover.js";
-import { StorageUsageRepository } from "../../domain/ports/repositories/StorageUsageRepository.js";
-import { SectionFilesPayload } from "../../shared/dtos/SectionAndFiles.js"
+import { FileRepository } from "@/domain/ports/repositories/FileRepository.js";
+import { CloudinaryRemover } from "@/infraestructure/adapters/externalServices/CloudinaryRemover.js";
+import { StorageUsageRepository } from "@/domain/ports/repositories/StorageUsageRepository.js";
+import { SectionFilesPayload } from "@/shared/dtos/SectionAndFiles.js"
 
 export class DeleteFilesFromSectionsUseCase {
   constructor(
