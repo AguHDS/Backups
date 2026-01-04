@@ -1,6 +1,5 @@
 # Backups (in progress)
-This app will let you store files, getting level for more space and organizing your profile to make them
-private or public. You'll need to be validated as a user to access.
+This app will let you store images and leveling up your account to gain benefits.
 
 ### Features that are already implemented:
 
@@ -10,13 +9,11 @@ private or public. You'll need to be validated as a user to access.
 * Make your sections public/private
 * Admin Dashboard to manage users and their profile
 
-### Features that are in progress:
+### Features in progress:
 * Level system that will grant benefits
 * Daily quests to gain more exp and level up
 
-many features aren't avialable yet since i'm working on them
-
-### Profile preview (more changes in the UI/UX are expected)
+### Profile preview (not final design)
 
 Profile section
 ![Showcase](Profile_Showcase.png)
@@ -36,6 +33,10 @@ Profile section
 * Cloudinary
 * Prisma
 * Vitest
+
+### Architecture
+* Backend: Clean Architecture with SOLID principles
+* Frontend: Feature-based Architecture
 
 ### How to setup repository locally
 * Use **npm install** to install all dependencies in the backend and frontend folder
