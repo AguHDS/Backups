@@ -2,13 +2,17 @@
 This app will let you store files, getting level for more space and organizing your profile to make them
 private or public. You'll need to be validated as a user to access.
 
-## some of the features that this app will have:
+### Features that are already implemented:
 
-* Strong securiy flow for accounts, using token rotation. More info in AuthFlow-info.md
-* Storage for authenticated users
-* Switch to make your uploads public/private
+* Securiy flow for accounts using token rotation
+* Profiles where users can upload images to their sections
+* Optimized images with Cloudinary SDK
+* Make your sections public/private
+* Admin Dashboard to manage users and their profile
+
+### Features that are in progress:
 * Level system that will grant benefits
-* Daily quests to gain more exp on your account
+* Daily quests to gain more exp and level up
 
 many features aren't avialable yet since i'm working on them
 
@@ -26,33 +30,28 @@ Profile section
 * Axios
 * Tanstack router / Tanstack Query
 * Zod
-* Node: Express
+* Node/Express
 * Mysql
+* BetterAuth
+* Cloudinary
+* Prisma
 * Vitest
 
-### First setup
-* once you have the repo on your local, use npm install in the backend and frontend folder to install all dependencies
-* create .env for /backend and /frontend and modify it with your own configs (see .env.examples to see what values you need)
+### How to setup repository locally
+* Use **npm install** to install all dependencies in the backend and frontend folder
+* Configure .env file for backend and frontend
 
 ### Database setup
-- you must have installed mysql on your computer and run its service so the database and backend can work(W+R -> services.msc -> run/stop mysql service), you can also use MySQLWorkbrench for a better view of the database (you'll need to connect the schema to the db with the 
-credentials)
-- in case you want to create your own database, you can read the "backend/db/db_code_info.txt" file, there you have the code to create the tables
+- You must have installed mysql on your computer and run its service (W+R -> services.msc -> run/stop mysql service), you can also use MySQLWorkbrench for a better view (you'll need to connect the schema to the db with the credentials)
+- All the DDL's for tables are in `backend\src\db\db_DLL.md`
 
-### Cloudinary service setup (for file uploads)
-- Create an account in https://cloudinary.com, then click the "View API keys" button to see the credentials that you must put in /backend/.env
-- The system will create folders in cloudinary that contains all files from each user
-- Cloudinary API data (public_id) to render those images in the client (already setted up)
+### Cloudinary Storage setup
+- Create account in https://cloudinary.com, then "View API keys" to see your credentials and put them in /backend/.env
 
-### how to run the project locally
-Open visual studio terminal, step on frontend and backend folder and run:
-* for dev: __npm run dev__ <- if there are typescript errors, this run will fail and ask you to fix them
-* for tests: __npm run test__ <- run tests
-* for coverage: __npx vitest run --coverage__ <- create coverage
-* for build dist: __npm run build__ <- create dist folder ready for production
-* for production: __npm start__ <- run the project production dist files
-
-Notes:<br><br>
-. Vite changes its port when it's running on production or development, make sure to change the frontend port in the .env files
-and in the package.json of the frontend since it's using "wait-on http://localhost:Your-port"<br><br>
-. Ttailwind may break in development sometimes, if that happen and the styles break just rerun the frontend again
+### Run scripts
+* dev: __npm run dev__ <- if there are typescript errors, this run will fail and ask you to fix them
+* build dist: __npm run build__ <- create dist folder ready for production
+* vite preview: __npm run preview__ <- run the production dist files in a local server
+* lint: __npm run lint__ <- run linter
+* tests: __npm run test__ <- run tests
+* coverage: __npx vitest run --coverage__ <- create coverage

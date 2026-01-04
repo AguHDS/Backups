@@ -22,7 +22,7 @@ declare module "@tanstack/react-router" {
 }
 
 const AppProvider = () => {
-  const isDevelopment = import.meta.env.VITE_QUERY_ENV === "development";
+  const isDevelopment = import.meta.env.VITE_QUERY_ENV === "production";
 
   return (
     <Provider store={store}>
