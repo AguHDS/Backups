@@ -10,7 +10,7 @@ export const Bio = ({ bio, onBioChange }: Props) => {
 
   return (
     <>
-      <div className="w-full mt-6">
+      <div className="w-full">
         <div className="flex items-center gap-2 mb-1">
           <h2 className="text-gray-400 text-[17px] ml-2 mb-1 font-sans">Bio</h2>
         </div>
@@ -21,7 +21,7 @@ export const Bio = ({ bio, onBioChange }: Props) => {
           <textarea
             className="w-full box-border bg-transparent text-gray-300 text-[16px] leading-normal font-sans p-2 border border-[#444] resize-none"
             rows={3}
-            placeholder="Add a new biography (max 500 chars)"
+            placeholder="Add a new biography"
             value={bio}
             onChange={(e) => onBioChange(e.target.value)}
             maxLength={500}
