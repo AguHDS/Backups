@@ -14,6 +14,7 @@ interface Props {
 const EMPTY_SET = new Set<string>();
 const NOOP = () => {};
 
+/** Manages display and selection of images inside sections */
 export const SectionFileGallery = ({
   uploadedFiles,
   isEditing = false,

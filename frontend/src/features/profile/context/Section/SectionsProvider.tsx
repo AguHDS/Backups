@@ -6,7 +6,10 @@ import {
   useMemo,
   useRef,
 } from "react";
-import type { SectionWithFile, UploadedFile } from "@/features/profile/types/section";
+import type {
+  SectionWithFile,
+  UploadedFile,
+} from "@/features/profile/types/section";
 
 interface SectionsContextType {
   sections: SectionWithFile[];
@@ -74,16 +77,29 @@ export const SectionsProvider = ({
 
   const renderFilesOnResponse = useCallback(
     (sectionId: number, newFiles: UploadedFile[]) => {
-      setSections((prev) =>
-        prev.map((section) =>
+      setSections((prev) => {
+        const updatedSections = prev.map((section) =>
           section.id === sectionId
             ? {
                 ...section,
                 files: [...(section.files || []), ...newFiles],
               }
             : section
-        )
-      );
+        );
+
+        initialSectionsRef.current = updatedSections.map((section, idx) => {
+          const initialSection = initialSectionsRef.current[idx];
+          if (section.id === sectionId && initialSection?.id === sectionId) {
+            return {
+              ...initialSection,
+              files: [...(initialSection.files || []), ...newFiles],
+            };
+          }
+          return initialSection;
+        });
+
+        return updatedSections;
+      });
     },
     []
   );
