@@ -10,29 +10,36 @@ export const Bio = ({ bio, onBioChange }: Props) => {
 
   return (
     <>
-      {isEditing ? (
-        <>
-          <div className="w-full mt-6">
-            <h2 className="text-green-500 text-lg ml-2 mb-1 font-medium">
-              Biography
-            </h2>
-          </div>
+      <div className="w-full mt-6">
+        <div className="flex items-center gap-2 mb-1">
+          <h2 className="text-gray-400 text-[17px] ml-2 mb-1 font-sans">Bio</h2>
+        </div>
+      </div>
+
+      <div className="max-w-full bg-[#1e1e1e] border border-[#333] shadow-md p-3 overflow-hidden">
+        {isEditing ? (
           <textarea
-            className="w-[95%] bg-[#272727] text-[#ccc] text-[14px] p-2 mb-4 border border-[#444] resize-none"
+            className="w-full box-border bg-transparent text-gray-300 text-[16px] leading-normal font-sans p-2 border border-[#444] resize-none"
             rows={3}
-            placeholder="Add a new biography"
+            placeholder="Add a new biography (max 500 chars)"
             value={bio}
             onChange={(e) => onBioChange(e.target.value)}
-          ></textarea>
-        </>
-      ) : (
-        <div className="w-full mt-6">
-          <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-gray-400 text-[17px] ml-2 mb-1 font-sans">Bio</h2>
-          </div>
-          <div className="max-w-full bg-[#1e1e1e] border border-[#333] shadow-md p-3">
-            <p className="text-gray-400 text-[16px] font-sans ml-2 my-0">{bio}</p>
-          </div>
+            maxLength={500}
+          />
+        ) : (
+          <p className="text-gray-300 text-[16px] leading-normal font-sans ml-2 my-0 break-words whitespace-pre-wrap overflow-hidden word-break-break-word">
+            {bio}
+          </p>
+        )}
+      </div>
+
+      {isEditing && (
+        <div className="text-right mr-2">
+          <span
+            className={`text-xs font-sans ${bio.length >= 450 ? "text-amber-400" : "text-gray-400"}`}
+          >
+            {bio.length}/500
+          </span>
         </div>
       )}
     </>

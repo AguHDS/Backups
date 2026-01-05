@@ -58,11 +58,7 @@ export class RegisterUserWithBetterAuthUseCase {
     // Initialize user storage usage
     await this.storageRepository.addToUsedStorage(userId, 0);
     await this.storageRepository.setMaxStorage(userId, 104857600);
-
-    // Create user profile with default values
     await this.profileRepository.createProfile(userId);
-    console.log(`User: ${name} profile created`);
-    console.log(`User: ${name} registered successfully`);
 
     return {
       user: {

@@ -26,8 +26,6 @@ export class GetUserProfileUseCase {
       throw new Error("PROFILE_NOT_FOUND");
     }
 
-    console.log("4. Found profile user ID:", profile.userId);
-
     // Compare as strings since BetterAuth uses string IDs
     const isOwner = requesterId
       ? String(requesterId) === String(profile.userId)
