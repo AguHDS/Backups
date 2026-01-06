@@ -139,10 +139,21 @@ const sections = [
     ],
   },
   {
+    title: "Service Availability and Data Integrity",
+    content: [
+      "Backups provides the service on an 'as is' and 'as available' basis.",
+      "We do not warrant that the service will be uninterrupted, timely, secure, or error-free.",
+      "Users acknowledge that data loss may occur due to various factors including but not limited to: server failures, software bugs, network issues, or force majeure events.",
+      "It is the user's responsibility to maintain independent backups of all critical files.",
+    ],
+  },
+  {
     title: "Limitation of Liability",
     content: [
       "Backups is not responsible for damages or losses arising from the use of the Application.",
       "Backups is not responsible for unauthorized access to content due to technical failures or external vulnerabilities.",
+      "Backups does not guarantee the permanent availability or integrity of uploaded content. Users are solely responsible for maintaining their own backups of important files.",
+      "In no event shall Backups be liable for any loss of data, corruption of files, or inability to access uploaded content.",
     ],
   },
   {

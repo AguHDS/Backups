@@ -2,7 +2,6 @@ import {
   HiOutlineMail,
   HiOutlineChatAlt2,
   HiOutlineDocumentText,
-  HiOutlineQuestionMarkCircle,
   HiOutlineInformationCircle,
   HiOutlineLockClosed,
   HiOutlineDocument,
@@ -50,12 +49,6 @@ export const Footer = () => {
                   Email
                 </a>
               </li>
-              <li className="flex items-center space-x-3">
-                <HiOutlineDocumentText className="text-[#2fd07f] w-5 h-5" />
-                <a href="/contact-form" className="hover:text-[#2fd07f]">
-                  Contact Form
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -63,12 +56,6 @@ export const Footer = () => {
           <div>
             <h2 className="text-xl font-bold tracking-wide mb-2">Backups</h2>
             <ul className="space-y-2 pl-0 text-sm list-inside">
-              <li className="flex items-center space-x-3">
-                <HiOutlineQuestionMarkCircle className="text-[#2fd07f] w-5 h-5" />
-                <a href="#" className="hover:text-[#2fd07f]">
-                  FAQ
-                </a>
-              </li>
               <li className="flex items-center space-x-3">
                 <HiOutlineInformationCircle className="text-[#2fd07f] w-5 h-5" />
                 <a href="#" className="hover:text-[#2fd07f]">
