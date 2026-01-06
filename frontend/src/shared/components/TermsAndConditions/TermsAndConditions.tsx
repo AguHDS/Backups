@@ -6,164 +6,163 @@ interface Props {
 
 export const TermsAndConditions = ({ onUnderstand }: Props) => {
   return (
-    <div className="inset-0 isolate flex items-center justify-center p-4  bg-opacity-30">
-      <div className="bg-gray-600 rounded w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <div className="p-5 text-white">
-          <h1 className="text-3xl mb-8 text-center">
-            Terms and Conditions of Use
-          </h1>
-          <div className="text-sm space-y-6">
-            <p className="mb-4">
-              By registering and using our services, you agree to comply with
-              the following terms and conditions. Please read this document
-              carefully before proceeding.
-            </p>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">1. Definitions</h2>
-              <p>
-                1.1. &quot;user&quot;: Any person who registers and uses the Application.
-              </p>
-              <p>
-                1.2. &quot;content&quot;: Files, documents, images, videos, or other
-                materials uploaded to the Application.
-              </p>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">
-                2. Registration and Authentication
-              </h2>
-              <p>
-                2.1. To use our services, you must register by providing
-                truthful and up-to-date information.
-              </p>
-              <p>
-                2.2. It is the user&apos;s responsibility to maintain the
-                confidentiality of their access credentials.
-              </p>
-              <p>
-                2.3. Backups will not be liable for unauthorized access to your
-                account due to user negligence.
-              </p>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">3. Use of the Application</h2>
-              <p>
-                3.1. The user may upload personal files to the Application, with
-                the option to set them as public or private.
-              </p>
-              <p>3.2. The following is prohibited:</p>
-              <ul className="list-disc pl-8">
-                <li>
-                  Uploading illegal, offensive, defamatory content, or content
-                  that infringes the rights of third parties (including
-                  copyright).
-                </li>
-                <li>
-                  Using the Application for fraudulent activities or malicious
-                  purposes.
-                </li>
-              </ul>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg  mb-2">4. Ownership and Licenses</h2>
-              <p>
-                4.1. The rights to the content uploaded by the user remain with
-                the user.
-              </p>
-              <p>
-                4.2. By uploading content, the user grants Backups a limited,
-                non-exclusive, and revocable license to store and display such
-                content according to the selected privacy settings.
-              </p>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">5. Privacy and Data Protection</h2>
-              <p>
-                5.1. The Application complies with all applicable data
-                protection laws.
-              </p>
-              <p>
-                5.2. The information collected will be used solely to provide
-                the offered services and improve the user experience.s
-              </p>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">6. user Responsibility</h2>
-              <p>
-                6.1. The user assumes all responsibility for the content they
-                upload to the Application.
-              </p>
-              <p>
-                6.2. Backups reserves the right to delete or restrict access to
-                content that violates these terms.
-              </p>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">7. Limitation of Liability</h2>
-              <p>7.1. Backups is not responsible for:</p>
-              <ul className="list-disc pl-8">
-                <li>
-                  Damages or losses arising from the use of the Application.
-                </li>
-                <li>
-                  Unauthorized access to content due to technical failures or
-                  external vulnerabilities.
-                </li>
-              </ul>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">8. Changes to Terms</h2>
-              <p>
-                8.1. We reserve the right to modify these terms at any time.
-                Updates will be notified to the user, who must accept them to
-                continue using the Application.
-              </p>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">9. Account Cancellation</h2>
-              <p>
-                9.1. The user may cancel their account at any time through the
-                Application settings.
-              </p>
-              <p>
-                9.2. Backups may also suspend or cancel accounts that violate
-                these terms.
-              </p>
-            </section>
-            <section className="space-y-2">
-              <h2 className="text-lg mb-2">
-                10. Jurisdiction and Applicable Law
-              </h2>
-              <p>
-                10.1. These terms are governed by the laws of [applicable
-                country or jurisdiction].
-              </p>
-              <p>
-                10.2. Any related dispute will be submitted to the competent
-                courts of [city or region].
-              </p>
-            </section>
-            <section className="space-y-2 mt-8">
-              <h2 className="text-lg mb-2">Contact</h2>
-              <p>
-                If you have any questions about these terms, you can contact an
-                admin using the contact information in the footer
-              </p>
-            </section>
-            <p className="mt-8 text-center">
-              By registering, the user confirms that they have read and accepted
-              these terms and conditions.
-            </p>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+      <div className="bg-[#232d42] border-2 border-[#3a4a68] rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="sticky top-0 bg-gradient-to-r from-[#232d42] to-[#2a3650] border-b border-[#3a4a68] p-6 z-10">
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold text-white text-center w-full">
+              Terms and Conditions of Use
+            </h1>
           </div>
-          <div className="text-center mt-5 flex justify-center">
-            <Button
-              label="I understand"
-              onClick={onUnderstand}
-              className="backupsBtn bg-gray-500 h-6 mx-2 flex items-center text-white px-8 py-4 rounded-lg shadow-md"
-            />
+          <p className="text-gray-300 text-center mt-2">
+            Last updated:{" "}
+            {new Date().toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+
+        <div className="p-6 md:p-8 text-gray-200">
+          <div className="space-y-8">
+            <div className="bg-[#1a2234]/50 p-6 rounded-lg border-l-4 border-[#2fd07f]">
+              <p className="text-base leading-relaxed">
+                By registering and using our services, you agree to comply with
+                the following terms and conditions. Please read this document
+                carefully before proceeding.
+              </p>
+            </div>
+
+            <div className="space-y-8">
+              {sections.map((section, index) => (
+                <section key={index} className="space-y-4 group">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-[#2fd07f] rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold">{index + 1}</span>
+                    </div>
+                    <h2 className="text-xl font-semibold text-white group-hover:text-[#2fd07f] transition-colors duration-200">
+                      {section.title}
+                    </h2>
+                  </div>
+
+                  <div className="ml-11 space-y-3">
+                    {section.content.map((paragraph, pIndex) => (
+                      <div key={pIndex} className="flex items-start space-x-3">
+                        <span className="text-[#2fd07f] font-medium mt-0.5">
+                          {index + 1}.{pIndex + 1}.
+                        </span>
+                        <p className="text-gray-300 leading-relaxed">
+                          {paragraph}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+
+            <div className="bg-[#1a2234]/50 p-6 rounded-lg border border-[#3a4a68] mt-8">
+              <h2 className="text-xl font-semibold text-white mb-4">Contact</h2>
+              <p className="text-gray-300">
+                If you have any questions about these terms, you can contact an
+                admin using the contact information in the footer of our
+                website.
+              </p>
+            </div>
+
+            <div className="text-center p-6 border-t border-[#3a4a68] mt-8">
+              <p className="text-gray-300 italic mb-6">
+                By registering, the user confirms that they have read,
+                understood, and accepted these terms and conditions in their
+                entirety.
+              </p>
+
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <Button
+                  label="I Understand & Accept"
+                  onClick={onUnderstand}
+                  className="bg-gradient-to-r from-[#2fd07f] to-emerald-500 hover:from-emerald-500 hover:to-[#2fd07f] text-white px-10 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+const sections = [
+  {
+    title: "Definitions",
+    content: [
+      '"User": Any person who registers and uses the Application.',
+      '"Content": Files, documents, images, videos, or other materials uploaded to the Application.',
+    ],
+  },
+  {
+    title: "Registration and Authentication",
+    content: [
+      "To use our services, you must register by providing truthful and up-to-date information.",
+      "It is the user's responsibility to maintain the confidentiality of their access credentials.",
+      "Backups will not be liable for unauthorized access to your account due to user negligence.",
+    ],
+  },
+  {
+    title: "Use of the Application",
+    content: [
+      "The user may upload personal files to the Application, with the option to set them as public or private.",
+      "The following is prohibited: Uploading illegal, offensive, defamatory content, or content that infringes the rights of third parties (including copyright).",
+      "The following is prohibited: Using the Application for fraudulent activities or malicious purposes.",
+    ],
+  },
+  {
+    title: "Ownership and Licenses",
+    content: [
+      "The rights to the content uploaded by the user remain with the user.",
+      "By uploading content, the user grants Backups a limited, non-exclusive, and revocable license to store and display such content according to the selected privacy settings.",
+    ],
+  },
+  {
+    title: "Privacy and Data Protection",
+    content: [
+      "The Application complies with all applicable data protection laws.",
+      "The information collected will be used solely to provide the offered services and improve the user experience.",
+    ],
+  },
+  {
+    title: "User Responsibility",
+    content: [
+      "The user assumes all responsibility for the content they upload to the Application.",
+      "Backups reserves the right to delete or restrict access to content that violates these terms.",
+    ],
+  },
+  {
+    title: "Limitation of Liability",
+    content: [
+      "Backups is not responsible for damages or losses arising from the use of the Application.",
+      "Backups is not responsible for unauthorized access to content due to technical failures or external vulnerabilities.",
+    ],
+  },
+  {
+    title: "Changes to Terms",
+    content: [
+      "We reserve the right to modify these terms at any time. Updates will be notified to the user, who must accept them to continue using the Application.",
+    ],
+  },
+  {
+    title: "Account Cancellation",
+    content: [
+      "The user may cancel their account at any time through the Application settings.",
+      "Backups may also suspend or cancel accounts that violate these terms.",
+    ],
+  },
+  {
+    title: "Jurisdiction and Applicable Law",
+    content: [
+      "These terms are governed by the laws of the applicable jurisdiction.",
+      "Any related dispute will be submitted to the competent courts of the designated region.",
+    ],
+  },
+];
