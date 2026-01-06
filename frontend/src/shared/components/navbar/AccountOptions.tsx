@@ -19,12 +19,10 @@ export default function AccountOptions({ username }: Props) {
     e.preventDefault();
     try {
       await logout();
-      navigate({ to: "/", replace: true });
     } catch (error) {
       console.error("Error during logout:", error);
     }
   };
-
   const goToProfile = () => {
     navigate({ to: "/profile/$username", params: { username } });
   };

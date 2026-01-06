@@ -6,10 +6,24 @@ export interface AuthState {
   isAuthenticated: boolean;
 }
 
-const initialState: AuthState = {
-  user: null,
-  isAuthenticated: false,
+const getInitialAuthState = (): AuthState => {
+  const savedAuth = localStorage.getItem('authState');
+  
+  if (savedAuth) {
+    try {
+      return JSON.parse(savedAuth);
+    } catch (error) {
+      console.error("Error parsing saved auth state:", error);
+    }
+  }
+  
+  return {
+    user: null,
+    isAuthenticated: false,
+  };
 };
+
+const initialState: AuthState = getInitialAuthState();
 
 const authSlice = createSlice({
   name: "auth",
@@ -18,10 +32,16 @@ const authSlice = createSlice({
     setAuth: (state, action: PayloadAction<UserData>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
+      
+      localStorage.setItem('authState', JSON.stringify({
+        isAuthenticated: true,
+      }));
     },
     clearAuth: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      
+      localStorage.removeItem('authState');
     },
   },
 });

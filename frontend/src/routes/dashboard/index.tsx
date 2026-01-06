@@ -7,7 +7,6 @@ export const Route = createFileRoute("/dashboard/")({
     const state = store.getState();
     const isAuthenticated = state.auth.isAuthenticated;
 
-    //if there's session in localstorage, PersistLogin will handle it
     if (!isAuthenticated) {
       throw redirect({
         to: "/",
@@ -17,6 +16,7 @@ export const Route = createFileRoute("/dashboard/")({
   },
   component: DashboardRoute,
 });
+
 function DashboardRoute() {
   return <Dashboard />;
 }
