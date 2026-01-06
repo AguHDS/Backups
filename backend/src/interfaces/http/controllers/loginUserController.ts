@@ -53,13 +53,11 @@ export const loginUserController = async (req: Request, res: Response) => {
 
     if (error instanceof Error) {
       if (error.message === "USER_NOT_FOUND") {
-        console.error("User not found");
-        res.status(401).json({ message: "Invalid email or password" });
+        res.status(401).json({ message: "Invalid credentials" });
         return;
       }
     }
 
-    console.error("Login failed:", error);
-    res.status(401).json({ message: "Invalid email or password" });
+    res.status(401).json({ message: "Invalid credentials" });
   }
 };

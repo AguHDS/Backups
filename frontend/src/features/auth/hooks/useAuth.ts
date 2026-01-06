@@ -57,7 +57,12 @@ export const useAuth = () => {
 
         // Store user data in Redux
         dispatch(setAuth(result.user));
-        navigate({ to: "/dashboard", replace: true });
+
+        if (window.location.pathname.includes("/dashboard")) {
+          window.location.reload();
+        } else {
+          navigate({ to: "/dashboard", replace: true });
+        }
       }
     } catch (error) {
       const messages = processErrorMessages(error);

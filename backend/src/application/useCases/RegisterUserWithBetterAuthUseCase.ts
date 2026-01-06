@@ -35,42 +35,57 @@ export class RegisterUserWithBetterAuthUseCase {
       }
     }
 
-    // Use BetterAuth to create the user WITHOUT auto-login
-    const response = await auth.api.signUpEmail({
-      body: {
-        name,
-        email,
-        password,
-      },
-      // No headers = no session cookies
-      asResponse: true,
-    });
+    try {
+      // Use BetterAuth to create the user WITHOUT auto-login
+      const response = await auth.api.signUpEmail({
+        body: {
+          name,
+          email,
+          password,
+        },
+        // No headers = no session cookies
+        asResponse: true,
+      });
 
-    // Parse the response body
-    const result = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        const betterAuthError = {
+          body: errorData,
+          statusCode: response.status
+        };
+        
+        throw betterAuthError;
+      }
 
-    if (!result || !result.user) {
+      // Parse the response body
+      const result = await response.json();
+
+      if (!result || !result.user) {
+        throw new Error("REGISTRATION_FAILED");
+      }
+
+      const userId = result.user.id;
+
+      // Initialize user storage usage
+      await this.storageRepository.addToUsedStorage(userId, 0);
+      await this.storageRepository.setMaxStorage(userId, 104857600);
+      await this.profileRepository.createProfile(userId);
+
+      return {
+        user: {
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email,
+        },
+        // No headers = no session cookies set
+      };
+    } catch (error) {
+      if (error && typeof error === 'object' && 'body' in error && 'statusCode' in error) {
+        throw error;
+      }
+      
       throw new Error("REGISTRATION_FAILED");
     }
-
-    const userId = result.user.id;
-
-    // Initialize user storage usage
-    await this.storageRepository.addToUsedStorage(userId, 0);
-    await this.storageRepository.setMaxStorage(userId, 104857600);
-
-    // Create user profile with default values
-    await this.profileRepository.createProfile(userId);
-    console.log(`User: ${name} profile created`);
-    console.log(`User: ${name} registered successfully`);
-
-    return {
-      user: {
-        id: result.user.id,
-        name: result.user.name,
-        email: result.user.email,
-      },
-      // No headers = no session cookies set
-    };
   }
 }

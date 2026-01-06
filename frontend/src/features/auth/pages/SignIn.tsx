@@ -60,7 +60,7 @@ export const SignIn = () => {
                       id="name_login"
                       value={input.user}
                       onChange={handleUserChange}
-                      placeholder="username"
+                      placeholder="Username"
                       name="user"
                       autoComplete="on"
                       required={true}
@@ -79,7 +79,7 @@ export const SignIn = () => {
                       id="pass_login"
                       value={input.password}
                       onChange={handlePassChange}
-                      placeholder="password"
+                      placeholder="Password"
                       type="password"
                       name="password"
                       autoComplete="off"

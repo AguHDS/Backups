@@ -1,4 +1,5 @@
 import type { ChangeEvent } from "react";
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useModalContext, ValidationMessages, Button, Input, TermsAndConditions, Modal } from "@/shared";
@@ -11,8 +12,10 @@ interface AuthInput {
 }
 
 export const SignUp = () => {
-  const { setIsModalOpen } = useModalContext();
+  const { isModalOpen, setIsModalOpen } = useModalContext();
   const { input, setInput, statusMessage, handleSubmit } = useAuth();
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [termsError, setTermsError] = useState("");
 
   const handleUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
     setInput((prev: AuthInput) => ({ ...prev, user: e.target.value }));
@@ -26,11 +29,34 @@ export const SignUp = () => {
     setInput((prev: AuthInput) => ({ ...prev, email: e.target.value }));
   };
 
+  const handleTermsChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setAcceptedTerms(e.target.checked);
+    if (termsError) setTermsError("");
+  };
+
+  const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!acceptedTerms) {
+      setTermsError("You must accept the terms and conditions");
+      return;
+    }
+    
+    setTermsError("");
+    handleSubmit(e);
+  };
+
+  const openTermsModal = (): void => {
+    setIsModalOpen(true);
+  };
+
   return (
     <>
-      <Modal>
-        <TermsAndConditions onUnderstand={()=> setIsModalOpen(false)} />
-      </Modal>
+      {isModalOpen && (
+        <Modal>
+          <TermsAndConditions onUnderstand={() => setIsModalOpen(false)} />
+        </Modal>
+      )}
       <div
         tabIndex={0}
         className="flex items-center justify-center w-full h-[94vh]"
@@ -43,7 +69,7 @@ export const SignUp = () => {
               </h3>
             </div>
             <div className="py-5 px-5">
-              <form className="overflow-hidden" onSubmit={handleSubmit}>
+              <form className="overflow-hidden" onSubmit={handleSignUpSubmit}>
                 <div className="space-y-5">
                   <div>
                     <label
@@ -58,7 +84,7 @@ export const SignUp = () => {
                       id="name_login"
                       value={input.user}
                       onChange={handleUserChange}
-                      placeholder="username"
+                      placeholder="Username"
                       name="user"
                       autoComplete="on"
                       required={true}
@@ -78,7 +104,7 @@ export const SignUp = () => {
                       value={input.email}
                       onChange={handleEmailChange}
                       name="email"
-                      placeholder="email"
+                      placeholder="Email"
                       autoComplete="on"
                       required={true}
                     />
@@ -96,13 +122,44 @@ export const SignUp = () => {
                       id="pass_login"
                       value={input.password}
                       onChange={handlePassChange}
-                      placeholder="password"
+                      placeholder="Password (Min. 8 characters)"
                       type="password"
                       name="password"
                       autoComplete="off"
                       required={true}
                     />
                   </div>
+                  
+                  <div className="flex items-start mt-4">
+                    <div className="flex items-center h-5">
+                      <input
+                        id="terms-checkbox"
+                        type="checkbox"
+                        checked={acceptedTerms}
+                        onChange={handleTermsChange}
+                        required={true}
+                      />
+                    </div>
+                    <div className="ms-2 top-[2px] relative">
+                      <label
+                        htmlFor="terms-checkbox"
+                        className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none"
+                      >
+                        I have read and agree to the
+                        <a
+                          type="button"
+                          onClick={openTermsModal}
+                          className="text-blue-500 bg-inherit border-inherit font-medium rounded px-0.5"
+                        >
+                          {" "} Terms and Conditions
+                        </a>
+                      </label>
+                      {termsError && (
+                        <p className="text-red-500 text-xs mt-1 font-medium">{termsError}</p>
+                      )}
+                    </div>
+                  </div>
+                  
                   <ValidationMessages
                     input={input.inputsWarnings}
                     status={null}
@@ -111,27 +168,22 @@ export const SignUp = () => {
                   <div className="flex justify-center">
                     <Button
                       label="Sign up"
-                      className="backupsBtn my-5"
+                      className="backupsBtn my-5 disabled:opacity-50 disabled:cursor-not-allowed"
                       type="submit"
+                      disabled={!acceptedTerms}
                     />
                   </div>
                 </div>
               </form>
-              <div className="flex justify-between">
-                <div className="relative mt-4 text-sm font-medium text-gray-500 dark:text-gray-300 self-end">
-                  Have an account?
+              <div className="flex justify-between items-center mt-6">
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                  Already have an account?{" "}
                   <Link
                     to="/sign-in"
-                    className="ml-1 text-blue-700 hover:underline dark:text-blue-500"
+                    className="text-blue-700 hover:underline dark:text-blue-500"
                   >
                     Sign in
                   </Link>
-                </div>
-                <div className="relative mt-4 text-sm font-medium text-gray-500 dark:text-gray-300 self-end">
-                  by registiring you agree with the
-                  <a className="cursor-pointer ml-1 text-blue-700 hover:underline dark:text-blue-500" onClick={()=> setIsModalOpen(true)}>
-                    Terms and conditions
-                  </a>
                 </div>
               </div>
             </div>

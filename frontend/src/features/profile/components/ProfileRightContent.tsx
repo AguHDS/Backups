@@ -25,9 +25,9 @@ export const ProfileRightContent = ({
     status && status >= 200 && status < 300 && errorMessages.length === 0;
 
   return (
-    <div className="w-full mr-[5px] ml-[5px] scrollbar-container flex flex-col h-full min-h-[80vh]">
-      <div className="bg-[#272727] w-full max-w-full flex-1">
-        <div className="p-4 space-y-4 scrollbar-container flex-1">
+    <div className="w-full mr-[5px] ml-[5px] scrollbar-container flex flex-col h-full min-h-[80vh] overflow-x-hidden">
+      <div className="bg-[#272727] w-full max-w-full flex-1 overflow-hidden">
+        <div className="p-4 scrollbar-container flex-1 overflow-x-hidden">
           {(errorMessages.length > 0 || shouldShowSuccess) && (
             <ValidationMessages
               input={errorMessages}
@@ -39,7 +39,9 @@ export const ProfileRightContent = ({
           <Bio bio={updateData.bio} onBioChange={onBioChange} />
 
           {/* Separator between Bio and Sections */}
-          <div className="my-8 flex items-center gap-3">
+          <div
+            className={`flex items-center gap-3 ${isEditing ? "mt-5 mb-12" : "mt-10 mb-4"}`}
+          >
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#3a3a3a] to-transparent"></div>
             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
               Sections
@@ -54,11 +56,14 @@ export const ProfileRightContent = ({
           ) : (
             sections.map((section, index) => (
               <Fragment key={section.id !== 0 ? section.id : `new-${index}`}>
-                <div className="mb-6">
+                <div className={`mb-6 ${isEditing ? "mt-4" : ""}`}>
                   {isEditing ? (
                     <>
-                      <div className="relative w-full mb-4">
-                        <div className="absolute top-0 right-0">
+                      <div className="relative w-full">
+                        <div className="absolute top-0 right-0 flex flex-col items-end">
+                          <span className="text-xs text-gray-400 mb-1 mr-1">
+                            Section visibility
+                          </span>
                           <select
                             className="bg-[#272727] text-white border border-[#444] px-3 py-2 rounded text-sm"
                             value={section.isPublic ? "public" : "private"}
@@ -75,47 +80,57 @@ export const ProfileRightContent = ({
                           </select>
                         </div>
 
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-4">
                           <div className="h-[2px] w-10 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
                           <input
                             type="text"
-                            className="bg-[#272727] text-white text-[18px] p-2 border border-[#444] w-auto min-w-[200px]"
+                            className="bg-[#272727] text-white text-[18px] p-2 border border-[#444] w-full max-w-[500px] box-border"
                             placeholder="Title for Section"
                             value={section.title}
-                            onChange={(e) =>
-                              updateSection(index, "title", e.target.value)
-                            }
+                            onChange={(e) => {
+                              if (e.target.value.length <= 50) {
+                                updateSection(index, "title", e.target.value);
+                              }
+                            }}
+                            maxLength={50}
                           />
+                          <div
+                            className={`text-xs whitespace-nowrap ${section.title.length >= 40 ? "text-amber-400" : "text-gray-400"}`}
+                          >
+                            {section.title.length}/50
+                          </div>
                         </div>
                       </div>
-                    </>
-                  ) : (
-                    <div className="mb-4">
-                      <div className="flex items-center gap-3 mb-1">
-                        <div className="h-[2px] w-10 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
-                        <h3 className="text-[#ccc] text-[28px]">
-                          {section.title}
-                        </h3>
-                        {!section.isPublic && (
-                          <span className="font-sans text-xs bg-blue-900/30 text-blue-300 px-2 py-1 rounded border border-blue-700/50">
-                            Private
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
 
-                  {isEditing ? (
-                    <>
-                      <textarea
-                        className="w-[95%] mx-auto block bg-[#272727] text-[#ccc] text-[14px] p-2 mb-2 border border-[#444] resize-none text-center"
-                        rows={3}
-                        placeholder="Add description (optional)"
-                        value={section.description || ""}
-                        onChange={(e) =>
-                          updateSection(index, "description", e.target.value)
-                        }
-                      ></textarea>
+                      <div className="h-6"></div>
+
+                      <div className="w-full px-4 box-border mb-2">
+                        <div className="relative">
+                          <textarea
+                            className="w-full box-border bg-[#272727] text-[#ccc] text-[14px] p-4 mb-1 border border-[#444] resize-none break-words whitespace-pre-wrap min-h-[80px]"
+                            placeholder="Add description"
+                            value={section.description || ""}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 250) {
+                                updateSection(
+                                  index,
+                                  "description",
+                                  e.target.value
+                                );
+                              }
+                            }}
+                            maxLength={250}
+                            rows={3}
+                          ></textarea>
+                          <div className="text-right">
+                            <span
+                              className={`text-xs ${(section.description?.length || 0) >= 225 ? "text-amber-400" : "text-gray-400"}`}
+                            >
+                              {section.description?.length || 0}/250
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                       <SectionFileManager sectionIndex={index} />
                       <Button
                         onClick={() => deleteSection(section.id)}
@@ -125,9 +140,27 @@ export const ProfileRightContent = ({
                     </>
                   ) : (
                     <>
-                      <p className="text-center text-gray-300">
-                        {section.description}
-                      </p>
+                      <div className="mb-4">
+                        <div className="flex items-center gap-3 mb-1">
+                          <div className="h-[2px] w-10 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                          <h3 className="font-sans text-[#ccc] text-[28px] break-words max-w-full">
+                            {section.title}
+                          </h3>
+                          {!section.isPublic && (
+                            <span className="font-sans text-xs bg-blue-900/30 text-blue-300 px-2 py-1 rounded border border-blue-700/50 whitespace-nowrap">
+                              Private
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {section.description && (
+                        <div className="w-full px-4 box-border mb-4">
+                          <p className="text-gray-300 font-sans break-words whitespace-pre-wrap overflow-hidden text-center px-4 py-2 bg-[#2a2a2a] rounded border border-[#333]">
+                            {section.description}
+                          </p>
+                        </div>
+                      )}
                       <div className="mb-4">
                         <SectionFileManager sectionIndex={index} />
                       </div>

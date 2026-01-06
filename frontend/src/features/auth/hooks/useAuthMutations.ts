@@ -29,6 +29,12 @@ export const useLogout = () => {
     mutationFn: logout,
     onSuccess: () => {
       dispatch(clearAuth());
+      window.location.href = "/";
+    },
+    onError: (error) => {
+      console.error("Logout error:", error);
+      dispatch(clearAuth());
+      window.location.href = "/";
     },
   });
 };

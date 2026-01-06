@@ -55,25 +55,17 @@ export class MysqlProfileRepository implements ProfileRepository {
     }
   }
 
-  async createProfile(userId: string): Promise<void> {
+    async createProfile(userId: string): Promise<void> {
     const connection = await promisePool.getConnection();
     try {
       await connection.beginTransaction();
 
-      // Create users_profile entry
       await connection.execute(
         "INSERT INTO users_profile (fk_users_id, bio, level, profile_pic) VALUES (?, ?, ?, ?)",
         [userId, "No bio available", 0, null]
       );
 
-      // Create users_profile_sections entry
-      await connection.execute(
-        "INSERT INTO users_profile_sections (fk_users_id, title, description) VALUES (?, ?, ?)",
-        [userId, null, null]
-      );
-
       await connection.commit();
-      console.log(`Profile and sections created for user: ${userId}`);
     } catch (error) {
       await connection.rollback();
       console.error("Error creating user profile:", error);

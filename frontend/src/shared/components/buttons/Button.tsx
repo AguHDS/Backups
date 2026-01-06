@@ -8,6 +8,7 @@ interface ButtonProps {
   className?: string;
   style?: CSSProperties;
   id?: string;
+  disabled?: boolean;
 }
 
 export const Button = ({
@@ -18,6 +19,7 @@ export const Button = ({
   className = "backupsBtn",
   style,
   id,
+  disabled = false,
 }: ButtonProps) => {
   return (
     <button
@@ -26,7 +28,9 @@ export const Button = ({
       type={type}
       className={className}
       style={style}
-      id={id} >
+      id={id}
+      disabled={disabled}
+    >
       {label}
     </button>
   );

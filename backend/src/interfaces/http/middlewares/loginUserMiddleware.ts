@@ -9,15 +9,18 @@ export const loginUserMiddleware = (
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const messages = errors.array().map((e) => e.msg).join(", ");
-    console.error("Validation errors found:", messages);
-    res.status(400).json({ message: messages });
+    const errorMessages = errors.array().map((e) => e.msg);
+    console.error("Validation errors found:", errorMessages.join(", "));
+    
+    res.status(400).json({ 
+      message: errorMessages[0] || "Validation error",
+      errors: errorMessages 
+    });
     return;
   }
 
   const { user, password } = matchedData(req);
 
-  // Add to req object user data for controller
   req.userAndPassword = { user, password };
 
   next();
