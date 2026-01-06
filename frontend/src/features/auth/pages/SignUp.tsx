@@ -58,7 +58,7 @@ export const SignUp = () => {
                       id="name_login"
                       value={input.user}
                       onChange={handleUserChange}
-                      placeholder="username"
+                      placeholder="Username"
                       name="user"
                       autoComplete="on"
                       required={true}
@@ -78,7 +78,7 @@ export const SignUp = () => {
                       value={input.email}
                       onChange={handleEmailChange}
                       name="email"
-                      placeholder="email"
+                      placeholder="Email"
                       autoComplete="on"
                       required={true}
                     />
@@ -96,7 +96,7 @@ export const SignUp = () => {
                       id="pass_login"
                       value={input.password}
                       onChange={handlePassChange}
-                      placeholder="password"
+                      placeholder="Password (Min. 8 characters)"
                       type="password"
                       name="password"
                       autoComplete="off"

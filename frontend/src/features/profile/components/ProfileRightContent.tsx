@@ -156,7 +156,7 @@ export const ProfileRightContent = ({
 
                       {section.description && (
                         <div className="w-full px-4 box-border mb-4">
-                          <p className="text-gray-300 break-words whitespace-pre-wrap overflow-hidden text-center px-4 py-2 bg-[#2a2a2a] rounded border border-[#333]">
+                          <p className="text-gray-300 font-sans break-words whitespace-pre-wrap overflow-hidden text-center px-4 py-2 bg-[#2a2a2a] rounded border border-[#333]">
                             {section.description}
                           </p>
                         </div>
