@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { TermsAndConditions } from "../TermsAndConditions/TermsAndConditions";
+import { TermsAndConditions } from "../footer/components/TermsAndConditions";
 
 describe("TermsAndConditions", () => {
   it("should call onUnderstand when clicking I understand button", () => {

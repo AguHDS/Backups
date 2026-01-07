@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useAdminDashboard } from "../context";
 import type { User } from "../api/adminTypes";
 
+/* eslint-disable react/prop-types */
 interface UserSelectorProps {
   users: User[];
 }

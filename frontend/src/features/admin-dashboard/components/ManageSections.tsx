@@ -63,7 +63,7 @@ export const ManageSections: React.FC = () => {
   return (
     <div className="bg-[#232d42] rounded-lg border border-[#3a4a68] p-6">
       <h3 className="text-lg font-semibold mb-4 text-white">
-        Manage User's Sections
+        Manage User&apos;s Sections
       </h3>
 
       {!selectedUser && (

@@ -37,6 +37,9 @@ export const useSessionCheck = () => {
         }
       } catch (error) {
         // No active session or error, do nothing (user stays logged out)
+        if(error) {
+          console.debug("Session check error:", error);
+        }
         console.debug("No active session found");
       } finally {
         setIsChecking(false);

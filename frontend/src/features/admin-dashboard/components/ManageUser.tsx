@@ -73,9 +73,7 @@ export const ManageUser: React.FC = () => {
             </p>
             <div className="flex items-center gap-3">
               <div>
-                <p className="font-semibold text-white">
-                  {selectedUser.name}
-                </p>
+                <p className="font-semibold text-white">{selectedUser.name}</p>
                 <p className="text-sm text-gray-400">{selectedUser.email}</p>
               </div>
               <span
@@ -92,8 +90,8 @@ export const ManageUser: React.FC = () => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              Type the username "<strong>{selectedUser.name}</strong>" to
-              confirm
+              Type the username &quot;<strong>{selectedUser.name}</strong>&quot;
+              to confirm
             </label>
             <input
               type="text"
