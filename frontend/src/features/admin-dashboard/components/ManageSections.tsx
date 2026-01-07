@@ -77,9 +77,7 @@ export const ManageSections: React.FC = () => {
       )}
 
       {selectedUser && !isLoading && userSections.length === 0 && (
-        <p className="text-sm text-gray-400 mb-4">
-          This user has no sections
-        </p>
+        <p className="text-sm text-gray-400 mb-4">This user has no sections</p>
       )}
 
       {selectedUser && !isLoading && userSections.length > 0 && (
@@ -131,21 +129,12 @@ export const ManageSections: React.FC = () => {
                 selectedSectionIds.length === 0 ||
                 deleteSecMutation.isPending
               }
-              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-[#2a3a58] disabled:cursor-not-allowed transition-colors font-medium"
+              className="flex justify-center m-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:bg-[#2a3a58] disabled:cursor-not-allowed transition-colors font-medium"
             >
               {deleteSecMutation.isPending
                 ? "Deleting..."
                 : `Delete Selected (${selectedSectionIds.length})`}
             </button>
-
-            {selectedSectionIds.length > 0 && (
-              <button
-                onClick={clearSectionSelection}
-                className="px-4 py-2 bg-[#1a2332] text-gray-300 border border-[#3a4a68] rounded-md hover:bg-[#0e172a] transition-colors"
-              >
-                Clear
-              </button>
-            )}
           </div>
         </>
       )}
