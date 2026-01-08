@@ -130,7 +130,7 @@ export class CloudinaryRemover {
       try {
         await cloudinary.api.delete_folder(userFolderPath);
       } catch (error) {
-        // If the folder does not exist or is already deleted, it's fine
+        // If the folder does not exist or is already deleted, it's fine (recently created users with no files uploaded may not have folders)
         if (!this.isFolderNotFoundError(error)) {
           this.logCloudinaryError(
             `Could not delete main user folder: ${userFolderPath}`,

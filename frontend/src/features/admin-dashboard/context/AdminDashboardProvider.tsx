@@ -1,4 +1,10 @@
-import { createContext, useState, useMemo, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useState,
+  useMemo,
+  useCallback,
+  type ReactNode,
+} from "react";
 import type { User, UserSection } from "../api/adminTypes";
 
 export interface AdminDashboardContextType {
@@ -11,9 +17,8 @@ export interface AdminDashboardContextType {
   clearSectionSelection: () => void;
 }
 
-export const AdminDashboardContext = createContext<AdminDashboardContextType | null>(
-  null
-);
+export const AdminDashboardContext =
+  createContext<AdminDashboardContextType | null>(null);
 
 interface AdminDashboardProviderProps {
   children: ReactNode;
@@ -48,7 +53,13 @@ export const AdminDashboardProvider = ({
       toggleSectionSelection,
       clearSectionSelection,
     }),
-    [selectedUser, userSections, selectedSectionIds]
+    [
+      selectedUser,
+      userSections,
+      selectedSectionIds,
+      toggleSectionSelection,
+      clearSectionSelection,
+    ]
   );
 
   return (

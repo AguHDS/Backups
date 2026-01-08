@@ -103,7 +103,7 @@ export const ManageCredentials: React.FC = () => {
         <button
           type="submit"
           disabled={isDisabled || updateCredentialsMutation.isPending}
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-[#2a3a58] disabled:cursor-not-allowed transition-colors font-medium"
+          className="flex justify-center m-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-[#2a3a58] disabled:cursor-not-allowed transition-colors font-medium"
         >
           {updateCredentialsMutation.isPending
             ? "Updating..."

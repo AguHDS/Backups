@@ -61,6 +61,18 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     return rows.length > 0 ? rows[0].total_bytes : 0;
   }
 
+  async getTotalFilesCount(userId: string): Promise<number> {
+    const query = `
+    SELECT COUNT(*) AS total_files
+    FROM users_files
+    WHERE user_id = ?
+  `;
+
+    const [rows] = await promisePool.execute<RowDataPacket[]>(query, [userId]);
+
+    return rows.length > 0 ? Number(rows[0].total_files) : 0;
+  }
+
   async getMaxStorage(userId: number | string): Promise<number> {
     const query = `
       SELECT max_bytes

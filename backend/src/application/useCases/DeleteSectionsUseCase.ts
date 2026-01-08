@@ -13,10 +13,7 @@ export class DeleteSectionsUseCase {
     private readonly fileCloudinaryRemover: CloudinaryRemover,
     private readonly storageUsageRepo: StorageUsageRepository
   ) {}
-  async execute(
-    sectionIds: number[],
-    userId: string | number,
-  ): Promise<void> {
+  async execute(sectionIds: number[], userId: string): Promise<void> {
     if (sectionIds.length === 0) throw new Error("NO_SECTIONS_ID");
 
     const files = await this.fileRepo.getFilesWithSizeBySectionId(sectionIds);
