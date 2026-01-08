@@ -17,7 +17,7 @@ import {
   profilePicture,
   deleteSections,
   getStorage,
-  dashboard,
+  getDashboardSummary,
   deleteFiles,
   adminDeleteUser,
   adminGetAllUsers,
@@ -60,7 +60,7 @@ app.use("/api/uploadFiles", uploadFiles);
 app.use("/api/profilePicture", profilePicture);
 app.use("/api/deleteSections", deleteSections);
 app.use("/api/getStorage", getStorage);
-app.use("/api/dashboard-summary", dashboard);
+app.use("/api/dashboard-summary", getDashboardSummary);
 app.use("/api/deleteFiles", deleteFiles);
 
 // Admin routes

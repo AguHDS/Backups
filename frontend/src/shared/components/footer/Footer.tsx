@@ -51,7 +51,7 @@ export const Footer = () => {
       {isModalOpen && modalType && <Modal>{renderModalContent()}</Modal>}
 
       <footer
-        className="bg-[#0b1220] mt-5 border-t border-[#1b2a44] text-gray-200"
+        className="bg-[#0b1220] mt-10 border-t border-[#1b2a44] text-gray-200"
         style={{ boxShadow: "0px -12px 16px -7px rgb(25 36 59)" }}
       >
         <div className="max-w-7xl mx-auto pt-10 px-6 flex flex-col items-center text-center md:items-start md:text-left md:flex-row justify-between gap-8 md:gap-48">

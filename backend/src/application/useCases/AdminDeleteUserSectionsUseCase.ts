@@ -17,10 +17,7 @@ export class AdminDeleteUserSectionsUseCase {
     private readonly storageUsageRepo: StorageUsageRepository
   ) {}
 
-  async execute(
-    userId: string | number,
-    sectionIds: number[]
-  ): Promise<number> {
+  async execute(userId: string, sectionIds: number[]): Promise<number> {
     if (!userId) {
       throw new Error("MISSING_USER_ID");
     }

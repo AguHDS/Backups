@@ -5,7 +5,7 @@ import uploadFiles from "./uploadFiles.js";
 import profilePicture from "./profilePicture.js";
 import deleteSections from "./deleteSections.js";
 import getStorage from "./getStorage.js";
-import dashboard from "./dashboard.js";
+import getDashboardSummary from "./getDashboardSummary.js";
 import deleteFiles from "./deleteFiles.js";
 import register from "./register.js";
 import login from "./login.js";
@@ -23,7 +23,7 @@ export {
   profilePicture,
   deleteSections,
   getStorage,
-  dashboard,
+  getDashboardSummary,
   deleteFiles,
   register,
   login,

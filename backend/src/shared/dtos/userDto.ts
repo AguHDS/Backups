@@ -3,7 +3,7 @@ export interface UserId {
 }
 
 export interface BaseUserData {
-  id: number | string;
+  id: string;
   name: string;
   role: "user" | "admin";
   email?: string;
