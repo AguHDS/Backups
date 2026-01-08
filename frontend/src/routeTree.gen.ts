@@ -13,10 +13,14 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as NotFoundRouteImport } from './routes/NotFound'
+import { Route as SettingsRouteRouteImport } from './routes/settings/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as AdminDashboardIndexRouteImport } from './routes/admin-dashboard/index'
-import { Route as AccountSettingsIndexRouteImport } from './routes/account-settings/index'
+import { Route as SettingsPrivacyRouteImport } from './routes/settings/privacy'
+import { Route as SettingsAppearanceRouteImport } from './routes/settings/appearance'
+import { Route as SettingsAccountRouteImport } from './routes/settings/account'
 import { Route as ProfileUsernameRouteImport } from './routes/profile/$username'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -39,10 +43,20 @@ const NotFoundRoute = NotFoundRouteImport.update({
   path: '/NotFound',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRouteRoute = SettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRouteRoute,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
@@ -54,10 +68,20 @@ const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
   path: '/admin-dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AccountSettingsIndexRoute = AccountSettingsIndexRouteImport.update({
-  id: '/account-settings/',
-  path: '/account-settings/',
-  getParentRoute: () => rootRouteImport,
+const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
+  id: '/appearance',
+  path: '/appearance',
+  getParentRoute: () => SettingsRouteRoute,
+} as any)
+const SettingsAccountRoute = SettingsAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => SettingsRouteRoute,
 } as any)
 const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   id: '/profile/$username',
@@ -67,14 +91,18 @@ const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRouteRouteWithChildren
   '/NotFound': typeof NotFoundRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/profile/$username': typeof ProfileUsernameRoute
-  '/account-settings': typeof AccountSettingsIndexRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/admin-dashboard': typeof AdminDashboardIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -83,34 +111,45 @@ export interface FileRoutesByTo {
   '/sign-up': typeof SignUpRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/profile/$username': typeof ProfileUsernameRoute
-  '/account-settings': typeof AccountSettingsIndexRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/admin-dashboard': typeof AdminDashboardIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/settings': typeof SettingsRouteRouteWithChildren
   '/NotFound': typeof NotFoundRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/profile/$username': typeof ProfileUsernameRoute
-  '/account-settings/': typeof AccountSettingsIndexRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/privacy': typeof SettingsPrivacyRoute
   '/admin-dashboard/': typeof AdminDashboardIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/settings'
     | '/NotFound'
     | '/sign-in'
     | '/sign-up'
     | '/unauthorized'
     | '/profile/$username'
-    | '/account-settings'
+    | '/settings/account'
+    | '/settings/appearance'
+    | '/settings/privacy'
     | '/admin-dashboard'
     | '/dashboard'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -119,30 +158,37 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/unauthorized'
     | '/profile/$username'
-    | '/account-settings'
+    | '/settings/account'
+    | '/settings/appearance'
+    | '/settings/privacy'
     | '/admin-dashboard'
     | '/dashboard'
+    | '/settings'
   id:
     | '__root__'
     | '/'
+    | '/settings'
     | '/NotFound'
     | '/sign-in'
     | '/sign-up'
     | '/unauthorized'
     | '/profile/$username'
-    | '/account-settings/'
+    | '/settings/account'
+    | '/settings/appearance'
+    | '/settings/privacy'
     | '/admin-dashboard/'
     | '/dashboard/'
+    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SettingsRouteRoute: typeof SettingsRouteRouteWithChildren
   NotFoundRoute: typeof NotFoundRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ProfileUsernameRoute: typeof ProfileUsernameRoute
-  AccountSettingsIndexRoute: typeof AccountSettingsIndexRoute
   AdminDashboardIndexRoute: typeof AdminDashboardIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
@@ -177,12 +223,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotFoundRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRouteRoute
     }
     '/dashboard/': {
       id: '/dashboard/'
@@ -198,12 +258,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/account-settings/': {
-      id: '/account-settings/'
-      path: '/account-settings'
-      fullPath: '/account-settings'
-      preLoaderRoute: typeof AccountSettingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/settings/privacy': {
+      id: '/settings/privacy'
+      path: '/privacy'
+      fullPath: '/settings/privacy'
+      preLoaderRoute: typeof SettingsPrivacyRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/appearance': {
+      id: '/settings/appearance'
+      path: '/appearance'
+      fullPath: '/settings/appearance'
+      preLoaderRoute: typeof SettingsAppearanceRouteImport
+      parentRoute: typeof SettingsRouteRoute
+    }
+    '/settings/account': {
+      id: '/settings/account'
+      path: '/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof SettingsAccountRouteImport
+      parentRoute: typeof SettingsRouteRoute
     }
     '/profile/$username': {
       id: '/profile/$username'
@@ -215,14 +289,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SettingsRouteRouteChildren {
+  SettingsAccountRoute: typeof SettingsAccountRoute
+  SettingsAppearanceRoute: typeof SettingsAppearanceRoute
+  SettingsPrivacyRoute: typeof SettingsPrivacyRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+}
+
+const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
+  SettingsAccountRoute: SettingsAccountRoute,
+  SettingsAppearanceRoute: SettingsAppearanceRoute,
+  SettingsPrivacyRoute: SettingsPrivacyRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+}
+
+const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
+  SettingsRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SettingsRouteRoute: SettingsRouteRouteWithChildren,
   NotFoundRoute: NotFoundRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ProfileUsernameRoute: ProfileUsernameRoute,
-  AccountSettingsIndexRoute: AccountSettingsIndexRoute,
   AdminDashboardIndexRoute: AdminDashboardIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
