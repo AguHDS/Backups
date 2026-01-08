@@ -30,6 +30,7 @@ Admin Pannel
 * React
 * Redux-toolkit
 * Tailwind
+* Recharts
 * Axios
 * Tanstack router / Tanstack Query
 * Zod
