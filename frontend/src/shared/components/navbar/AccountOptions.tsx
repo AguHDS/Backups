@@ -28,7 +28,7 @@ export default function AccountOptions({ username }: Props) {
   };
 
   const goToConfig = () => {
-    navigate({ to: "/account-settings" });
+    navigate({ to: "/settings" });
   };
 
   const goToAdminDashboard = () => {
@@ -60,7 +60,7 @@ export default function AccountOptions({ username }: Props) {
                   focus ? "bg-gray-700" : ""
                 } bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded`}
               >
-                Profile
+                My Profile
               </button>
             )}
           </MenuItem>
@@ -73,7 +73,7 @@ export default function AccountOptions({ username }: Props) {
                   focus ? "bg-gray-700" : ""
                 } bg-[#212b3c] cursor-pointer w-full text-start text-base px-3 border-none text-white rounded`}
               >
-                Configuration
+                Settings
               </button>
             )}
           </MenuItem>

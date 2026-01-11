@@ -18,7 +18,7 @@ export class DeleteUserUseCase {
     private readonly cloudinaryRemover: CloudinaryRemover
   ) {}
 
-  async execute(userId: number | string): Promise<void> {
+  async execute(userId: string): Promise<void> {
     if (!userId) {
       throw new Error("MISSING_USER_ID");
     }

@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth.js";
 import promisePool from "@/db/database.js";
 
 export interface UpdateCredentialsData {
-  userId: string | number;
+  userId: string;
   username?: string;
   email?: string;
   password?: string;
