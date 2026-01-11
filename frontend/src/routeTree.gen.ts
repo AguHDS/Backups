@@ -18,7 +18,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as AdminDashboardIndexRouteImport } from './routes/admin-dashboard/index'
-import { Route as SettingsPrivacyRouteImport } from './routes/settings/privacy'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings/appearance'
 import { Route as SettingsAccountRouteImport } from './routes/settings/account'
 import { Route as ProfileUsernameRouteImport } from './routes/profile/$username'
@@ -68,11 +67,6 @@ const AdminDashboardIndexRoute = AdminDashboardIndexRouteImport.update({
   path: '/admin-dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsPrivacyRoute = SettingsPrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => SettingsRouteRoute,
-} as any)
 const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
   id: '/appearance',
   path: '/appearance',
@@ -99,7 +93,6 @@ export interface FileRoutesByFullPath {
   '/profile/$username': typeof ProfileUsernameRoute
   '/settings/account': typeof SettingsAccountRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
-  '/settings/privacy': typeof SettingsPrivacyRoute
   '/admin-dashboard': typeof AdminDashboardIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -113,7 +106,6 @@ export interface FileRoutesByTo {
   '/profile/$username': typeof ProfileUsernameRoute
   '/settings/account': typeof SettingsAccountRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
-  '/settings/privacy': typeof SettingsPrivacyRoute
   '/admin-dashboard': typeof AdminDashboardIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -129,7 +121,6 @@ export interface FileRoutesById {
   '/profile/$username': typeof ProfileUsernameRoute
   '/settings/account': typeof SettingsAccountRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
-  '/settings/privacy': typeof SettingsPrivacyRoute
   '/admin-dashboard/': typeof AdminDashboardIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -146,7 +137,6 @@ export interface FileRouteTypes {
     | '/profile/$username'
     | '/settings/account'
     | '/settings/appearance'
-    | '/settings/privacy'
     | '/admin-dashboard'
     | '/dashboard'
     | '/settings/'
@@ -160,7 +150,6 @@ export interface FileRouteTypes {
     | '/profile/$username'
     | '/settings/account'
     | '/settings/appearance'
-    | '/settings/privacy'
     | '/admin-dashboard'
     | '/dashboard'
     | '/settings'
@@ -175,7 +164,6 @@ export interface FileRouteTypes {
     | '/profile/$username'
     | '/settings/account'
     | '/settings/appearance'
-    | '/settings/privacy'
     | '/admin-dashboard/'
     | '/dashboard/'
     | '/settings/'
@@ -258,13 +246,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/privacy': {
-      id: '/settings/privacy'
-      path: '/privacy'
-      fullPath: '/settings/privacy'
-      preLoaderRoute: typeof SettingsPrivacyRouteImport
-      parentRoute: typeof SettingsRouteRoute
-    }
     '/settings/appearance': {
       id: '/settings/appearance'
       path: '/appearance'
@@ -292,14 +273,12 @@ declare module '@tanstack/react-router' {
 interface SettingsRouteRouteChildren {
   SettingsAccountRoute: typeof SettingsAccountRoute
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
-  SettingsPrivacyRoute: typeof SettingsPrivacyRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteRouteChildren: SettingsRouteRouteChildren = {
   SettingsAccountRoute: SettingsAccountRoute,
   SettingsAppearanceRoute: SettingsAppearanceRoute,
-  SettingsPrivacyRoute: SettingsPrivacyRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
 

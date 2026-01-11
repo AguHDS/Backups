@@ -14,6 +14,7 @@ import adminGetAllUsers from "./adminGetAllUsers.js";
 import adminGetUserSections from "./adminGetUserSections.js";
 import adminDeleteUserSections from "./adminDeleteUserSections.js";
 import adminUpdateUserCredentials from "./adminUpdateUserCredentials.js";
+import changeCredentials from "./changeCredentials.js";
 
 export {
   getProfile,
@@ -26,6 +27,7 @@ export {
   getDashboardSummary,
   deleteFiles,
   register,
+  changeCredentials,
   login,
   adminDeleteUser,
   adminGetAllUsers,

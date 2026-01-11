@@ -1,16 +1,10 @@
-export type SettingsTab = "account" | "privacy" | "appearance";
+export type SettingsTab = "account" | "appearance";
 
 export interface UserSettings {
   email?: string;
   username?: string;
-  displayName?: string;
-  profileVisibility?: "public" | "private" | "friends";
-  analyticsTracking?: boolean;
-  performanceMonitoring?: boolean;
-  theme?: "light" | "dark" | "system";
-  compactMode?: boolean;
-  chartAnimations?: boolean;
-  showGridLines?: boolean;
+  password?: string;
+  theme?: "light" | "dark";
 }
 
 export interface SettingsNavItem {

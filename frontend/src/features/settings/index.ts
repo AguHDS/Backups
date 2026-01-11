@@ -1,5 +1,9 @@
-export { SettingsLayout } from "./components/SettingsLayout";
 export { AccountSettingsPage } from "./pages/AccountSettingsPage";
-export { PrivacySettingsPage } from "./pages/PrivacySettingsPage";
-export { AppearanceSettingsPage } from "./pages/AppearanceSettingsPage";
-export type { SettingsTab, UserSettings } from "./types";
+export { SettingSection } from "./components/SettingSection";
+export type {
+  UpdateCredentialsRequest,
+  UpdateCredentialsResponse,
+} from "./api/settingsTypes";
+export { updateCredentials } from "./api/settingsApi";
+export { useAccountSettings } from "./hooks/useAccountSettings";
+export { useUpdateCredentials } from "./hooks/useSettingsMutations";

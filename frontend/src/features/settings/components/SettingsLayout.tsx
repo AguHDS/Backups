@@ -16,7 +16,6 @@ export const SettingsLayout = () => {
   return (
     <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header with back button */}
         <div className="mb-8">
           <Link
             to="/dashboard"
@@ -29,7 +28,6 @@ export const SettingsLayout = () => {
           <h1 className="mt-4 text-3xl font-bold text-white">Settings</h1>
         </div>
 
-        {/* Layout with sidebar and content */}
         <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
           {/* Sidebar Navigation */}
           <aside className="lg:w-64 lg:flex-shrink-0">
