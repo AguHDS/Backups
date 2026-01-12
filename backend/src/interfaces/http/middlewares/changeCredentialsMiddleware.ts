@@ -9,8 +9,6 @@ export const changeCredentialsMiddleware = (
   try {
     const { username, email, currentPassword, newPassword } = req.body;
 
-
-
     // Limpiar campos
     const cleanedData: any = {};
     const errors: { field: string; message: string }[] = [];
@@ -50,7 +48,11 @@ export const changeCredentialsMiddleware = (
     }
 
     // 3. Validar nueva contraseña (si se proporciona) - Solo longitud mínima
-    if (newPassword !== undefined && newPassword !== null && newPassword !== "") {
+    if (
+      newPassword !== undefined &&
+      newPassword !== null &&
+      newPassword !== ""
+    ) {
       const trimmedNewPassword = newPassword.trim();
 
       // Solo validar longitud mínima - BetterAuth manejará la complejidad
@@ -71,7 +73,8 @@ export const changeCredentialsMiddleware = (
     if (!hasValidField) {
       errors.push({
         field: "general",
-        message: "At least one field (username, email, or newPassword) must be provided",
+        message:
+          "At least one field (username, email, or newPassword) must be provided",
       });
     }
 
@@ -85,7 +88,7 @@ export const changeCredentialsMiddleware = (
       } else {
         const trimmedCurrentPassword = currentPassword.trim();
         cleanedData.currentPassword = trimmedCurrentPassword;
-        
+
         // Validar que currentPassword tenga al menos 1 carácter
         if (cleanedData.currentPassword.length < 1) {
           errors.push({
@@ -106,8 +109,6 @@ export const changeCredentialsMiddleware = (
       });
       return;
     }
-
-
 
     // Agregar los datos validados al request
     req.body = cleanedData;

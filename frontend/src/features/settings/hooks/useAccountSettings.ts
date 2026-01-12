@@ -1,8 +1,8 @@
-// frontend\src\features\settings\hooks\useAccountSettings.ts
 import { useState, type FormEvent } from "react";
 import { useUpdateCredentials } from "./useSettingsMutations";
 import { processErrorMessages } from "@/shared/utils/processErrorMessages";
 import type { UpdateCredentialsRequest } from "../api/settingsTypes";
+import { useLogout } from "@/features/auth/hooks/useAuthMutations";
 
 interface AccountSettingsForm {
   username: string;
@@ -36,10 +36,13 @@ export const useAccountSettings = () => {
   const [statusCode, setStatusCode] = useState<number | null>(null);
   const [inputWarnings, setInputWarnings] = useState<string[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const updateCredentialsMutation = useUpdateCredentials();
+  const { mutateAsync: logout } = useLogout();
 
-  // Validaciones del frontend - MODIFICADA
+  // Validaciones del frontend
   const validateForm = (): boolean => {
     const errors: ValidationErrors = {};
     const warnings: string[] = [];
@@ -82,12 +85,12 @@ export const useAccountSettings = () => {
 
     // Validar nueva contraseña si se está cambiando
     if (newPassword.trim() !== "") {
-      if (newPassword.length < 8) {
-        errors.newPassword = "Password must be at least 8 characters";
+      if (newPassword.length < 6) {
+        errors.newPassword = "Password must be at least 6 characters";
         isValid = false;
       }
       if (newPassword !== confirmPassword) {
-        errors.confirmPassword = "Passwords do not match"; //hay que crear un endpoint para obtener los datos cambiados en el frontend
+        errors.confirmPassword = "Passwords do not match";
         isValid = false;
       }
     }
@@ -110,7 +113,7 @@ export const useAccountSettings = () => {
     return isValid;
   };
 
-  // Manejar cambios en los inputs - MEJORADO
+  // Manejar cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
 
@@ -147,6 +150,16 @@ export const useAccountSettings = () => {
       if (hasAnyFieldChanged) {
         setHasChanges(true);
       }
+    }
+  };
+
+  // Función para hacer logout cuando el usuario hace click en OK
+  const handleOkButtonClick = async (): Promise<void> => {
+    try {
+      setShowSuccessModal(false);
+      await logout();
+    } catch (error) {
+      console.error("Error during logout:", error);
     }
   };
 
@@ -188,10 +201,29 @@ export const useAccountSettings = () => {
       const result = await updateCredentialsMutation.mutateAsync(updateData);
 
       if (result.success) {
-        setStatusMessage(result.message || "Settings updated successfully");
-        setStatusCode(200);
+        // Determinar qué cambió para mostrar el mensaje apropiado
+        let changeMessage = "";
+        const changedFields = [];
 
-        // Limpiar formulario después de éxito
+        if (formData.username.trim() !== "") changedFields.push("username");
+        if (formData.email.trim() !== "") changedFields.push("email");
+        if (formData.newPassword.trim() !== "") changedFields.push("password");
+
+        if (changedFields.length === 1) {
+          changeMessage = `Your ${changedFields[0]} has been updated successfully.`;
+        } else if (changedFields.length > 1) {
+          changeMessage = `Your ${changedFields.join(", ")} have been updated successfully.`;
+        } else {
+          changeMessage = "Settings updated successfully.";
+        }
+
+        // Mostrar modal con mensaje
+        setSuccessMessage(
+          `${changeMessage} Please sign in again with your new credentials.`
+        );
+        setShowSuccessModal(true);
+
+        // Limpiar formulario
         setFormData({
           username: "",
           email: "",
@@ -200,12 +232,6 @@ export const useAccountSettings = () => {
           currentPassword: "",
         });
         setHasChanges(false);
-
-        // Limpiar mensaje después de 5 segundos
-        setTimeout(() => {
-          setStatusMessage(null);
-          setStatusCode(null);
-        }, 5000);
       }
     } catch (error: any) {
       console.error("Error updating settings:", error);
@@ -218,7 +244,7 @@ export const useAccountSettings = () => {
       if (error?.response?.status) {
         setStatusCode(error.response.status);
       } else {
-        setStatusCode(500); // Error interno por defecto
+        setStatusCode(500);
       }
 
       // También mapear errores específicos por campo si el backend los proporciona
@@ -245,18 +271,17 @@ export const useAccountSettings = () => {
     setStatusCode(null);
     setInputWarnings([]);
     setHasChanges(false);
+    setShowSuccessModal(false);
   };
 
   // Obtener todos los mensajes de error para ValidationMessages
   const getAllErrorMessages = (): string[] => {
     const errorMessages: string[] = [];
 
-    // Agregar errores de validación por campo
     Object.values(validationErrors).forEach((error) => {
       if (error) errorMessages.push(error);
     });
 
-    // Agregar warnings del frontend
     errorMessages.push(...inputWarnings);
 
     return errorMessages;
@@ -285,9 +310,12 @@ export const useAccountSettings = () => {
     inputWarnings: getAllErrorMessages(),
     hasChanges,
     isLoading: updateCredentialsMutation.isPending,
-    isSubmitDisabled: isSubmitDisabled(), // Llamar a la función
+    isSubmitDisabled: isSubmitDisabled(),
+    showSuccessModal,
+    successMessage,
     handleInputChange,
     handleSubmit,
     handleCancel,
+    handleOkButtonClick,
   };
 };
