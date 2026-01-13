@@ -37,6 +37,8 @@ export class ChangeCredentialsUseCase {
     const connection = await promisePool.getConnection();
 
     try {
+      await connection.beginTransaction();
+
       const user = await this.userRepo.findById(userId, connection);
 
       if (!user) {
@@ -119,29 +121,80 @@ export class ChangeCredentialsUseCase {
         }
       }
 
-      if (username && username !== user.name) {
-        await this.userRepo.updateUserCredentials(userId, username, undefined);
-      }
+      let usernameChanged = false;
+      let emailChanged = false;
+      let passwordChanged = false;
+      let errorDuringBetterAuth = null;
 
-      if (email && email !== user.email) {
-        await this.userRepo.updateUserCredentials(userId, undefined, email);
-      }
+      try {
+        if (newPassword && headers) {
+          const betterAuthHeaders = new Headers();
+          Object.entries(headers).forEach(([key, value]) => {
+            if (value && typeof value === "string") {
+              betterAuthHeaders.set(key, value);
+            }
+          });
 
-      if (newPassword && headers) {
-        const betterAuthHeaders = new Headers();
-        Object.entries(headers).forEach(([key, value]) => {
-          if (value && typeof value === "string") {
-            betterAuthHeaders.set(key, value);
+          await auth.api.changePassword({
+            body: {
+              currentPassword: currentPassword!,
+              newPassword: newPassword,
+            },
+            headers: betterAuthHeaders,
+          });
+          passwordChanged = true;
+        }
+
+        if (username && username !== user.name) {
+          await this.userRepo.updateUserCredentials(
+            userId,
+            username,
+            undefined,
+            connection
+          );
+          usernameChanged = true;
+        }
+
+        if (email && email !== user.email) {
+          await this.userRepo.updateUserCredentials(
+            userId,
+            undefined,
+            email,
+            connection
+          );
+          emailChanged = true;
+        }
+
+        await connection.commit();
+      } catch (error) {
+        errorDuringBetterAuth = error;
+
+        if (usernameChanged || emailChanged) {
+          try {
+            if (usernameChanged) {
+              await this.userRepo.updateUserCredentials(
+                userId,
+                user.name,
+                undefined,
+                connection
+              );
+            }
+            if (emailChanged) {
+              await this.userRepo.updateUserCredentials(
+                userId,
+                undefined,
+                user.email,
+                connection
+              );
+            }
+          } catch (rollbackError) {
+            console.error("❌ Error during rollback:", rollbackError);
           }
-        });
+        }
 
-        await auth.api.changePassword({
-          body: {
-            currentPassword: currentPassword!,
-            newPassword: newPassword,
-          },
-          headers: betterAuthHeaders,
-        });
+        await connection.rollback();
+
+        throw error;
       }
     } catch (error) {
       if (
@@ -155,9 +208,25 @@ export class ChangeCredentialsUseCase {
           "EMAIL_TAKEN",
         ].includes(error.message)
       ) {
+        try {
+          await connection.rollback();
+        } catch (rollbackError) {
+          console.error(
+            "❌ Error during rollback on validation error:",
+            rollbackError
+          );
+        }
         throw error;
       }
 
+      try {
+        await connection.rollback();
+      } catch (rollbackError) {
+        console.error(
+          "❌ Error during rollback on general error:",
+          rollbackError
+        );
+      }
       throw error;
     } finally {
       connection.release();

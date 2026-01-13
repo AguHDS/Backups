@@ -54,6 +54,7 @@ export interface UserRepository {
   updateUserCredentials(
     userId: string,
     username?: string,
-    email?: string
+    email?: string,
+    connection?: Connection
   ): Promise<void>;
 }
