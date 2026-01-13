@@ -20,21 +20,24 @@ export interface UserRepository {
    * @param connection - A MySQL connection
    */
 
-  findById(id: number | string, connection: Connection): Promise<User | null>;
+  findById(userId: string, connection: Connection): Promise<User | null>;
 
   /**
    * Checks if username or email are already taken in the database
    *
    * @returns A promise that resolves to an object indicating which values are taken
    */
-  
-  isNameOrEmailTaken(username: string, email: string): Promise<NameAndEmailCheckResult>;
+
+  isNameOrEmailTaken(
+    username: string,
+    email: string
+  ): Promise<NameAndEmailCheckResult>;
 
   /**
    * Deletes a user from the database by ID
    * This will cascade delete all related data (sessions, files, sections, etc.)
    */
-  deleteUserById(userId: number | string): Promise<void>;
+  deleteUserById(userId: string): Promise<void>;
 
   /**
    * Retrieves all users from the database
@@ -49,15 +52,9 @@ export interface UserRepository {
    * @param email - New email (optional)
    */
   updateUserCredentials(
-    userId: string | number,
+    userId: string,
     username?: string,
-    email?: string
+    email?: string,
+    connection?: Connection
   ): Promise<void>;
-
-  /**
-   * Updates password for a user in the account table
-   * @param userId - The ID of the user
-   * @param hashedPassword - The new hashed password
-   */
-  updateUserPassword(userId: string | number, hashedPassword: string): Promise<void>;
 }

@@ -23,7 +23,8 @@ import {
   adminGetAllUsers,
   adminGetUserSections,
   adminDeleteUserSections,
-  adminUpdateUserCredentials
+  adminUpdateUserCredentials,
+  changeCredentials
 } from "./routes/index.js";
 
 const app: Express = express();
@@ -62,6 +63,7 @@ app.use("/api/deleteSections", deleteSections);
 app.use("/api/getStorage", getStorage);
 app.use("/api/dashboard-summary", getDashboardSummary);
 app.use("/api/deleteFiles", deleteFiles);
+app.use("/api/changeCredentials", changeCredentials);
 
 // Admin routes
 app.use("/api/admin/deleteUser", adminDeleteUser);

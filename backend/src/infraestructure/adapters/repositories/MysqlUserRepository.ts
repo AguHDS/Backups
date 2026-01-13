@@ -1,9 +1,9 @@
-import promisePool from "../../../db/database.js";
-import { User } from "../../../domain/entities/User.js";
+import promisePool from "@/db/database.js";
+import { User } from "@/domain/entities/User.js";
 import {
   UserRepository,
   NameAndEmailCheckResult,
-} from "../../../domain/ports/repositories/UserRepository.js";
+} from "@/domain/ports/repositories/UserRepository.js";
 import { RowDataPacket, Connection } from "mysql2/promise";
 
 interface UserRow extends RowDataPacket {
@@ -32,11 +32,11 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error retrieving username from database");
     }
   }
-  async findById(id: number | string, connection: Connection): Promise<User | null> {
+  async findById(userId: string, connection: Connection): Promise<User | null> {
     try {
       const [rows] = await connection.execute<RowDataPacket[]>(
         "SELECT id, namedb, emaildb, role FROM users WHERE id = ?",
-        [id]
+        [userId]
       );
 
       if (rows.length === 0) {
@@ -90,7 +90,7 @@ export class MysqlUserRepository implements UserRepository {
     }
   }
 
-  async deleteUserById(userId: number | string): Promise<void> {
+  async deleteUserById(userId: string): Promise<void> {
     try {
       const [result] = await promisePool.execute(
         "DELETE FROM users WHERE id = ?",
@@ -127,7 +127,7 @@ export class MysqlUserRepository implements UserRepository {
   }
 
   async updateUserCredentials(
-    userId: string | number,
+    userId: string,
     username?: string,
     email?: string
   ): Promise<void> {
@@ -166,34 +166,6 @@ export class MysqlUserRepository implements UserRepository {
       }
       console.error("Error updating user credentials:", error);
       throw new Error("Error updating user credentials");
-    }
-  }
-
-  async updateUserPassword(
-    userId: string | number,
-    hashedPassword: string
-  ): Promise<void> {
-    try {
-      // Update password in account table where provider_id is 'credential'
-      const query = `
-        UPDATE account 
-        SET password = ?, updated_at = CURRENT_TIMESTAMP(3) 
-        WHERE user_id = ? AND provider_id = 'credential'
-      `;
-
-      const [result] = await promisePool.execute(query, [hashedPassword, userId]);
-
-      const affectedRows = (result as { affectedRows: number }).affectedRows;
-
-      if (affectedRows === 0) {
-        throw new Error("ACCOUNT_NOT_FOUND");
-      }
-    } catch (error) {
-      if (error instanceof Error && error.message === "ACCOUNT_NOT_FOUND") {
-        throw error;
-      }
-      console.error("Error updating user password:", error);
-      throw new Error("Error updating user password");
     }
   }
 }

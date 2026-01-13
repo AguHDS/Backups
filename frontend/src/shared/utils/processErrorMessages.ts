@@ -30,22 +30,18 @@ type FetchError = Error | ValidationError[] | ApiError | AxiosErrorResponse | un
  * Can be used along with ValidationMessages component
  */
 export const processErrorMessages = (error: FetchError): string[] => {
-  // Handle AxiosError structure (error.response.data)
   if (typeof error === "object" && error !== null && "response" in error) {
     const axiosError = error as AxiosErrorResponse;
     if (axiosError.response?.data) {
       const apiError = axiosError.response.data;
 
-      // Check for "error" field first (from backend middlewares)
       if (apiError.error) {
-        // Handle invalid file type error from multer middleware
         if (apiError.error.includes("You only can upload image files")) {
           return ["You only can upload image files"];
         }
         return [String(apiError.error)];
       }
 
-      // Storage quota exceeded
       if (apiError.code === "STORAGE_QUOTA_EXCEEDED" && apiError.details) {
         const details = apiError.details;
         return [
@@ -61,14 +57,11 @@ export const processErrorMessages = (error: FetchError): string[] => {
         ];
       }
 
-      // Invalid file type error from controller
       if (apiError.code === "INVALID_FILE_TYPE") {
         return ["You only can upload image files"];
       }
 
-      // Check for "message" field
       if (apiError.message) {
-        // Handle storage-specific messages
         if (
           apiError.message.includes("only can have one section") ||
           apiError.message.includes("User role only can have one section")
@@ -80,9 +73,17 @@ export const processErrorMessages = (error: FetchError): string[] => {
           return [apiError.message];
         }
 
-        // Handle invalid file type message from controller
         if (apiError.message.includes("You only can upload image files")) {
           return ["You only can upload image files"];
+        }
+
+        if (
+          apiError.message.toLowerCase().includes("password") ||
+          apiError.message.toLowerCase().includes("too short") ||
+          apiError.message.toLowerCase().includes("too weak") ||
+          apiError.message.toLowerCase().includes("invalid")
+        ) {
+          return [apiError.message];
         }
 
         // Return message directly (BetterAuth and backend already send proper messages)
@@ -157,6 +158,17 @@ export const processErrorMessages = (error: FetchError): string[] => {
       if (apiError.message.includes("You only can upload image files")) {
         return ["You only can upload image files"];
       }
+
+      // Handle BetterAuth password validation errors
+      if (
+        apiError.message.toLowerCase().includes("password") ||
+        apiError.message.toLowerCase().includes("too short") ||
+        apiError.message.toLowerCase().includes("too weak") ||
+        apiError.message.toLowerCase().includes("invalid")
+      ) {
+        return [apiError.message];
+      }
+
       return [String(apiError.message)];
     }
 
@@ -179,6 +191,16 @@ export const processErrorMessages = (error: FetchError): string[] => {
     if (errorMessage.includes("You only can upload image files")) {
       return ["You only can upload image files"];
     }
+
+    // Handle BetterAuth password validation errors
+    if (
+      errorMessage.toLowerCase().includes("password") ||
+      errorMessage.toLowerCase().includes("too short") ||
+      errorMessage.toLowerCase().includes("too weak") ||
+      errorMessage.toLowerCase().includes("invalid")
+    ) {
+      return [errorMessage];
+    }
     
     return [errorMessage];
   }
@@ -188,6 +210,17 @@ export const processErrorMessages = (error: FetchError): string[] => {
     if (error.includes("You only can upload image files")) {
       return ["You only can upload image files"];
     }
+
+    // Handle BetterAuth password validation error strings
+    if (
+      error.toLowerCase().includes("password") ||
+      error.toLowerCase().includes("too short") ||
+      error.toLowerCase().includes("too weak") ||
+      error.toLowerCase().includes("invalid")
+    ) {
+      return [error];
+    }
+
     return [error];
   }
 
