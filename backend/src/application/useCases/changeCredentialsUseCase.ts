@@ -11,6 +11,10 @@ export interface ChangeCredentialsRequest {
   headers?: Headers | Record<string, string>;
 }
 
+/**
+ * Use case to update user credentials.
+ * Coordinates current password verification and update in BetterAuth.
+ */
 export class ChangeCredentialsUseCase {
   constructor(private readonly userRepo: UserRepository) {}
 
@@ -75,9 +79,15 @@ export class ChangeCredentialsUseCase {
             }
           });
 
+          const emailToUse = user.email?.trim();
+
+          if (!emailToUse) {
+            throw new Error("INVALID_CURRENT_PASSWORD");
+          }
+
           const loginResult = await auth.api.signInEmail({
             body: {
-              email: user.email,
+              email: emailToUse,
               password: currentPassword,
             },
             headers: betterAuthHeaders,
@@ -125,9 +135,9 @@ export class ChangeCredentialsUseCase {
           }
         });
 
-        await auth.api.setUserPassword({
+        await auth.api.changePassword({
           body: {
-            userId: userId,
+            currentPassword: currentPassword!,
             newPassword: newPassword,
           },
           headers: betterAuthHeaders,
@@ -146,24 +156,6 @@ export class ChangeCredentialsUseCase {
         ].includes(error.message)
       ) {
         throw error;
-      }
-
-      if (
-        error &&
-        typeof error === "object" &&
-        "body" in error &&
-        "statusCode" in error
-      ) {
-        const betterAuthError = error as { body: any; statusCode: number };
-
-        if (
-          betterAuthError.statusCode === 401 ||
-          betterAuthError.statusCode === 403
-        ) {
-          throw new Error("INVALID_CURRENT_PASSWORD");
-        }
-
-        throw new Error("BETTERAUTH_ERROR");
       }
 
       throw error;

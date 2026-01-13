@@ -19,10 +19,8 @@ export const changeCredentialsController = async (
     const userId = req.user!.id;
     const { username, email, currentPassword, newPassword } = req.body;
 
-    // Preparar headers para BetterAuth
     const headers: Record<string, string> = {};
 
-    // Solo tomar headers necesarios
     const importantHeaders = [
       "authorization",
       "cookie",
@@ -38,7 +36,6 @@ export const changeCredentialsController = async (
       }
     });
 
-
     const userRepository = new MysqlUserRepository();
     const changeCredentialsUseCase = new ChangeCredentialsUseCase(
       userRepository
@@ -53,7 +50,6 @@ export const changeCredentialsController = async (
       headers,
     });
 
-
     res.status(200).json({
       success: true,
       message: "Credentials updated successfully",
@@ -64,7 +60,6 @@ export const changeCredentialsController = async (
       },
     });
   } catch (error) {
-    // Mapeo de errores NUESTROS - ACTUALIZADO
     const ourErrorMap: Record<string, { status: number; message: string }> = {
       USER_NOT_FOUND: { status: 404, message: "User not found" },
       NO_FIELDS_TO_UPDATE: {
@@ -108,7 +103,6 @@ export const changeCredentialsController = async (
       return;
     }
 
-    // 2. Si es error de BetterAuth (con body y statusCode), propagarlo
     if (
       error &&
       typeof error === "object" &&
@@ -124,14 +118,19 @@ export const changeCredentialsController = async (
         statusCode: number;
       };
 
-
-      // Extraer el mensaje de error de BetterAuth
       const betterAuthMessage =
         betterAuthError.body?.message ||
         betterAuthError.body?.error ||
         "Authentication service error";
 
-      // Si es error de credenciales inválidas (contraseña incorrecta)
+      if (betterAuthError.statusCode === 400) {
+        res.status(400).json({
+          success: false,
+          error: betterAuthMessage,
+        });
+        return;
+      }
+
       if (
         betterAuthError.statusCode === 401 ||
         betterAuthError.body?.code === "INVALID_CREDENTIALS" ||
@@ -154,7 +153,6 @@ export const changeCredentialsController = async (
       return;
     }
 
-    // 3. Si es un error genérico
     if (error instanceof Error) {
       res.status(500).json({
         success: false,
@@ -163,7 +161,6 @@ export const changeCredentialsController = async (
       return;
     }
 
-    // 4. Cualquier otro error
     res.status(500).json({
       success: false,
       error: "Internal server error",

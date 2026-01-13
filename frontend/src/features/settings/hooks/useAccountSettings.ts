@@ -20,6 +20,11 @@ interface ValidationErrors {
   currentPassword?: string;
 }
 
+
+/**
+ * Hook to manage account setup form.
+ * Handles validation, status and submission of credential changes.
+ */
 export const useAccountSettings = () => {
   const [formData, setFormData] = useState<AccountSettingsForm>({
     username: "",
@@ -42,7 +47,6 @@ export const useAccountSettings = () => {
   const updateCredentialsMutation = useUpdateCredentials();
   const { mutateAsync: logout } = useLogout();
 
-  // Validaciones del frontend
   const validateForm = (): boolean => {
     const errors: ValidationErrors = {};
     const warnings: string[] = [];
@@ -51,7 +55,6 @@ export const useAccountSettings = () => {
     const { username, email, newPassword, confirmPassword, currentPassword } =
       formData;
 
-    // Verificar que al menos un campo tenga cambios (excepto currentPassword)
     const hasFieldChanges =
       username.trim() !== "" ||
       email.trim() !== "" ||
@@ -62,7 +65,6 @@ export const useAccountSettings = () => {
       isValid = false;
     }
 
-    // Validar username si se está cambiando
     if (username.trim() !== "") {
       if (username.length < 3 || username.length > 30) {
         errors.username = "Username must be between 3 and 30 characters";
@@ -75,34 +77,26 @@ export const useAccountSettings = () => {
       }
     }
 
-    // Validar email si se está cambiando
     if (email.trim() !== "") {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
         errors.email = "Please enter a valid email address";
         isValid = false;
       }
     }
 
-    // Validar nueva contraseña si se está cambiando
     if (newPassword.trim() !== "") {
-      if (newPassword.length < 6) {
-        errors.newPassword = "Password must be at least 6 characters";
-        isValid = false;
-      }
       if (newPassword !== confirmPassword) {
         errors.confirmPassword = "Passwords do not match";
         isValid = false;
       }
     }
 
-    // SIEMPRE se requiere currentPassword cuando hay cambios
     if (hasFieldChanges && !currentPassword.trim()) {
       errors.currentPassword =
         "Current password is required to confirm changes";
       isValid = false;
     }
 
-    // Validar que la currentPassword tenga al menos 1 carácter si se proporciona
     if (currentPassword.trim() && currentPassword.trim().length < 1) {
       errors.currentPassword = "Please enter your current password";
       isValid = false;
@@ -113,7 +107,6 @@ export const useAccountSettings = () => {
     return isValid;
   };
 
-  // Manejar cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
 
@@ -122,7 +115,6 @@ export const useAccountSettings = () => {
       [name]: value,
     }));
 
-    // Limpiar errores específicos cuando el usuario empieza a escribir
     if (validationErrors[name as keyof ValidationErrors]) {
       setValidationErrors((prev) => ({
         ...prev,
@@ -130,14 +122,12 @@ export const useAccountSettings = () => {
       }));
     }
 
-    // Limpiar mensajes generales
     if (statusMessage || inputWarnings.length > 0) {
       setStatusMessage(null);
       setStatusCode(null);
       setInputWarnings([]);
     }
 
-    // Marcar que hay cambios si hay al menos un campo con valor (excepto currentPassword)
     if (!hasChanges) {
       const hasAnyFieldChanged =
         (name !== "currentPassword" && value.trim() !== "") ||
@@ -153,7 +143,6 @@ export const useAccountSettings = () => {
     }
   };
 
-  // Función para hacer logout cuando el usuario hace click en OK
   const handleOkButtonClick = async (): Promise<void> => {
     try {
       setShowSuccessModal(false);
@@ -163,7 +152,6 @@ export const useAccountSettings = () => {
     }
   };
 
-  // Manejar envío del formulario
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setStatusMessage(null);
@@ -171,13 +159,11 @@ export const useAccountSettings = () => {
     setInputWarnings([]);
     setValidationErrors({});
 
-    // Validar formulario
     if (!validateForm()) {
       return;
     }
 
     try {
-      // Preparar datos para enviar al backend
       const updateData: UpdateCredentialsRequest = {};
 
       if (formData.username.trim() !== "") {
@@ -192,16 +178,13 @@ export const useAccountSettings = () => {
         updateData.newPassword = formData.newPassword;
       }
 
-      // SIEMPRE enviar currentPassword si hay cambios
       if (formData.currentPassword.trim() !== "") {
         updateData.currentPassword = formData.currentPassword;
       }
 
-      // Llamar a la API
       const result = await updateCredentialsMutation.mutateAsync(updateData);
 
       if (result.success) {
-        // Determinar qué cambió para mostrar el mensaje apropiado
         let changeMessage = "";
         const changedFields = [];
 
@@ -217,13 +200,11 @@ export const useAccountSettings = () => {
           changeMessage = "Settings updated successfully.";
         }
 
-        // Mostrar modal con mensaje
         setSuccessMessage(
           `${changeMessage} Please sign in again with your new credentials.`
         );
         setShowSuccessModal(true);
 
-        // Limpiar formulario
         setFormData({
           username: "",
           email: "",
@@ -236,28 +217,29 @@ export const useAccountSettings = () => {
     } catch (error: any) {
       console.error("Error updating settings:", error);
 
-      // Procesar errores con processErrorMessages
       const errorMessages = processErrorMessages(error);
       setInputWarnings(errorMessages);
 
-      // Establecer código de estado si está disponible
       if (error?.response?.status) {
         setStatusCode(error.response.status);
       } else {
         setStatusCode(500);
       }
 
-      // También mapear errores específicos por campo si el backend los proporciona
       if (error?.response?.data?.field) {
         const { field, error: fieldError } = error.response.data;
         setValidationErrors({
           [field]: fieldError,
         });
+
+        const filteredWarnings = errorMessages.filter(
+          (msg) => msg !== fieldError
+        );
+        setInputWarnings(filteredWarnings);
       }
     }
   };
 
-  // Cancelar cambios
   const handleCancel = (): void => {
     setFormData({
       username: "",
@@ -274,7 +256,6 @@ export const useAccountSettings = () => {
     setShowSuccessModal(false);
   };
 
-  // Obtener todos los mensajes de error para ValidationMessages
   const getAllErrorMessages = (): string[] => {
     const errorMessages: string[] = [];
 
@@ -287,7 +268,6 @@ export const useAccountSettings = () => {
     return errorMessages;
   };
 
-  // Función para verificar si el botón debe estar deshabilitado
   const isSubmitDisabled = (): boolean => {
     const isLoading = updateCredentialsMutation.isPending;
     if (isLoading) return true;

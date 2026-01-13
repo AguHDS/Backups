@@ -1,6 +1,8 @@
-// backend\src\interfaces\http\middlewares\changeCredentialsMiddleware.ts
 import { Request, Response, NextFunction } from "express";
 
+/**
+ * Validates username, email and ensures current password for changes.
+ */
 export const changeCredentialsMiddleware = (
   req: Request,
   res: Response,
@@ -9,11 +11,9 @@ export const changeCredentialsMiddleware = (
   try {
     const { username, email, currentPassword, newPassword } = req.body;
 
-    // Limpiar campos
     const cleanedData: any = {};
     const errors: { field: string; message: string }[] = [];
 
-    // 1. Validar username (si se proporciona) - Solo validaciones básicas
     if (username !== undefined && username !== null && username !== "") {
       const trimmedUsername = username.trim();
 
@@ -32,41 +32,27 @@ export const changeCredentialsMiddleware = (
       }
     }
 
-    // 2. Validar formato de email (si se proporciona) - Solo formato básico
     if (email !== undefined && email !== null && email !== "") {
       const trimmedEmail = email.trim().toLowerCase();
 
-      // Solo validación básica de formato - BetterAuth hará validaciones más completas
-      if (!trimmedEmail.includes("@") || !trimmedEmail.includes(".")) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(trimmedEmail)) {
         errors.push({
           field: "email",
-          message: "Invalid email format",
+          message: "Please enter a valid email address",
         });
       } else {
         cleanedData.email = trimmedEmail;
       }
     }
 
-    // 3. Validar nueva contraseña (si se proporciona) - Solo longitud mínima
     if (
       newPassword !== undefined &&
       newPassword !== null &&
       newPassword !== ""
     ) {
-      const trimmedNewPassword = newPassword.trim();
-
-      // Solo validar longitud mínima - BetterAuth manejará la complejidad
-      if (trimmedNewPassword.length < 6) {
-        errors.push({
-          field: "newPassword",
-          message: "Password must be at least 6 characters",
-        });
-      } else {
-        cleanedData.newPassword = trimmedNewPassword;
-      }
+      cleanedData.newPassword = newPassword.trim();
     }
 
-    // 4. Verificar que al menos un campo esté presente
     const hasValidField =
       cleanedData.username || cleanedData.email || cleanedData.newPassword;
 
@@ -78,7 +64,6 @@ export const changeCredentialsMiddleware = (
       });
     }
 
-    // 5. SIEMPRE se requiere currentPassword cuando hay cambios
     if (hasValidField) {
       if (!currentPassword || currentPassword.trim() === "") {
         errors.push({
@@ -86,20 +71,10 @@ export const changeCredentialsMiddleware = (
           message: "Current password is required to confirm changes",
         });
       } else {
-        const trimmedCurrentPassword = currentPassword.trim();
-        cleanedData.currentPassword = trimmedCurrentPassword;
-
-        // Validar que currentPassword tenga al menos 1 carácter
-        if (cleanedData.currentPassword.length < 1) {
-          errors.push({
-            field: "currentPassword",
-            message: "Please enter your current password",
-          });
-        }
+        cleanedData.currentPassword = currentPassword.trim();
       }
     }
 
-    // Si hay errores de validación básica
     if (errors.length > 0) {
       const firstError = errors[0];
       res.status(400).json({
@@ -110,9 +85,7 @@ export const changeCredentialsMiddleware = (
       return;
     }
 
-    // Agregar los datos validados al request
     req.body = cleanedData;
-
     next();
   } catch (error) {
     console.error("❌ Validation middleware error:", error);
@@ -120,6 +93,5 @@ export const changeCredentialsMiddleware = (
       success: false,
       error: "Internal server error during validation",
     });
-    return;
   }
 };

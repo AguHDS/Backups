@@ -80,8 +80,8 @@ export const AccountSettingsPage = () => {
               Security Notice
             </h4>
             <p className="text-sm text-blue-200/80">
-              You will be automatically signed out after changing your
-              credentials.
+              You will be automatically logged out after changing your
+              credentials
             </p>
           </div>
         </div>
@@ -92,7 +92,6 @@ export const AccountSettingsPage = () => {
           title="Account Information"
           description="Update your personal information"
         >
-          {/* Username - Width limitado en mobile */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-slate-200 mb-2">
               New username
@@ -116,7 +115,6 @@ export const AccountSettingsPage = () => {
             )}
           </div>
 
-          {/* Email - Width limitado en mobile */}
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
               New email
@@ -141,7 +139,6 @@ export const AccountSettingsPage = () => {
 
         <SettingSection title="Change Password">
           <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-0 gap-4">
-            {/* New Password - Width limitado en mobile */}
             <div>
               <label className="block text-sm font-medium text-slate-200 mb-2">
                 New Password
@@ -165,7 +162,6 @@ export const AccountSettingsPage = () => {
               )}
             </div>
 
-            {/* Confirm New Password - Width limitado en mobile */}
             <div>
               <label className="block text-sm font-medium text-slate-200 mb-2">
                 Confirm New Password
@@ -192,7 +188,6 @@ export const AccountSettingsPage = () => {
         </SettingSection>
 
         <SettingSection title="Security Verification">
-          {/* Current Password - Width limitado en mobile */}
           <div>
             <label className="block text-sm font-medium text-yellow-400 mb-2">
               Current Password *
