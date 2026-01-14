@@ -9,6 +9,7 @@ export const ResetPasswordPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [inputsWarnings, setInputsWarnings] = useState<string[]>([]);
+  const [resetSuccessful, setResetSuccessful] = useState(false);
 
   const navigate = useNavigate();
 
@@ -48,11 +49,8 @@ export const ResetPasswordPage = () => {
         password: newPassword,
       });
 
-      setStatusMessage("Password reset successful! Redirecting to login...");
-
-      setTimeout(() => {
-        navigate({ to: "/sign-in", replace: true });
-      }, 3000);
+      setResetSuccessful(true);
+      setStatusMessage("Password reset successful!");
     } catch (error: any) {
       console.error("Reset password error:", error);
 
@@ -66,6 +64,10 @@ export const ResetPasswordPage = () => {
     }
   };
 
+  const handleGoToLogin = () => {
+    navigate({ to: "/sign-in", replace: true });
+  };
+
   if (!token) {
     return (
       <div className="flex items-center justify-center w-full h-[94vh]">
@@ -76,7 +78,7 @@ export const ResetPasswordPage = () => {
                 Invalid Reset Link
               </h3>
             </div>
-            <div className="p-6 text-center">
+            <div className="p-6">
               <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-900 mb-4">
                 <svg
                   className="h-8 w-8 text-red-600 dark:text-red-400"
@@ -93,7 +95,7 @@ export const ResetPasswordPage = () => {
                 </svg>
               </div>
 
-              <p className="text-gray-700 dark:text-gray-300 mb-6">
+              <p className="text-gray-700 dark:text-gray-300 mb-6 text-center">
                 This password reset link is invalid or has expired. Please
                 request a new one.
               </p>
@@ -119,6 +121,46 @@ export const ResetPasswordPage = () => {
     );
   }
 
+  if (resetSuccessful) {
+    return (
+      <div className="flex items-center justify-center w-full h-[94vh]">
+        <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
+          <div className="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6 flex flex-col items-center text-center">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Password Reset Successful!
+            </h3>
+
+            <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900 mb-4">
+              <svg
+                className="h-8 w-8 text-green-600 dark:text-green-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
+              Your password has been successfully updated.
+            </p>
+
+            <Button
+              label="Go to Sign In"
+              className="backupsBtn"
+              onClick={handleGoToLogin}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center w-full h-[94vh]">
       <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
@@ -128,22 +170,21 @@ export const ResetPasswordPage = () => {
               Set New Password
             </h3>
           </div>
-          <div className="p-6">
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Enter your new password below.
-            </p>
-
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-6">
+          <div className="py-5">
+            <form
+              className="overflow-hidden pl-6 pr-10"
+              onSubmit={handleSubmit}
+            >
+              <div className="space-y-8">
                 <div>
                   <label
-                    className="block text-sm text-gray-700 dark:text-gray-300 mb-2"
+                    className="text-sm text-gray-700 dark:text-gray-300"
                     htmlFor="new_password"
                   >
                     New Password
                   </label>
                   <Input
-                    className="backupsInput w-full"
+                    className="backupsInput my-2"
                     id="new_password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -156,13 +197,13 @@ export const ResetPasswordPage = () => {
 
                 <div>
                   <label
-                    className="block text-sm text-gray-700 dark:text-gray-300 mb-2"
+                    className="text-sm text-gray-700 dark:text-gray-300"
                     htmlFor="confirm_password"
                   >
                     Confirm New Password
                   </label>
                   <Input
-                    className="backupsInput w-full"
+                    className="backupsInput my-2"
                     id="confirm_password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -172,40 +213,40 @@ export const ResetPasswordPage = () => {
                     required={true}
                   />
                 </div>
-              </div>
 
-              <ValidationMessages
-                input={inputsWarnings}
-                status={null}
-                message={statusMessage}
-              />
-
-              <div className="space-y-4 mt-6">
-                <Button
-                  label={
-                    resetPasswordMutation.isPending
-                      ? "Resetting..."
-                      : "Reset Password"
-                  }
-                  className="backupsBtn w-full"
-                  type="submit"
-                  disabled={
-                    resetPasswordMutation.isPending ||
-                    !newPassword ||
-                    !confirmPassword
-                  }
+                <ValidationMessages
+                  input={inputsWarnings}
+                  status={null}
+                  message={statusMessage}
                 />
 
-                <div className="text-center">
-                  <Link
-                    to="/sign-in"
-                    className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-                  >
-                    Back to Sign In
-                  </Link>
+                <div className="flex justify-center">
+                  <Button
+                    label={
+                      resetPasswordMutation.isPending
+                        ? "Resetting..."
+                        : "Reset Password"
+                    }
+                    className="backupsBtn"
+                    type="submit"
+                    disabled={
+                      resetPasswordMutation.isPending ||
+                      !newPassword ||
+                      !confirmPassword
+                    }
+                  />
                 </div>
               </div>
             </form>
+
+            <div className="relative left-[17px] pb-3 mt-4 text-sm font-medium text-gray-500 dark:text-gray-300 self-end">
+              <Link
+                to="/sign-in"
+                className="text-blue-700 hover:underline dark:text-blue-500"
+              >
+                Back to Sign In
+              </Link>
+            </div>
           </div>
         </div>
       </div>

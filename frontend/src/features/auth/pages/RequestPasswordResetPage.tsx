@@ -30,8 +30,6 @@ export const RequestPasswordResetPage = () => {
       await requestPasswordResetMutation.mutateAsync({ email });
       setSubmitted(true);
     } catch (error: any) {
-      console.error("Error requesting password reset:", error);
-
       if (error.response?.data?.error) {
         setStatusMessage(error.response.data.error);
       } else if (error.message) {
@@ -46,16 +44,16 @@ export const RequestPasswordResetPage = () => {
     return (
       <div className="flex items-center justify-center w-full h-[94vh]">
         <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
-          <div className="h-auto bg-white rounded-lg shadow dark:bg-gray-700">
-            <div className="text-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center">
+          <div className="bg-white rounded-lg shadow dark:bg-gray-700">
+
+            <div className="flex flex-col items-center pt-6 gap-2">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Check Your Email
               </h3>
-            </div>
-            <div className="p-6 text-center">
-              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 dark:bg-green-900 mb-4">
+
+              <div className="flex items-center justify-center h-14 w-14 rounded-full bg-green-100 dark:bg-green-900">
                 <svg
-                  className="h-8 w-8 text-green-600 dark:text-green-400"
+                  className="h-7 w-7 text-green-600 dark:text-green-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -68,6 +66,9 @@ export const RequestPasswordResetPage = () => {
                   />
                 </svg>
               </div>
+            </div>
+
+            <div className="p-6 text-center">
               <p className="text-gray-700 dark:text-gray-300 mb-6">
                 If an account exists with the email{" "}
                 <span className="font-semibold text-blue-600 dark:text-blue-400">
@@ -75,19 +76,23 @@ export const RequestPasswordResetPage = () => {
                 </span>
                 , you will receive a password reset link shortly.
               </p>
-              <div className="space-y-4">
-                <Link
-                  to="/sign-in"
-                  className="block w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-center transition-colors"
-                >
-                  Back to Sign In
-                </Link>
+
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <Link
+                    to="/sign-in"
+                    className="text-sm text-blue-700 hover:underline dark:text-blue-500"
+                  >
+                    Back to Sign In
+                  </Link>
+                </div>
+
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Didn't receive the email? Check your spam folder or{" "}
+                  Didn't receive the email?{" "}
                   <button
                     type="button"
                     onClick={() => setSubmitted(false)}
-                    className="text-blue-600 hover:underline dark:text-blue-400"
+                    className="text-blue-700 cursor-pointer hover:underline dark:text-blue-500 bg-transparent border-0"
                   >
                     try again
                   </button>
@@ -103,22 +108,27 @@ export const RequestPasswordResetPage = () => {
   return (
     <div className="flex items-center justify-center w-full h-[94vh]">
       <div className="w-full max-w-md md:max-w-lg lg:max-w-xl px-6">
-        <div className="h-auto bg-white rounded-lg shadow dark:bg-gray-700">
-          <div className="text-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center">
+        <div className="bg-white p-10 rounded-lg shadow dark:bg-gray-700">
+
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Reset Your Password
             </h3>
           </div>
-          <div className="p-6">
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+
+          <div className="flex flex-col items-center">
+            <p className="text-gray-600 relative bottom-2 dark:text-gray-400 text-center">
               Enter your email address and we'll send you a link to reset your
               password.
             </p>
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-6">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col items-center w-full space-y-4"
+            >
+              <div className="w-full max-w-xs">
                 <label
-                  className="block text-sm text-gray-700 dark:text-gray-300 mb-2"
+                  className="flex justify-center text-sm text-gray-700 dark:text-gray-300 mb-2"
                   htmlFor="email_reset"
                 >
                   Email Address
@@ -128,10 +138,10 @@ export const RequestPasswordResetPage = () => {
                   id="email_reset"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder="Enter your email"
                   type="email"
                   name="email"
-                  required={true}
+                  required
                 />
               </div>
 
@@ -141,26 +151,24 @@ export const RequestPasswordResetPage = () => {
                 message={statusMessage}
               />
 
-              <div className="space-y-4">
+              <div className="w-full max-w-xs flex flex-col items-center space-y-3">
                 <Button
                   label={
                     requestPasswordResetMutation.isPending
                       ? "Sending..."
-                      : "Send Reset Link"
+                      : "Send Link"
                   }
-                  className="backupsBtn w-full"
+                  className="backupsBtn"
                   type="submit"
                   disabled={requestPasswordResetMutation.isPending}
                 />
 
-                <div className="text-center">
-                  <Link
-                    to="/sign-in"
-                    className="text-sm text-blue-700 hover:underline dark:text-blue-500"
-                  >
-                    Back to Sign In
-                  </Link>
-                </div>
+                <Link
+                  to="/sign-in"
+                  className="text-sm pt-4 text-blue-700 hover:underline dark:text-blue-500"
+                >
+                  Back to Sign In
+                </Link>
               </div>
             </form>
           </div>
