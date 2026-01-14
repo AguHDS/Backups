@@ -111,12 +111,12 @@ export const SignIn = () => {
                         Remember me
                       </label>
                     </div>
-                    <a
-                      href="#"
+                    <Link
+                      to="/forgot-password"
                       className="text-sm text-blue-700 hover:underline dark:text-blue-500"
                     >
-                      Lost Password?
-                    </a>
+                      Forgot Password?
+                    </Link>
                   </div>
                   <div className="flex justify-center">
                     <Button

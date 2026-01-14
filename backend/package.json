@@ -27,7 +27,7 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "@types/jsonwebtoken": "^9.0.10",
-    "better-auth": "^1.4.9",
+    "better-auth": "^1.4.12",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
