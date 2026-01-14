@@ -14,7 +14,10 @@ const adminDeleteUserSectionsUseCase = new AdminDeleteUserSectionsUseCase(
   new MysqlStorageUsageRepository()
 );
 
-export const deleteUserSectionsController = async (req: Request, res: Response) => {
+export const deleteUserSectionsController = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { userId, sectionIds } = req.body;
 

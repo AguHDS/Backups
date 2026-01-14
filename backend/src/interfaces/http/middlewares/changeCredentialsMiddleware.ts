@@ -1,18 +1,27 @@
 import { Request, Response, NextFunction } from "express";
+import promisePool from "@/db/database.js";
 
 /**
  * Validates username, email and ensures current password for changes.
  */
-export const changeCredentialsMiddleware = (
+export const changeCredentialsMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { username, email, currentPassword, newPassword } = req.body;
+    const userId = req.user?.id;
 
     const cleanedData: any = {};
     const errors: { field: string; message: string }[] = [];
+
+    if (!userId) {
+      errors.push({
+        field: "general",
+        message: "User not authenticated",
+      });
+    }
 
     if (username !== undefined && username !== null && username !== "") {
       const trimmedUsername = username.trim();
@@ -29,6 +38,37 @@ export const changeCredentialsMiddleware = (
         });
       } else {
         cleanedData.username = trimmedUsername;
+
+        if (userId) {
+          try {
+            const [rows] = await promisePool.execute(
+              "SELECT last_username_change FROM users WHERE id = ?",
+              [userId]
+            );
+
+            const userData = rows as any[];
+            if (userData.length > 0 && userData[0].last_username_change) {
+              const lastChange = new Date(userData[0].last_username_change);
+              const now = new Date();
+              const daysSinceLastChange = Math.floor(
+                (now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24)
+              );
+
+              if (daysSinceLastChange < 15) {
+                const daysRemaining = 15 - daysSinceLastChange;
+                errors.push({
+                  field: "username",
+                  message: `You can only change your username once every 15 days. Please wait ${daysRemaining} more day(s).`,
+                });
+              }
+            }
+          } catch (dbError) {
+            console.error(
+              "❌ Database error checking last username change:",
+              dbError
+            );
+          }
+        }
       }
     }
 

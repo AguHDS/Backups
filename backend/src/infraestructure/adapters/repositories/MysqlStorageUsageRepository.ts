@@ -2,55 +2,58 @@ import promisePool from "@/db/database.js";
 import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import { StorageUsageRepository } from "@/domain/ports/repositories/StorageUsageRepository.js";
 
-const DEFAULT_MAX_STORAGE = 104857600; // 100MB
+const DEFAULT_MAX_STORAGE = 104857600n; // 100MB
 
 interface UsedStorageRow extends RowDataPacket {
-  total_bytes: number;
-  profile_pic_size: number;
+  total_bytes: string | number;
+  profile_pic_size: string | number;
 }
 
 interface MaxStorageRow extends RowDataPacket {
-  max_bytes: number;
+  max_bytes: string | number;
 }
 
 export class MysqlStorageUsageRepository implements StorageUsageRepository {
   async addToUsedStorage(
     userId: number | string,
-    delta: number
+    delta: bigint
   ): Promise<void> {
     const query = `
       INSERT INTO user_storage_usage (user_id, total_bytes)
       VALUES (?, ?)
       ON DUPLICATE KEY UPDATE total_bytes = total_bytes + VALUES(total_bytes)
     `;
-    await promisePool.execute(query, [userId, delta]);
+
+    await promisePool.execute(query, [userId, delta.toString()]);
   }
 
   async setMaxStorage(
     userId: number | string,
-    maxBytes: number
+    maxBytes: bigint
   ): Promise<void> {
     const query = `
       INSERT INTO user_storage_limits (user_id, max_bytes)
       VALUES (?, ?)
       ON DUPLICATE KEY UPDATE max_bytes = VALUES(max_bytes)
     `;
-    await promisePool.execute(query, [userId, maxBytes]);
+
+    await promisePool.execute(query, [userId, maxBytes.toString()]);
   }
 
   async decreaseFromUsedStorage(
     userId: number | string,
-    delta: number
+    delta: bigint
   ): Promise<void> {
     const query = `
       UPDATE user_storage_usage
       SET total_bytes = GREATEST(total_bytes - ?, 0)
       WHERE user_id = ?
     `;
-    await promisePool.execute(query, [delta, userId]);
+
+    await promisePool.execute(query, [delta.toString(), userId]);
   }
 
-  async getUsedStorage(userId: number | string): Promise<number> {
+  async getUsedStorage(userId: number | string): Promise<bigint> {
     const query = `
       SELECT total_bytes
       FROM user_storage_usage
@@ -58,22 +61,21 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     `;
 
     const [rows] = await promisePool.execute<UsedStorageRow[]>(query, [userId]);
-    return rows.length > 0 ? rows[0].total_bytes : 0;
+    return rows.length > 0 ? BigInt(rows[0].total_bytes) : 0n;
   }
 
   async getTotalFilesCount(userId: string): Promise<number> {
     const query = `
-    SELECT COUNT(*) AS total_files
-    FROM users_files
-    WHERE user_id = ?
-  `;
+      SELECT COUNT(*) AS total_files
+      FROM users_files
+      WHERE user_id = ?
+    `;
 
     const [rows] = await promisePool.execute<RowDataPacket[]>(query, [userId]);
-
     return rows.length > 0 ? Number(rows[0].total_files) : 0;
   }
 
-  async getMaxStorage(userId: number | string): Promise<number> {
+  async getMaxStorage(userId: number | string): Promise<bigint> {
     const query = `
       SELECT max_bytes
       FROM user_storage_limits
@@ -81,20 +83,20 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     `;
 
     const [rows] = await promisePool.execute<MaxStorageRow[]>(query, [userId]);
-    return rows.length > 0 ? rows[0].max_bytes : DEFAULT_MAX_STORAGE;
+    return rows.length > 0 ? BigInt(rows[0].max_bytes) : DEFAULT_MAX_STORAGE;
   }
 
-  async getRemainingStorage(userId: number | string): Promise<number> {
+  async getRemainingStorage(userId: number | string): Promise<bigint> {
     const [used, max] = await Promise.all([
       this.getUsedStorage(userId),
       this.getMaxStorage(userId),
     ]);
 
     const remaining = max - used;
-    return remaining > 0 ? remaining : 0;
+    return remaining > 0n ? remaining : 0n;
   }
 
-  async getProfilePictureSize(userId: number | string): Promise<number> {
+  async getProfilePictureSize(userId: number | string): Promise<bigint> {
     const query = `
       SELECT profile_pic_size
       FROM user_storage_usage
@@ -102,31 +104,31 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     `;
 
     const [rows] = await promisePool.execute<UsedStorageRow[]>(query, [userId]);
-    return rows.length > 0 ? rows[0].profile_pic_size : 0;
+    return rows.length > 0 ? BigInt(rows[0].profile_pic_size) : 0n;
   }
 
   async updateProfilePictureSize(
     userId: number | string,
-    newSize: number,
-    oldSize: number = 0
+    newSize: bigint,
+    oldSize: bigint = 0n
   ): Promise<void> {
     const connection = await promisePool.getConnection();
 
     try {
       await connection.beginTransaction();
 
-      // Verify if record exists
       const [currentRows] = await connection.execute<UsedStorageRow[]>(
-        `SELECT total_bytes, profile_pic_size 
-         FROM user_storage_usage 
+        `SELECT total_bytes, profile_pic_size
+         FROM user_storage_usage
          WHERE user_id = ?`,
         [userId]
       );
 
       const exists = currentRows.length > 0;
-      const currentProfileSize = exists ? currentRows[0].profile_pic_size : 0;
+      const currentProfileSize = exists
+        ? BigInt(currentRows[0].profile_pic_size)
+        : 0n;
 
-      // If the oldSize passed does not match the db, use the value from the db
       if (exists && currentProfileSize !== oldSize) {
         oldSize = currentProfileSize;
       }
@@ -135,39 +137,33 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
         await connection.execute(
           `INSERT INTO user_storage_usage (user_id, total_bytes, profile_pic_size)
            VALUES (?, ?, ?)`,
-          [userId, newSize, newSize]
+          [userId, newSize.toString(), newSize.toString()]
         );
       } else {
-        // update profile_pic_size
         await connection.execute(
-          `UPDATE user_storage_usage 
+          `UPDATE user_storage_usage
            SET profile_pic_size = ?
            WHERE user_id = ?`,
-          [newSize, userId]
+          [newSize.toString(), userId]
         );
 
-        // calculate difference and update total_bytes
         const sizeDifference = newSize - oldSize;
 
-        if (sizeDifference > 0) {
-          // if new picture is larger - add to total_bytes
+        if (sizeDifference > 0n) {
           await connection.execute(
-            `UPDATE user_storage_usage 
+            `UPDATE user_storage_usage
              SET total_bytes = total_bytes + ?
              WHERE user_id = ?`,
-            [sizeDifference, userId]
+            [sizeDifference.toString(), userId]
           );
-        } else if (sizeDifference < 0) {
-          // if new picture is smaller - subtract from total_bytes
-          const decreaseAmount = Math.abs(sizeDifference);
+        } else if (sizeDifference < 0n) {
           await connection.execute(
-            `UPDATE user_storage_usage 
+            `UPDATE user_storage_usage
              SET total_bytes = GREATEST(total_bytes - ?, 0)
              WHERE user_id = ?`,
-            [decreaseAmount, userId]
+            [(-sizeDifference).toString(), userId]
           );
         }
-        // file size is the same - no change to total_bytes
       }
 
       await connection.commit();
@@ -181,7 +177,7 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
 
   async tryReserveStorage(
     userId: number | string,
-    delta: number
+    delta: bigint
   ): Promise<boolean> {
     const query = `
       UPDATE user_storage_usage u
@@ -192,9 +188,9 @@ export class MysqlStorageUsageRepository implements StorageUsageRepository {
     `;
 
     const [result] = await promisePool.execute<ResultSetHeader>(query, [
-      delta,
+      delta.toString(),
       userId,
-      delta,
+      delta.toString(),
     ]);
 
     return (result.affectedRows ?? 0) > 0;

@@ -19,7 +19,7 @@ export const uploadFilesController = async (req: Request, res: Response) => {
     const sectionTitle = req.query.sectionTitle as string;
     const files = req.files as Express.Multer.File[];
 
-    // Revalue file types (defense in depth)
+    // Revalidate file types (defense in depth)
     if (!files || files.length === 0) {
       res.status(400).json({
         success: false,
@@ -44,6 +44,7 @@ export const uploadFilesController = async (req: Request, res: Response) => {
     const invalidFiles = files.filter(
       (file) => !allowedMimeTypes.includes(file.mimetype)
     );
+
     if (invalidFiles.length > 0) {
       res.status(400).json({
         success: false,
@@ -82,7 +83,7 @@ export const uploadFilesController = async (req: Request, res: Response) => {
       files: results.map((file) => ({
         publicId: file.publicId,
         sectionId: file.sectionId.toString(),
-        sizeInBytes: file.sizeInBytes,
+        sizeInBytes: file.sizeInBytes.toString(),
         userId: file.userId,
       })),
     });
@@ -92,27 +93,37 @@ export const uploadFilesController = async (req: Request, res: Response) => {
       (error as Error & { details?: { code: string } }).details?.code ===
         "STORAGE_QUOTA_EXCEEDED"
     ) {
-      const details = (
+      const rawDetails = (
         error as Error & {
-          details: {
-            code: string;
-            currentUsage: number;
-            maxStorage: number;
-            requested: number;
+          details?: {
+            used?: bigint;
+            limit?: bigint;
+            remaining?: bigint;
+            attempted?: bigint;
           };
         }
       ).details;
+
+      const details = rawDetails
+        ? {
+            used: rawDetails.used?.toString(),
+            limit: rawDetails.limit?.toString(),
+            remaining: rawDetails.remaining?.toString(),
+            attempted: rawDetails.attempted?.toString(),
+          }
+        : undefined;
 
       res.status(409).json({
         success: false,
         code: "STORAGE_QUOTA_EXCEEDED",
         message: error.message,
-        details: details,
+        details,
       });
-    } else if (
-      error instanceof Error &&
-      error.message.includes("Invalid file type")
-    ) {
+      return;
+    }
+
+    // Invalid file type fallback
+    if (error instanceof Error && error.message.includes("Invalid file type")) {
       res.status(400).json({
         success: false,
         message: "You only can upload image files",
@@ -130,13 +141,15 @@ export const uploadFilesController = async (req: Request, res: Response) => {
           ],
         },
       });
-    } else {
-      console.error("Upload error:", error);
-      res.status(500).json({
-        success: false,
-        message: error instanceof Error ? error.message : "Unknown error",
-        code: "INTERNAL_SERVER_ERROR",
-      });
+      return;
     }
+
+    // Generic error
+    console.error("Upload error:", error);
+    res.status(500).json({
+      success: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+      code: "INTERNAL_SERVER_ERROR",
+    });
   }
 };

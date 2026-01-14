@@ -7,7 +7,7 @@ interface ProfileContent {
 export interface UploadedFile {
   publicId: string;
   sectionId: string;
-  sizeInBytes: number;
+  sizeInBytes: string | number;
   userId: number | string;
 }
 

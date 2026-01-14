@@ -4,7 +4,6 @@ import { UserRepository } from "@/domain/ports/repositories/UserRepository.js";
 import { CloudinaryRemover } from "@/infraestructure/adapters/externalServices/CloudinaryRemover.js";
 import { StorageUsageRepository } from "@/domain/ports/repositories/StorageUsageRepository.js";
 import promisePool from "@/db/database.js";
-
 /**
  * Deletes sections from any user
  */
@@ -18,41 +17,28 @@ export class AdminDeleteUserSectionsUseCase {
   ) {}
 
   async execute(userId: string, sectionIds: number[]): Promise<number> {
-    if (!userId) {
-      throw new Error("MISSING_USER_ID");
-    }
+    if (!userId) throw new Error("MISSING_USER_ID");
+    if (!sectionIds.length) throw new Error("MISSING_SECTION_IDS");
 
-    if (!sectionIds || sectionIds.length === 0) {
-      throw new Error("MISSING_SECTION_IDS");
-    }
-
-    // Get user info
     const connection = await promisePool.getConnection();
+
     try {
       const user = await this.userRepo.findById(userId, connection);
+      if (!user) throw new Error("USER_NOT_FOUND");
 
-      if (!user) {
-        throw new Error("USER_NOT_FOUND");
-      }
-
-      // Get files from these sections to calculate storage reduction
       const files = await this.fileRepo.getFilesWithSizeBySectionId(sectionIds);
 
-      // Get public IDs to delete from Cloudinary
-      const publicIds = files.map((file) => file.public_id);
+      const publicIds = files.map((file) => file.publicId);
 
-      // Calculate total bytes to subtract from storage
-      const totalBytesToSubtract = files.reduce(
-        (sum, file) => sum + file.size_in_bytes,
-        0
+      const totalBytesToSubtract = files.reduce<bigint>(
+        (sum, file) => sum + file.sizeInBytes,
+        0n
       );
 
-      // Delete files from Cloudinary
       if (publicIds.length > 0) {
         await this.cloudinaryRemover.deleteFilesByPublicIds(publicIds);
       }
 
-      // Delete section folders from Cloudinary (all versions)
       for (const sectionId of sectionIds) {
         await this.cloudinaryRemover.deleteFoldersBySectionId(
           userId,
@@ -60,11 +46,9 @@ export class AdminDeleteUserSectionsUseCase {
         );
       }
 
-      // Delete sections from database (CASCADE will delete associated files)
       await this.profileRepo.deleteSectionsByIds(sectionIds, userId);
 
-      // Update user's storage usage
-      if (totalBytesToSubtract > 0) {
+      if (totalBytesToSubtract > 0n) {
         await this.storageUsageRepo.decreaseFromUsedStorage(
           userId,
           totalBytesToSubtract

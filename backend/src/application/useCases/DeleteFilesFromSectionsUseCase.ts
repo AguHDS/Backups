@@ -15,20 +15,17 @@ export class DeleteFilesFromSectionsUseCase {
    * Updates user_storage_usage by subtracting deleted bytes
    */
   async execute(userId: string, data: SectionFilesPayload[]): Promise<void> {
-    let totalBytesToSubtract = 0;
+    let totalBytesToSubtract = 0n;
 
     for (const { publicIds } of data) {
       if (!publicIds.length) continue;
 
-      // Get file metadata before deletion
       const deletedFiles = await this.fileRepo.deleteFilesByPublicIds(
         publicIds
       );
 
-      // Delete from Cloudinary
       await this.fileCloudinaryRemover.deleteFilesByPublicIds(publicIds);
 
-      // Accumulate total bytes (only from the current user’s files)
       for (const file of deletedFiles) {
         if (file.userId === userId) {
           totalBytesToSubtract += file.sizeInBytes;
@@ -36,7 +33,7 @@ export class DeleteFilesFromSectionsUseCase {
       }
     }
 
-    if (totalBytesToSubtract > 0) {
+    if (totalBytesToSubtract > 0n) {
       await this.storageUsageRepo.decreaseFromUsedStorage(
         userId,
         totalBytesToSubtract

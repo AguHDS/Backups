@@ -7,7 +7,8 @@ export interface FileRepository {
    */
   save(file: UserFile): Promise<void>;
 
-  /** Save files in one request to db
+  /**
+   * Save files in one request to db
    * @param files - An array of UserFile entities to be saved
    * @returns A promise that resolves when all files are saved
    */
@@ -19,12 +20,14 @@ export interface FileRepository {
    * @returns A list of files belonging to the section
    */
   findBySectionId(sectionId: number): Promise<UserFile[]>;
+
   /**
-   * Deletes files from the database using its Cloudinary public ID
-   * @param publicId - The unique identifier of the file in Cloudinary
-   * @return A promise that resolves to an array of deleted UserFile entities
+   * Deletes files from the database using their Cloudinary public IDs
+   * @param publicIds - The unique identifiers of the files in Cloudinary
+   * @returns A promise that resolves to an array of deleted UserFile entities
    */
   deleteFilesByPublicIds(publicIds: string[]): Promise<UserFile[]>;
+
   /**
    * Retrieves files with their sizes associated with specific sections
    * @param sectionIds - An array of section IDs to retrieve files for
@@ -32,5 +35,5 @@ export interface FileRepository {
    */
   getFilesWithSizeBySectionId(
     sectionIds: number[]
-  ): Promise<{ public_id: string; size_in_bytes: number }[]>;
+  ): Promise<Pick<UserFile, "publicId" | "sizeInBytes">[]>;
 }

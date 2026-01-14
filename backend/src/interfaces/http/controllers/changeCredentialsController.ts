@@ -82,6 +82,14 @@ export const changeCredentialsController = async (
         status: 400,
         message: "Current password is required to confirm changes",
       },
+      MISSING_USER_ID: {
+        status: 400,
+        message: "User ID is required",
+      },
+      USERNAME_CHANGE_TOO_SOON: {
+        status: 429,
+        message: "You can only change your username once every 15 days",
+      },
       BETTERAUTH_ERROR: {
         status: 500,
         message: "Authentication service error",

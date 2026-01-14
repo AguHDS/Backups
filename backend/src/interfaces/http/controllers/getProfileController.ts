@@ -67,7 +67,7 @@ export const getProfileController = async (req: Request, res: Response) => {
             section.files?.map((file) => ({
               publicId: file.publicId,
               sectionId: section.id.toString(),
-              sizeInBytes: file.sizeInBytes,
+              sizeInBytes: Number(file.sizeInBytes),
               userId: file.userId,
             })) ?? [],
         })) ?? [],

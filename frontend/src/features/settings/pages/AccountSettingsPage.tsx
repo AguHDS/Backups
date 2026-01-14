@@ -9,7 +9,7 @@ export const AccountSettingsPage = () => {
     validationErrors,
     statusMessage,
     statusCode,
-    inputWarnings,
+    systemErrors,
     hasChanges,
     isLoading,
     isSubmitDisabled,
@@ -56,11 +56,13 @@ export const AccountSettingsPage = () => {
         </div>
       )}
 
-      <ValidationMessages
-        input={inputWarnings}
-        status={statusCode}
-        message={statusMessage}
-      />
+      {(systemErrors.length > 0 || statusMessage) && (
+        <ValidationMessages
+          input={systemErrors}
+          status={statusCode}
+          message={statusMessage}
+        />
+      )}
 
       <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
         <div className="flex items-start gap-3">

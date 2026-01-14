@@ -32,10 +32,11 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error retrieving username from database");
     }
   }
+  
   async findById(userId: string, connection: Connection): Promise<User | null> {
     try {
       const [rows] = await connection.execute<RowDataPacket[]>(
-        "SELECT id, namedb, emaildb, role FROM users WHERE id = ?",
+        "SELECT id, namedb, emaildb, role, last_username_change FROM users WHERE id = ?",
         [userId]
       );
 
@@ -51,6 +52,7 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error retrieving user from database");
     }
   }
+  
   async isNameOrEmailTaken(
     username: string,
     email: string
@@ -129,7 +131,8 @@ export class MysqlUserRepository implements UserRepository {
   async updateUserCredentials(
     userId: string,
     username?: string,
-    email?: string
+    email?: string,
+    connection?: Connection
   ): Promise<void> {
     if (!username && !email) {
       return; // Nothing to update
@@ -142,6 +145,8 @@ export class MysqlUserRepository implements UserRepository {
       if (username) {
         updates.push("namedb = ?");
         values.push(username);
+        
+        updates.push("last_username_change = CURRENT_TIMESTAMP(3)");
       }
 
       if (email) {
@@ -149,11 +154,14 @@ export class MysqlUserRepository implements UserRepository {
         values.push(email);
       }
 
+      updates.push("updated_at = CURRENT_TIMESTAMP(3)");
       values.push(userId);
 
-      const query = `UPDATE users SET ${updates.join(", ")}, updated_at = CURRENT_TIMESTAMP(3) WHERE id = ?`;
+      const query = `UPDATE users SET ${updates.join(", ")} WHERE id = ?`;
 
-      const [result] = await promisePool.execute(query, values);
+      const dbConnection = connection || promisePool;
+      
+      const [result] = await dbConnection.execute(query, values);
 
       const affectedRows = (result as { affectedRows: number }).affectedRows;
 

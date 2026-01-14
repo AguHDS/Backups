@@ -1,6 +1,6 @@
-import { FileRepository } from "../../../domain/ports/repositories/FileRepository.js";
-import { UserFile } from "../../../domain/entities/UserFile.js";
-import promisePool from "../../../db/database.js";
+import { FileRepository } from "@/domain/ports/repositories/FileRepository.js";
+import { UserFile } from "@/domain/entities/UserFile.js";
+import promisePool from "@/db/database.js";
 import type { RowDataPacket } from "mysql2";
 
 // Definir tipo para las filas de la base de datos
@@ -8,7 +8,7 @@ interface UserFileRow {
   public_id: string;
   url: string;
   section_id: number;
-  size_in_bytes: number;
+  size_in_bytes: string | number;
   user_id: number;
 }
 
@@ -18,7 +18,7 @@ function mapRowToUserFile(row: UserFileRow): UserFile {
     row.public_id,
     row.url,
     row.section_id,
-    row.size_in_bytes,
+    BigInt(row.size_in_bytes),
     row.user_id
   );
 }
@@ -28,11 +28,12 @@ export class MysqlFileRepository implements FileRepository {
     const query = `
     INSERT INTO users_files (public_id, url, section_id, size_in_bytes, user_id)
     VALUES (?, ?, ?, ?, ?)`;
+
     const values = [
       file.publicId,
       file.url,
       file.sectionId,
-      file.sizeInBytes,
+      file.sizeInBytes.toString(),
       file.userId,
     ];
 
@@ -55,7 +56,7 @@ export class MysqlFileRepository implements FileRepository {
       file.publicId,
       file.url,
       file.sectionId,
-      file.sizeInBytes,
+      file.sizeInBytes.toString(),
       file.userId,
     ]);
 
@@ -74,10 +75,7 @@ export class MysqlFileRepository implements FileRepository {
     WHERE section_id = ?`;
 
     try {
-      // Usar aserción de tipo específica en lugar de any
       const [rows] = await promisePool.execute(query, [sectionId]);
-
-      // Asegurar que rows es un array de UserFileRow
       const fileRows = rows as UserFileRow[];
 
       return fileRows.map(mapRowToUserFile);
@@ -103,8 +101,6 @@ export class MysqlFileRepository implements FileRepository {
 
     try {
       const [rows] = await promisePool.execute(selectQuery, publicIds);
-
-      // Asegurar que rows es un array de UserFileRow
       const fileRows = rows as UserFileRow[];
 
       await promisePool.execute(deleteQuery, publicIds);
@@ -118,19 +114,21 @@ export class MysqlFileRepository implements FileRepository {
 
   async getFilesWithSizeBySectionId(
     sectionIds: number[]
-  ): Promise<{ public_id: string; size_in_bytes: number }[]> {
+  ): Promise<Pick<UserFile, "publicId" | "sizeInBytes">[]> {
     if (sectionIds.length === 0) return [];
 
     const placeholders = sectionIds.map(() => "?").join(", ");
 
     const [rows] = await promisePool.execute<RowDataPacket[]>(
-      `SELECT public_id, size_in_bytes FROM users_files WHERE section_id IN (${placeholders})`,
+      `SELECT public_id, size_in_bytes
+       FROM users_files
+       WHERE section_id IN (${placeholders})`,
       sectionIds
     );
 
     return rows.map((row) => ({
-      public_id: row.public_id,
-      size_in_bytes: row.size_in_bytes,
+      publicId: row.public_id,
+      sizeInBytes: BigInt(row.size_in_bytes),
     }));
   }
 }

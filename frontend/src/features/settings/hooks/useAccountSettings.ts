@@ -20,7 +20,6 @@ interface ValidationErrors {
   currentPassword?: string;
 }
 
-
 /**
  * Hook to manage account setup form.
  * Handles validation, status and submission of credential changes.
@@ -39,7 +38,7 @@ export const useAccountSettings = () => {
   );
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusCode, setStatusCode] = useState<number | null>(null);
-  const [inputWarnings, setInputWarnings] = useState<string[]>([]);
+  const [systemErrors, setSystemErrors] = useState<string[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -103,7 +102,7 @@ export const useAccountSettings = () => {
     }
 
     setValidationErrors(errors);
-    setInputWarnings(warnings);
+    setSystemErrors(warnings);
     return isValid;
   };
 
@@ -122,10 +121,10 @@ export const useAccountSettings = () => {
       }));
     }
 
-    if (statusMessage || inputWarnings.length > 0) {
+    if (statusMessage || systemErrors.length > 0) {
       setStatusMessage(null);
       setStatusCode(null);
-      setInputWarnings([]);
+      setSystemErrors([]);
     }
 
     if (!hasChanges) {
@@ -156,7 +155,7 @@ export const useAccountSettings = () => {
     e.preventDefault();
     setStatusMessage(null);
     setStatusCode(null);
-    setInputWarnings([]);
+    setSystemErrors([]);
     setValidationErrors({});
 
     if (!validateForm()) {
@@ -218,24 +217,89 @@ export const useAccountSettings = () => {
       console.error("Error updating settings:", error);
 
       const errorMessages = processErrorMessages(error);
-      setInputWarnings(errorMessages);
+
+      const validationErrorMessages = [
+        "Username must be between 3 and 30 characters",
+        "Username can only contain letters, numbers and underscores",
+        "Please enter a valid email address",
+        "Passwords do not match",
+        "Current password is required to confirm changes",
+        "Please enter your current password",
+        "Current password is incorrect",
+        "Username is already taken",
+        "Email is already in use",
+        "You must change at least one field",
+        "You can only change your username once every 15 days",
+      ];
+
+      const newValidationErrors: ValidationErrors = {};
+      const newSystemErrors: string[] = [];
+
+      errorMessages.forEach((msg) => {
+        if (
+          validationErrorMessages.some((validationMsg) =>
+            msg
+              .toLowerCase()
+              .includes(
+                validationMsg
+                  .toLowerCase()
+                  .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+              )
+          )
+        ) {
+          if (msg.toLowerCase().includes("username")) {
+            if (msg.toLowerCase().includes("taken")) {
+              newValidationErrors.username = msg;
+            } else if (msg.toLowerCase().includes("only change")) {
+              newValidationErrors.username = msg;
+            } else if (msg.toLowerCase().includes("between")) {
+              newValidationErrors.username = msg;
+            } else if (msg.toLowerCase().includes("letters")) {
+              newValidationErrors.username = msg;
+            }
+          } else if (msg.toLowerCase().includes("email")) {
+            if (
+              msg.toLowerCase().includes("taken") ||
+              msg.toLowerCase().includes("in use")
+            ) {
+              newValidationErrors.email = msg;
+            } else if (msg.toLowerCase().includes("valid")) {
+              newValidationErrors.email = msg;
+            }
+          } else if (
+            msg.toLowerCase().includes("password") &&
+            msg.toLowerCase().includes("incorrect")
+          ) {
+            newValidationErrors.currentPassword = msg;
+          } else if (msg.toLowerCase().includes("passwords do not match")) {
+            newValidationErrors.confirmPassword = msg;
+          } else if (msg.toLowerCase().includes("current password")) {
+            if (!newValidationErrors.currentPassword) {
+              newValidationErrors.currentPassword = msg;
+            }
+          } else {
+            newSystemErrors.push(msg);
+          }
+        } else {
+          newSystemErrors.push(msg);
+        }
+      });
+
+      setValidationErrors(newValidationErrors);
+      setSystemErrors(newSystemErrors);
+
+      if (error?.response?.data?.field) {
+        const { field, error: fieldError } = error.response.data;
+        setValidationErrors((prev) => ({
+          ...prev,
+          [field]: fieldError,
+        }));
+      }
 
       if (error?.response?.status) {
         setStatusCode(error.response.status);
       } else {
         setStatusCode(500);
-      }
-
-      if (error?.response?.data?.field) {
-        const { field, error: fieldError } = error.response.data;
-        setValidationErrors({
-          [field]: fieldError,
-        });
-
-        const filteredWarnings = errorMessages.filter(
-          (msg) => msg !== fieldError
-        );
-        setInputWarnings(filteredWarnings);
       }
     }
   };
@@ -251,21 +315,9 @@ export const useAccountSettings = () => {
     setValidationErrors({});
     setStatusMessage(null);
     setStatusCode(null);
-    setInputWarnings([]);
+    setSystemErrors([]);
     setHasChanges(false);
     setShowSuccessModal(false);
-  };
-
-  const getAllErrorMessages = (): string[] => {
-    const errorMessages: string[] = [];
-
-    Object.values(validationErrors).forEach((error) => {
-      if (error) errorMessages.push(error);
-    });
-
-    errorMessages.push(...inputWarnings);
-
-    return errorMessages;
   };
 
   const isSubmitDisabled = (): boolean => {
@@ -287,7 +339,7 @@ export const useAccountSettings = () => {
     validationErrors,
     statusMessage,
     statusCode,
-    inputWarnings: getAllErrorMessages(),
+    systemErrors,
     hasChanges,
     isLoading: updateCredentialsMutation.isPending,
     isSubmitDisabled: isSubmitDisabled(),

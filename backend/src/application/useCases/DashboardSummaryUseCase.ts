@@ -5,9 +5,9 @@ export class DashboardSummaryUseCase {
   constructor(private readonly storageRepo: StorageUsageRepository) {}
 
   async execute(userId: string): Promise<{
-    used: number;
+    used: bigint;
     totalFiles: number;
-    maxStorage: number;
+    maxStorage: bigint;
   }> {
     const [used, totalFiles, maxStorage] = await Promise.all([
       this.storageRepo.getUsedStorage(userId),
