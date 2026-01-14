@@ -45,6 +45,26 @@ export class ChangeCredentialsUseCase {
         throw new Error("USER_NOT_FOUND");
       }
 
+      if (username && username !== user.name) {
+        const [rows] = await connection.execute(
+          "SELECT last_username_change FROM users WHERE id = ?",
+          [userId]
+        );
+        
+        const userData = rows as any[];
+        if (userData.length > 0 && userData[0].last_username_change) {
+          const lastChange = new Date(userData[0].last_username_change);
+          const now = new Date();
+          const daysSinceLastChange = Math.floor(
+            (now.getTime() - lastChange.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          
+          if (daysSinceLastChange < 15) {
+            throw new Error("USERNAME_CHANGE_TOO_SOON");
+          }
+        }
+      }
+
       if (username || email) {
         const checkUsername = username || user.name;
         const checkEmail = email || user.email;
@@ -206,6 +226,7 @@ export class ChangeCredentialsUseCase {
           "INVALID_CURRENT_PASSWORD",
           "USERNAME_TAKEN",
           "EMAIL_TAKEN",
+          "USERNAME_CHANGE_TOO_SOON",
         ].includes(error.message)
       ) {
         try {
