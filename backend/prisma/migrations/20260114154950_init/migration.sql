@@ -63,7 +63,7 @@ CREATE TABLE `verification` (
     `expires_at` DATETIME(3) NOT NULL,
     `created_at` DATETIME(3) NULL,
     `updated_at` DATETIME(3) NULL,
-    `user_id` VARCHAR(191) NOT NULL,
+    `user_id` VARCHAR(191) NULL,
 
     INDEX `verification_identifier_idx`(`identifier`(191)),
     PRIMARY KEY (`id`)

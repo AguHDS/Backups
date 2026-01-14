@@ -82,8 +82,8 @@ model Verification {
   expiresAt  DateTime  @map("expires_at")
   createdAt  DateTime? @map("created_at")
   updatedAt  DateTime? @map("updated_at")
-  userId     String    @map("user_id")
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?   @map("user_id")
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("verification")
   @@index([identifier(length: 191)])

@@ -1,5 +1,4 @@
 // Request
-
 export interface LoginRequest {
   user: string;
   password: string;
@@ -11,8 +10,16 @@ export interface RegisterRequest {
   email: string;
 }
 
-// Response
+export interface RequestPasswordResetRequest {
+  email: string;
+}
 
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+// Response
 export interface UserData {
   id: string;
   name: string;
@@ -37,8 +44,17 @@ export interface LogoutResponse {
   message: string;
 }
 
-// Errors
+export interface RequestPasswordResetResponse {
+  success: boolean;
+  message: string;
+}
 
+export interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
+// Errors
 export interface ValidationErrorResponse {
   message: string;
 }

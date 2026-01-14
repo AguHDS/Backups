@@ -1,6 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
-import { login, register, logout } from "../api/authApi";
+import {
+  login,
+  register,
+  logout,
+  requestPasswordReset,
+  resetPassword,
+} from "../api/authApi";
 import { clearAuth } from "@/app/redux/features/slices/authSlice";
 import type {
   LoginRequest,
@@ -8,6 +14,10 @@ import type {
   LoginResponse,
   RegisterResponse,
   LogoutResponse,
+  RequestPasswordResetRequest,
+  ResetPasswordRequest,
+  RequestPasswordResetResponse,
+  ResetPasswordResponse,
 } from "../api/authTypes";
 
 export const useLogin = () => {
@@ -39,4 +49,26 @@ export const useLogout = () => {
   });
 };
 
-export type { LoginResponse, RegisterResponse, LogoutResponse };
+export const useRequestPasswordReset = () => {
+  return useMutation<
+    RequestPasswordResetResponse,
+    Error,
+    RequestPasswordResetRequest
+  >({
+    mutationFn: requestPasswordReset,
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation<ResetPasswordResponse, Error, ResetPasswordRequest>({
+    mutationFn: resetPassword,
+  });
+};
+
+export type {
+  LoginResponse,
+  RegisterResponse,
+  LogoutResponse,
+  RequestPasswordResetResponse,
+  ResetPasswordResponse,
+};
