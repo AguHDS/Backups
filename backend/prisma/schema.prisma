@@ -17,6 +17,8 @@ model User {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
   role          String   @default("user") @db.VarChar(15)
+  
+  lastUsernameChange DateTime? @map("last_username_change")
 
   sessions     Session[]
   accounts     Account[]
@@ -29,8 +31,8 @@ model User {
   files        UserFile[]
 
   banned     Boolean?  @default(false)
-  banReason  String?   @db.Text
-  banExpires DateTime?
+  banReason  String?   @map("ban_reason") @db.Text
+  banExpires DateTime? @map("ban_expires")
 
   @@map("users")
 }
@@ -46,7 +48,7 @@ model Session {
   updatedAt DateTime @updatedAt @map("updated_at")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  impersonatedBy String? @db.Text
+  impersonatedBy String? @map("impersonated_by") @db.Text
 
   @@map("session")
   @@index([userId(length: 191)])
@@ -131,7 +133,7 @@ model UserFile {
 
 model UserStorageUsage {
   userId         String    @id @map("user_id")
-  totalBytes     BigInt    @default(0) @map("total_bytes")
+  totalBytes     BigInt   @default(0) @map("total_bytes") @db.UnsignedBigInt
   updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at")
   profilePicSize BigInt    @default(0) @map("profile_pic_size") @db.UnsignedBigInt
 

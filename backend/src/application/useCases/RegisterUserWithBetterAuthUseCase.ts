@@ -12,6 +12,8 @@ interface RegisterResult {
   headers?: Headers;
 }
 
+const DEFAULT_MAX_STORAGE = 104857600n; // 100 MB
+
 export class RegisterUserWithBetterAuthUseCase {
   constructor(
     private readonly userRepository: MysqlUserRepository,
@@ -19,9 +21,15 @@ export class RegisterUserWithBetterAuthUseCase {
     private readonly profileRepository: MysqlProfileRepository
   ) {}
 
-  async execute(name: string, email: string, password: string): Promise<RegisterResult> {
-    // Check if user already exists
-    const checkResult = await this.userRepository.isNameOrEmailTaken(name, email);
+  async execute(
+    name: string,
+    email: string,
+    password: string
+  ): Promise<RegisterResult> {
+    const checkResult = await this.userRepository.isNameOrEmailTaken(
+      name,
+      email
+    );
 
     if (checkResult.isTaken) {
       if (checkResult.userTaken && checkResult.emailTaken) {
@@ -36,40 +44,35 @@ export class RegisterUserWithBetterAuthUseCase {
     }
 
     try {
-      // Use BetterAuth to create the user WITHOUT auto-login
       const response = await auth.api.signUpEmail({
         body: {
           name,
           email,
           password,
         },
-        // No headers = no session cookies
-        asResponse: true,
+        asResponse: true, // avoid auto-login
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        
-        const betterAuthError = {
+
+        throw {
           body: errorData,
-          statusCode: response.status
+          statusCode: response.status,
         };
-        
-        throw betterAuthError;
       }
 
-      // Parse the response body
       const result = await response.json();
 
-      if (!result || !result.user) {
+      if (!result?.user?.id) {
         throw new Error("REGISTRATION_FAILED");
       }
 
       const userId = result.user.id;
 
-      // Initialize user storage usage
-      await this.storageRepository.addToUsedStorage(userId, 0);
-      await this.storageRepository.setMaxStorage(userId, 104857600);
+      // Initialize storage + profile (BIGINT)
+      await this.storageRepository.addToUsedStorage(userId, 0n);
+      await this.storageRepository.setMaxStorage(userId, DEFAULT_MAX_STORAGE);
       await this.profileRepository.createProfile(userId);
 
       return {
@@ -78,13 +81,17 @@ export class RegisterUserWithBetterAuthUseCase {
           name: result.user.name,
           email: result.user.email,
         },
-        // No headers = no session cookies set
       };
     } catch (error) {
-      if (error && typeof error === 'object' && 'body' in error && 'statusCode' in error) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "body" in error &&
+        "statusCode" in error
+      ) {
         throw error;
       }
-      
+
       throw new Error("REGISTRATION_FAILED");
     }
   }

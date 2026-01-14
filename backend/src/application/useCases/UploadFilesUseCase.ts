@@ -5,10 +5,10 @@ import { MysqlStorageUsageRepository } from "@/infraestructure/adapters/reposito
 
 type QuotaErrorPayload = {
   code: "STORAGE_QUOTA_EXCEEDED";
-  used?: number;
-  limit?: number;
-  remaining?: number;
-  attempted?: number;
+  used?: bigint;
+  limit?: bigint;
+  remaining?: bigint;
+  attempted?: bigint;
 };
 
 // Custom error class to fix rollback situations
@@ -32,16 +32,27 @@ export class UploadFilesUseCase {
     sectionTitle: string,
     userId: number | string
   ): Promise<UserFile[]> {
-    if (!files || files.length === 0) throw new Error("No files provided");
+    if (!files || files.length === 0) {
+      throw new Error("No files provided");
+    }
 
     // Re-validate file types (defense in depth)
     const allowedMimeTypes = [
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 
-      'image/webp', 'image/svg+xml', 'image/bmp', 
-      'image/tiff', 'image/x-icon'
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml",
+      "image/bmp",
+      "image/tiff",
+      "image/x-icon",
     ];
 
-    const invalidFiles = files.filter(file => !allowedMimeTypes.includes(file.mimetype));
+    const invalidFiles = files.filter(
+      (file) => !allowedMimeTypes.includes(file.mimetype)
+    );
+
     if (invalidFiles.length > 0) {
       throw new Error("Invalid file type. Only image files are allowed");
     }
@@ -53,20 +64,28 @@ export class UploadFilesUseCase {
       );
     }
 
-    // Validate userId is provided (can be string or number for BetterAuth compatibility)
     if (!userId || (typeof userId === "string" && userId.trim() === "")) {
       throw new Error("Invalid userId: userId is required");
     }
 
-    const incomingBytes = files.reduce((sum, f) => sum + (f.size ?? 0), 0);
-    if (incomingBytes <= 0) throw new Error("Invalid files payload");
+    // Incoming bytes (BIGINT)
+    const incomingBytes = files.reduce(
+      (sum, f) => sum + BigInt(f.size ?? 0),
+      0n
+    );
+
+    if (incomingBytes <= 0n) {
+      throw new Error("Invalid files payload");
+    }
 
     // Check initial quota
     const remaining = await this.storageUsageRepo.getRemainingStorage(userId);
 
     if (incomingBytes > remaining) {
-      const used = await this.storageUsageRepo.getUsedStorage(userId);
-      const limit = await this.storageUsageRepo.getMaxStorage(userId);
+      const [used, limit] = await Promise.all([
+        this.storageUsageRepo.getUsedStorage(userId),
+        this.storageUsageRepo.getMaxStorage(userId),
+      ]);
 
       const err: Error & { details?: QuotaErrorPayload } = new Error(
         "Storage quota exceeded"
@@ -109,7 +128,7 @@ export class UploadFilesUseCase {
 
     // Upload to Cloudinary
     let uploadedPublicIds: string[] = [];
-    let confirmedBytes = 0;
+    let confirmedBytes = 0n;
 
     try {
       const uploaded = await this.cloudinaryUploader.uploadFilesToSection(
@@ -119,9 +138,10 @@ export class UploadFilesUseCase {
       );
 
       uploadedPublicIds = uploaded.map((f) => f.public_id);
+
       confirmedBytes = uploaded.reduce(
-        (sum, f) => sum + (f.sizeInBytes ?? 0),
-        0
+        (sum, f) => sum + BigInt(f.sizeInBytes ?? 0),
+        0n
       );
 
       // Handle byte difference
@@ -160,12 +180,7 @@ export class UploadFilesUseCase {
         }
       } else if (confirmedBytes < incomingBytes) {
         const surplus = incomingBytes - confirmedBytes;
-        if (surplus > 0) {
-          await this.storageUsageRepo.decreaseFromUsedStorage(
-            userId,
-            surplus
-          );
-        }
+        await this.storageUsageRepo.decreaseFromUsedStorage(userId, surplus);
       }
 
       // Persist metadata
@@ -175,7 +190,7 @@ export class UploadFilesUseCase {
             file.public_id,
             file.url,
             numericSectionId,
-            file.sizeInBytes,
+            BigInt(file.sizeInBytes),
             userId
           )
       );
@@ -183,15 +198,13 @@ export class UploadFilesUseCase {
       await this.fileRepo.saveMany(fileEntities);
       return fileEntities;
     } catch (e) {
-      // Only rollback if it is NOT an AlreadyRolledBackError
       if (!(e instanceof AlreadyRolledBackError)) {
         if (uploadedPublicIds.length > 0) {
           await this.rollbackUpload(uploadedPublicIds);
         }
 
-        // Calculate how many bytes to reverse:
         const bytesToRevert =
-          confirmedBytes > 0 ? confirmedBytes : incomingBytes;
+          confirmedBytes > 0n ? confirmedBytes : incomingBytes;
 
         await this.storageUsageRepo.decreaseFromUsedStorage(
           userId,

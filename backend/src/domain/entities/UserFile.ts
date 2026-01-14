@@ -3,7 +3,7 @@ export class UserFile {
     public readonly publicId: string,
     public readonly url: string,
     public readonly sectionId: number,
-    public readonly sizeInBytes: number,
+    public readonly sizeInBytes: bigint,
     public readonly userId: number | string
   ) {
     if (

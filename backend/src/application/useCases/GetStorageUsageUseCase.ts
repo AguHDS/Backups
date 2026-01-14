@@ -1,5 +1,5 @@
-import { UserRepository } from "../../domain/ports/repositories/UserRepository.js";
-import { StorageUsageRepository } from "../../domain/ports/repositories/StorageUsageRepository.js";
+import { UserRepository } from "@/domain/ports/repositories/UserRepository.js";
+import { StorageUsageRepository } from "@/domain/ports/repositories/StorageUsageRepository.js";
 
 /** Get storage status for username in the params */
 export class GetStorageUsageUseCase {
@@ -10,7 +10,7 @@ export class GetStorageUsageUseCase {
 
   async execute(
     username: string
-  ): Promise<{ used: number; limit: number; remaining: number }> {
+  ): Promise<{ used: bigint; limit: bigint; remaining: bigint }> {
     const user = await this.userRepo.findByUsername(username);
     if (!user) throw new Error("USER_NOT_FOUND");
 
@@ -19,7 +19,8 @@ export class GetStorageUsageUseCase {
       this.storageRepo.getMaxStorage(user.id),
     ]);
 
-    const remaining = Math.max(limit - used, 0);
+    const remaining = limit > used ? limit - used : 0n;
+
     return { used, limit, remaining };
   }
 }
