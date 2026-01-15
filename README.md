@@ -1,12 +1,14 @@
 # Backups (in progress)
 This app will let you store images and leveling up your account to gain benefits.
 
-### Features that are already implemented:
+### Features already implemented:
 
-* Securiy flow for accounts using token rotation
-* Profiles where users can upload images to their sections
+* Secure flow for auth
+* Password recovery system via email
+* Dashboard displaying stats about user storage
+* Editable profile with bio, online status, and sections for uploads
+* Storage based on user uploads
 * Optimized images with Cloudinary SDK
-* Make your sections public/private
 * Admin Dashboard to manage users and their profile
 
 ### Features in progress:
@@ -56,7 +58,7 @@ Admin Pannel
 ### Cloudinary Storage setup
 - Create account in https://cloudinary.com, then "View API keys" to see your credentials and put them in /backend/.env
 
-### Run scripts
+### Scripts
 * dev: __npm run dev__ <- if there are typescript errors, this run will fail and ask you to fix them
 * build dist: __npm run build__ <- create dist folder ready for production
 * vite preview: __npm run preview__ <- run the production dist files in a local server
