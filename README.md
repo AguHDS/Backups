@@ -15,16 +15,13 @@ This app will let you store images and leveling up your account to gain benefits
 * Level system that will grant benefits
 * Daily quests to gain more exp and level up
 
-### Previews (not final design)
+### Previews (see all preview images in /assets)
 
 Profile
-![Showcase](assets/Profile_Showcase.png)
+![Showcase](assets/preview/Profile_Showcase.png)
 
 Dashboard
-![Showcase](assets/Dashboard_Showcase.png)
-
-Admin Pannel
-![Showcase](assets/AdminPannel_Showcase.png)
+![Showcase](assets/preview/Dashboard_Showcase.png)
 
 ## Stack used
 

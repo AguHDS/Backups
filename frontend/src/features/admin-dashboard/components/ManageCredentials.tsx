@@ -68,7 +68,7 @@ export const ManageCredentials: React.FC = () => {
             onChange={(e) => setUsername(e.target.value)}
             disabled={isDisabled}
             placeholder="Leave empty to keep current"
-            className="w-full px-3 py-2 border border-[#3a4a68] rounded-md bg-[#1a2332] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[#0e172a] disabled:cursor-not-allowed"
+            className="max-w-xl m-auto px-3 py-2 border border-[#3a4a68] rounded-md bg-[#1a2332] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[#0e172a] disabled:cursor-not-allowed"
           />
         </div>
 
@@ -82,7 +82,7 @@ export const ManageCredentials: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
             disabled={isDisabled}
             placeholder="Leave empty to keep current"
-            className="w-full px-3 py-2 border border-[#3a4a68] rounded-md bg-[#1a2332] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[#0e172a] disabled:cursor-not-allowed"
+            className="max-w-xl m-auto px-3 py-2 border border-[#3a4a68] rounded-md bg-[#1a2332] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[#0e172a] disabled:cursor-not-allowed"
           />
         </div>
 
@@ -96,7 +96,7 @@ export const ManageCredentials: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             disabled={isDisabled}
             placeholder="Leave empty to keep current"
-            className="w-full px-3 py-2 border border-[#3a4a68] rounded-md bg-[#1a2332] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[#0e172a] disabled:cursor-not-allowed"
+            className="max-w-xl m-auto px-3 py-2 border border-[#3a4a68] rounded-md bg-[#1a2332] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-[#0e172a] disabled:cursor-not-allowed"
           />
         </div>
 

@@ -352,45 +352,47 @@ export const Dashboard = () => {
           </StatCard>
         </div>
 
-        <div className="bg-gray-800/50 p-4 rounded-xl">
-          <h3 className="text-lg font-semibold text-gray-200 mb-3">
-            Quick Stats
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gray-700/50 p-3 rounded-lg">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-sm text-gray-300">Used Storage</span>
+        <div className="mt-16">
+          <div className="bg-gray-800/50 mt-12 p-4 rounded-xl">
+            <h3 className="text-lg font-semibold text-gray-200 mb-3">
+              Quick Stats
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-gray-700/50 p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-gray-300">Used Storage</span>
+                </div>
+                <div className="text-lg font-bold text-white mt-1">
+                  {formatBytes(used)}
+                </div>
               </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {formatBytes(used)}
+              <div className="bg-gray-700/50 p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-gray-500"></div>
+                  <span className="text-sm text-gray-300">Free Space</span>
+                </div>
+                <div className="text-lg font-bold text-white mt-1">
+                  {formatBytes(remainingBytes)}
+                </div>
               </div>
-            </div>
-            <div className="bg-gray-700/50 p-3 rounded-lg">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-gray-500"></div>
-                <span className="text-sm text-gray-300">Free Space</span>
+              <div className="bg-gray-700/50 p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                  <span className="text-sm text-gray-300">Total Files</span>
+                </div>
+                <div className="text-lg font-bold text-white mt-1">
+                  {totalFiles.toLocaleString()}
+                </div>
               </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {formatBytes(remainingBytes)}
-              </div>
-            </div>
-            <div className="bg-gray-700/50 p-3 rounded-lg">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                <span className="text-sm text-gray-300">Total Files</span>
-              </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {totalFiles.toLocaleString()}
-              </div>
-            </div>
-            <div className="bg-gray-700/50 p-3 rounded-lg">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                <span className="text-sm text-gray-300">Avg File Size</span>
-              </div>
-              <div className="text-lg font-bold text-white mt-1">
-                {averageFileSize > 0 ? formatBytes(averageFileSize) : "—"}
+              <div className="bg-gray-700/50 p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <span className="text-sm text-gray-300">Avg File Size</span>
+                </div>
+                <div className="text-lg font-bold text-white mt-1">
+                  {averageFileSize > 0 ? formatBytes(averageFileSize) : "—"}
+                </div>
               </div>
             </div>
           </div>
