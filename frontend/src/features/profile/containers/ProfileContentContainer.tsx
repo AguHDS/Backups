@@ -1,11 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams } from "@tanstack/react-router";
 import { useEditBio } from "../hooks/useEditBio";
-import {
-  useEditProfile,
-  useSections,
-  useFileDeletion,
-} from "../context";
+import { useEditProfile, useSections, useFileDeletion } from "../context";
 import { useStorageData } from "../hooks/useStorageData";
 import {
   useUpdateBio,
@@ -260,7 +256,11 @@ export const ProfileContentContainer = ({ data }: FetchedUserProfile) => {
                 </div>
               )}
 
-              <UserInfo userStatus="offline" role={data.role} level={"-"} />
+              <UserInfo
+                userStatus={data.isOnline ? "online" : "offline"}
+                role={data.role}
+                level={"-"}
+              />
 
               <StorageChart {...{ usedBytes, limitBytes, remainingBytes }} />
             </div>
