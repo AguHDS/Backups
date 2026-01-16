@@ -5,8 +5,10 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/app/redux/store";
 
 export const NavBar = () => {
-  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-  
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.auth
+  );
+
   return (
     <>
       <nav className="bg-[#1d2435] h-auto relative top-0 w-full flex flex-col shadow-[0_0_10px] z-50">
@@ -33,7 +35,7 @@ export const NavBar = () => {
                 <Link to="/sign-in">
                   <Button
                     label="Sign in"
-                    className="backupsBtn mr-2"
+                    className="backupsBtn mr-3 !px-4 !py-[0.625rem] !min-w-0 !h-auto !leading-none"
                     id="sign-in"
                   ></Button>
                 </Link>
@@ -41,7 +43,7 @@ export const NavBar = () => {
                 <Link to="/sign-up">
                   <Button
                     label="Sign up"
-                    className="backupsBtn"
+                    className="backupsBtn mr-1 !px-4 !py-[0.625rem] !min-w-0 !h-auto !leading-none"
                     id="sign-in"
                   ></Button>
                 </Link>
@@ -52,4 +54,4 @@ export const NavBar = () => {
       </nav>
     </>
   );
-}
+};

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { ImageOverviewModal } from "./ImageOverviewModal";
 
 interface ImageData {
@@ -12,12 +12,8 @@ interface Props {
 }
 
 export const ImageOverview = ({ images, children }: Props) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const callbacksRef = useRef({
-    onClose: () => setIsModalOpen(false),
-  });
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const validImages = useMemo(
     () => images.filter((img) => img.publicId?.trim()),
@@ -26,51 +22,36 @@ export const ImageOverview = ({ images, children }: Props) => {
 
   const openOverview = useCallback(
     (index: number) => {
-      if (validImages.length === 0) return;
-
-      const safeIndex = Math.max(0, Math.min(index, validImages.length - 1));
-      setCurrentImageIndex(safeIndex);
-      setIsModalOpen(true);
+      if (!validImages.length) return;
+      setCurrentIndex(index);
+      setIsOpen(true);
     },
-    [validImages]
+    [validImages.length]
   );
 
-  // Use functional updates to avoid changing dependencies
-  const goToNext = useCallback(() => {
-    setCurrentImageIndex((prevIndex) => {
-      if (prevIndex < validImages.length - 1) {
-        return prevIndex + 1;
-      }
-      return 0;
-    });
+  const goNext = useCallback(() => {
+    setCurrentIndex((i) =>
+      i < validImages.length - 1 ? i + 1 : 0
+    );
   }, [validImages.length]);
 
-  const goToPrevious = useCallback(() => {
-    setCurrentImageIndex((prevIndex) => {
-      if (prevIndex > 0) {
-        return prevIndex - 1;
-      }
-      return validImages.length - 1;
-    });
+  const goPrev = useCallback(() => {
+    setCurrentIndex((i) =>
+      i > 0 ? i - 1 : validImages.length - 1
+    );
   }, [validImages.length]);
-
-  // Memoize modal props
-  const modalProps = useMemo(
-    () => ({
-      currentImageIndex,
-      images: validImages,
-      isOpen: isModalOpen,
-      onClose: callbacksRef.current.onClose,
-      onNext: goToNext,
-      onPrevious: goToPrevious,
-    }),
-    [currentImageIndex, validImages, isModalOpen, goToNext, goToPrevious]
-  );
 
   return (
     <>
       {children(openOverview)}
-      <ImageOverviewModal {...modalProps} />
+      <ImageOverviewModal
+        isOpen={isOpen}
+        images={validImages}
+        currentIndex={currentIndex}
+        onClose={() => setIsOpen(false)}
+        onNext={goNext}
+        onPrevious={goPrev}
+      />
     </>
   );
 };
