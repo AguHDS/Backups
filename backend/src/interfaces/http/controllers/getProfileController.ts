@@ -3,11 +3,14 @@ import { MysqlProfileRepository } from "@/infraestructure/adapters/repositories/
 import { GetUserProfileUseCase } from "@/application/useCases/GetUserProfileUseCase.js";
 import { GetProfileResponse } from "@/shared/dtos/index.js";
 import { MysqlFileRepository } from "@/infraestructure/adapters/repositories/MysqlFileRepository.js";
+import { MysqlUserRepository } from "@/infraestructure/adapters/repositories/MysqlUserRepository.js"; // AÑADIR
 
 const getUserProfileUseCase = new GetUserProfileUseCase(
   new MysqlProfileRepository(),
   new MysqlFileRepository()
 );
+
+const mysqlUserRepository = new MysqlUserRepository(); // AÑADIR
 
 /** Respond with user profile data, comparing its id from users table with fk_users_id in users_profile table */
 export const getProfileController = async (req: Request, res: Response) => {
@@ -45,9 +48,18 @@ export const getProfileController = async (req: Request, res: Response) => {
       return;
     }
 
+    let isOnline = false;
+    try {
+      const status = await mysqlUserRepository.getUserOnlineStatus(id);
+      isOnline = status.isOnline;
+    } catch (error) {
+      console.error("Error getting online status for user:", id, error);
+    }
+
     const response: GetProfileResponse = {
       username: name,
       role,
+      isOnline: isOnline,
       id,
       email,
       isOwner,

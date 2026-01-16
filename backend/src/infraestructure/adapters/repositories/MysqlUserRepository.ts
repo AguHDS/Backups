@@ -32,7 +32,7 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error retrieving username from database");
     }
   }
-  
+
   async findById(userId: string, connection: Connection): Promise<User | null> {
     try {
       const [rows] = await connection.execute<RowDataPacket[]>(
@@ -52,7 +52,7 @@ export class MysqlUserRepository implements UserRepository {
       throw new Error("Error retrieving user from database");
     }
   }
-  
+
   async isNameOrEmailTaken(
     username: string,
     email: string
@@ -145,7 +145,7 @@ export class MysqlUserRepository implements UserRepository {
       if (username) {
         updates.push("namedb = ?");
         values.push(username);
-        
+
         updates.push("last_username_change = CURRENT_TIMESTAMP(3)");
       }
 
@@ -160,7 +160,7 @@ export class MysqlUserRepository implements UserRepository {
       const query = `UPDATE users SET ${updates.join(", ")} WHERE id = ?`;
 
       const dbConnection = connection || promisePool;
-      
+
       const [result] = await dbConnection.execute(query, values);
 
       const affectedRows = (result as { affectedRows: number }).affectedRows;
@@ -174,6 +174,65 @@ export class MysqlUserRepository implements UserRepository {
       }
       console.error("Error updating user credentials:", error);
       throw new Error("Error updating user credentials");
+    }
+  }
+  
+  async updateLastActiveAt(userId: string): Promise<void> {
+    try {
+      // Cooldown of 30 seconds to avoid excessive updates
+      const query = `
+        UPDATE users 
+        SET last_active_at = CURRENT_TIMESTAMP(3) 
+        WHERE id = ? 
+        AND (
+          last_active_at IS NULL 
+          OR TIMESTAMPDIFF(SECOND, last_active_at, CURRENT_TIMESTAMP(3)) >= 30
+        )
+      `;
+
+      await promisePool.execute(query, [userId]);
+    } catch (error) {
+      console.error("Error updating user last activity:", error);
+    }
+  }
+
+  async getUserOnlineStatus(userId: string): Promise<{
+    isOnline: boolean;
+    lastActiveAt: Date | null;
+  }> {
+    try {
+      const [rows] = await promisePool.execute<RowDataPacket[]>(
+        "SELECT last_active_at FROM users WHERE id = ?",
+        [userId]
+      );
+
+      if (rows.length === 0) {
+        return { isOnline: false, lastActiveAt: null };
+      }
+
+      const row = rows[0];
+      const lastActiveAt = row.last_active_at;
+
+      if (!lastActiveAt) {
+        return { isOnline: false, lastActiveAt: null };
+      }
+
+      // Consider online if the last activity was in the last 3 minutes
+      const currentTime = new Date();
+      const lastActiveTime = new Date(lastActiveAt);
+      const secondsSinceLastActivity = Math.floor(
+        (currentTime.getTime() - lastActiveTime.getTime()) / 1000
+      );
+
+      const isOnline = secondsSinceLastActivity <= 180; // 3 mins
+
+      return {
+        isOnline,
+        lastActiveAt: lastActiveAt,
+      };
+    } catch (error) {
+      console.error("Error retrieving user online status:", error);
+      return { isOnline: false, lastActiveAt: null };
     }
   }
 }

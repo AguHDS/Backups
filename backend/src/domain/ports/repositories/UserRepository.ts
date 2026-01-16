@@ -8,6 +8,11 @@ export interface NameAndEmailCheckResult {
   emailTaken: string | null;
 }
 
+export interface UserOnlineStatus {
+  isOnline: boolean;
+  lastActiveAt: Date | null;
+}
+
 /** Interface for interacting with user data in the database */
 export interface UserRepository {
   /** Searches user in the database by username */
@@ -57,4 +62,14 @@ export interface UserRepository {
     email?: string,
     connection?: Connection
   ): Promise<void>;
+
+  /**
+   * Updates the user's last activity timestamp for offline/online status tracking
+   */
+  updateLastActiveAt(userId: string): Promise<void>;
+
+  /**
+   * Retrieves the user's online status based on last activity
+   */
+  getUserOnlineStatus(userId: string): Promise<UserOnlineStatus>;
 }

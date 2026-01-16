@@ -54,4 +54,4 @@ export const getProfileMiddleware = async (req: Request, res: Response, next: Ne
     console.error("Error in profileMiddleware:", error);
     res.status(500).json({ status: 500, message: 'Internal server error' });
   }
-};//probar si el borrado de carpetas luego de cambiar el nombre de un usuario como admin funciona bien, y todo el flujo de borrado de secciones y archivos
+};

@@ -10,6 +10,7 @@ export interface ProfileStats {
 export interface UserProfileBasic {
   username: string;
   role: "user" | "admin";
+  isOnline: boolean;
   id: number;
   isOwner: boolean;
   userProfileData: ProfileStats;
