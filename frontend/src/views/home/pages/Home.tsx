@@ -17,12 +17,21 @@ export const Home = () => {
                   show them in your profile"
           />
           <AboutCard
-            title="Daily quests"
+            title="Daily quests (comming soon!)"
             subtitle={
               <>
                 by doing daily quests you can gain exp and upgrade your account
                 level, gaining benefits, like for example additional
                 <span className="text-green-400"> storage space</span>
+              </>
+            }
+          />
+          <AboutCard
+            title="Detailed dashboard pannel"
+            subtitle={
+              <>
+                once you're registered, you can access your dashboard, so you
+                can see detailed statistics about your storage
               </>
             }
           />
