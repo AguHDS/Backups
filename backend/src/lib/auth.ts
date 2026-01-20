@@ -26,33 +26,43 @@ export const auth = betterAuth({
 
       console.log(`🎯 Frontend URL (para tu app): ${frontendUrl}`);
 
-      // Show both links for development purposes
-      if (config.nodeEnv !== "production") {
-        console.log(`BetterAuth URL: ${url}`);
-      }
+      // Log adicional para debugging del envío real
+      console.log(`📤 Email será enviado por BetterAuth usando:`);
+      console.log(
+        `   - SMTP Host: ${process.env.SMTP_HOST || "No configurado"}`,
+      );
+      console.log(
+        `   - From: ${process.env.SMTP_FROM_EMAIL || "No configurado"}`,
+      );
 
-      // IMPORTANT: BetterAuth manages the sending automatically
-      // DO NOT return anything - only log for development
-      // BetterAuth will use the SMTP configuration of the 'email' object if it is configured
-
-      // In development: We can show the link but NOT send real email
-      // In production: BetterAuth will automatically send the email using the URL you generated
+      // IMPORTANT: NO retornes nada - BetterAuth maneja el envío automáticamente
+      // La configuración SMTP en el objeto 'email' será usada automáticamente
     },
 
     onPasswordReset: async ({ user }) => {
-      console.log(`Password reset completed for user: ${user.email}`);
+      console.log(`✅ Password reset completed for user: ${user.email}`);
     },
   },
 
   email: {
-    from: "Backups <noreply@backups.com>",
+    // Usa las variables de entorno directamente
+    from: process.env.SMTP_FROM_EMAIL
+      ? `Backups <${process.env.SMTP_FROM_EMAIL}>`
+      : "Backups <noreply@backups.com>",
+
     server: {
       host: process.env.SMTP_HOST || "smtp.ethereal.email",
       port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: false, // 587 usa STARTTLS, no SSL directo
       auth: {
         user: process.env.SMTP_USER || "test@ethereal.email",
         pass: process.env.SMTP_PASSWORD || "test123",
       },
+    },
+
+    // Configuración adicional para mejor deliverability
+    tls: {
+      rejectUnauthorized: false, // Útil para desarrollo/auto-signed certs
     },
   },
 

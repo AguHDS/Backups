@@ -100,7 +100,6 @@ export const changeCredentialsController = async (
       },
     };
 
-    // 1. Si es error NUESTRO, usar nuestro mapeo
     if (error instanceof Error && error.message in ourErrorMap) {
       const { status, message } = ourErrorMap[error.message];
 

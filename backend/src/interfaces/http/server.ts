@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import credentials from "./middlewares/corsCredentials.js";
 import { createProxyMiddleware, Options } from "http-proxy-middleware";
-import allowedOrigins from "../../config/allowedOrigins.js";
+import allowedOrigins from "@/config/allowedOrigins.js";
 
 // routes
 import auth from "./routes/auth.js";
